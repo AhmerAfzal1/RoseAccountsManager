@@ -6,4 +6,15 @@
     <string name="ad_interstitial_id">ca-app-pub-0672688958454166/6992601724</string>
     <string name="ad_rewarded_id">ca-app-pub-0672688958454166/1241032854</string>
     <string name="ad_rewarded_interstitial_id">ca-app-pub-0672688958454166/9684676532</string>
+
+    //Content description for icons
+    <string name="menu_sort">Sort icon</string>
+    <string name="menu_add">Add icon</string>
+    <string name="menu">Menu icon</string>
+    <string name="menu_search">Search icon</string>
+    <string name="menu_back">Back icon</string>
+    <string name="menu_edit">Edit icon</string>
+    <string name="menu_play_store">Playstore icon</string>
+    <string name="menu_share">Share icon</string>
+    <string name="menu_home">Home icon</string>
 </resources>
