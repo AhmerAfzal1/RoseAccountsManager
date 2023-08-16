@@ -34,6 +34,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.rose.account.utils.HelperFunctions
 import com.rose.account.R
 
 @Composable
@@ -59,7 +60,10 @@ fun RowScope.TableCell(text: String, weight: Float, isBold: Boolean = false) {
 }
 
 @Composable
-fun NavShape(credit: Long, debit: Long) {
+fun NavShape(credit: Double, debit: Double) {
+    val mAmountBalance = HelperFunctions.getRoundedValue((credit - debit))
+    val mAmountCredit = HelperFunctions.getRoundedValue(credit)
+    val mAmountDebit = HelperFunctions.getRoundedValue(debit)
     val mCardPadding = 32.dp
     val mContentPadding = 5.dp
     val mCornerDp = 100.dp
@@ -113,13 +117,13 @@ fun NavShape(credit: Long, debit: Long) {
                             TableCell(
                                 stringResource(id = R.string.label_nav_credit), mFirstRowWeight
                             )
-                            TableCell(credit.toString(), mSecondRowWeight)
+                            TableCell(mAmountCredit, mSecondRowWeight)
                         }
                         Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
                             TableCell(
                                 stringResource(id = R.string.label_nav_debit), mFirstRowWeight
                             )
-                            TableCell(debit.toString(), mSecondRowWeight)
+                            TableCell(mAmountDebit, mSecondRowWeight)
                         }
                         Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
                             Divider(color = Color.Black, thickness = 2.dp)
@@ -128,7 +132,7 @@ fun NavShape(credit: Long, debit: Long) {
                             TableCell(
                                 stringResource(id = R.string.label_balance), mFirstRowWeight, true
                             )
-                            TableCell((credit - debit).toString(), mSecondRowWeight, true)
+                            TableCell(mAmountBalance, mSecondRowWeight, true)
                         }
                     }
                 }

@@ -81,8 +81,8 @@ fun TopAppBarWithNavigation() {
     val mDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val mNavItemsList = prepareNavItems()
     val mSelectedItems = remember { mutableStateOf(mNavItemsList[0]) }
-    val mCredit: Long = 10000
-    val mDebit: Long = 8000
+    val mCredit = 10000.00
+    val mDebit = 8000.00
 
     ModalNavigationDrawer(drawerState = mDrawerState, drawerContent = {
         ModalDrawerSheet {
