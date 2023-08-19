@@ -1,5 +1,7 @@
 # Rose Accounts Manager
-A simple accounting task perform and keep all transactions record in database using Kotlin
+
+A simple accounting task perform and keep all transactions record in database using Jetpack Compose
+Kotlin
 
 This project is under progress...
 
