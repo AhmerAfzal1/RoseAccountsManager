@@ -1,4 +1,4 @@
-package com.rose.account.navigation
+package com.rose.account.drawer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,8 +34,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rose.account.utils.HelperFunctions
 import com.rose.account.R
+import com.rose.account.utils.HelperFunctions
 
 @Composable
 fun RowScope.TableCell(text: String, weight: Float, isBold: Boolean = false) {

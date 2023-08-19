@@ -1,6 +1,7 @@
-package com.rose.account.navigation
+package com.rose.account.drawer
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -75,11 +76,11 @@ private fun MyTopAppBar(onNavIconClick: () -> Unit) {
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun TopAppBarWithNavigation() {
+fun TopAppBarWithNavigationBar() {
     val mContext = LocalContext.current.applicationContext
     val mCoroutineScope = rememberCoroutineScope()
     val mDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val mNavItemsList = prepareNavItems()
+    val mNavItemsList = drawerItemsList()
     val mSelectedItems = remember { mutableStateOf(mNavItemsList[0]) }
     val mCredit = 10000.00
     val mDebit = 8000.00
@@ -95,10 +96,8 @@ fun TopAppBarWithNavigation() {
                     label = { Text(item.label) },
                     selected = item == mSelectedItems.value,
                     onClick = {
-                        //navController.navigate(item.route)
-                        mCoroutineScope.launch {
-                            mDrawerState.close()
-                        }
+                        mCoroutineScope.launch { mDrawerState.close() }
+                        Toast.makeText(mContext, item.label, Toast.LENGTH_SHORT).show()
                         mSelectedItems.value = item
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
@@ -108,9 +107,7 @@ fun TopAppBarWithNavigation() {
     }) {
         Scaffold(topBar = {
             MyTopAppBar {
-                mCoroutineScope.launch {
-                    mDrawerState.open()
-                }
+                mCoroutineScope.launch { mDrawerState.open() }
             }
         }) {
 
