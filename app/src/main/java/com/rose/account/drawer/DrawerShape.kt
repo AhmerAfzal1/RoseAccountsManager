@@ -16,24 +16,19 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.rose.account.R
 import com.rose.account.utils.HelperFunctions
 
@@ -64,12 +59,10 @@ fun NavShape(credit: Double, debit: Double) {
     val mAmountBalance = HelperFunctions.getRoundedValue((credit - debit))
     val mAmountCredit = HelperFunctions.getRoundedValue(credit)
     val mAmountDebit = HelperFunctions.getRoundedValue(debit)
-    val mCardPadding = 32.dp
     val mContentPadding = 5.dp
     val mCornerDp = 100.dp
-    val mFirstRowWeight = 0.3f
-    val mSecondRowWeight = 0.7f
-    val mTextOffset = Offset(4.0f, 8.0f)
+    val mFirstRowWeight = 1.5f
+    val mSecondRowWeight = 2f
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,28 +83,29 @@ fun NavShape(credit: Double, debit: Double) {
             ) {
                 item {
                     Image(
-                        modifier = Modifier.size(size = 48.dp),
+                        modifier = Modifier
+                            .padding(top = mContentPadding)
+                            .size(size = 48.dp),
                         painter = painterResource(id = R.drawable.ic_logo),
                         contentDescription = stringResource(R.string.content_description_app_logo)
                     )
                     Text(
                         modifier = Modifier.padding(top = mContentPadding),
                         text = stringResource(id = R.string.app_name),
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            shadow = Shadow(
-                                color = Color.Black, offset = mTextOffset, blurRadius = 3f
-                            )
-                        ),
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        fontWeight = FontWeight.W900,
+                        color = MaterialTheme.colorScheme.secondaryContainer,
                     )
-                    Card(
-                        modifier = Modifier.padding(
-                            top = mContentPadding, start = mCardPadding, end = mCardPadding
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer)
+                    ElevatedCard(
+                        modifier = Modifier
+                            .padding(
+                                top = mContentPadding,
+                                start = mContentPadding,
+                                end = mContentPadding
+                            )
+                            .size(width = 200.dp, height = 75.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+                        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondaryContainer)
                     ) {
                         Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
                             TableCell(
@@ -126,7 +120,10 @@ fun NavShape(credit: Double, debit: Double) {
                             TableCell(mAmountDebit, mSecondRowWeight)
                         }
                         Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
-                            Divider(color = Color.Black, thickness = 2.dp)
+                            Divider(
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                thickness = 2.dp
+                            )
                         }
                         Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
                             TableCell(

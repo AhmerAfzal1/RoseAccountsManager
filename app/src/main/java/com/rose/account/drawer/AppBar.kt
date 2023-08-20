@@ -48,7 +48,7 @@ private fun MyTopAppBar(onNavIconClick: () -> Unit) {
         containerColor = MaterialTheme.colorScheme.primary,
         titleContentColor = MaterialTheme.colorScheme.onPrimary,
         navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-        actionIconContentColor = MaterialTheme.colorScheme.onSecondary
+        actionIconContentColor = MaterialTheme.colorScheme.onPrimary
     ), navigationIcon = {
         IconButton(onClick = {
             onNavIconClick()
