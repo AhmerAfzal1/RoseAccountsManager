@@ -1,10 +1,13 @@
 package com.rose.account.drawer
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
@@ -23,9 +26,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -35,9 +41,26 @@ import androidx.compose.ui.unit.dp
 import com.rose.account.R
 import kotlinx.coroutines.launch
 
+fun underProgressFeature(context: Context) {
+    Toast.makeText(context, "This feature is under progress", Toast.LENGTH_LONG).show()
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MyTopAppBar(onNavIconClick: () -> Unit) {
+private fun MyTopAppBar(
+    onNavIconClick: () -> Unit
+) {
+    val mContext = LocalContext.current.applicationContext
+    var mShowSearch by remember { mutableStateOf(false) }
+    var mTextSearch by remember { mutableStateOf("") }
+
+    if (mShowSearch) {
+        MenuSearchBar(
+            query = mTextSearch,
+            onQueryChange = { mTextSearch = it },
+            onDismiss = { mShowSearch = false })
+    }
+
     TopAppBar(title = {
         Text(
             text = stringResource(R.string.app_name),
@@ -59,13 +82,13 @@ private fun MyTopAppBar(onNavIconClick: () -> Unit) {
             )
         }
     }, actions = {
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { mShowSearch = true }) {
             Icon(
                 imageVector = Icons.Filled.Search,
                 contentDescription = stringResource(id = R.string.content_description_search)
             )
         }
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { underProgressFeature(mContext) }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_sort),
                 contentDescription = stringResource(id = R.string.content_description_sort)
@@ -104,13 +127,20 @@ fun TopAppBarWithNavigationBar() {
                 )
             }
         }
-    }) {
+    }, content = {
         Scaffold(topBar = {
-            MyTopAppBar {
-                mCoroutineScope.launch { mDrawerState.open() }
+            MyTopAppBar { mCoroutineScope.launch { mDrawerState.open() } }
+        }) { innerPadding ->
+            LazyColumn(
+                contentPadding = innerPadding,
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item {
+                    Text(text = "Text in Drawer content 1")
+                    Text(text = "Text in Drawer content 2")
+                }
             }
-        }) {
-
         }
-    }
+    })
 }
