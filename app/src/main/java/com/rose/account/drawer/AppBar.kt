@@ -3,11 +3,11 @@ package com.rose.account.drawer
 import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
@@ -39,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rose.account.R
+import com.rose.account.ui.HomeScreen
 import kotlinx.coroutines.launch
 
 fun underProgressFeature(context: Context) {
@@ -55,8 +56,7 @@ private fun MyTopAppBar(
     var mTextSearch by remember { mutableStateOf("") }
 
     if (mShowSearch) {
-        MenuSearchBar(
-            query = mTextSearch,
+        MenuSearchBar(query = mTextSearch,
             onQueryChange = { mTextSearch = it },
             onDismiss = { mShowSearch = false })
     }
@@ -131,15 +131,13 @@ fun TopAppBarWithNavigationBar() {
         Scaffold(topBar = {
             MyTopAppBar { mCoroutineScope.launch { mDrawerState.open() } }
         }) { innerPadding ->
-            LazyColumn(
-                contentPadding = innerPadding,
-                modifier = Modifier.fillMaxSize(),
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                item {
-                    Text(text = "Text in Drawer content 1")
-                    Text(text = "Text in Drawer content 2")
-                }
+                HomeScreen(modifier = Modifier.fillMaxSize())
             }
         }
     })

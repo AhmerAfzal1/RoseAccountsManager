@@ -99,9 +99,9 @@ dependencies {
     ksp("com.google.dagger:hilt-compiler:2.47")
 
     //Room Database
-    implementation("androidx.room:room-ktx:2.5.2")
-    implementation("androidx.room:room-runtime:2.5.2")
-    ksp("androidx.room:room-compiler:2.5.2")
+    implementation("androidx.room:room-ktx:2.6.0-alpha03")
+    implementation("androidx.room:room-runtime:2.6.0-alpha03")
+    ksp("androidx.room:room-compiler:2.6.0-alpha03")
 
     //Data Store Preferences
     implementation("androidx.datastore:datastore:1.0.0")

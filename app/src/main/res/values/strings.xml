@@ -12,6 +12,8 @@
     <string name="content_description_app_logo">App logo</string>
     <string name="content_description_back">Back icon</string>
     <string name="content_description_backup">Backup icon</string>
+    <string name="content_description_close">Close icon</string>
+    <string name="content_description_delete">Delete icon</string>
     <string name="content_description_edit">Edit icon</string>
     <string name="content_description_exit">Exit icon</string>
     <string name="content_description_home">Home icon</string>
@@ -39,5 +41,4 @@
     <string name="label_restore_backup">Restore Backup</string>
     <string name="label_settings">Settings</string>
     <string name="label_share_the_app">Share the app</string>
-    <string name="content_description_close">Close icon</string>
 </resources>
