@@ -27,9 +27,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +54,7 @@ private fun MyTopAppBar(
     onNavIconClick: () -> Unit
 ) {
     val mContext = LocalContext.current.applicationContext
+    val mScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var mShowSearch by remember { mutableStateOf(false) }
     var mTextSearch by remember { mutableStateOf("") }
 
@@ -61,40 +64,43 @@ private fun MyTopAppBar(
             onDismiss = { mShowSearch = false })
     }
 
-    TopAppBar(title = {
-        Text(
-            text = stringResource(R.string.app_name),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }, colors = TopAppBarDefaults.topAppBarColors(
-        containerColor = MaterialTheme.colorScheme.primary,
-        titleContentColor = MaterialTheme.colorScheme.onPrimary,
-        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-        actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-    ), navigationIcon = {
-        IconButton(onClick = {
-            onNavIconClick()
-        }) {
-            Icon(
-                imageVector = Icons.Filled.Menu,
-                contentDescription = stringResource(id = R.string.content_description_menu)
+    TopAppBar(
+        title = {
+            Text(
+                text = stringResource(R.string.app_name),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
-        }
-    }, actions = {
-        IconButton(onClick = { mShowSearch = true }) {
-            Icon(
-                imageVector = Icons.Filled.Search,
-                contentDescription = stringResource(id = R.string.content_description_search)
-            )
-        }
-        IconButton(onClick = { underProgressFeature(mContext) }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_sort),
-                contentDescription = stringResource(id = R.string.content_description_sort)
-            )
-        }
-    })
+        }, navigationIcon = {
+            IconButton(onClick = {
+                onNavIconClick()
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = stringResource(id = R.string.content_description_menu)
+                )
+            }
+        }, actions = {
+            IconButton(onClick = { mShowSearch = true }) {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = stringResource(id = R.string.content_description_search)
+                )
+            }
+            IconButton(onClick = { underProgressFeature(mContext) }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_sort),
+                    contentDescription = stringResource(id = R.string.content_description_sort)
+                )
+            }
+        }, colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+        scrollBehavior = mScrollBehavior
+    )
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -102,35 +108,52 @@ private fun MyTopAppBar(
 fun TopAppBarWithNavigationBar() {
     val mContext = LocalContext.current.applicationContext
     val mCoroutineScope = rememberCoroutineScope()
-    val mDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val mNavItemsList = drawerItemsList()
-    val mSelectedItems = remember { mutableStateOf(mNavItemsList[0]) }
     val mCredit = 10000.00
     val mDebit = 8000.00
+    val mDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val mNavItemsList = drawerItemsList()
+    var mSelectedItems by rememberSaveable { mutableIntStateOf(0) }
 
-    ModalNavigationDrawer(drawerState = mDrawerState, drawerContent = {
-        ModalDrawerSheet {
-            NavShape(mCredit, mDebit)
-            Spacer(Modifier.height(12.dp))
-            mNavItemsList.forEach { item ->
-                //Spacer(Modifier.height(6.dp))
-                NavigationDrawerItem(
-                    icon = { Icon(item.icon, contentDescription = item.contentDescription) },
-                    label = { Text(item.label) },
-                    selected = item == mSelectedItems.value,
-                    onClick = {
-                        mCoroutineScope.launch { mDrawerState.close() }
-                        Toast.makeText(mContext, item.label, Toast.LENGTH_SHORT).show()
-                        mSelectedItems.value = item
-                    },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                )
+    ModalNavigationDrawer(
+        drawerContent = {
+            ModalDrawerSheet {
+                NavShape(mCredit, mDebit)
+                Spacer(Modifier.height(12.dp))
+                mNavItemsList.forEachIndexed { index, item ->
+                    //Spacer(Modifier.height(6.dp))
+                    NavigationDrawerItem(
+                        label = { Text(text = item.label) },
+                        selected = index == mSelectedItems,
+                        onClick = {
+                            //navController.navigate(item.route)
+                            mSelectedItems = index
+                            mCoroutineScope.launch { mDrawerState.close() }
+                            Toast.makeText(mContext, item.label, Toast.LENGTH_SHORT).show()
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = if (index == mSelectedItems) {
+                                    item.selectedIcon
+                                } else item.unselectedIcon,
+                                contentDescription = item.contentDescription
+                            )
+                        },
+                        badge = {
+                            item.badgeCount?.let { Text(text = item.badgeCount.toString()) }
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                    )
+                }
             }
-        }
-    }, content = {
-        Scaffold(topBar = {
-            MyTopAppBar { mCoroutineScope.launch { mDrawerState.open() } }
-        }) { innerPadding ->
+        },
+        drawerState = mDrawerState
+    )
+    {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                MyTopAppBar { mCoroutineScope.launch { mDrawerState.open() } }
+            }) { innerPadding ->
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
@@ -140,5 +163,5 @@ fun TopAppBarWithNavigationBar() {
                 HomeScreen(modifier = Modifier.fillMaxSize())
             }
         }
-    })
+    }
 }

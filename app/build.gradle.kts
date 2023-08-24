@@ -65,6 +65,7 @@ android {
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0-rc01")
     implementation("androidx.multidex:multidex:2.0.1")
+    implementation("androidx.compose.material:material-icons-extended:1.6.0-alpha04")
 
     //Jetpack Compose BOM
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
