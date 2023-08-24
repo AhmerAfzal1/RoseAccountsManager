@@ -23,25 +23,91 @@ class UsersCallback(private val mUsersDao: Provider<UsersDao>) : RoomDatabase.Ca
                 phone = "03023339589",
                 email = "ahmerafzal@yahoo.com",
                 comments = ""
-            ), UsersModel(
+            ),
+            UsersModel(
                 name = "Rida Hasan",
-                address = "",
+                address = "Street No. 2",
                 phone = "",
                 email = "",
                 comments = ""
-            ), UsersModel(
+            ),
+            UsersModel(
                 name = "Maham Hasan",
-                address = "",
+                address = "Street No. 2",
                 phone = "",
                 email = "",
                 comments = ""
-            ), UsersModel(
+            ),
+            UsersModel(
                 name = "Arfa Hasan",
-                address = "",
+                address = "Street No. 2",
                 phone = "",
                 email = "",
                 comments = ""
-            )
+            ),
+            UsersModel(
+                name = "Umar Riaz",
+                address = "Dharanwala",
+                phone = "03005095665",
+                email = "umarriaz665@gmail.com",
+                comments = ""
+            ),
+            UsersModel(
+                name = "Sajjad Hussain Bhutta",
+                address = "Street No. 2, House No. 547",
+                phone = "03024159211",
+                email = "sajjad.bhutta@live.com",
+                comments = ""
+            ),
+            UsersModel(
+                name = "Imtiaz Bhutta",
+                address = "",
+                phone = "03014652092",
+                email = "",
+                comments = ""
+            ),
+            UsersModel(
+                name = "Ijaz Bhutta",
+                address = "",
+                phone = "03024585268",
+                email = "",
+                comments = ""
+            ),
+            UsersModel(
+                name = "Abbas Bhutta",
+                address = "",
+                phone = "03002039589",
+                email = "",
+                comments = ""
+            ),
+            UsersModel(
+                name = "Yasir Shahid",
+                address = "",
+                phone = "03057039270",
+                email = "",
+                comments = ""
+            ),
+            UsersModel(
+                name = "Faisal Shahid",
+                address = "",
+                phone = "03117511575",
+                email = "",
+                comments = ""
+            ),
+            UsersModel(
+                name = "Adil Shahid",
+                address = "",
+                phone = "03106900089",
+                email = "",
+                comments = ""
+            ),
+            UsersModel(
+                name = "Umar Farooq",
+                address = "Chak No. 63f, Hasilpur",
+                phone = "03012882943",
+                email = "",
+                comments = "Computer Operator at Bajwa's Collection"
+            ),
         )
         mScope.launch(Dispatchers.IO) {
             mUsersModelLists.forEach { mUsersDao.get().insertOrUpdate(it) }
