@@ -5,8 +5,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.rose.account.database.AppDatabase
 import com.rose.account.database.dao.AdminDao
-import com.rose.account.database.dao.UsersDao
-import com.rose.account.database.repository.UsersRepository
+import com.rose.account.database.dao.UserDao
+import com.rose.account.database.repository.UserRepositoryImpl
 import com.rose.account.preferences.PreferencesManager
 import com.rose.account.utils.Constants
 import dagger.Module
@@ -39,7 +39,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesUsersDao(mDatabase: AppDatabase): UsersDao = mDatabase.usersDao()
+    fun providesUsersDao(mDatabase: AppDatabase): UserDao = mDatabase.usersDao()
 
     @Provides
     @Singleton
@@ -47,5 +47,5 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesUsersRepository(mUsersDao: UsersDao): UsersRepository = UsersRepository(mUsersDao)
+    fun providesUserRepository(mUserDao: UserDao): UserRepositoryImpl = UserRepositoryImpl(mUserDao)
 }

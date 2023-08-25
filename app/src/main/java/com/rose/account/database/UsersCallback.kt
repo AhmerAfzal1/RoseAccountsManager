@@ -2,7 +2,7 @@ package com.rose.account.database
 
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.rose.account.database.dao.UsersDao
+import com.rose.account.database.dao.UserDao
 import com.rose.account.database.model.UserModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -10,7 +10,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Provider
 
-class UsersCallback(private val usersDao: Provider<UsersDao>) : RoomDatabase.Callback() {
+class UsersCallback(private val userDao: Provider<UserDao>) : RoomDatabase.Callback() {
 
     private val mScope = CoroutineScope(SupervisorJob())
 
@@ -110,7 +110,7 @@ class UsersCallback(private val usersDao: Provider<UsersDao>) : RoomDatabase.Cal
             ),
         )
         mScope.launch(Dispatchers.IO) {
-            mUserModelLists.forEach { usersDao.get().insertOrUpdate(it) }
+            mUserModelLists.forEach { userDao.get().insertOrUpdate(it) }
         }
     }
 }

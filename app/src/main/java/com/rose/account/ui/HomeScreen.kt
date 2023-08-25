@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -46,6 +48,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -55,6 +58,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -62,9 +66,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rose.account.R
 import com.rose.account.database.model.UserModel
+import com.rose.account.database.state.HomeUiState
+import com.rose.account.database.state.UiState
 import com.rose.account.drawer.DrawerItems
 import com.rose.account.drawer.NavShape
 import com.rose.account.drawer.drawerItemsList
@@ -72,9 +77,16 @@ import com.rose.account.utils.SortOrder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-fun underProgressFeature(context: Context) {
-    Toast.makeText(context, "This feature is under progress", Toast.LENGTH_LONG).show()
+@Composable
+fun LoadingProgressBar(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier.fillMaxSize()
+    ) {
+        CircularProgressIndicator(color = Color.LightGray)
+    }
 }
+
 
 @Composable
 private fun UserItem(
@@ -107,14 +119,16 @@ private fun UserItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                IconButton(modifier = Modifier.then(Modifier.size(mIconSize)),
+                IconButton(
+                    modifier = Modifier.then(Modifier.size(mIconSize)),
                     onClick = { /*TODO*/ }) {
                     Icon(
                         imageVector = Icons.Filled.Info,
                         contentDescription = stringResource(id = R.string.content_description_info)
                     )
                 }
-                IconButton(modifier = Modifier.then(Modifier.size(mIconSize)),
+                IconButton(
+                    modifier = Modifier.then(Modifier.size(mIconSize)),
                     onClick = { /*TODO*/ }) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
@@ -269,22 +283,46 @@ fun TopAppBarWithNavigationBar() {
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val mUsers by remember {
-                    mHomeViewModel.getAllUsersWithFiltered
-                }.collectAsStateWithLifecycle(initialValue = emptyList())
+                val uiState: HomeUiState by mHomeViewModel.userUi.collectAsState()
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(mUsers) { user ->
-                        UserItem(modifier = Modifier.fillMaxWidth(),
-                            userModel = user,
-                            onDeleteClick = { mHomeViewModel.userDelete(user) }
-                        )
+                when (uiState.userData) {
+                    UiState.Loading -> {
+                        LoadingProgressBar()
+                    }
+
+                    UiState.Error -> {}
+
+                    is UiState.Success -> {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items((uiState.userData as UiState.Success).userModel) { user ->
+                                UserItem(modifier = Modifier.fillMaxWidth(),
+                                    userModel = user,
+                                    onDeleteClick = { mHomeViewModel.deleteUser(user) })
+                            }
+                        }
                     }
                 }
+                /*when (uiState) {
+                    UiState.Loading -> {
+                        item {
+                            LoadingIndicator()
+                        }
+                    }
+
+                    !userState.errorMsg.isNullOrEmpty() -> {
+                        HelperFunctions.toastLong(
+                            mContext, userState.errorMsg ?: "Error while loading database"
+                        )
+                    }
+
+                    userState.data != null -> {
+
+                    }
+                }*/
             }
         }
     }

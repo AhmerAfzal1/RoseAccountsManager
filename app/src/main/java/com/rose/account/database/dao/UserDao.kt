@@ -9,7 +9,7 @@ import com.rose.account.utils.SortOrder
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface UsersDao {
+interface UserDao {
 
     @Upsert
     suspend fun insertOrUpdate(userModel: UserModel)
