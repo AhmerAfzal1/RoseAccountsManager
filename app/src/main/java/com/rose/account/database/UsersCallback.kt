@@ -10,7 +10,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Provider
 
-class UsersCallback(private val mUsersDao: Provider<UsersDao>) : RoomDatabase.Callback() {
+class UsersCallback(private val usersDao: Provider<UsersDao>) : RoomDatabase.Callback() {
 
     private val mScope = CoroutineScope(SupervisorJob())
 
@@ -110,7 +110,7 @@ class UsersCallback(private val mUsersDao: Provider<UsersDao>) : RoomDatabase.Ca
             ),
         )
         mScope.launch(Dispatchers.IO) {
-            mUserModelLists.forEach { mUsersDao.get().insertOrUpdate(it) }
+            mUserModelLists.forEach { usersDao.get().insertOrUpdate(it) }
         }
     }
 }

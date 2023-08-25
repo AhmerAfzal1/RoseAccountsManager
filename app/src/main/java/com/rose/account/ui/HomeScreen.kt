@@ -80,13 +80,14 @@ fun underProgressFeature(context: Context) {
 private fun UserItem(
     modifier: Modifier = Modifier, userModel: UserModel, onDeleteClick: () -> Unit
 ) {
+    val mIconSize: Dp = 36.dp
+    val mPadding: Dp = 5.dp
+
     ElevatedCard(
         modifier = modifier,
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
     ) {
-        val mIconSize: Dp = 36.dp
-        val mPadding: Dp = 5.dp
         Row(
             modifier = Modifier
                 .padding(start = mPadding, end = mPadding)
@@ -280,9 +281,8 @@ fun TopAppBarWithNavigationBar() {
                     items(mUsers) { user ->
                         UserItem(modifier = Modifier.fillMaxWidth(),
                             userModel = user,
-                            onDeleteClick = {
-                                mHomeViewModel.userDelete(user)
-                            })
+                            onDeleteClick = { mHomeViewModel.userDelete(user) }
+                        )
                     }
                 }
             }

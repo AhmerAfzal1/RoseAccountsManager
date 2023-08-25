@@ -9,24 +9,24 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class UsersRepository @Inject constructor(private val mUsersDao: UsersDao) {
+class UsersRepository @Inject constructor(private val usersDao: UsersDao) {
 
     @WorkerThread
     suspend fun insertOrUpdate(userModel: UserModel) = withContext(Dispatchers.IO) {
-        mUsersDao.insertOrUpdate(userModel)
+        usersDao.insertOrUpdate(userModel)
     }
 
     @WorkerThread
     suspend fun delete(userModel: UserModel) = withContext(Dispatchers.IO) {
-        mUsersDao.delete(userModel)
+        usersDao.delete(userModel)
     }
 
+    @WorkerThread
     fun getAllCustomersSortedByNames(
-        searchName: String, sortOrder: SortOrder
-    ): Flow<List<UserModel>> = mUsersDao.getAllUsersByFilter(searchName, sortOrder)
+        searchText: String, sortOrder: SortOrder
+    ): Flow<List<UserModel>> = usersDao.getAllUsersByFilter(searchText, sortOrder)
 
-
-    val getAllCustomers: Flow<List<UserModel>> = mUsersDao.getAllUsers()
+    val getAllCustomers: Flow<List<UserModel>> = usersDao.getAllUsers()
 
 }
 
