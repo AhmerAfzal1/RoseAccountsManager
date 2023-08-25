@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.rose.account.drawer.TopAppBarWithNavigationBar
 import com.rose.account.ui.theme.RoseAccountsManagerTheme
 import dagger.hilt.android.AndroidEntryPoint
 

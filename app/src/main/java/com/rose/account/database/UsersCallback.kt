@@ -3,7 +3,7 @@ package com.rose.account.database
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.rose.account.database.dao.UsersDao
-import com.rose.account.database.model.UsersModel
+import com.rose.account.database.model.UserModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -16,92 +16,92 @@ class UsersCallback(private val mUsersDao: Provider<UsersDao>) : RoomDatabase.Ca
 
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
-        val mUsersModelLists = listOf(
-            UsersModel(
+        val mUserModelLists = listOf(
+            UserModel(
                 name = "Ahmer Afzal",
                 address = "Street No. 1, House No. 548, Darbar Road",
                 phone = "03023339589",
                 email = "ahmerafzal@yahoo.com",
                 comments = ""
             ),
-            UsersModel(
+            UserModel(
                 name = "Rida Hasan",
                 address = "Street No. 2",
                 phone = "",
                 email = "",
                 comments = ""
             ),
-            UsersModel(
+            UserModel(
                 name = "Maham Hasan",
                 address = "Street No. 2",
                 phone = "",
                 email = "",
                 comments = ""
             ),
-            UsersModel(
+            UserModel(
                 name = "Arfa Hasan",
                 address = "Street No. 2",
                 phone = "",
                 email = "",
                 comments = ""
             ),
-            UsersModel(
+            UserModel(
                 name = "Umar Riaz",
                 address = "Dharanwala",
                 phone = "03005095665",
                 email = "umarriaz665@gmail.com",
                 comments = ""
             ),
-            UsersModel(
+            UserModel(
                 name = "Sajjad Hussain Bhutta",
                 address = "Street No. 2, House No. 547",
                 phone = "03024159211",
                 email = "sajjad.bhutta@live.com",
                 comments = ""
             ),
-            UsersModel(
+            UserModel(
                 name = "Imtiaz Bhutta",
                 address = "",
                 phone = "03014652092",
                 email = "",
                 comments = ""
             ),
-            UsersModel(
+            UserModel(
                 name = "Ijaz Bhutta",
                 address = "",
                 phone = "03024585268",
                 email = "",
                 comments = ""
             ),
-            UsersModel(
+            UserModel(
                 name = "Abbas Bhutta",
                 address = "",
                 phone = "03002039589",
                 email = "",
                 comments = ""
             ),
-            UsersModel(
+            UserModel(
                 name = "Yasir Shahid",
                 address = "",
                 phone = "03057039270",
                 email = "",
                 comments = ""
             ),
-            UsersModel(
+            UserModel(
                 name = "Faisal Shahid",
                 address = "",
                 phone = "03117511575",
                 email = "",
                 comments = ""
             ),
-            UsersModel(
+            UserModel(
                 name = "Adil Shahid",
                 address = "",
                 phone = "03106900089",
                 email = "",
                 comments = ""
             ),
-            UsersModel(
+            UserModel(
                 name = "Umar Farooq",
                 address = "Chak No. 63f, Hasilpur",
                 phone = "03012882943",
@@ -110,7 +110,7 @@ class UsersCallback(private val mUsersDao: Provider<UsersDao>) : RoomDatabase.Ca
             ),
         )
         mScope.launch(Dispatchers.IO) {
-            mUsersModelLists.forEach { mUsersDao.get().insertOrUpdate(it) }
+            mUserModelLists.forEach { mUsersDao.get().insertOrUpdate(it) }
         }
     }
 }

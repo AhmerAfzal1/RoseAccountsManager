@@ -11,7 +11,7 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Entity(tableName = "Customers", indices = [Index(value = arrayOf("_id"), unique = true)])
 @Parcelize
-data class UsersModel(
+data class UserModel(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "_id")
     val id: Long = 0.toLong(),

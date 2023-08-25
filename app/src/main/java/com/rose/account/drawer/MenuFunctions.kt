@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import com.rose.account.R
+import com.rose.account.database.AppDatabase
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,8 +27,8 @@ import kotlinx.coroutines.delay
 fun MenuSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    /*pokemonList: List<PokemonDb>,
-    onQueryClick: (PokemonDb) -> Unit,*/
+    pokemonList: List<AppDatabase>,
+    onQueryClick: (AppDatabase) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {

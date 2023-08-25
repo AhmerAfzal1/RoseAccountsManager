@@ -7,6 +7,7 @@ import com.rose.account.database.AppDatabase
 import com.rose.account.database.dao.AdminDao
 import com.rose.account.database.dao.UsersDao
 import com.rose.account.database.repository.UsersRepository
+import com.rose.account.preferences.PreferencesManager
 import com.rose.account.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -31,6 +32,10 @@ object AppModule {
         //.addCallback(UsersCallback(mUsersProvider))
         .build()
 
+    @Provides
+    @Singleton
+    fun providesDataStore(@ApplicationContext mContext: Context): PreferencesManager =
+        PreferencesManager(mContext)
 
     @Provides
     @Singleton

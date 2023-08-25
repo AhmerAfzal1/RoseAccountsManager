@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.rose.account.database.model.UsersModel
+import com.rose.account.database.model.UserModel
 import com.rose.account.utils.SortOrder
 import kotlinx.coroutines.flow.Flow
 
@@ -12,18 +12,18 @@ import kotlinx.coroutines.flow.Flow
 interface UsersDao {
 
     @Upsert
-    suspend fun insertOrUpdate(usersModel: UsersModel)
+    suspend fun insertOrUpdate(userModel: UserModel)
 
     @Delete
-    suspend fun delete(usersModel: UsersModel)
+    suspend fun delete(userModel: UserModel)
 
     @Query("SELECT * FROM customers WHERE Name LIKE '%' || :searchName || '%' ORDER BY Name ASC")
-    fun getAllUsersSortedByNames(searchName: String): Flow<List<UsersModel>>
+    fun getAllUsersSortedByNames(searchName: String): Flow<List<UserModel>>
 
     @Query("SELECT * FROM customers WHERE Name LIKE '%' || :searchName || '%' ORDER BY Created ASC")
-    fun getAllUsersSortedByDate(searchName: String): Flow<List<UsersModel>>
+    fun getAllUsersSortedByDate(searchName: String): Flow<List<UserModel>>
 
-    fun getAllUsersByFilter(searchName: String, sortOrder: SortOrder): Flow<List<UsersModel>> {
+    fun getAllUsersByFilter(searchName: String, sortOrder: SortOrder): Flow<List<UserModel>> {
         return when (sortOrder) {
             SortOrder.BY_NAME -> getAllUsersSortedByNames(searchName)
             SortOrder.BY_DATE -> getAllUsersSortedByDate(searchName)
@@ -31,5 +31,5 @@ interface UsersDao {
     }
 
     @Query("SELECT * FROM customers")
-    fun getAllUsers(): Flow<List<UsersModel>>
+    fun getAllUsers(): Flow<List<UserModel>>
 }
