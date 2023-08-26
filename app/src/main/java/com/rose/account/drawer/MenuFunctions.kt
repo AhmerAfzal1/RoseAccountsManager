@@ -2,6 +2,8 @@ package com.rose.account.drawer
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -18,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import com.rose.account.R
 import com.rose.account.database.AppDatabase
 import kotlinx.coroutines.delay
@@ -25,12 +28,11 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuSearchBar(
-    query: String,
-    onQueryChange: (String) -> Unit,
-    pokemonList: List<AppDatabase>,
-    onQueryClick: (AppDatabase) -> Unit,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    text: String,
+    onTextChange: (String) -> Unit,
+    //onSearchClick: (String) -> Unit,
+    onDismiss: () -> Unit
 ) {
 
     var mIsActive by rememberSaveable { mutableStateOf(false) }
@@ -49,8 +51,8 @@ fun MenuSearchBar(
 
     SearchBar(
         modifier = modifier.fillMaxWidth(),
-        query = query,
-        onQueryChange = onQueryChange,
+        query = text,
+        onQueryChange = onTextChange,
         onSearch = { closeSearchBar() },
         active = mIsActive,
         onActiveChange = {
@@ -71,8 +73,8 @@ fun MenuSearchBar(
             if (mIsActive) {
                 Icon(
                     modifier = Modifier.clickable {
-                        if (query.isNotEmpty()) {
-                            onQueryChange("")
+                        if (text.isNotEmpty()) {
+                            onTextChange("")
                         } else {
                             closeSearchBar()
                         }

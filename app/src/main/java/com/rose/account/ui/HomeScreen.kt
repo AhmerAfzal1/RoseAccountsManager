@@ -73,6 +73,7 @@ import com.rose.account.database.model.UserModel
 import com.rose.account.database.state.HomeUiState
 import com.rose.account.database.state.UiState
 import com.rose.account.drawer.DrawerItems
+import com.rose.account.drawer.MenuSearchBar
 import com.rose.account.drawer.NavShape
 import com.rose.account.drawer.drawerItemsList
 import com.rose.account.utils.SortOrder
@@ -181,24 +182,22 @@ fun TopAppBarWithNavigationBar() {
     var mSelectedItems by rememberSaveable { mutableIntStateOf(0) }
     var mShowDropdownMenu by remember { mutableStateOf(false) }
     var mShowSearch by remember { mutableStateOf(false) }
-    var mTextSearch by remember { mutableStateOf("") }
+    var mTextSearch by remember { mutableStateOf(mHomeViewModel.searchQuery.value) }
 
-    /*if (mShowSearch) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0XFF070E14))
-        ) {
-            CustomSearchView(
-                text = mTextSearch,
-                onTextChange = { mTextSearch = it },
-                onCloseClick = {
-                    mCoroutineScope.launch { delay(200L) }
-                },
-                onSearchClick = { mHomeViewModel.searchData(it) }
-            )
+    if (mShowSearch) {
+        MenuSearchBar(text = mTextSearch,
+            onTextChange = { mTextSearch = it }) {
+            mShowSearch = false
         }
-    }*/
+        /*CustomSearchView(
+            text = mTextSearch,
+            onTextChange = { mTextSearch = it },
+            onCloseClick = {
+                mCoroutineScope.launch { delay(200L) }
+            },
+            onSearchClick = { mTextSearch = it }
+        )*/
+    }
 
     ModalNavigationDrawer(
         drawerContent = {
