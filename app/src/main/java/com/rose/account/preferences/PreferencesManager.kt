@@ -22,7 +22,7 @@ import javax.inject.Singleton
 @Singleton
 class PreferencesManager @Inject constructor(@ApplicationContext private val context: Context) {
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "RoseAccountsPrefs")
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.PREFERENCES_NAME)
 
     private object PreferencesKeys {
         val APP_LOCK = booleanPreferencesKey("AppLockKey")
@@ -54,21 +54,16 @@ class PreferencesManager @Inject constructor(@ApplicationContext private val con
             FilterPreferences(lockIsChecked, themeIsChecked, sortOrder)
         }
 
-    suspend fun updateAppLock(isChecked: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.APP_LOCK] = isChecked
-        }
+    suspend fun updateAppLock(isChecked: Boolean) = context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.APP_LOCK] = isChecked
     }
 
-    suspend fun updateAppTheme(isChecked: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.APP_THEME] = isChecked
-        }
+    suspend fun updateAppTheme(isChecked: Boolean) = context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.APP_THEME] = isChecked
     }
 
-    suspend fun updateSortOrder(sortOrder: SortOrder) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.SORT_ORDER] = sortOrder.name
-        }
+    suspend fun updateSortOrder(sortOrder: SortOrder) = context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.SORT_ORDER] = sortOrder.name
     }
+
 }

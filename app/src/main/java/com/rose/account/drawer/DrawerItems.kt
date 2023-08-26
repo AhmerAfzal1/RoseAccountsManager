@@ -38,7 +38,6 @@ fun drawerItemsList(): List<DrawerItems> = listOf(
         unselectedIcon = Icons.Outlined.Home,
         contentDescription = stringResource(id = R.string.content_description_home),
     ),
-
     DrawerItems(
         label = stringResource(R.string.label_backup),
         selectedIcon = Icons.Filled.Backup,

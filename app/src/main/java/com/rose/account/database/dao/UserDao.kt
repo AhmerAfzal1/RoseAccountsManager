@@ -29,8 +29,8 @@ interface UserDao {
     fun getAllUsersBySearchAndSort(
         searchQuery: String, sortOrder: SortOrder
     ): Flow<List<UserModel>> = when (sortOrder) {
-        SortOrder.BY_NAME -> getAllUsersSortedByNames(searchQuery)
         SortOrder.BY_DATE -> getAllUsersSortedByDate(searchQuery)
+        SortOrder.BY_NAME -> getAllUsersSortedByNames(searchQuery)
     }
 
     @Query("SELECT * FROM customers WHERE _id=:id")

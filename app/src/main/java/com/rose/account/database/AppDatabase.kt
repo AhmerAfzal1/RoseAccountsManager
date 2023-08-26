@@ -8,7 +8,6 @@ import com.rose.account.database.model.UserModel
 
 @Database(entities = [UserModel::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
-
     abstract fun adminDao(): AdminDao
     abstract fun usersDao(): UserDao
 }

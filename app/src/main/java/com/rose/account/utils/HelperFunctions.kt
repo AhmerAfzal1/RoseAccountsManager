@@ -18,4 +18,11 @@ object HelperFunctions {
         mRound.roundingMode = RoundingMode.HALF_UP
         return mRound.format(value)
     }
+
+    @JvmStatic
+    fun getPlayStoreLink(context: Context): String {
+        return Constants.PLAY_STORE_LINK + context.packageName
+    }
+
 }
+
