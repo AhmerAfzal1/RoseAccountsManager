@@ -6,10 +6,14 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.rose.account.utils.Constants
 import kotlinx.parcelize.Parcelize
 
 @Keep
-@Entity(tableName = "Customers", indices = [Index(value = arrayOf("_id"), unique = true)])
+@Entity(
+    tableName = Constants.DATABASE_USER_TABLE,
+    indices = [Index(value = arrayOf("_id"), unique = true)]
+)
 @Parcelize
 data class UserModel(
     @PrimaryKey(autoGenerate = true)
@@ -36,7 +40,4 @@ data class UserModel(
 
     @ColumnInfo(name = "LastModified")
     val modified: Long = 0.toLong(),
-
-    @ColumnInfo(name = "IsPinned")
-    val isPinned: Boolean = false,
 ) : Parcelable

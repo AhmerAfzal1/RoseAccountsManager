@@ -23,29 +23,29 @@ object AppModule {
     @Provides
     @Singleton
     fun providesDatabase(
-        @ApplicationContext mContext: Context,
-        //mUsersProvider: Provider<UsersDao>
+        @ApplicationContext context: Context,
+        //usersProvider: Provider<UserDao>
     ): AppDatabase = Room.databaseBuilder(
-        mContext, AppDatabase::class.java, Constants.DATABASE_NAME
+        context.applicationContext, AppDatabase::class.java, Constants.DATABASE_NAME
     ).setJournalMode(RoomDatabase.JournalMode.TRUNCATE) //For backup in single file
         .fallbackToDestructiveMigration()
-        //.addCallback(UsersCallback(mUsersProvider))
+        //.addCallback(UsersCallback(usersProvider))
         .build()
 
     @Provides
     @Singleton
-    fun providesDataStore(@ApplicationContext mContext: Context): PreferencesManager =
-        PreferencesManager(mContext)
+    fun providesDataStore(@ApplicationContext context: Context): PreferencesManager =
+        PreferencesManager(context)
 
     @Provides
     @Singleton
-    fun providesUsersDao(mDatabase: AppDatabase): UserDao = mDatabase.usersDao()
+    fun providesUsersDao(database: AppDatabase): UserDao = database.usersDao()
 
     @Provides
     @Singleton
-    fun providesAdminDao(mDatabase: AppDatabase): AdminDao = mDatabase.adminDao()
+    fun providesAdminDao(database: AppDatabase): AdminDao = database.adminDao()
 
     @Provides
     @Singleton
-    fun providesUserRepository(mUserDao: UserDao): UserRepositoryImpl = UserRepositoryImpl(mUserDao)
+    fun providesUserRepository(userDao: UserDao): UserRepositoryImpl = UserRepositoryImpl(userDao)
 }

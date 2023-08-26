@@ -3,6 +3,7 @@ package com.rose.account.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,13 +19,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ChangeCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -58,6 +60,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -87,7 +90,6 @@ fun LoadingProgressBar(modifier: Modifier = Modifier) {
     }
 }
 
-
 @Composable
 private fun UserItem(
     modifier: Modifier = Modifier, userModel: UserModel, onDeleteClick: () -> Unit
@@ -106,19 +108,19 @@ private fun UserItem(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier.padding(start = mPadding),
-                text = "${userModel.name}",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleLarge
-            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
+                IconButton(
+                    modifier = Modifier.then(Modifier.size(mIconSize)),
+                    onClick = { /*TODO*/ }) {
+                    Icon(
+                        imageVector = Icons.Filled.PushPin,
+                        contentDescription = stringResource(id = R.string.content_description_pin)
+                    )
+                }
                 IconButton(
                     modifier = Modifier.then(Modifier.size(mIconSize)),
                     onClick = { /*TODO*/ }) {
@@ -149,7 +151,15 @@ private fun UserItem(
         ) {
             Text(
                 modifier = Modifier.padding(start = mPadding),
-                text = "Phone: ${userModel.phone}",
+                text = "${userModel.name}",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                modifier = Modifier.padding(start = mPadding),
+                text = "Phone: ${userModel.phone}  |  Balance: ",
                 maxLines = 1,
                 style = MaterialTheme.typography.titleSmall
             )
@@ -238,9 +248,14 @@ fun TopAppBarWithNavigationBar() {
                         contentDescription = stringResource(id = R.string.content_description_search)
                     )
                 }
+                val mAngle: Float by animateFloatAsState(
+                    targetValue = if (mShowDropdownMenu) 180f else 0f,
+                    label = stringResource(id = R.string.label_animate_sort_icon)
+                )
                 IconButton(onClick = { mShowDropdownMenu = !mShowDropdownMenu }) {
                     Icon(
-                        imageVector = Icons.Filled.Sort,
+                        modifier = Modifier.rotate(mAngle),
+                        imageVector = Icons.Filled.ArrowDropDown,
                         contentDescription = stringResource(id = R.string.content_description_sort)
                     )
                 }
@@ -306,23 +321,6 @@ fun TopAppBarWithNavigationBar() {
                         }
                     }
                 }
-                /*when (uiState) {
-                    UiState.Loading -> {
-                        item {
-                            LoadingIndicator()
-                        }
-                    }
-
-                    !userState.errorMsg.isNullOrEmpty() -> {
-                        HelperFunctions.toastLong(
-                            mContext, userState.errorMsg ?: "Error while loading database"
-                        )
-                    }
-
-                    userState.data != null -> {
-
-                    }
-                }*/
             }
         }
     }

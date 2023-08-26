@@ -17,16 +17,19 @@ interface UserDao {
     @Delete
     suspend fun delete(userModel: UserModel)
 
-    @Query("SELECT * FROM customers WHERE Name LIKE '%' || :searchText || '%' ORDER BY Name ASC")
-    fun getAllUsersSortedByNames(searchText: String): Flow<List<UserModel>>
+    @Query("SELECT * FROM customers WHERE Name LIKE '%' || :searchQuery || '%' ORDER BY Name ASC")
+    fun getAllUsersSortedByNames(searchQuery: String): Flow<List<UserModel>>
 
-    @Query("SELECT * FROM customers WHERE Name LIKE '%' || :searchText || '%' ORDER BY Created ASC")
-    fun getAllUsersSortedByDate(searchText: String): Flow<List<UserModel>>
+    @Query("SELECT * FROM customers WHERE Name LIKE '%' || :searchQuery || '%' ORDER BY Created ASC")
+    fun getAllUsersSortedByDate(searchQuery: String): Flow<List<UserModel>>
 
-    fun getAllUsersByFilter(searchText: String, sortOrder: SortOrder): Flow<List<UserModel>> {
+    @Query("SELECT * FROM customers WHERE _id=:id")
+    fun getPinnedUsers(id: Int): Flow<UserModel>
+
+    fun getAllUsersByFilter(searchQuery: String, sortOrder: SortOrder): Flow<List<UserModel>> {
         return when (sortOrder) {
-            SortOrder.BY_NAME -> getAllUsersSortedByNames(searchText)
-            SortOrder.BY_DATE -> getAllUsersSortedByDate(searchText)
+            SortOrder.BY_NAME -> getAllUsersSortedByNames(searchQuery)
+            SortOrder.BY_DATE -> getAllUsersSortedByDate(searchQuery)
         }
     }
 
