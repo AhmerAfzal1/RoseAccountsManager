@@ -1,55 +1,46 @@
 {
   "project_info": {
-    "project_number": "426236699532",
-    "project_id": "rose-account-manager",
-    "storage_bucket": "rose-account-manager.appspot.com"
+    "project_number": "1053824056759",
+    "project_id": "rose-accounts-manager",
+    "storage_bucket": "rose-accounts-manager.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:426236699532:android:76f46d717d564a9070aca9",
+        "mobilesdk_app_id": "1:1053824056759:android:b721501a228f4ab13e7c32",
         "android_client_info": {
-          "package_name": "com.rose.account"
+          "package_name": "com.ahmer.accounts"
         }
       },
       "oauth_client": [
         {
-          "client_id": "426236699532-kq4vc18v1up5sitjoauebarq5936nbvm.apps.googleusercontent.com",
+          "client_id": "1053824056759-05q8mj1goekap55e9257pn4m69b7nodq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.rose.account",
+            "package_name": "com.ahmer.accounts",
             "certificate_hash": "966628907cc4811721dcc704b46b0d4bf96610fa"
           }
         },
         {
-          "client_id": "426236699532-nvcp30i0ffe4jcuqcims0t67ggfr78ot.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.rose.account",
-            "certificate_hash": "d7166618546c0e47886be10701815dedfb70492b"
-          }
-        },
-        {
-          "client_id": "426236699532-4gr0g8ovnhk1t4te3l6le5nielmomkel.apps.googleusercontent.com",
+          "client_id": "1053824056759-9qu9s7l6nvuq0la1j9r90kvlpa1oikks.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCyK1yJUQzx75boJVaA1PTC4lqXtd9zfvA"
+          "current_key": "AIzaSyB6FlKZ-tSypzkdWGjF4Zzg4qoTGRntD5E"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "426236699532-4gr0g8ovnhk1t4te3l6le5nielmomkel.apps.googleusercontent.com",
+              "client_id": "1053824056759-9qu9s7l6nvuq0la1j9r90kvlpa1oikks.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
         }
-      },
-      "admob_app_id": "ca-app-pub-0672688958454166~7375745100"
+      }
     }
   ],
   "configuration_version": "1"

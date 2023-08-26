@@ -12,12 +12,12 @@ plugins {
 }
 
 android {
-    namespace = "com.rose.account"
+    namespace = "com.ahmer.accounts"
     compileSdk = 34
     buildToolsVersion = "34.0.0"
 
     defaultConfig {
-        applicationId = "com.rose.account"
+        applicationId = "com.ahmer.accounts"
         minSdk = 24
         versionCode = 1
         versionName = "1.0"
@@ -75,13 +75,13 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
     //Firebase BOM and Ads Services
-    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.firebase:firebase-perf-ktx")
-    implementation("com.google.android.gms:play-services-ads:22.2.0")
+    implementation("com.google.android.gms:play-services-ads:22.3.0")
 
     //Jetpack Compose View Model
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
@@ -92,7 +92,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.1")
 
     //Jetpack Compose Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.0")
+    implementation("androidx.navigation:navigation-compose:2.7.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     //Dagger Hilt
@@ -100,9 +100,9 @@ dependencies {
     ksp("com.google.dagger:hilt-compiler:2.47")
 
     //Room Database
-    implementation("androidx.room:room-ktx:2.6.0-alpha03")
-    implementation("androidx.room:room-runtime:2.6.0-alpha03")
-    ksp("androidx.room:room-compiler:2.6.0-alpha03")
+    implementation("androidx.room:room-ktx:2.6.0-beta01")
+    implementation("androidx.room:room-runtime:2.6.0-beta01")
+    ksp("androidx.room:room-compiler:2.6.0-beta01")
 
     //Data Store Preferences
     implementation("androidx.datastore:datastore:1.0.0")
