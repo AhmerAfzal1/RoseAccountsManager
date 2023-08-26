@@ -61,7 +61,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -83,10 +82,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoadingProgressBar(modifier: Modifier = Modifier) {
     Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(color = Color.LightGray)
+        CircularProgressIndicator(
+            modifier = Modifier.then(Modifier.size(80.dp)),
+            strokeWidth = 8.dp
+        )
     }
 }
 
@@ -113,24 +115,21 @@ private fun UserItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                IconButton(
-                    modifier = Modifier.then(Modifier.size(mIconSize)),
+                IconButton(modifier = Modifier.then(Modifier.size(mIconSize)),
                     onClick = { /*TODO*/ }) {
                     Icon(
                         imageVector = Icons.Filled.PushPin,
                         contentDescription = stringResource(id = R.string.content_description_pin)
                     )
                 }
-                IconButton(
-                    modifier = Modifier.then(Modifier.size(mIconSize)),
+                IconButton(modifier = Modifier.then(Modifier.size(mIconSize)),
                     onClick = { /*TODO*/ }) {
                     Icon(
                         imageVector = Icons.Filled.Info,
                         contentDescription = stringResource(id = R.string.content_description_info)
                     )
                 }
-                IconButton(
-                    modifier = Modifier.then(Modifier.size(mIconSize)),
+                IconButton(modifier = Modifier.then(Modifier.size(mIconSize)),
                     onClick = { /*TODO*/ }) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
@@ -185,11 +184,20 @@ fun TopAppBarWithNavigationBar() {
     var mTextSearch by remember { mutableStateOf("") }
 
     /*if (mShowSearch) {
-        MenuSearchBar(
-            query = mTextSearch,
-            onQueryChange = { mTextSearch = it },
-            onDismiss = { mShowSearch = false }
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0XFF070E14))
+        ) {
+            CustomSearchView(
+                text = mTextSearch,
+                onTextChange = { mTextSearch = it },
+                onCloseClick = {
+                    mCoroutineScope.launch { delay(200L) }
+                },
+                onSearchClick = { mHomeViewModel.searchData(it) }
+            )
+        }
     }*/
 
     ModalNavigationDrawer(
@@ -298,9 +306,9 @@ fun TopAppBarWithNavigationBar() {
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val uiState: HomeUiState by mHomeViewModel.userUi.collectAsState()
+                val mHomeUiState: HomeUiState by mHomeViewModel.getUserUiState.collectAsState()
 
-                when (uiState.userData) {
+                when (mHomeUiState.usersData) {
                     UiState.Loading -> {
                         LoadingProgressBar()
                     }
@@ -313,10 +321,11 @@ fun TopAppBarWithNavigationBar() {
                             contentPadding = PaddingValues(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            items((uiState.userData as UiState.Success).userModel) { user ->
+                            items((mHomeUiState.usersData as UiState.Success).userModel) { user ->
                                 UserItem(modifier = Modifier.fillMaxWidth(),
                                     userModel = user,
-                                    onDeleteClick = { mHomeViewModel.deleteUser(user) })
+                                    onDeleteClick = { mHomeViewModel.deleteUser(user) }
+                                )
                             }
                         }
                     }

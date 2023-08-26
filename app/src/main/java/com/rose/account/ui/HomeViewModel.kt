@@ -3,7 +3,7 @@ package com.rose.account.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rose.account.database.model.UserModel
-import com.rose.account.database.repository.UserRepositoryImpl
+import com.rose.account.database.repository.UserRepository
 import com.rose.account.database.state.HomeUiState
 import com.rose.account.database.state.Result
 import com.rose.account.database.state.UiState
@@ -25,27 +25,28 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: UserRepositoryImpl,
+    private val repository: UserRepository,
     private val preferencesManager: PreferencesManager,
 ) : ViewModel() {
 
     private val _preferences = preferencesManager.preferencesFlow
-    private val _searchText = MutableStateFlow("")
-    val searchText = _searchText
 
-    private val userData: Flow<Result<List<UserModel>>> = repository.getAllUsersData().asResult()
-    private val isRefreshing: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _searchQuery: MutableStateFlow<String> = MutableStateFlow("")
+    val searchQuery: MutableStateFlow<String> = _searchQuery
+
     private val isError: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val isRefreshing: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val getAllUsers: Flow<Result<List<UserModel>>> = repository.getAllUsers().asResult()
 
-    private val getUsersDataFilters: Flow<Result<List<UserModel>>> =
-        combine(searchText, _preferences) { searchQuery, preferences ->
+    private val getAllUsersBySearchAndSort: Flow<Result<List<UserModel>>> =
+        combine(_searchQuery, _preferences) { searchQuery, preferences ->
             Pair(searchQuery, preferences)
-        }.flatMapLatest { (text, preference) ->
-            repository.getAllUsersDataFilter(text, preference.sortOrder)
+        }.flatMapLatest { (search, preference) ->
+            repository.getAllUsersBySearchAndSort(search, preference.sortOrder)
         }.asResult()
 
-    val userUi: StateFlow<HomeUiState> = combine(
-        userData, isRefreshing, isError
+    val getUserUiState: StateFlow<HomeUiState> = combine(
+        getAllUsersBySearchAndSort, isRefreshing, isError
     ) { userData, refreshing, error ->
         val userModel: UiState = when (userData) {
             is Result.Success -> UiState.Success(userData.data)
@@ -57,9 +58,7 @@ class HomeViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000L),
-        initialValue = HomeUiState(
-            UiState.Loading, isRefreshing = false, isError = false
-        )
+        initialValue = HomeUiState(UiState.Loading, isRefreshing = false, isError = false)
     )
 
     fun insertOrUpdateUser(userModel: UserModel) = viewModelScope.launch {
@@ -70,9 +69,8 @@ class HomeViewModel @Inject constructor(
         repository.delete(userModel)
     }
 
-    fun updateSortOrder(sortOrder: SortOrder) {
-        viewModelScope.launch {
-            preferencesManager.updateSortOrder(sortOrder)
-        }
+    fun updateSortOrder(sortOrder: SortOrder) = viewModelScope.launch {
+        preferencesManager.updateSortOrder(sortOrder)
     }
+
 }

@@ -17,22 +17,22 @@ interface UserDao {
     @Delete
     suspend fun delete(userModel: UserModel)
 
-    @Query("SELECT * FROM customers WHERE Name LIKE '%' || :searchQuery || '%' ORDER BY Name ASC")
-    fun getAllUsersSortedByNames(searchQuery: String): Flow<List<UserModel>>
+    @Query("SELECT * FROM customers")
+    fun getAllUsers(): Flow<List<UserModel>>
 
     @Query("SELECT * FROM customers WHERE Name LIKE '%' || :searchQuery || '%' ORDER BY Created ASC")
     fun getAllUsersSortedByDate(searchQuery: String): Flow<List<UserModel>>
 
-    @Query("SELECT * FROM customers WHERE _id=:id")
-    fun getPinnedUsers(id: Int): Flow<UserModel>
+    @Query("SELECT * FROM customers WHERE Name LIKE '%' || :searchQuery || '%' ORDER BY Name ASC")
+    fun getAllUsersSortedByNames(searchQuery: String): Flow<List<UserModel>>
 
-    fun getAllUsersByFilter(searchQuery: String, sortOrder: SortOrder): Flow<List<UserModel>> {
-        return when (sortOrder) {
-            SortOrder.BY_NAME -> getAllUsersSortedByNames(searchQuery)
-            SortOrder.BY_DATE -> getAllUsersSortedByDate(searchQuery)
-        }
+    fun getAllUsersBySearchAndSort(
+        searchQuery: String, sortOrder: SortOrder
+    ): Flow<List<UserModel>> = when (sortOrder) {
+        SortOrder.BY_NAME -> getAllUsersSortedByNames(searchQuery)
+        SortOrder.BY_DATE -> getAllUsersSortedByDate(searchQuery)
     }
 
-    @Query("SELECT * FROM customers")
-    fun getAllUsers(): Flow<List<UserModel>>
+    @Query("SELECT * FROM customers WHERE _id=:id")
+    fun getPinnedUsers(id: Int): Flow<UserModel>
 }

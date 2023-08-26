@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase
 import com.rose.account.database.AppDatabase
 import com.rose.account.database.dao.AdminDao
 import com.rose.account.database.dao.UserDao
-import com.rose.account.database.repository.UserRepositoryImpl
+import com.rose.account.database.repository.UserRepository
 import com.rose.account.preferences.PreferencesManager
 import com.rose.account.utils.Constants
 import dagger.Module
@@ -47,5 +47,5 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesUserRepository(userDao: UserDao): UserRepositoryImpl = UserRepositoryImpl(userDao)
+    fun providesUserRepository(userDao: UserDao): UserRepository = UserRepository(userDao)
 }
