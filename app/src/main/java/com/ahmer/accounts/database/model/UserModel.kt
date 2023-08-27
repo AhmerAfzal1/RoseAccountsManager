@@ -32,8 +32,8 @@ data class UserModel(
     @ColumnInfo(name = "Email")
     val email: String?,
 
-    @ColumnInfo(name = "Comments")
-    val comments: String?,
+    @ColumnInfo(name = "Notes")
+    val notes: String?,
 
     @ColumnInfo(name = "Created")
     val created: Long = System.currentTimeMillis(),

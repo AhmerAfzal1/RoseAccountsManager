@@ -4,13 +4,18 @@ import android.content.Context
 import android.widget.Toast
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 object HelperFunctions {
 
     @JvmStatic
-    fun toastLong(context: Context, msg: String) {
-        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+    fun getDateTime(time: Long): String = if (time == 0.toLong()) "" else {
+        SimpleDateFormat(Constants.DATE_TIME_PATTERN, Locale.getDefault()).format(Date(time))
     }
+
+    fun getPlayStoreLink(context: Context): String = Constants.PLAY_STORE_LINK + context.packageName
 
     @JvmStatic
     fun getRoundedValue(value: Double): String {
@@ -20,9 +25,7 @@ object HelperFunctions {
     }
 
     @JvmStatic
-    fun getPlayStoreLink(context: Context): String {
-        return Constants.PLAY_STORE_LINK + context.packageName
+    fun toastLong(context: Context, msg: String) {
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
     }
-
 }
-

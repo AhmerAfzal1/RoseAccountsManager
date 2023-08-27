@@ -21,91 +21,91 @@ class UsersCallback(private val userDao: Provider<UserDao>) : RoomDatabase.Callb
                 address = "Street No. 1, House No. 548, Darbar Road",
                 phone = "03023339589",
                 email = "ahmerafzal@yahoo.com",
-                comments = ""
+                notes = ""
             ),
             UserModel(
                 name = "Rida Hasan",
                 address = "Street No. 2",
                 phone = "",
                 email = "",
-                comments = ""
+                notes = ""
             ),
             UserModel(
                 name = "Maham Hasan",
                 address = "Street No. 2",
                 phone = "",
                 email = "",
-                comments = ""
+                notes = ""
             ),
             UserModel(
                 name = "Arfa Hasan",
                 address = "Street No. 2",
                 phone = "",
                 email = "",
-                comments = ""
+                notes = ""
             ),
             UserModel(
                 name = "Umar Riaz",
                 address = "Dharanwala",
                 phone = "03005095665",
                 email = "umarriaz665@gmail.com",
-                comments = ""
+                notes = ""
             ),
             UserModel(
                 name = "Sajjad Hussain Bhutta",
                 address = "Street No. 2, House No. 547",
                 phone = "03024159211",
                 email = "sajjad.bhutta@live.com",
-                comments = ""
+                notes = ""
             ),
             UserModel(
                 name = "Imtiaz Bhutta",
                 address = "",
                 phone = "03014652092",
                 email = "",
-                comments = ""
+                notes = ""
             ),
             UserModel(
                 name = "Ijaz Bhutta",
                 address = "",
                 phone = "03024585268",
                 email = "",
-                comments = ""
+                notes = ""
             ),
             UserModel(
                 name = "Abbas Bhutta",
                 address = "",
                 phone = "03002039589",
                 email = "",
-                comments = ""
+                notes = ""
             ),
             UserModel(
                 name = "Yasir Shahid",
                 address = "",
                 phone = "03057039270",
                 email = "",
-                comments = ""
+                notes = ""
             ),
             UserModel(
                 name = "Faisal Shahid",
                 address = "",
                 phone = "03117511575",
                 email = "",
-                comments = ""
+                notes = ""
             ),
             UserModel(
                 name = "Adil Shahid",
                 address = "",
                 phone = "03106900089",
                 email = "",
-                comments = ""
+                notes = ""
             ),
             UserModel(
                 name = "Umar Farooq",
                 address = "Chak No. 63f, Hasilpur",
                 phone = "03012882943",
                 email = "",
-                comments = "Computer Operator at Bajwa's Collection"
+                notes = "Computer Operator at Bajwa's Collection"
             ),
         )
         mScope.launch(Dispatchers.IO) {

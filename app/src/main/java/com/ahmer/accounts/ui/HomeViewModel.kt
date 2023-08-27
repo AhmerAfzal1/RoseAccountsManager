@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.database.repository.UserRepository
-import com.ahmer.accounts.database.state.HomeUiState
 import com.ahmer.accounts.database.state.Result
 import com.ahmer.accounts.database.state.UiState
+import com.ahmer.accounts.database.state.UiStateEvent
 import com.ahmer.accounts.database.state.asResult
 import com.ahmer.accounts.preferences.PreferencesManager
 import com.ahmer.accounts.utils.SortOrder
@@ -45,7 +45,7 @@ class HomeViewModel @Inject constructor(
             repository.getAllUsersBySearchAndSort(search, preference.sortOrder)
         }.asResult()
 
-    val getUserUiState: StateFlow<HomeUiState> = combine(
+    val getUserUiState: StateFlow<UiStateEvent> = combine(
         getAllUsersBySearchAndSort, isRefreshing, isError
     ) { userData, refreshing, error ->
         val userModel: UiState = when (userData) {
@@ -54,11 +54,11 @@ class HomeViewModel @Inject constructor(
             Result.Loading -> UiState.Loading
         }
 
-        HomeUiState(userModel, refreshing, error)
+        UiStateEvent(userModel, refreshing, error)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000L),
-        initialValue = HomeUiState(UiState.Loading, isRefreshing = false, isError = false)
+        initialValue = UiStateEvent(UiState.Loading, isRefreshing = false, isError = false)
     )
 
     fun insertOrUpdateUser(userModel: UserModel) = viewModelScope.launch {

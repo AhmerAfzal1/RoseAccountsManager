@@ -70,9 +70,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.database.state.HomeUiState
 import com.ahmer.accounts.database.state.UiState
+import com.ahmer.accounts.database.state.UiStateEvent
 import com.ahmer.accounts.dialogs.DeleteAlertDialog
+import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
 import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
@@ -99,11 +100,16 @@ private fun UserItem(
     val mIconSize: Dp = 36.dp
     val mPadding: Dp = 5.dp
     var mShowDeleteDialog by remember { mutableStateOf(false) }
+    var mShowInfoDialog by remember { mutableStateOf(false) }
 
     if (mShowDeleteDialog) {
         DeleteAlertDialog(
             nameAccount = userModel.name!!,
             onConfirmClick = { viewModel.deleteUser(userModel) })
+    }
+
+    if (mShowInfoDialog) {
+        MoreInfoAlertDialog(userModel)
     }
 
     ElevatedCard(
@@ -130,7 +136,7 @@ private fun UserItem(
                     )
                 }
                 IconButton(modifier = Modifier.then(Modifier.size(mIconSize)),
-                    onClick = { /*TODO*/ }) {
+                    onClick = { mShowInfoDialog = true }) {
                     Icon(
                         imageVector = Icons.Filled.Info,
                         contentDescription = stringResource(id = R.string.content_description_info)
@@ -309,9 +315,9 @@ fun TopAppBarWithNavigationBar() {
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val mHomeUiState: HomeUiState by mHomeViewModel.getUserUiState.collectAsState()
+                val mUiStateEvent: UiStateEvent by mHomeViewModel.getUserUiState.collectAsState()
 
-                when (mHomeUiState.usersData) {
+                when (mUiStateEvent.usersData) {
                     UiState.Loading -> {
                         LoadingProgressBar()
                     }
@@ -324,7 +330,7 @@ fun TopAppBarWithNavigationBar() {
                             contentPadding = PaddingValues(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            items((mHomeUiState.usersData as UiState.Success).userModel) { user ->
+                            items((mUiStateEvent.usersData as UiState.Success).userModel) { user ->
                                 UserItem(
                                     modifier = Modifier.fillMaxWidth(),
                                     viewModel = mHomeViewModel,
