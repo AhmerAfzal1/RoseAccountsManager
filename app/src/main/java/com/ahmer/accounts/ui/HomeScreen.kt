@@ -72,6 +72,7 @@ import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.database.state.HomeUiState
 import com.ahmer.accounts.database.state.UiState
+import com.ahmer.accounts.dialogs.DeleteAlertDialog
 import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
@@ -83,22 +84,27 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoadingProgressBar(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
-            modifier = Modifier.then(Modifier.size(80.dp)),
-            strokeWidth = 8.dp
+            modifier = Modifier.then(Modifier.size(80.dp)), strokeWidth = 8.dp
         )
     }
 }
 
 @Composable
 private fun UserItem(
-    modifier: Modifier = Modifier, userModel: UserModel, onDeleteClick: () -> Unit
+    modifier: Modifier = Modifier, viewModel: HomeViewModel, userModel: UserModel
 ) {
     val mIconSize: Dp = 36.dp
     val mPadding: Dp = 5.dp
+    var mShowDeleteDialog by remember { mutableStateOf(false) }
+
+    if (mShowDeleteDialog) {
+        DeleteAlertDialog(
+            nameAccount = userModel.name!!,
+            onConfirmClick = { viewModel.deleteUser(userModel) })
+    }
 
     ElevatedCard(
         modifier = modifier,
@@ -138,7 +144,7 @@ private fun UserItem(
                     )
                 }
                 IconButton(modifier = Modifier.then(Modifier.size(mIconSize)),
-                    onClick = { onDeleteClick() }) {
+                    onClick = { mShowDeleteDialog = true }) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
                         contentDescription = stringResource(id = R.string.content_description_delete)
@@ -185,11 +191,9 @@ fun TopAppBarWithNavigationBar() {
     var mTextSearch by remember { mutableStateOf(mHomeViewModel.searchQuery.value) }
 
     if (mShowSearch) {
-        MenuSearchBar(text = mTextSearch,
-            onTextChange = { mTextSearch = it }) {
+        MenuSearchBar(text = mTextSearch, onTextChange = { mTextSearch = it }) {
             mShowSearch = false
-        }
-        /*CustomSearchView(
+        }/*CustomSearchView(
             text = mTextSearch,
             onTextChange = { mTextSearch = it },
             onCloseClick = {
@@ -321,9 +325,10 @@ fun TopAppBarWithNavigationBar() {
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             items((mHomeUiState.usersData as UiState.Success).userModel) { user ->
-                                UserItem(modifier = Modifier.fillMaxWidth(),
-                                    userModel = user,
-                                    onDeleteClick = { mHomeViewModel.deleteUser(user) }
+                                UserItem(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    viewModel = mHomeViewModel,
+                                    userModel = user
                                 )
                             }
                         }
