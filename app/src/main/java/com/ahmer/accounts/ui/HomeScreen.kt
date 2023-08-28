@@ -115,11 +115,11 @@ private fun UserItem(
     ElevatedCard(
         modifier = modifier,
         shape = RoundedCornerShape(10.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
             modifier = Modifier
-                .padding(start = mPadding, end = mPadding)
+                .padding(end = mPadding)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -128,29 +128,37 @@ private fun UserItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                IconButton(modifier = Modifier.then(Modifier.size(mIconSize)),
-                    onClick = { /*TODO*/ }) {
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.then(Modifier.size(mIconSize)),
+                ) {
                     Icon(
                         imageVector = Icons.Filled.PushPin,
                         contentDescription = stringResource(id = R.string.content_description_pin)
                     )
                 }
-                IconButton(modifier = Modifier.then(Modifier.size(mIconSize)),
-                    onClick = { mShowInfoDialog = true }) {
+                IconButton(
+                    onClick = { mShowInfoDialog = true },
+                    modifier = Modifier.then(Modifier.size(mIconSize)),
+                ) {
                     Icon(
                         imageVector = Icons.Filled.Info,
                         contentDescription = stringResource(id = R.string.content_description_info)
                     )
                 }
-                IconButton(modifier = Modifier.then(Modifier.size(mIconSize)),
-                    onClick = { /*TODO*/ }) {
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.then(Modifier.size(mIconSize)),
+                ) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
                         contentDescription = stringResource(id = R.string.content_description_edit)
                     )
                 }
-                IconButton(modifier = Modifier.then(Modifier.size(mIconSize)),
-                    onClick = { mShowDeleteDialog = true }) {
+                IconButton(
+                    onClick = { mShowDeleteDialog = true },
+                    modifier = Modifier.then(Modifier.size(mIconSize)),
+                ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
                         contentDescription = stringResource(id = R.string.content_description_delete)
@@ -327,8 +335,8 @@ fun TopAppBarWithNavigationBar() {
                     is UiState.Success -> {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            contentPadding = PaddingValues(10.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items((mUiStateEvent.usersData as UiState.Success).userModel) { user ->
                                 UserItem(

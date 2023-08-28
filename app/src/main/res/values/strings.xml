@@ -35,13 +35,17 @@
     <string name="label_animate_sort_icon">Animate sort icon</string>
     <string name="label_backup">Backup</string>
     <string name="label_balance">Balance</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_confirm">Confirmation</string>
     <string name="label_credit">Credit</string>
     <string name="label_debit">Debit</string>
+    <string name="label_delete">Delete</string>
     <string name="label_exit">EXIT</string>
     <string name="label_home">Home</string>
     <string name="label_more_apps">More apps</string>
     <string name="label_nav_credit">Credit(+)</string>
     <string name="label_nav_debit">Debit(-)</string>
+    <string name="label_ok">OK</string>
     <string name="label_rate_the_app">Rate the app</string>
     <string name="label_restore_backup">Restore Backup</string>
     <string name="label_settings">Settings</string>

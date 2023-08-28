@@ -6,10 +6,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,10 +21,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.utils.HelperFunctions
@@ -47,6 +53,7 @@ fun RowScope.InfoText(text: String, weight: Float, isTitle: Boolean = false) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoreInfoAlertDialog(userModel: UserModel) {
     val mDataList = listOf(
@@ -65,34 +72,49 @@ fun MoreInfoAlertDialog(userModel: UserModel) {
         "Email:",
         "Notes:",
         "Created:",
-        "LastModified:",
+        "Modified:",
     )
     val mOpenDialog = remember { mutableStateOf(true) }
 
     if (mOpenDialog.value) {
         AlertDialog(
-            onDismissRequest = { mOpenDialog.value = false },
-            icon = {
+            onDismissRequest = { mOpenDialog.value = false }) {
+            ElevatedCard(
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier.padding(10.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+            ) {
                 Icon(
-                    modifier = Modifier.size(48.dp),
+                    modifier = Modifier
+                        .size(48.dp)
+                        .align(Alignment.CenterHorizontally),
                     imageVector = Icons.Filled.Info,
-                    contentDescription = stringResource(id = R.string.content_description_info)
+                    contentDescription = stringResource(id = R.string.content_description_info),
+                    tint = AlertDialogDefaults.iconContentColor
                 )
-            },
-            tonalElevation = AlertDialogDefaults.TonalElevation,
-            text = {
-                LazyColumn {
+
+                LazyColumn(
+                    modifier = Modifier.padding(
+                        start = 10.dp, end = 10.dp, top = 5.dp, bottom = 10.dp
+                    )
+                ) {
                     itemsIndexed(mTitleList) { index, title ->
                         Row {
                             InfoText(text = title, weight = 1f, isTitle = true)
-                            InfoText(text = mDataList[index], weight = 2f, isTitle = false)
+                            InfoText(text = mDataList[index], weight = 3f, isTitle = false)
                         }
                     }
                 }
-            },
-            confirmButton = {
-                TextButton(onClick = { mOpenDialog.value = false }) { Text("Ok") }
-            },
-        )
+
+                TextButton(
+                    onClick = { mOpenDialog.value = false },
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(end = 10.dp, bottom = 5.dp),
+                ) {
+                    Text(text = stringResource(R.string.label_ok), fontSize = 14.sp)
+                }
+            }
+        }
     }
 }

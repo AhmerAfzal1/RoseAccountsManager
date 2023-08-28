@@ -1,16 +1,24 @@
 package com.ahmer.accounts.dialogs
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -18,8 +26,10 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ahmer.accounts.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeleteAlertDialog(
     nameAccount: String,
@@ -39,28 +49,58 @@ fun DeleteAlertDialog(
     if (mOpenDialog.value) {
         AlertDialog(
             onDismissRequest = { mOpenDialog.value = false },
-            icon = {
+        ) {
+            ElevatedCard(
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier.padding(10.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+            ) {
                 Icon(
-                    modifier = Modifier.size(48.dp),
+                    modifier = Modifier
+                        .size(48.dp)
+                        .align(Alignment.CenterHorizontally),
                     imageVector = Icons.Filled.DeleteForever,
-                    contentDescription = stringResource(id = R.string.content_description_delete)
+                    contentDescription = stringResource(id = R.string.content_description_delete),
+                    tint = AlertDialogDefaults.iconContentColor
                 )
-            },
-            title = { Text(text = "Confirmation", fontWeight = FontWeight.Bold) },
-            tonalElevation = AlertDialogDefaults.TonalElevation,
-            text = { Text(text = mAnnotatedMsg) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onConfirmClick()
-                        mOpenDialog.value = false
+
+                Text(
+                    text = stringResource(R.string.label_confirm),
+                    modifier = Modifier
+                        .padding(top = 5.dp, bottom = 5.dp)
+                        .align(Alignment.CenterHorizontally),
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                Text(
+                    text = mAnnotatedMsg,
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp)
+                        .align(Alignment.Start),
+                    style = MaterialTheme.typography.titleSmall
+                )
+
+                LazyRow(modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(end = 10.dp, bottom = 5.dp), content = {
+                    item {
+                        TextButton(
+                            onClick = { mOpenDialog.value = false },
+                        ) {
+                            Text(text = stringResource(R.string.label_cancel), fontSize = 14.sp)
+                        }
+                        TextButton(
+                            onClick = {
+                                mOpenDialog.value = false
+                                onConfirmClick()
+                            },
+                        ) {
+                            Text(text = stringResource(R.string.label_delete), fontSize = 14.sp)
+                        }
                     }
-                ) { Text(text = "Delete") }
-            },
-            dismissButton = {
-                TextButton(onClick = { mOpenDialog.value = false }
-                ) { Text(text = "Cancel") }
+                })
             }
-        )
+        }
     }
 }
