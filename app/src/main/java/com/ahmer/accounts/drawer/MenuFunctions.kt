@@ -2,11 +2,7 @@ package com.ahmer.accounts.drawer
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import com.ahmer.accounts.R
+import com.ahmer.accounts.utils.CloseIcon
+import com.ahmer.accounts.utils.SearchIcon
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,26 +56,13 @@ fun MenuSearchBar(
                 onDismiss()
             }
         },
-        placeholder = { Text("Search") },
-        leadingIcon = {
-            Icon(
-                Icons.Filled.Search,
-                contentDescription = stringResource(id = R.string.content_description_search)
-            )
-        },
+        placeholder = { Text(stringResource(id = R.string.label_search)) },
+        leadingIcon = { SearchIcon() },
         trailingIcon = {
             if (mIsActive) {
-                Icon(
-                    modifier = Modifier.clickable {
-                        if (text.isNotEmpty()) {
-                            onTextChange("")
-                        } else {
-                            closeSearchBar()
-                        }
-                    },
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = stringResource(id = R.string.content_description_close)
-                )
+                CloseIcon(modifier = Modifier.clickable {
+                    if (text.isNotEmpty()) onTextChange("") else closeSearchBar()
+                })
             }
         },
     ) {

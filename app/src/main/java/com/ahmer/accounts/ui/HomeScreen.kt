@@ -18,16 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ChangeCircle
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.PushPin
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
@@ -36,6 +26,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -78,6 +69,16 @@ import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.drawerItemsList
+import com.ahmer.accounts.utils.AddIcon
+import com.ahmer.accounts.utils.DeleteIcon
+import com.ahmer.accounts.utils.EditIcon
+import com.ahmer.accounts.utils.InfoIcon
+import com.ahmer.accounts.utils.MenuIcon
+import com.ahmer.accounts.utils.PinIcon
+import com.ahmer.accounts.utils.SearchIcon
+import com.ahmer.accounts.utils.SortByDateIcon
+import com.ahmer.accounts.utils.SortByNameIcon
+import com.ahmer.accounts.utils.SortIcon
 import com.ahmer.accounts.utils.SortOrder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -103,8 +104,7 @@ private fun UserItem(
     var mShowInfoDialog by remember { mutableStateOf(false) }
 
     if (mShowDeleteDialog) {
-        DeleteAlertDialog(
-            nameAccount = userModel.name!!,
+        DeleteAlertDialog(nameAccount = userModel.name!!,
             onConfirmClick = { viewModel.deleteUser(userModel) })
     }
 
@@ -131,39 +131,19 @@ private fun UserItem(
                 IconButton(
                     onClick = { /*TODO*/ },
                     modifier = Modifier.then(Modifier.size(mIconSize)),
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.PushPin,
-                        contentDescription = stringResource(id = R.string.content_description_pin)
-                    )
-                }
+                ) { PinIcon() }
                 IconButton(
                     onClick = { mShowInfoDialog = true },
                     modifier = Modifier.then(Modifier.size(mIconSize)),
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Info,
-                        contentDescription = stringResource(id = R.string.content_description_info)
-                    )
-                }
+                ) { InfoIcon() }
                 IconButton(
                     onClick = { /*TODO*/ },
                     modifier = Modifier.then(Modifier.size(mIconSize)),
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Edit,
-                        contentDescription = stringResource(id = R.string.content_description_edit)
-                    )
-                }
+                ) { EditIcon() }
                 IconButton(
                     onClick = { mShowDeleteDialog = true },
                     modifier = Modifier.then(Modifier.size(mIconSize)),
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = stringResource(id = R.string.content_description_delete)
-                    )
-                }
+                ) { DeleteIcon() }
             }
         }
         Column(
@@ -205,16 +185,19 @@ fun TopAppBarWithNavigationBar() {
     var mTextSearch by remember { mutableStateOf(mHomeViewModel.searchQuery.value) }
 
     if (mShowSearch) {
-        MenuSearchBar(text = mTextSearch, onTextChange = { mTextSearch = it }) {
-            mShowSearch = false
-        }/*CustomSearchView(
+        MenuSearchBar(
             text = mTextSearch,
-            onTextChange = { mTextSearch = it },
-            onCloseClick = {
-                mCoroutineScope.launch { delay(200L) }
-            },
-            onSearchClick = { mTextSearch = it }
-        )*/
+            onTextChange = { mTextSearch = it }) {
+            mShowSearch = false
+        }
+        /*CustomSearchView(
+               text = mTextSearch,
+               onTextChange = { mTextSearch = it },
+               onCloseClick = {
+                   mCoroutineScope.launch { delay(200L) }
+               },
+               onSearchClick = { mTextSearch = it }
+           )*/
     }
 
     ModalNavigationDrawer(
@@ -250,6 +233,11 @@ fun TopAppBarWithNavigationBar() {
             }
         }, drawerState = mDrawerState
     ) {
+        val mAngle: Float by animateFloatAsState(
+            targetValue = if (mShowDropdownMenu) 180f else 0f,
+            label = stringResource(id = R.string.label_animate_sort_icon)
+        )
+
         Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
             TopAppBar(title = {
                 Text(
@@ -260,29 +248,11 @@ fun TopAppBarWithNavigationBar() {
             }, navigationIcon = {
                 IconButton(onClick = {
                     mCoroutineScope.launch { mDrawerState.open() }
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Menu,
-                        contentDescription = stringResource(id = R.string.content_description_menu)
-                    )
-                }
+                }) { MenuIcon() }
             }, actions = {
-                IconButton(onClick = { mShowSearch = true }) {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = stringResource(id = R.string.content_description_search)
-                    )
-                }
-                val mAngle: Float by animateFloatAsState(
-                    targetValue = if (mShowDropdownMenu) 180f else 0f,
-                    label = stringResource(id = R.string.label_animate_sort_icon)
-                )
+                IconButton(onClick = { mShowSearch = true }) { SearchIcon() }
                 IconButton(onClick = { mShowDropdownMenu = !mShowDropdownMenu }) {
-                    Icon(
-                        modifier = Modifier.rotate(mAngle),
-                        imageVector = Icons.Filled.ArrowDropDown,
-                        contentDescription = stringResource(id = R.string.content_description_sort)
-                    )
+                    SortIcon(modifier = Modifier.rotate(mAngle))
                 }
                 DropdownMenu(expanded = mShowDropdownMenu,
                     onDismissRequest = { mShowDropdownMenu = false }) {
@@ -291,23 +261,15 @@ fun TopAppBarWithNavigationBar() {
                             mHomeViewModel.updateSortOrder(SortOrder.BY_NAME)
                             mShowDropdownMenu = false
                         },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.SortByAlpha,
-                                contentDescription = stringResource(id = R.string.content_description_sort_by_name)
-                            )
-                        })
+                        leadingIcon = { SortByNameIcon() }
+                    )
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_date_created)) },
                         onClick = {
                             mHomeViewModel.updateSortOrder(SortOrder.BY_DATE)
                             mShowDropdownMenu = false
                         },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.ChangeCircle,
-                                contentDescription = stringResource(id = R.string.content_description_sort_by_date)
-                            )
-                        })
+                        leadingIcon = { SortByDateIcon() }
+                    )
                 }
             }, colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -316,6 +278,8 @@ fun TopAppBarWithNavigationBar() {
                 actionIconContentColor = MaterialTheme.colorScheme.onPrimary
             ), scrollBehavior = mScrollBehavior
             )
+        }, floatingActionButton = {
+            FloatingActionButton(onClick = { /*TODO*/ }) { AddIcon() }
         }) { innerPadding ->
             Column(
                 modifier = Modifier

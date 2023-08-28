@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.utils.HelperFunctions
+import com.ahmer.accounts.utils.InfoIcon
 
 @Composable
 fun RowScope.InfoText(text: String, weight: Float, isTitle: Boolean = false) {
@@ -84,12 +82,10 @@ fun MoreInfoAlertDialog(userModel: UserModel) {
                 modifier = Modifier.padding(10.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
             ) {
-                Icon(
+                InfoIcon(
                     modifier = Modifier
                         .size(48.dp)
                         .align(Alignment.CenterHorizontally),
-                    imageVector = Icons.Filled.Info,
-                    contentDescription = stringResource(id = R.string.content_description_info),
                     tint = AlertDialogDefaults.iconContentColor
                 )
 

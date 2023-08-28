@@ -7,10 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -23,6 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
+import com.ahmer.accounts.utils.CloseIcon
+import com.ahmer.accounts.utils.SearchIcon
 
 @Composable
 fun CustomSearchView(
@@ -48,27 +46,16 @@ fun CustomSearchView(
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
             ),
-            placeholder = { Text("Search") },
+            placeholder = { Text(stringResource(id = R.string.label_search)) },
             singleLine = true, keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { onSearchClick(text) }),
-            leadingIcon = {
-                Icon(
-                    Icons.Filled.Search,
-                    contentDescription = stringResource(id = R.string.content_description_search)
-                )
-            },
+            leadingIcon = { SearchIcon() },
             trailingIcon = {
                 if (text.isNotEmpty()) {
-                    Icon(
+                    CloseIcon(
                         modifier = Modifier.clickable {
-                            if (text.isNotEmpty()) {
-                                onTextChange("")
-                            } else {
-                                onCloseClick()
-                            }
-                        },
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = stringResource(id = R.string.content_description_close)
+                            if (text.isNotEmpty()) onTextChange("") else onCloseClick()
+                        }
                     )
                 }
             }

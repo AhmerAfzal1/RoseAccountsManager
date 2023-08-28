@@ -4,14 +4,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -28,6 +25,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ahmer.accounts.R
+import com.ahmer.accounts.utils.DeleteIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,12 +53,10 @@ fun DeleteAlertDialog(
                 modifier = Modifier.padding(10.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
             ) {
-                Icon(
+                DeleteIcon(
                     modifier = Modifier
                         .size(48.dp)
                         .align(Alignment.CenterHorizontally),
-                    imageVector = Icons.Filled.DeleteForever,
-                    contentDescription = stringResource(id = R.string.content_description_delete),
                     tint = AlertDialogDefaults.iconContentColor
                 )
 
