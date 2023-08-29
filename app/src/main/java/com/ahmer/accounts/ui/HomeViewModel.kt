@@ -11,7 +11,10 @@ import com.ahmer.accounts.database.state.asResult
 import com.ahmer.accounts.preferences.PreferencesManager
 import com.ahmer.accounts.utils.SortOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,7 +31,11 @@ class HomeViewModel @Inject constructor(
     private val repository: UserRepository,
     private val preferencesManager: PreferencesManager,
 ) : ViewModel() {
-
+    private val mExceptionHandler = CoroutineExceptionHandler { _, _ ->
+        viewModelScope.launch {
+            isError.emit(true)
+        }
+    }
     private val _preferences = preferencesManager.preferencesFlow
 
     private val _searchQuery: MutableStateFlow<String> = MutableStateFlow("")
@@ -60,6 +67,26 @@ class HomeViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000L),
         initialValue = UiStateEvent(UiState.Loading, isRefreshing = false, isError = false)
     )
+
+    fun onRefresh() {
+        viewModelScope.launch(mExceptionHandler) {
+            val mGetUserModelData = async { getUserUiState }
+            isRefreshing.emit(true)
+            try {
+                awaitAll(mGetUserModelData)
+            } finally {
+                isRefreshing.emit(false)
+            }
+        }
+    }
+
+    fun onErrorConsumed() = viewModelScope.launch {
+        isError.emit(false)
+    }
+
+    fun onRefreshConsumed() = viewModelScope.launch {
+        isRefreshing.emit(true)
+    }
 
     fun insertOrUpdateUser(userModel: UserModel) = viewModelScope.launch {
         repository.insertOrUpdate(userModel)

@@ -1,6 +1,5 @@
 package com.ahmer.accounts.database.repository
 
-import androidx.annotation.WorkerThread
 import com.ahmer.accounts.database.dao.UserDao
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.utils.SortOrder
@@ -13,12 +12,10 @@ import javax.inject.Inject
 @ViewModelScoped
 class UserRepository @Inject constructor(private val userDao: UserDao) {
 
-    @WorkerThread
     suspend fun insertOrUpdate(userModel: UserModel) = withContext(Dispatchers.IO) {
         userDao.insertOrUpdate(userModel)
     }
 
-    @WorkerThread
     suspend fun delete(userModel: UserModel) = withContext(Dispatchers.IO) {
         userDao.delete(userModel)
     }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -36,7 +37,9 @@ fun DeleteAlertDialog(
     val mOpenDialog = remember { mutableStateOf(true) }
     val mAnnotatedMsg = buildAnnotatedString {
         append("Do you really want to delete this ")
-        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append(nameAccount) }
+        withStyle(style = SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
+            append(nameAccount)
+        }
         append(
             " account? All transaction(s) associated with this account will also be " +
                     "permanently deleted and this action cannot be undone and you will " +

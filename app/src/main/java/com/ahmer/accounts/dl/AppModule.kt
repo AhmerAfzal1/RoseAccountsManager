@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ahmer.accounts.database.AppDatabase
+import com.ahmer.accounts.database.UsersCallback
 import com.ahmer.accounts.database.dao.AdminDao
 import com.ahmer.accounts.database.dao.UserDao
 import com.ahmer.accounts.database.repository.UserRepository
@@ -14,6 +15,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Module
@@ -24,12 +26,12 @@ object AppModule {
     @Singleton
     fun providesDatabase(
         @ApplicationContext context: Context,
-        //usersProvider: Provider<UserDao>
+        usersProvider: Provider<UserDao>
     ): AppDatabase = Room.databaseBuilder(
         context.applicationContext, AppDatabase::class.java, Constants.DATABASE_NAME
     ).setJournalMode(RoomDatabase.JournalMode.TRUNCATE) //For backup in single file
         .fallbackToDestructiveMigration()
-        //.addCallback(UsersCallback(usersProvider))
+        .addCallback(UsersCallback(usersProvider))
         .build()
 
     @Provides

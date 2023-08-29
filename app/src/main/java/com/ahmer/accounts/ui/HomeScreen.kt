@@ -72,6 +72,7 @@ import com.ahmer.accounts.drawer.drawerItemsList
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.EditIcon
+import com.ahmer.accounts.utils.HelperFunctions
 import com.ahmer.accounts.utils.InfoIcon
 import com.ahmer.accounts.utils.MenuIcon
 import com.ahmer.accounts.utils.PinIcon
@@ -104,8 +105,10 @@ private fun UserItem(
     var mShowInfoDialog by remember { mutableStateOf(false) }
 
     if (mShowDeleteDialog) {
-        DeleteAlertDialog(nameAccount = userModel.name!!,
+        DeleteAlertDialog(
+            nameAccount = userModel.name!!,
             onConfirmClick = { viewModel.deleteUser(userModel) })
+        //viewModel.onRefresh()
     }
 
     if (mShowInfoDialog) {
@@ -185,12 +188,9 @@ fun TopAppBarWithNavigationBar() {
     var mTextSearch by remember { mutableStateOf(mHomeViewModel.searchQuery.value) }
 
     if (mShowSearch) {
-        MenuSearchBar(
-            text = mTextSearch,
-            onTextChange = { mTextSearch = it }) {
+        MenuSearchBar(text = mTextSearch, onTextChange = { mTextSearch = it }) {
             mShowSearch = false
-        }
-        /*CustomSearchView(
+        }/*CustomSearchView(
                text = mTextSearch,
                onTextChange = { mTextSearch = it },
                onCloseClick = {
@@ -261,15 +261,13 @@ fun TopAppBarWithNavigationBar() {
                             mHomeViewModel.updateSortOrder(SortOrder.BY_NAME)
                             mShowDropdownMenu = false
                         },
-                        leadingIcon = { SortByNameIcon() }
-                    )
+                        leadingIcon = { SortByNameIcon() })
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_date_created)) },
                         onClick = {
                             mHomeViewModel.updateSortOrder(SortOrder.BY_DATE)
                             mShowDropdownMenu = false
                         },
-                        leadingIcon = { SortByDateIcon() }
-                    )
+                        leadingIcon = { SortByDateIcon() })
                 }
             }, colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -289,6 +287,11 @@ fun TopAppBarWithNavigationBar() {
             ) {
                 val mUiStateEvent: UiStateEvent by mHomeViewModel.getUserUiState.collectAsState()
 
+                if (mUiStateEvent.isError) {
+                    HelperFunctions.toastLong(mContext, "There is some unknown error.")
+                    mHomeViewModel.onErrorConsumed()
+                }
+
                 when (mUiStateEvent.usersData) {
                     UiState.Loading -> {
                         LoadingProgressBar()
@@ -302,7 +305,9 @@ fun TopAppBarWithNavigationBar() {
                             contentPadding = PaddingValues(10.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            items((mUiStateEvent.usersData as UiState.Success).userModel) { user ->
+                            items(items = (mUiStateEvent.usersData as UiState.Success).userModel,
+                                key = { listUser -> listUser.id }
+                            ) { user ->
                                 UserItem(
                                     modifier = Modifier.fillMaxWidth(),
                                     viewModel = mHomeViewModel,
