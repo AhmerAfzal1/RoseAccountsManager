@@ -2,7 +2,6 @@ package com.ahmer.accounts.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -212,7 +211,7 @@ fun TopAppBarWithNavigationBar() {
                             //navController.navigate(item.route)
                             mSelectedItems = index
                             mCoroutineScope.launch { mDrawerState.close() }
-                            Toast.makeText(mContext, item.label, Toast.LENGTH_SHORT).show()
+                            HelperFunctions.toastLong(mContext, item.label)
                         },
                         icon = {
                             Icon(
