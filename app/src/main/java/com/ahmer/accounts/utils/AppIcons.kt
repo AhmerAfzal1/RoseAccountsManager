@@ -1,9 +1,8 @@
 package com.ahmer.accounts.utils
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ChangeCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Edit
@@ -11,6 +10,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -103,7 +103,7 @@ fun SearchIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 @Composable
 fun SortByDateIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.ChangeCircle,
+        imageVector = Icons.Filled.AccessTime,
         contentDescription = stringResource(id = R.string.content_description_sort_by_date),
         modifier = modifier,
         tint = tint
@@ -123,7 +123,7 @@ fun SortByNameIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColo
 @Composable
 fun SortIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.ArrowDropDown,
+        imageVector = Icons.Filled.Sort,
         contentDescription = stringResource(id = R.string.content_description_sort),
         modifier = modifier,
         tint = tint

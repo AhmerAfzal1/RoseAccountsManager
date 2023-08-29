@@ -12,6 +12,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 object HelperFunctions {
 
@@ -35,6 +36,17 @@ object HelperFunctions {
         val mRound = DecimalFormat("#,##0.##")
         mRound.roundingMode = RoundingMode.HALF_UP
         return mRound.format(value)
+    }
+
+    @JvmStatic
+    fun getSizeFormat(size: Long): String {
+        var result = size.toDouble() / 1024
+        if (result < 1024) return "${result.roundToInt()} KB"
+        result /= 1024
+        if (result < 1024) return String.format("%.2f MB", result)
+        result /= 1024
+        return String.format("%.2f GB", result)
+
     }
 
     @JvmStatic
