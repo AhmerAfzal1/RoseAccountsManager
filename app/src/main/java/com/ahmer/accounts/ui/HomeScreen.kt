@@ -178,13 +178,13 @@ fun TopAppBarWithNavigationBar(navHostController: NavHostController) {
     val mDebit: Double = 8000.00
     val mDrawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val mHomeViewModel: HomeViewModel = hiltViewModel()
+    val mHomeUiState: HomeUiState by mHomeViewModel.uiState.collectAsState()
     val mNavItemsList: List<DrawerItems> = drawerItemsList()
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var mSelectedItems by rememberSaveable { mutableIntStateOf(0) }
     var mShowDropdownMenu by remember { mutableStateOf(false) }
     var mShowSearch by remember { mutableStateOf(false) }
     var mTextSearch by remember { mutableStateOf(mHomeViewModel.searchQuery.value) }
-    val mHomeUiState: HomeUiState by mHomeViewModel.getUserUiState.collectAsState()
 
     if (mShowSearch) {
         MenuSearchBar(text = mTextSearch, onTextChange = { mTextSearch = it }) {
@@ -229,7 +229,7 @@ fun TopAppBarWithNavigationBar(navHostController: NavHostController) {
                             )
                         },
                         badge = {
-                            item.badgeCount?.let { Text(text = item.badgeCount.toString()) }
+                            item.badgeCount?.let { Text(text = item.run { badgeCount.toString() }) }
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )

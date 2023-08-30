@@ -19,11 +19,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -52,25 +54,25 @@ class HomeViewModel @Inject constructor(
             repository.getAllUsersBySearchAndSort(search, preference.sortOrder)
         }.asResult()
 
-    val getUserUiState: StateFlow<HomeUiState> = combine(
+    val uiState: StateFlow<HomeUiState> = combine(
         getAllUsersBySearchAndSort, isRefreshing, isError
     ) { userData, refreshing, error ->
-        val userModel: UiState = when (userData) {
+        val mUserModelUi: UiState = when (userData) {
             is Result.Success -> UiState.Success(userData.data)
             is Result.Error -> UiState.Error
             Result.Loading -> UiState.Loading
         }
 
-        HomeUiState(userModel, refreshing, error)
+        HomeUiState(mUserModelUi, refreshing, error)
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000L),
+        started = SharingStarted.WhileSubscribed(5.seconds),
         initialValue = HomeUiState(UiState.Loading, isRefreshing = false, isError = false)
     )
 
     fun onRefresh() {
         viewModelScope.launch(mExceptionHandler) {
-            val mGetUserModelData = async { getUserUiState }
+            val mGetUserModelData = async { uiState }
             isRefreshing.emit(true)
             try {
                 awaitAll(mGetUserModelData)
@@ -82,10 +84,6 @@ class HomeViewModel @Inject constructor(
 
     fun onErrorConsumed() = viewModelScope.launch {
         isError.emit(false)
-    }
-
-    fun onRefreshConsumed() = viewModelScope.launch {
-        isRefreshing.emit(true)
     }
 
     fun deleteUser(userModel: UserModel) = viewModelScope.launch {

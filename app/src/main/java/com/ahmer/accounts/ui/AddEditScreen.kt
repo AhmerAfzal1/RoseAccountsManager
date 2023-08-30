@@ -21,12 +21,15 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,20 +41,25 @@ import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.CloseIcon
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = Modifier) {
-    val mViewModel: AddEditViewModel = hiltViewModel()
-    var mTextName by rememberSaveable { mutableStateOf("") }
-    var mTextAddress by rememberSaveable { mutableStateOf("") }
-    var mTextPhone by rememberSaveable { mutableStateOf("") }
-    var mTextEmail by rememberSaveable { mutableStateOf("") }
-    var mTextNotes by rememberSaveable { mutableStateOf("") }
-    val mKeyboardController = LocalSoftwareKeyboardController.current
-    val mFocusManager = LocalFocusManager.current
+    val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
+    val mFocusManager: FocusManager = LocalFocusManager.current
+    val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val mViewModel: AddEditViewModel = hiltViewModel()
+    var mTextAddress: String by rememberSaveable { mutableStateOf("") }
+    var mTextEmail: String by rememberSaveable { mutableStateOf("") }
+    var mTextName: String by rememberSaveable { mutableStateOf("") }
+    var mTextNotes: String by rememberSaveable { mutableStateOf("") }
+    var mTextPhone: String by rememberSaveable { mutableStateOf("") }
 
     fun clear() {
         mKeyboardController?.hide()
@@ -59,21 +67,20 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
     }
 
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-        TopAppBar(
-            title = {
-                Text(
-                    text = stringResource(R.string.title_add_user),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }, navigationIcon = {
-                IconButton(onClick = { navHostController.navigateUp() }) { BackIcon() }
-            }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-            ), scrollBehavior = mScrollBehavior
+        TopAppBar(title = {
+            Text(
+                text = stringResource(R.string.title_add_user),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }, navigationIcon = {
+            IconButton(onClick = { navHostController.navigateUp() }) { BackIcon() }
+        }, colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+        ), scrollBehavior = mScrollBehavior
         )
     }) { innerPadding ->
         LazyColumn(modifier = modifier
@@ -91,9 +98,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                         trailingIcon = {
                             if (mTextName.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (mTextName.isNotEmpty()) {
-                                        mTextName = ""
-                                    }
+                                    if (mTextName.isNotEmpty()) mTextName = ""
                                 })
                             }
                         },
@@ -114,9 +119,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                         trailingIcon = {
                             if (mTextAddress.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (mTextAddress.isNotEmpty()) {
-                                        mTextAddress = ""
-                                    }
+                                    if (mTextAddress.isNotEmpty()) mTextAddress = ""
                                 })
                             }
                         },
@@ -137,9 +140,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                         trailingIcon = {
                             if (mTextPhone.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (mTextPhone.isNotEmpty()) {
-                                        mTextPhone = ""
-                                    }
+                                    if (mTextPhone.isNotEmpty()) mTextPhone = ""
                                 })
                             }
                         },
@@ -162,9 +163,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                         trailingIcon = {
                             if (mTextEmail.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (mTextEmail.isNotEmpty()) {
-                                        mTextEmail = ""
-                                    }
+                                    if (mTextEmail.isNotEmpty()) mTextEmail = ""
                                 })
                             }
                         },
@@ -187,9 +186,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                         trailingIcon = {
                             if (mTextNotes.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (mTextNotes.isNotEmpty()) {
-                                        mTextNotes = ""
-                                    }
+                                    if (mTextNotes.isNotEmpty()) mTextNotes = ""
                                 })
                             }
                         },
@@ -200,7 +197,6 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
 
                     ElevatedButton(
                         onClick = {
-                            clear()
                             val mUserModel = UserModel(
                                 name = mTextName,
                                 address = mTextAddress,
@@ -208,15 +204,20 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                                 phone = mTextPhone,
                                 notes = mTextNotes,
                             )
-                            mViewModel.insertOrUpdateUser(userModel = mUserModel)
+                            mCoroutineScope.launch {
+                                clear()
+                                delay(500.milliseconds)
+                                mViewModel.insertOrUpdateUser(userModel = mUserModel)
+                                delay(1.seconds)
+                            }
                             navHostController.navigateUp()
                         },
                         modifier = Modifier.padding(top = 10.dp),
+                        enabled = mTextName.isNotEmpty(),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp)
                     ) {
-                        Text("Save")
+                        Text(text = stringResource(R.string.label_save))
                     }
-
                 }
             })
     }

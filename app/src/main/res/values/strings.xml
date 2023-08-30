@@ -32,7 +32,7 @@
     <string name="content_description_sort_by_name">Sort by name icon</string>
 
     //Labels
-    <string name="label_animate_sort_icon">Animate sort icon</string>
+    <string name="label_address">Address</string>
     <string name="label_backup">Backup</string>
     <string name="label_balance">Balance</string>
     <string name="label_cancel">Cancel</string>
@@ -40,24 +40,24 @@
     <string name="label_credit">Credit</string>
     <string name="label_debit">Debit</string>
     <string name="label_delete">Delete</string>
+    <string name="label_email">Email Address</string>
     <string name="label_exit">EXIT</string>
     <string name="label_home">Home</string>
     <string name="label_more_apps">More apps</string>
+    <string name="label_name">Name</string>
     <string name="label_nav_credit">Credit(+)</string>
     <string name="label_nav_debit">Debit(-)</string>
+    <string name="label_notes">Notes</string>
     <string name="label_ok">OK</string>
+    <string name="label_phone_number">Phone Number</string>
     <string name="label_rate_the_app">Rate the app</string>
     <string name="label_restore_backup">Restore Backup</string>
+    <string name="label_save">Save</string>
     <string name="label_search">Search</string>
     <string name="label_settings">Settings</string>
     <string name="label_share_the_app">Share the app</string>
     <string name="label_sort_by_date_created">Sort by date created</string>
     <string name="label_sort_by_name">Sort by name</string>
-    <string name="label_name">Name</string>
-    <string name="label_address">Address</string>
-    <string name="label_phone_number">Phone Number</string>
-    <string name="label_email">Email Address</string>
-    <string name="label_notes">Notes</string>
     <string name="title_add_user">Add User Data</string>
     <string name="title_edit_user">Edit User Data</string>
 </resources>
