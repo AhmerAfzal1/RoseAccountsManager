@@ -3,6 +3,7 @@ package com.ahmer.accounts.utils
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Edit
@@ -25,6 +26,16 @@ fun AddIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curre
     Icon(
         imageVector = Icons.Filled.Add,
         contentDescription = stringResource(id = R.string.content_description_add),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun BackIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        imageVector = Icons.Filled.ArrowBack,
+        contentDescription = stringResource(id = R.string.content_description_back),
         modifier = modifier,
         tint = tint
     )

@@ -53,4 +53,11 @@
     <string name="label_share_the_app">Share the app</string>
     <string name="label_sort_by_date_created">Sort by date created</string>
     <string name="label_sort_by_name">Sort by name</string>
+    <string name="label_name">Name</string>
+    <string name="label_address">Address</string>
+    <string name="label_phone_number">Phone Number</string>
+    <string name="label_email">Email Address</string>
+    <string name="label_notes">Notes</string>
+    <string name="title_add_user">Add User Data</string>
+    <string name="title_edit_user">Edit User Data</string>
 </resources>

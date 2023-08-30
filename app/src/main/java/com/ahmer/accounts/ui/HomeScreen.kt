@@ -56,16 +56,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.UserModel
+import com.ahmer.accounts.database.state.HomeUiState
 import com.ahmer.accounts.database.state.UiState
-import com.ahmer.accounts.database.state.UiStateEvent
 import com.ahmer.accounts.dialogs.DeleteAlertDialog
 import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
 import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.drawerItemsList
+import com.ahmer.accounts.navigation.NavScreens
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.EditIcon
@@ -102,8 +104,7 @@ private fun UserItem(
     var mShowInfoDialog by remember { mutableStateOf(false) }
 
     if (mShowDeleteDialog) {
-        DeleteAlertDialog(
-            nameAccount = userModel.name!!,
+        DeleteAlertDialog(nameAccount = userModel.name!!,
             onConfirmClick = { viewModel.deleteUser(userModel) })
         //viewModel.onRefresh()
     }
@@ -170,7 +171,7 @@ private fun UserItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun TopAppBarWithNavigationBar() {
+fun TopAppBarWithNavigationBar(navHostController: NavHostController) {
     val mContext: Context = LocalContext.current.applicationContext
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mCredit: Double = 10000.00
@@ -183,6 +184,7 @@ fun TopAppBarWithNavigationBar() {
     var mShowDropdownMenu by remember { mutableStateOf(false) }
     var mShowSearch by remember { mutableStateOf(false) }
     var mTextSearch by remember { mutableStateOf(mHomeViewModel.searchQuery.value) }
+    val mHomeUiState: HomeUiState by mHomeViewModel.getUserUiState.collectAsState()
 
     if (mShowSearch) {
         MenuSearchBar(text = mTextSearch, onTextChange = { mTextSearch = it }) {
@@ -195,6 +197,11 @@ fun TopAppBarWithNavigationBar() {
                },
                onSearchClick = { mTextSearch = it }
            )*/
+    }
+
+    if (mHomeUiState.isError) {
+        HelperFunctions.toastLong(mContext, "There is some unknown error.")
+        mHomeViewModel.onErrorConsumed()
     }
 
     ModalNavigationDrawer(
@@ -267,7 +274,9 @@ fun TopAppBarWithNavigationBar() {
             ), scrollBehavior = mScrollBehavior
             )
         }, floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }) { AddIcon() }
+            FloatingActionButton(onClick = {
+                navHostController.navigate(NavScreens.AddEditScreen.route)
+            }) { AddIcon() }
         }) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -275,29 +284,23 @@ fun TopAppBarWithNavigationBar() {
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val mUiStateEvent: UiStateEvent by mHomeViewModel.getUserUiState.collectAsState()
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    when (mHomeUiState.uiState) {
+                        UiState.Error -> {}
 
-                if (mUiStateEvent.isError) {
-                    HelperFunctions.toastLong(mContext, "There is some unknown error.")
-                    mHomeViewModel.onErrorConsumed()
-                }
+                        UiState.Loading -> {
+                            item {
+                                LoadingProgressBar()
+                            }
+                        }
 
-                when (mUiStateEvent.usersData) {
-                    UiState.Loading -> {
-                        LoadingProgressBar()
-                    }
-
-                    UiState.Error -> {}
-
-                    is UiState.Success -> {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(10.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(items = (mUiStateEvent.usersData as UiState.Success).userModel,
-                                key = { listUser -> listUser.id }
-                            ) { user ->
+                        is UiState.Success -> {
+                            items(items = (mHomeUiState.uiState as UiState.Success).userModel,
+                                key = { listUser -> listUser.id }) { user ->
                                 UserItem(
                                     modifier = Modifier.fillMaxWidth(),
                                     viewModel = mHomeViewModel,
