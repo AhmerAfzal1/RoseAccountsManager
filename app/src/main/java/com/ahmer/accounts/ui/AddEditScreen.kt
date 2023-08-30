@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,6 +54,11 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mFocusManager: FocusManager = LocalFocusManager.current
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
+    val mLenAddress = 128
+    val mLenEmail = 64
+    val mLenName = 64
+    val mLenNotes = 512
+    val mLenPhone = 15
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mViewModel: AddEditViewModel = hiltViewModel()
     var mTextAddress: String by rememberSaveable { mutableStateOf("") }
@@ -91,7 +97,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                 item {
                     OutlinedTextField(
                         value = mTextName,
-                        onValueChange = { mTextName = it },
+                        onValueChange = { if (it.length <= mLenName) mTextName = it },
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(stringResource(R.string.label_name)) },
                         placeholder = { Text(stringResource(R.string.label_name)) },
@@ -102,6 +108,13 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                                 })
                             }
                         },
+                        supportingText = {
+                            Text(
+                                text = "${mTextName.length} / $mLenName",
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.End,
+                            )
+                        },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         keyboardActions = KeyboardActions(onNext = {
                             mFocusManager.moveFocus(FocusDirection.Down)
@@ -110,7 +123,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
 
                     OutlinedTextField(
                         value = mTextAddress,
-                        onValueChange = { mTextAddress = it },
+                        onValueChange = { if (it.length <= mLenAddress) mTextAddress = it },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp),
@@ -123,6 +136,13 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                                 })
                             }
                         },
+                        supportingText = {
+                            Text(
+                                text = "${mTextAddress.length} / $mLenAddress",
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.End,
+                            )
+                        },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         keyboardActions = KeyboardActions(onNext = {
                             mFocusManager.moveFocus(FocusDirection.Down)
@@ -131,7 +151,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
 
                     OutlinedTextField(
                         value = mTextPhone,
-                        onValueChange = { mTextPhone = it },
+                        onValueChange = { if (it.length <= mLenPhone) mTextPhone = it },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp),
@@ -144,6 +164,13 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                                 })
                             }
                         },
+                        supportingText = {
+                            Text(
+                                text = "${mTextPhone.length} / $mLenPhone",
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.End,
+                            )
+                        },
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next, keyboardType = KeyboardType.Phone
                         ),
@@ -154,7 +181,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
 
                     OutlinedTextField(
                         value = mTextEmail,
-                        onValueChange = { mTextEmail = it },
+                        onValueChange = { if (it.length <= mLenEmail) mTextEmail = it },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp),
@@ -167,6 +194,13 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                                 })
                             }
                         },
+                        supportingText = {
+                            Text(
+                                text = "${mTextEmail.length} / $mLenEmail",
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.End,
+                            )
+                        },
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next, keyboardType = KeyboardType.Email
                         ),
@@ -177,7 +211,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
 
                     OutlinedTextField(
                         value = mTextNotes,
-                        onValueChange = { mTextNotes = it },
+                        onValueChange = { if (it.length <= mLenNotes) mTextNotes = it },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp),
@@ -189,6 +223,13 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                                     if (mTextNotes.isNotEmpty()) mTextNotes = ""
                                 })
                             }
+                        },
+                        supportingText = {
+                            Text(
+                                text = "${mTextNotes.length} / $mLenNotes",
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.End,
+                            )
                         },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(onDone = { clear() }),
