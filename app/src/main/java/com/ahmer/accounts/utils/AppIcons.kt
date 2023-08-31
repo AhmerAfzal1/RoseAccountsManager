@@ -6,10 +6,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.SortByAlpha
@@ -63,10 +63,10 @@ fun DeleteIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 }
 
 @Composable
-fun DoneIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+fun SaveIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.Done,
-        contentDescription = stringResource(id = R.string.content_description_done),
+        imageVector = Icons.Filled.Save,
+        contentDescription = stringResource(id = R.string.content_description_save),
         modifier = modifier,
         tint = tint
     )

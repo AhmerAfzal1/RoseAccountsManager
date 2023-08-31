@@ -47,7 +47,7 @@ import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.Constants
-import com.ahmer.accounts.utils.DoneIcon
+import com.ahmer.accounts.utils.SaveIcon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -144,7 +144,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 if (mTextName.isEmpty()) mShowSnackBar.value = !mShowSnackBar.value else save()
-            }) { DoneIcon() }
+            }) { SaveIcon() }
         }) { innerPadding ->
         LazyColumn(modifier = modifier
             .fillMaxSize()

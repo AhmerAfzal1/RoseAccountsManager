@@ -14,7 +14,6 @@
     <string name="content_description_backup">Backup icon</string>
     <string name="content_description_close">Close icon</string>
     <string name="content_description_delete">Delete icon</string>
-    <string name="content_description_done">Done icon</string>
     <string name="content_description_edit">Edit icon</string>
     <string name="content_description_exit">Exit icon</string>
     <string name="content_description_home">Home icon</string>
@@ -25,6 +24,7 @@
     <string name="content_description_play_store">Playstore icon</string>
     <string name="content_description_rate_app">Rate app icon</string>
     <string name="content_description_restore_backup">Restore backup icon</string>
+    <string name="content_description_save">Save icon</string>
     <string name="content_description_search">Search icon</string>
     <string name="content_description_settings">Settings icon</string>
     <string name="content_description_share">Share icon</string>
