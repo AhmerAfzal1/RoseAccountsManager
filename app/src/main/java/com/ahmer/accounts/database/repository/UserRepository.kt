@@ -2,7 +2,7 @@ package com.ahmer.accounts.database.repository
 
 import com.ahmer.accounts.database.dao.UserDao
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.utils.SortOrder
+import com.ahmer.accounts.utils.SortBy
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -23,8 +23,8 @@ class UserRepository @Inject constructor(private val userDao: UserDao) {
     fun getAllUsers(): Flow<List<UserModel>> = userDao.getAllUsers()
 
     fun getAllUsersBySearchAndSort(
-        searchQuery: String, sortOrder: SortOrder
-    ): Flow<List<UserModel>> = userDao.getAllUsersBySearchAndSort(searchQuery, sortOrder)
+        searchQuery: String, sortBy: SortBy
+    ): Flow<List<UserModel>> = userDao.getAllUsersBySearchAndSort(searchQuery, sortBy)
 
     fun getPinnedUsers(id: Int): Flow<UserModel> = userDao.getPinnedUsers(id)
 }

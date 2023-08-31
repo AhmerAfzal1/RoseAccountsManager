@@ -9,7 +9,7 @@ import com.ahmer.accounts.database.state.Result
 import com.ahmer.accounts.database.state.UiState
 import com.ahmer.accounts.database.state.asResult
 import com.ahmer.accounts.preferences.PreferencesManager
-import com.ahmer.accounts.utils.SortOrder
+import com.ahmer.accounts.utils.SortBy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,7 +51,7 @@ class HomeViewModel @Inject constructor(
         combine(_searchQuery, _preferences) { searchQuery, preferences ->
             Pair(searchQuery, preferences)
         }.flatMapLatest { (search, preference) ->
-            repository.getAllUsersBySearchAndSort(search, preference.sortOrder)
+            repository.getAllUsersBySearchAndSort(search, preference.sortBy)
         }.asResult()
 
     val uiState: StateFlow<HomeUiState> = combine(
@@ -90,8 +90,8 @@ class HomeViewModel @Inject constructor(
         repository.delete(userModel)
     }
 
-    fun updateSortOrder(sortOrder: SortOrder) = viewModelScope.launch {
-        preferencesManager.updateSortOrder(sortOrder)
+    fun updateSortOrder(sortBy: SortBy) = viewModelScope.launch {
+        preferencesManager.updateSortOrder(sortBy)
     }
 
 }

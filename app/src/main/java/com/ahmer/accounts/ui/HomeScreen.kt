@@ -78,10 +78,10 @@ import com.ahmer.accounts.utils.InfoIcon
 import com.ahmer.accounts.utils.MenuIcon
 import com.ahmer.accounts.utils.PinIcon
 import com.ahmer.accounts.utils.SearchIcon
+import com.ahmer.accounts.utils.SortBy
 import com.ahmer.accounts.utils.SortByDateIcon
 import com.ahmer.accounts.utils.SortByNameIcon
 import com.ahmer.accounts.utils.SortIcon
-import com.ahmer.accounts.utils.SortOrder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -267,13 +267,13 @@ fun TopAppBarWithNavigationBar(navHostController: NavHostController) {
                     onDismissRequest = { mShowDropdownMenu = false }) {
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_name)) },
                         onClick = {
-                            mHomeViewModel.updateSortOrder(SortOrder.BY_NAME)
+                            mHomeViewModel.updateSortOrder(SortBy.NAME)
                             mShowDropdownMenu = false
                         },
                         leadingIcon = { SortByNameIcon() })
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_date_created)) },
                         onClick = {
-                            mHomeViewModel.updateSortOrder(SortOrder.BY_DATE)
+                            mHomeViewModel.updateSortOrder(SortBy.DATE)
                             mShowDropdownMenu = false
                         },
                         leadingIcon = { SortByDateIcon() })

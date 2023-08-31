@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.utils.SortOrder
+import com.ahmer.accounts.utils.SortBy
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -26,11 +26,11 @@ interface UserDao {
     @Query("SELECT * FROM customers WHERE Name LIKE '%' || :searchQuery || '%' ORDER BY Name ASC")
     fun getAllUsersSortedByNames(searchQuery: String): Flow<List<UserModel>>
 
-    fun getAllUsersBySearchAndSort(
-        searchQuery: String, sortOrder: SortOrder
-    ): Flow<List<UserModel>> = when (sortOrder) {
-        SortOrder.BY_DATE -> getAllUsersSortedByDate(searchQuery)
-        SortOrder.BY_NAME -> getAllUsersSortedByNames(searchQuery)
+    fun getAllUsersBySearchAndSort(searchQuery: String, sortBy: SortBy): Flow<List<UserModel>> {
+        return when (sortBy) {
+            SortBy.DATE -> getAllUsersSortedByDate(searchQuery)
+            SortBy.NAME -> getAllUsersSortedByNames(searchQuery)
+        }
     }
 
     @Query("SELECT * FROM customers WHERE _id=:id")
