@@ -2,6 +2,7 @@ package com.ahmer.accounts.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,6 +70,7 @@ import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.drawerItemsList
 import com.ahmer.accounts.navigation.NavScreens
 import com.ahmer.accounts.utils.AddIcon
+import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.EditIcon
 import com.ahmer.accounts.utils.HelperFunctions
@@ -96,7 +98,10 @@ fun LoadingProgressBar(modifier: Modifier = Modifier) {
 
 @Composable
 private fun UserItem(
-    modifier: Modifier = Modifier, viewModel: HomeViewModel, userModel: UserModel
+    modifier: Modifier = Modifier,
+    navHostController: NavHostController,
+    viewModel: HomeViewModel,
+    userModel: UserModel
 ) {
     val mIconSize: Dp = 36.dp
     val mPadding: Dp = 5.dp
@@ -105,8 +110,10 @@ private fun UserItem(
 
     if (mShowDeleteDialog) {
         DeleteAlertDialog(nameAccount = userModel.name!!,
-            onConfirmClick = { viewModel.deleteUser(userModel) })
-        //viewModel.onRefresh()
+            onConfirmClick = {
+                viewModel.deleteUser(userModel)
+            }
+        )
     }
 
     if (mShowInfoDialog) {
@@ -114,7 +121,12 @@ private fun UserItem(
     }
 
     ElevatedCard(
-        modifier = modifier,
+        modifier = modifier.clickable {
+            navHostController.currentBackStackEntry?.savedStateHandle?.set(
+                Constants.NAV_ADD_EDIT_KEY, userModel
+            )
+            navHostController.navigate(NavScreens.AddEditScreen.route)
+        },
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
@@ -303,6 +315,7 @@ fun TopAppBarWithNavigationBar(navHostController: NavHostController) {
                                 key = { listUser -> listUser.id }) { user ->
                                 UserItem(
                                     modifier = Modifier.fillMaxWidth(),
+                                    navHostController = navHostController,
                                     viewModel = mHomeViewModel,
                                     userModel = user
                                 )

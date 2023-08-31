@@ -42,11 +42,11 @@ import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.CloseIcon
+import com.ahmer.accounts.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,15 +67,33 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
     var mTextNotes: String by rememberSaveable { mutableStateOf("") }
     var mTextPhone: String by rememberSaveable { mutableStateOf("") }
 
+    var mTitle = stringResource(R.string.title_add_user)
+    val mData: UserModel? =
+        navHostController.previousBackStackEntry?.savedStateHandle?.get<UserModel>(Constants.NAV_ADD_EDIT_KEY)
+
+    if (mData != null) {
+        mTitle = stringResource(R.string.title_edit_user)
+        mTextAddress = mData.address.toString()
+        mTextEmail = mData.email.toString()
+        mTextName = mData.name.toString()
+        mTextNotes = mData.notes.toString()
+        mTextPhone = mData.phone.toString()
+    }
+
     fun clear() {
         mKeyboardController?.hide()
         mFocusManager.clearFocus()
+        mTextAddress = ""
+        mTextEmail = ""
+        mTextName = ""
+        mTextNotes = ""
+        mTextPhone = ""
     }
 
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
         TopAppBar(title = {
             Text(
-                text = stringResource(R.string.title_add_user),
+                text = mTitle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -238,7 +256,15 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
 
                     ElevatedButton(
                         onClick = {
-                            val mUserModel = UserModel(
+                            val mUserModel: UserModel = mData?.copy(
+                                id = mData.id,
+                                name = mTextName,
+                                address = mTextAddress,
+                                email = mTextEmail,
+                                phone = mTextPhone,
+                                notes = mTextNotes,
+                                modified = System.currentTimeMillis()
+                            ) ?: UserModel(
                                 name = mTextName,
                                 address = mTextAddress,
                                 email = mTextEmail,
@@ -249,7 +275,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                                 clear()
                                 delay(500.milliseconds)
                                 mViewModel.insertOrUpdateUser(userModel = mUserModel)
-                                delay(1.seconds)
+                                delay(500.milliseconds)
                             }
                             navHostController.navigateUp()
                         },
@@ -260,6 +286,7 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                         Text(text = stringResource(R.string.label_save))
                     }
                 }
-            })
+            }
+        )
     }
 }
