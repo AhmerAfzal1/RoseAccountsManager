@@ -7,20 +7,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -43,6 +47,7 @@ import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.Constants
+import com.ahmer.accounts.utils.DoneIcon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -59,30 +64,32 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
     val mLenName = 64
     val mLenNotes = 512
     val mLenPhone = 15
+    val mNavUserData: UserModel? =
+        navHostController.previousBackStackEntry?.savedStateHandle?.get<UserModel>(Constants.NAV_ADD_EDIT_KEY)
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val mShowSnackBar: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    val mSnackBarMessage: String = stringResource(R.string.title_snack_bar_text_field)
     val mViewModel: AddEditViewModel = hiltViewModel()
     var mTextAddress: String by rememberSaveable { mutableStateOf("") }
     var mTextEmail: String by rememberSaveable { mutableStateOf("") }
     var mTextName: String by rememberSaveable { mutableStateOf("") }
     var mTextNotes: String by rememberSaveable { mutableStateOf("") }
     var mTextPhone: String by rememberSaveable { mutableStateOf("") }
+    var mTitle: String = stringResource(R.string.title_add_user)
 
-    var mTitle = stringResource(R.string.title_add_user)
-    val mData: UserModel? =
-        navHostController.previousBackStackEntry?.savedStateHandle?.get<UserModel>(Constants.NAV_ADD_EDIT_KEY)
-
-    if (mData != null) {
+    if (mNavUserData != null) {
+        mTextAddress = mNavUserData.address.toString()
+        mTextEmail = mNavUserData.email.toString()
+        mTextName = mNavUserData.name.toString()
+        mTextNotes = mNavUserData.notes.toString()
+        mTextPhone = mNavUserData.phone.toString()
         mTitle = stringResource(R.string.title_edit_user)
-        mTextAddress = mData.address.toString()
-        mTextEmail = mData.email.toString()
-        mTextName = mData.name.toString()
-        mTextNotes = mData.notes.toString()
-        mTextPhone = mData.phone.toString()
     }
 
     fun clear() {
-        mKeyboardController?.hide()
         mFocusManager.clearFocus()
+        mKeyboardController?.hide()
         mTextAddress = ""
         mTextEmail = ""
         mTextName = ""
@@ -90,23 +97,55 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
         mTextPhone = ""
     }
 
-    Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-        TopAppBar(title = {
-            Text(
-                text = mTitle,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }, navigationIcon = {
-            IconButton(onClick = { navHostController.navigateUp() }) { BackIcon() }
-        }, colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-        ), scrollBehavior = mScrollBehavior
+    fun save() {
+        val mUserModel: UserModel = mNavUserData?.copy(
+            id = mNavUserData.id,
+            name = mTextName,
+            address = mTextAddress,
+            email = mTextEmail,
+            phone = mTextPhone,
+            notes = mTextNotes,
+            modified = System.currentTimeMillis()
+        ) ?: UserModel(
+            name = mTextName,
+            address = mTextAddress,
+            email = mTextEmail,
+            phone = mTextPhone,
+            notes = mTextNotes,
         )
-    }) { innerPadding ->
+        mCoroutineScope.launch {
+            mViewModel.insertOrUpdateUser(userModel = mUserModel)
+            clear()
+            delay(250.milliseconds)
+        }
+        navHostController.navigateUp()
+    }
+
+    LaunchedEffect(mShowSnackBar.value) {
+        if (mShowSnackBar.value) {
+            mSnackBarHostState.showSnackbar(mSnackBarMessage)
+        }
+    }
+
+    Scaffold(modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(title = {
+                Text(text = mTitle, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }, navigationIcon = {
+                IconButton(onClick = { navHostController.navigateUp() }) { BackIcon() }
+            }, colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+            ), scrollBehavior = mScrollBehavior
+            )
+        }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                if (mTextName.isEmpty()) mShowSnackBar.value = !mShowSnackBar.value else save()
+            }) { DoneIcon() }
+        }) { innerPadding ->
         LazyColumn(modifier = modifier
             .fillMaxSize()
             .padding(all = 16.dp),
@@ -253,38 +292,6 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                         keyboardActions = KeyboardActions(onDone = { clear() }),
                         minLines = 4
                     )
-
-                    ElevatedButton(
-                        onClick = {
-                            val mUserModel: UserModel = mData?.copy(
-                                id = mData.id,
-                                name = mTextName,
-                                address = mTextAddress,
-                                email = mTextEmail,
-                                phone = mTextPhone,
-                                notes = mTextNotes,
-                                modified = System.currentTimeMillis()
-                            ) ?: UserModel(
-                                name = mTextName,
-                                address = mTextAddress,
-                                email = mTextEmail,
-                                phone = mTextPhone,
-                                notes = mTextNotes,
-                            )
-                            mCoroutineScope.launch {
-                                clear()
-                                delay(500.milliseconds)
-                                mViewModel.insertOrUpdateUser(userModel = mUserModel)
-                                delay(500.milliseconds)
-                            }
-                            navHostController.navigateUp()
-                        },
-                        modifier = Modifier.padding(top = 10.dp),
-                        enabled = mTextName.isNotEmpty(),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp)
-                    ) {
-                        Text(text = stringResource(R.string.label_save))
-                    }
                 }
             }
         )

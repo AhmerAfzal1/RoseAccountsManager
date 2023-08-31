@@ -121,12 +121,7 @@ private fun UserItem(
     }
 
     ElevatedCard(
-        modifier = modifier.clickable {
-            navHostController.currentBackStackEntry?.savedStateHandle?.set(
-                Constants.NAV_ADD_EDIT_KEY, userModel
-            )
-            navHostController.navigate(NavScreens.AddEditScreen.route)
-        },
+        modifier = modifier.clickable { /*TODO*/ },
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
@@ -150,7 +145,12 @@ private fun UserItem(
                     modifier = Modifier.then(Modifier.size(mIconSize)),
                 ) { InfoIcon() }
                 IconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        navHostController.currentBackStackEntry?.savedStateHandle?.set(
+                            Constants.NAV_ADD_EDIT_KEY, userModel
+                        )
+                        navHostController.navigate(NavScreens.AddEditScreen.route)
+                    },
                     modifier = Modifier.then(Modifier.size(mIconSize)),
                 ) { EditIcon() }
                 IconButton(
