@@ -18,7 +18,7 @@ import kotlinx.parcelize.Parcelize
 data class UserModel(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "_id")
-    val id: Long = 0.toLong(),
+    val id: Long? = 0.toLong(),
 
     @ColumnInfo(name = "Name")
     val name: String?,

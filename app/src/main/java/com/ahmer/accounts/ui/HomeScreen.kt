@@ -34,12 +34,16 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -57,20 +61,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.database.state.HomeUiState
-import com.ahmer.accounts.database.state.UiState
-import com.ahmer.accounts.dialogs.DeleteAlertDialog
 import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
 import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.drawerItemsList
-import com.ahmer.accounts.navigation.NavScreens
+import com.ahmer.accounts.event.ListEvent
+import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.utils.AddIcon
-import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.EditIcon
 import com.ahmer.accounts.utils.HelperFunctions
@@ -98,23 +98,22 @@ fun LoadingProgressBar(modifier: Modifier = Modifier) {
 
 @Composable
 private fun UserItem(
-    modifier: Modifier = Modifier,
-    navHostController: NavHostController,
-    viewModel: HomeViewModel,
-    userModel: UserModel
+    userModel: UserModel,
+    onEvent: (ListEvent) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val mIconSize: Dp = 36.dp
     val mPadding: Dp = 5.dp
     var mShowDeleteDialog by remember { mutableStateOf(false) }
     var mShowInfoDialog by remember { mutableStateOf(false) }
 
-    if (mShowDeleteDialog) {
+    /*if (mShowDeleteDialog) {
         DeleteAlertDialog(nameAccount = userModel.name!!,
             onConfirmClick = {
                 viewModel.deleteUser(userModel)
             }
         )
-    }
+    }*/
 
     if (mShowInfoDialog) {
         MoreInfoAlertDialog(userModel)
@@ -146,15 +145,12 @@ private fun UserItem(
                 ) { InfoIcon() }
                 IconButton(
                     onClick = {
-                        navHostController.currentBackStackEntry?.savedStateHandle?.set(
-                            Constants.NAV_ADD_EDIT_KEY, userModel
-                        )
-                        navHostController.navigate(NavScreens.AddEditScreen.route)
+                        onEvent(ListEvent.OnItemClick(userModel))
                     },
                     modifier = Modifier.then(Modifier.size(mIconSize)),
                 ) { EditIcon() }
                 IconButton(
-                    onClick = { mShowDeleteDialog = true },
+                    onClick = { onEvent(ListEvent.OnDeleteClick(userModel)) },
                     modifier = Modifier.then(Modifier.size(mIconSize)),
                 ) { DeleteIcon() }
             }
@@ -183,14 +179,40 @@ private fun UserItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun TopAppBarWithNavigationBar(navHostController: NavHostController) {
+fun TopAppBarWithNavigationBar(
+    onNavigation: (UiEvent.Navigate) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
+    val userData = viewModel.getAllUsersBySearchAndSort.collectAsState(initial = emptyList())
+    val mShowSnackBar: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is UiEvent.Navigate -> onNavigation(event)
+                is UiEvent.ShowSnackBar -> {
+                    val result = mSnackBarHostState.showSnackbar(
+                        message = event.message,
+                        actionLabel = event.action
+                    )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        viewModel.onEvent(ListEvent.OnUndoDeleteClick)
+                    }
+                }
+
+                else -> Unit
+            }
+        }
+    }
+
+
     val mContext: Context = LocalContext.current.applicationContext
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mCredit: Double = 10000.00
     val mDebit: Double = 8000.00
     val mDrawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val mHomeViewModel: HomeViewModel = hiltViewModel()
-    val mHomeUiState: HomeUiState by mHomeViewModel.uiState.collectAsState()
+    //val mHomeUiState: HomeUiState by mHomeViewModel.uiState.collectAsState()
     val mNavItemsList: List<DrawerItems> = drawerItemsList()
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var mSelectedItems by rememberSaveable { mutableIntStateOf(0) }
@@ -211,10 +233,10 @@ fun TopAppBarWithNavigationBar(navHostController: NavHostController) {
            )*/
     }
 
-    if (mHomeUiState.isError) {
+    /*if (mHomeUiState.isError) {
         HelperFunctions.toastLong(mContext, "There is some unknown error.")
         mHomeViewModel.onErrorConsumed()
-    }
+    }*/
 
     ModalNavigationDrawer(
         drawerContent = {
@@ -267,13 +289,13 @@ fun TopAppBarWithNavigationBar(navHostController: NavHostController) {
                     onDismissRequest = { mShowDropdownMenu = false }) {
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_name)) },
                         onClick = {
-                            mHomeViewModel.updateSortOrder(SortBy.NAME)
+                            viewModel.onEvent(ListEvent.OnSortBy(SortBy.NAME))
                             mShowDropdownMenu = false
                         },
                         leadingIcon = { SortByNameIcon() })
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_date_created)) },
                         onClick = {
-                            mHomeViewModel.updateSortOrder(SortBy.DATE)
+                            viewModel.onEvent(ListEvent.OnSortBy(SortBy.DATE))
                             mShowDropdownMenu = false
                         },
                         leadingIcon = { SortByDateIcon() })
@@ -287,7 +309,7 @@ fun TopAppBarWithNavigationBar(navHostController: NavHostController) {
             )
         }, floatingActionButton = {
             FloatingActionButton(onClick = {
-                navHostController.navigate(NavScreens.AddEditScreen.route)
+                viewModel.onEvent(ListEvent.OnAddClick)
             }) { AddIcon() }
         }) { innerPadding ->
             Column(
@@ -301,7 +323,15 @@ fun TopAppBarWithNavigationBar(navHostController: NavHostController) {
                     contentPadding = PaddingValues(10.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    when (mHomeUiState.uiState) {
+                    items(
+                        items = userData.value,
+                        key = { listUser -> listUser.id!! }) { user ->
+                        UserItem(
+                            userModel = user,
+                            onEvent = viewModel::onEvent,
+                        )
+                    }
+                    /*when (mHomeUiState.uiState) {
                         UiState.Error -> {}
 
                         UiState.Loading -> {
@@ -321,7 +351,7 @@ fun TopAppBarWithNavigationBar(navHostController: NavHostController) {
                                 )
                             }
                         }
-                    }
+                    }*/
                 }
             }
         }

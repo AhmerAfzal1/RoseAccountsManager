@@ -7,6 +7,7 @@ import com.ahmer.accounts.database.AppDatabase
 import com.ahmer.accounts.database.dao.AdminDao
 import com.ahmer.accounts.database.dao.UserDao
 import com.ahmer.accounts.database.repository.UserRepository
+import com.ahmer.accounts.database.repository.UserRepositoryImp
 import com.ahmer.accounts.preferences.PreferencesManager
 import com.ahmer.accounts.utils.Constants
 import dagger.Module
@@ -47,5 +48,5 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesUserRepository(userDao: UserDao): UserRepository = UserRepository(userDao)
+    fun providesUserRepository(userDao: UserDao): UserRepository = UserRepositoryImp(userDao)
 }

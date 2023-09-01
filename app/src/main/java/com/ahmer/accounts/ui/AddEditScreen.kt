@@ -22,12 +22,10 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
@@ -41,21 +39,40 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.model.UserModel
+import com.ahmer.accounts.event.AddEditEvent
+import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.CloseIcon
-import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.SaveIcon
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = Modifier) {
+fun AddOrEditScreen(
+    onPopBackStack: () -> Unit,
+    viewModel: AddEditViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier
+) {
+
+    val mShowSnackBar: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is UiEvent.ShowSnackBar -> {
+                    mSnackBarHostState.showSnackbar(
+                        message = event.message,
+                        actionLabel = event.action
+                    )
+                }
+
+                UiEvent.PopBackStack -> onPopBackStack()
+                else -> Unit
+            }
+        }
+    }
+
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mFocusManager: FocusManager = LocalFocusManager.current
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
@@ -64,40 +81,35 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
     val mLenName = 64
     val mLenNotes = 512
     val mLenPhone = 15
-    val mNavUserData: UserModel? =
-        navHostController.previousBackStackEntry?.savedStateHandle?.get<UserModel>(Constants.NAV_ADD_EDIT_KEY)
+    //val mNavUserData: UserModel? =
+    //    navHostController.previousBackStackEntry?.savedStateHandle?.get<UserModel>(Constants.NAV_ADD_EDIT_KEY)
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val mShowSnackBar: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    //val mShowSnackBar: MutableState<Boolean> = remember { mutableStateOf(false) }
+    //val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mSnackBarMessage: String = stringResource(R.string.title_snack_bar_text_field)
     val mViewModel: AddEditViewModel = hiltViewModel()
-    var mTextAddress: String by rememberSaveable { mutableStateOf("") }
+    /*var mTextAddress: String by rememberSaveable { mutableStateOf("") }
     var mTextEmail: String by rememberSaveable { mutableStateOf("") }
     var mTextName: String by rememberSaveable { mutableStateOf("") }
     var mTextNotes: String by rememberSaveable { mutableStateOf("") }
-    var mTextPhone: String by rememberSaveable { mutableStateOf("") }
+    var mTextPhone: String by rememberSaveable { mutableStateOf("") }*/
     var mTitle: String = stringResource(R.string.title_add_user)
 
-    if (mNavUserData != null) {
+    /*if (mNavUserData != null) {
         mTextAddress = mNavUserData.address.toString()
         mTextEmail = mNavUserData.email.toString()
         mTextName = mNavUserData.name.toString()
         mTextNotes = mNavUserData.notes.toString()
         mTextPhone = mNavUserData.phone.toString()
         mTitle = stringResource(R.string.title_edit_user)
-    }
+    }*/
 
     fun clear() {
         mFocusManager.clearFocus()
         mKeyboardController?.hide()
-        mTextAddress = ""
-        mTextEmail = ""
-        mTextName = ""
-        mTextNotes = ""
-        mTextPhone = ""
     }
 
-    fun save() {
+    /*fun save() {
         val mUserModel: UserModel = mNavUserData?.copy(
             id = mNavUserData.id,
             name = mTextName,
@@ -119,31 +131,25 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
             delay(250.milliseconds)
         }
         navHostController.navigateUp()
-    }
-
-    LaunchedEffect(mShowSnackBar.value) {
-        if (mShowSnackBar.value) {
-            mSnackBarHostState.showSnackbar(mSnackBarMessage)
-        }
-    }
+    }*/
 
     Scaffold(modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(title = {
-                Text(text = mTitle, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }, navigationIcon = {
-                IconButton(onClick = { navHostController.navigateUp() }) { BackIcon() }
-            }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-            ), scrollBehavior = mScrollBehavior
+            TopAppBar(
+                title = {
+                    Text(text = mTitle, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                ), scrollBehavior = mScrollBehavior
             )
         }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                if (mTextName.isEmpty()) mShowSnackBar.value = !mShowSnackBar.value else save()
+                viewModel.onEvent(AddEditEvent.OnSaveClick)
+                /*if (mTextName.isEmpty()) mShowSnackBar.value = !mShowSnackBar.value else save()*/
             }) { SaveIcon() }
         }) { innerPadding ->
         LazyColumn(modifier = modifier
@@ -153,21 +159,27 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
             content = {
                 item {
                     OutlinedTextField(
-                        value = mTextName,
-                        onValueChange = { if (it.length <= mLenName) mTextName = it },
+                        value = viewModel.name,
+                        onValueChange = {
+                            if (it.length <= mLenName) {
+                                viewModel.onEvent(AddEditEvent.OnNameChange(it))
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(stringResource(R.string.label_name)) },
                         placeholder = { Text(stringResource(R.string.label_name)) },
                         trailingIcon = {
-                            if (mTextName.isNotEmpty()) {
+                            if (viewModel.name.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (mTextName.isNotEmpty()) mTextName = ""
+                                    if (viewModel.name.isNotEmpty()) {
+                                        viewModel.onEvent(AddEditEvent.OnNameChange(""))
+                                    }
                                 })
                             }
                         },
                         supportingText = {
                             Text(
-                                text = "${mTextName.length} / $mLenName",
+                                text = "${viewModel.name.length} / $mLenName",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.End,
                             )
@@ -179,23 +191,29 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                     )
 
                     OutlinedTextField(
-                        value = mTextAddress,
-                        onValueChange = { if (it.length <= mLenAddress) mTextAddress = it },
+                        value = viewModel.address,
+                        onValueChange = {
+                            if (it.length <= mLenAddress) {
+                                viewModel.onEvent(AddEditEvent.OnAddressChange(it))
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp),
                         label = { Text(stringResource(R.string.label_address)) },
                         placeholder = { Text(stringResource(R.string.label_address)) },
                         trailingIcon = {
-                            if (mTextAddress.isNotEmpty()) {
+                            if (viewModel.address.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (mTextAddress.isNotEmpty()) mTextAddress = ""
+                                    if (viewModel.address.isNotEmpty()) {
+                                        viewModel.onEvent(AddEditEvent.OnAddressChange(""))
+                                    }
                                 })
                             }
                         },
                         supportingText = {
                             Text(
-                                text = "${mTextAddress.length} / $mLenAddress",
+                                text = "${viewModel.address.length} / $mLenAddress",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.End,
                             )
@@ -207,23 +225,29 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                     )
 
                     OutlinedTextField(
-                        value = mTextPhone,
-                        onValueChange = { if (it.length <= mLenPhone) mTextPhone = it },
+                        value = viewModel.phone,
+                        onValueChange = {
+                            if (it.length <= mLenPhone) {
+                                viewModel.onEvent(AddEditEvent.OnPhoneChange(it))
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp),
                         label = { Text(stringResource(R.string.label_phone_number)) },
                         placeholder = { Text(stringResource(R.string.label_phone_number)) },
                         trailingIcon = {
-                            if (mTextPhone.isNotEmpty()) {
+                            if (viewModel.phone.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (mTextPhone.isNotEmpty()) mTextPhone = ""
+                                    if (viewModel.phone.isNotEmpty()) {
+                                        viewModel.onEvent(AddEditEvent.OnPhoneChange(""))
+                                    }
                                 })
                             }
                         },
                         supportingText = {
                             Text(
-                                text = "${mTextPhone.length} / $mLenPhone",
+                                text = "${viewModel.phone.length} / $mLenPhone",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.End,
                             )
@@ -237,23 +261,29 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                     )
 
                     OutlinedTextField(
-                        value = mTextEmail,
-                        onValueChange = { if (it.length <= mLenEmail) mTextEmail = it },
+                        value = viewModel.email,
+                        onValueChange = {
+                            if (it.length <= mLenEmail) {
+                                viewModel.onEvent(AddEditEvent.OnEmailChange(it))
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp),
                         label = { Text(stringResource(R.string.label_email)) },
                         placeholder = { Text(stringResource(R.string.label_email)) },
                         trailingIcon = {
-                            if (mTextEmail.isNotEmpty()) {
+                            if (viewModel.email.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (mTextEmail.isNotEmpty()) mTextEmail = ""
+                                    if (viewModel.email.isNotEmpty()) {
+                                        viewModel.onEvent(AddEditEvent.OnEmailChange(""))
+                                    }
                                 })
                             }
                         },
                         supportingText = {
                             Text(
-                                text = "${mTextEmail.length} / $mLenEmail",
+                                text = "${viewModel.email.length} / $mLenEmail",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.End,
                             )
@@ -267,23 +297,29 @@ fun AddOrEditScreen(navHostController: NavHostController, modifier: Modifier = M
                     )
 
                     OutlinedTextField(
-                        value = mTextNotes,
-                        onValueChange = { if (it.length <= mLenNotes) mTextNotes = it },
+                        value = viewModel.notes,
+                        onValueChange = {
+                            if (it.length <= mLenNotes) {
+                                viewModel.onEvent(AddEditEvent.OnNotesChange(it))
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp),
                         label = { Text(stringResource(R.string.label_notes)) },
                         placeholder = { Text(stringResource(R.string.label_notes)) },
                         trailingIcon = {
-                            if (mTextNotes.isNotEmpty()) {
+                            if (viewModel.notes.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (mTextNotes.isNotEmpty()) mTextNotes = ""
+                                    if (viewModel.notes.isNotEmpty()) {
+                                        viewModel.onEvent(AddEditEvent.OnNotesChange(""))
+                                    }
                                 })
                             }
                         },
                         supportingText = {
                             Text(
-                                text = "${mTextNotes.length} / $mLenNotes",
+                                text = "${viewModel.notes.length} / $mLenNotes",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.End,
                             )
