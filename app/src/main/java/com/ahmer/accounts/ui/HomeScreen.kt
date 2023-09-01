@@ -34,6 +34,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
@@ -43,8 +44,6 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -61,14 +60,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.UserModel
+import com.ahmer.accounts.dialogs.DeleteAlertDialog
 import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
 import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.drawerItemsList
-import com.ahmer.accounts.event.ListEvent
+import com.ahmer.accounts.event.HomeEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.DeleteIcon
@@ -99,7 +100,7 @@ fun LoadingProgressBar(modifier: Modifier = Modifier) {
 @Composable
 private fun UserItem(
     userModel: UserModel,
-    onEvent: (ListEvent) -> Unit,
+    onEvent: (HomeEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val mIconSize: Dp = 36.dp
@@ -107,13 +108,12 @@ private fun UserItem(
     var mShowDeleteDialog by remember { mutableStateOf(false) }
     var mShowInfoDialog by remember { mutableStateOf(false) }
 
-    /*if (mShowDeleteDialog) {
-        DeleteAlertDialog(nameAccount = userModel.name!!,
-            onConfirmClick = {
-                viewModel.deleteUser(userModel)
-            }
+    if (mShowDeleteDialog) {
+        DeleteAlertDialog(
+            nameAccount = userModel.name!!,
+            onConfirmClick = { onEvent(HomeEvent.OnDeleteClick(userModel)) }
         )
-    }*/
+    }
 
     if (mShowInfoDialog) {
         MoreInfoAlertDialog(userModel)
@@ -145,12 +145,12 @@ private fun UserItem(
                 ) { InfoIcon() }
                 IconButton(
                     onClick = {
-                        onEvent(ListEvent.OnItemClick(userModel))
+                        onEvent(HomeEvent.OnItemClick(userModel))
                     },
                     modifier = Modifier.then(Modifier.size(mIconSize)),
                 ) { EditIcon() }
                 IconButton(
-                    onClick = { onEvent(ListEvent.OnDeleteClick(userModel)) },
+                    onClick = { mShowDeleteDialog = true },
                     modifier = Modifier.then(Modifier.size(mIconSize)),
                 ) { DeleteIcon() }
             }
@@ -180,23 +180,35 @@ private fun UserItem(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun TopAppBarWithNavigationBar(
-    onNavigation: (UiEvent.Navigate) -> Unit,
-    viewModel: HomeViewModel = hiltViewModel()
+    onNavigation: (UiEvent.Navigate) -> Unit
 ) {
-    val userData = viewModel.getAllUsersBySearchAndSort.collectAsState(initial = emptyList())
-    val mShowSnackBar: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val mContext: Context = LocalContext.current.applicationContext
+    val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
+    val mCredit = 10000.00
+    val mDebit = 8000.00
+    val mDrawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val mHomeViewModel: HomeViewModel = hiltViewModel()
+    val mNavItemsList: List<DrawerItems> = drawerItemsList()
+    val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    val mUserData =
+        mHomeViewModel.getAllUsersBySearchAndSort.collectAsStateWithLifecycle(emptyList())
+    var mSelectedItems by rememberSaveable { mutableIntStateOf(0) }
+    var mShowDropdownMenu by remember { mutableStateOf(false) }
+    var mShowSearch by remember { mutableStateOf(false) }
+    var mTextSearch by remember { mutableStateOf(mHomeViewModel.searchQuery.value) }
+
     LaunchedEffect(key1 = true) {
-        viewModel.uiEvent.collect { event ->
+        mHomeViewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvent.Navigate -> onNavigation(event)
                 is UiEvent.ShowSnackBar -> {
-                    val result = mSnackBarHostState.showSnackbar(
+                    val mResult = mSnackBarHostState.showSnackbar(
                         message = event.message,
                         actionLabel = event.action
                     )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onEvent(ListEvent.OnUndoDeleteClick)
+                    if (mResult == SnackbarResult.ActionPerformed) {
+                        mHomeViewModel.onEvent(HomeEvent.OnUndoDeleteClick)
                     }
                 }
 
@@ -204,21 +216,6 @@ fun TopAppBarWithNavigationBar(
             }
         }
     }
-
-
-    val mContext: Context = LocalContext.current.applicationContext
-    val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
-    val mCredit: Double = 10000.00
-    val mDebit: Double = 8000.00
-    val mDrawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val mHomeViewModel: HomeViewModel = hiltViewModel()
-    //val mHomeUiState: HomeUiState by mHomeViewModel.uiState.collectAsState()
-    val mNavItemsList: List<DrawerItems> = drawerItemsList()
-    val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    var mSelectedItems by rememberSaveable { mutableIntStateOf(0) }
-    var mShowDropdownMenu by remember { mutableStateOf(false) }
-    var mShowSearch by remember { mutableStateOf(false) }
-    var mTextSearch by remember { mutableStateOf(mHomeViewModel.searchQuery.value) }
 
     if (mShowSearch) {
         MenuSearchBar(text = mTextSearch, onTextChange = { mTextSearch = it }) {
@@ -232,11 +229,6 @@ fun TopAppBarWithNavigationBar(
                onSearchClick = { mTextSearch = it }
            )*/
     }
-
-    /*if (mHomeUiState.isError) {
-        HelperFunctions.toastLong(mContext, "There is some unknown error.")
-        mHomeViewModel.onErrorConsumed()
-    }*/
 
     ModalNavigationDrawer(
         drawerContent = {
@@ -284,18 +276,20 @@ fun TopAppBarWithNavigationBar(
                 }) { MenuIcon() }
             }, actions = {
                 IconButton(onClick = { mShowSearch = true }) { SearchIcon() }
-                IconButton(onClick = { mShowDropdownMenu = !mShowDropdownMenu }) { SortIcon() }
+                IconButton(onClick = {
+                    mShowDropdownMenu = !mShowDropdownMenu
+                }) { SortIcon() }
                 DropdownMenu(expanded = mShowDropdownMenu,
                     onDismissRequest = { mShowDropdownMenu = false }) {
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_name)) },
                         onClick = {
-                            viewModel.onEvent(ListEvent.OnSortBy(SortBy.NAME))
+                            mHomeViewModel.onEvent(HomeEvent.OnSortBy(SortBy.NAME))
                             mShowDropdownMenu = false
                         },
                         leadingIcon = { SortByNameIcon() })
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_date_created)) },
                         onClick = {
-                            viewModel.onEvent(ListEvent.OnSortBy(SortBy.DATE))
+                            mHomeViewModel.onEvent(HomeEvent.OnSortBy(SortBy.DATE))
                             mShowDropdownMenu = false
                         },
                         leadingIcon = { SortByDateIcon() })
@@ -307,11 +301,12 @@ fun TopAppBarWithNavigationBar(
                 actionIconContentColor = MaterialTheme.colorScheme.onPrimary
             ), scrollBehavior = mScrollBehavior
             )
-        }, floatingActionButton = {
-            FloatingActionButton(onClick = {
-                viewModel.onEvent(ListEvent.OnAddClick)
-            }) { AddIcon() }
-        }) { innerPadding ->
+        }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
+            floatingActionButton = {
+                FloatingActionButton(onClick = {
+                    mHomeViewModel.onEvent(HomeEvent.OnAddClick)
+                }) { AddIcon() }
+            }) { innerPadding ->
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
@@ -324,34 +319,13 @@ fun TopAppBarWithNavigationBar(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(
-                        items = userData.value,
+                        items = mUserData.value,
                         key = { listUser -> listUser.id!! }) { user ->
                         UserItem(
                             userModel = user,
-                            onEvent = viewModel::onEvent,
+                            onEvent = mHomeViewModel::onEvent,
                         )
                     }
-                    /*when (mHomeUiState.uiState) {
-                        UiState.Error -> {}
-
-                        UiState.Loading -> {
-                            item {
-                                LoadingProgressBar()
-                            }
-                        }
-
-                        is UiState.Success -> {
-                            items(items = (mHomeUiState.uiState as UiState.Success).userModel,
-                                key = { listUser -> listUser.id }) { user ->
-                                UserItem(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    navHostController = navHostController,
-                                    viewModel = mHomeViewModel,
-                                    userModel = user
-                                )
-                            }
-                        }
-                    }*/
                 }
             }
         }

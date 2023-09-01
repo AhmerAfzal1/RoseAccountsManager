@@ -40,12 +40,12 @@ object HelperFunctions {
 
     @JvmStatic
     fun getSizeFormat(size: Long): String {
-        var result = size.toDouble() / 1024
-        if (result < 1024) return "${result.roundToInt()} KB"
-        result /= 1024
-        if (result < 1024) return String.format("%.2f MB", result)
-        result /= 1024
-        return String.format("%.2f GB", result)
+        var mResult = size.toDouble() / 1024
+        if (mResult < 1024) return "${mResult.roundToInt()} KB"
+        mResult /= 1024
+        if (mResult < 1024) return String.format("%.2f MB", mResult)
+        mResult /= 1024
+        return String.format("%.2f GB", mResult)
 
     }
 

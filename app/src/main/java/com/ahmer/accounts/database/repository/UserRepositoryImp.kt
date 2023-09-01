@@ -30,6 +30,5 @@ class UserRepositoryImp @Inject constructor(private val userDao: UserDao) : User
         searchQuery: String, sortBy: SortBy
     ): Flow<List<UserModel>> = userDao.getAllUsersBySearchAndSort(searchQuery, sortBy)
 
-
     override fun getPinnedUsers(id: Int): Flow<UserModel> = userDao.getPinnedUsers(id)
 }

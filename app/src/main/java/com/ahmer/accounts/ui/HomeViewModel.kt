@@ -4,15 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.database.repository.UserRepositoryImp
-import com.ahmer.accounts.event.ListEvent
-import com.ahmer.accounts.database.state.Routes
+import com.ahmer.accounts.event.HomeEvent
 import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.navigation.ScreenRoutes
 import com.ahmer.accounts.preferences.PreferencesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -25,15 +27,15 @@ class HomeViewModel @Inject constructor(
     private val repository: UserRepositoryImp,
     private val preferencesManager: PreferencesManager,
 ) : ViewModel() {
-    private val _uiEvent = Channel<UiEvent>()
-    val uiEvent = _uiEvent.receiveAsFlow()
-
-    private var deletedUser: UserModel? = null
+    private val _searchQuery: MutableStateFlow<String> = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     private val _preferences = preferencesManager.preferencesFlow
 
-    private val _searchQuery: MutableStateFlow<String> = MutableStateFlow("")
-    val searchQuery: MutableStateFlow<String> = _searchQuery
+    private val _uiEvent = Channel<UiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
+    private var mDeletedUser: UserModel? = null
 
     val getAllUsersBySearchAndSort: Flow<List<UserModel>> =
         combine(_searchQuery, _preferences) { searchQuery, preferences ->
@@ -42,48 +44,37 @@ class HomeViewModel @Inject constructor(
             repository.getAllUsersBySearchAndSort(search, preference.sortBy)
         }
 
-    fun onEvent(event: ListEvent) {
+    fun onEvent(event: HomeEvent) {
         when (event) {
-            is ListEvent.OnDeleteClick -> {
+            is HomeEvent.OnDeleteClick -> {
                 viewModelScope.launch {
-                    deletedUser = event.userModel
-                    /*event.userModel.name?.let {
-                        DeleteAlertDialog(nameAccount = it,
-                            onConfirmClick = {
-                                repository.delete(event.userModel)
-                            }
-                        )
-                    }*/
+                    mDeletedUser = event.userModel
                     repository.delete(event.userModel)
                     sendUiEvent(
                         UiEvent.ShowSnackBar(
-                            message = "User deleted",
+                            message = "User ${event.userModel.name} deleted",
                             action = "Undo"
                         )
                     )
                 }
             }
 
-            is ListEvent.OnInfoClick -> {
-
+            is HomeEvent.OnItemClick -> {
+                sendUiEvent(UiEvent.Navigate(ScreenRoutes.AddEditScreen + "?userId=${event.userModel.id}"))
             }
 
-            is ListEvent.OnItemClick -> {
-                sendUiEvent(UiEvent.Navigate(Routes.ADD_EDIT_SCREEN + "?userId=${event.userModel.id}"))
-            }
-
-            is ListEvent.OnSortBy -> {
+            is HomeEvent.OnSortBy -> {
                 viewModelScope.launch {
                     preferencesManager.updateSortOrder(event.sortBy)
                 }
             }
 
-            ListEvent.OnAddClick -> {
-                sendUiEvent(UiEvent.Navigate(Routes.ADD_EDIT_SCREEN))
+            HomeEvent.OnAddClick -> {
+                sendUiEvent(UiEvent.Navigate(ScreenRoutes.AddEditScreen))
             }
 
-            ListEvent.OnUndoDeleteClick -> {
-                deletedUser?.let { user ->
+            HomeEvent.OnUndoDeleteClick -> {
+                mDeletedUser?.let { user ->
                     viewModelScope.launch {
                         repository.insertOrUpdate(user)
                     }
@@ -96,10 +87,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _uiEvent.send(event)
         }
-    }
-
-    fun deleteUser(userModel: UserModel) = viewModelScope.launch {
-        repository.delete(userModel)
     }
 
     /*private val mExceptionHandler = CoroutineExceptionHandler { _, _ ->

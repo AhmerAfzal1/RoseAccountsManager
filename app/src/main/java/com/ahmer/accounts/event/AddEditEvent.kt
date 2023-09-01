@@ -6,5 +6,5 @@ sealed class AddEditEvent {
     data class OnNameChange(val name: String) : AddEditEvent()
     data class OnNotesChange(val notes: String) : AddEditEvent()
     data class OnPhoneChange(val phone: String) : AddEditEvent()
-    object OnSaveClick : AddEditEvent()
+    data object OnSaveClick : AddEditEvent()
 }

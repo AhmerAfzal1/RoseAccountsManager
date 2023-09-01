@@ -1,7 +1,6 @@
 package com.ahmer.accounts.ui
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
@@ -22,42 +21,34 @@ class AddEditViewModel @Inject constructor(
     private val repository: UserRepositoryImp,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    var data by mutableStateOf<UserModel?>(null)
-        private set
-
-    var name by mutableStateOf("")
-        private set
+    private val mUserId = savedStateHandle.get<Int>("userId")
+    private var userModelData by mutableStateOf<UserModel?>(null)
 
     var address by mutableStateOf("")
-        private set
-
-    var phone by mutableStateOf("")
-        private set
-
     var email by mutableStateOf("")
-        private set
-
+    var name by mutableStateOf("")
     var notes by mutableStateOf("")
-        private set
-
-    private val userId = savedStateHandle.get<Int>("userId")
+    var phone by mutableStateOf("")
+    var titleBar by mutableStateOf("")
 
     init {
-        if (userId != -1) {
+        if (mUserId != -1) {
             viewModelScope.launch {
-                repository.getUserById(userId!!)?.let { user ->
+                titleBar = "Add User Data"
+                repository.getUserById(mUserId!!)?.let { user ->
                     name = user.name ?: ""
                     address = user.address ?: ""
                     phone = user.phone ?: ""
                     email = user.email ?: ""
                     notes = user.notes ?: ""
-                    this@AddEditViewModel.data = user
+                    this@AddEditViewModel.userModelData = user
                 }
             }
+        } else {
+            titleBar = "Edit User Data"
         }
     }
 
@@ -87,14 +78,12 @@ class AddEditViewModel @Inject constructor(
                 viewModelScope.launch {
                     if (name.isEmpty()) {
                         sendUiEvent(
-                            UiEvent.ShowSnackBar(
-                                message = "The name can't be empty"
-                            )
+                            UiEvent.ShowSnackBar(message = "The name must not be empty")
                         )
                         return@launch
                     }
 
-                    val user = if (userId == -1) {
+                    val mUser = if (mUserId == -1) {
                         UserModel(
                             name = name,
                             address = address,
@@ -103,8 +92,8 @@ class AddEditViewModel @Inject constructor(
                             notes = notes,
                         )
                     } else {
-                        data?.copy(
-                            id = data?.id,
+                        userModelData!!.copy(
+                            id = userModelData?.id,
                             name = name,
                             address = address,
                             phone = phone,
@@ -113,10 +102,8 @@ class AddEditViewModel @Inject constructor(
                             modified = System.currentTimeMillis()
                         )
                     }
-                    if (user != null) {
-                        repository.insertOrUpdate(user)
-                    }
 
+                    repository.insertOrUpdate(mUser)
                     sendUiEvent(UiEvent.PopBackStack)
                 }
             }
@@ -127,9 +114,5 @@ class AddEditViewModel @Inject constructor(
         viewModelScope.launch {
             _uiEvent.send(event)
         }
-    }
-
-    fun insertOrUpdateUser(userModel: UserModel) = viewModelScope.launch {
-        repository.insertOrUpdate(userModel)
     }
 }
