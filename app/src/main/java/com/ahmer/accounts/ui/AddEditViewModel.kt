@@ -37,7 +37,7 @@ class AddEditViewModel @Inject constructor(
     init {
         if (mUserId != -1) {
             viewModelScope.launch {
-                titleBar = "Add User Data"
+                titleBar = "Edit User Data"
                 repository.getUserById(mUserId!!)?.let { user ->
                     name = user.name ?: ""
                     address = user.address ?: ""
@@ -48,7 +48,7 @@ class AddEditViewModel @Inject constructor(
                 }
             }
         } else {
-            titleBar = "Edit User Data"
+            titleBar = "Add User Data"
         }
     }
 
