@@ -1,5 +1,6 @@
 package com.ahmer.accounts.ui
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +14,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -30,6 +30,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -46,13 +47,16 @@ import com.ahmer.accounts.event.AddEditEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.CloseIcon
+import com.ahmer.accounts.utils.HelperFunctions
 import com.ahmer.accounts.utils.SaveIcon
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun AddOrEditScreen(
     onPopBackStack: () -> Unit, modifier: Modifier = Modifier
 ) {
+    val mContext: Context = LocalContext.current
     val mFocusManager: FocusManager = LocalFocusManager.current
     val mFocusRequester: FocusRequester = remember { FocusRequester() }
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
@@ -67,17 +71,10 @@ fun AddOrEditScreen(
     val mLenPhone = 15
 
     LaunchedEffect(key1 = true) {
-        mViewModel.uiEvent.collect { event ->
+        mViewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is UiEvent.ShowSnackBar -> {
-                    mSnackBarHostState.showSnackbar(
-                        message = event.message,
-                        actionLabel = event.action,
-                        duration = SnackbarDuration.Short
-                    )
-                }
-
-                UiEvent.PopBackStack -> onPopBackStack()
+                UiEvent.SaveUserSuccess -> onPopBackStack()
+                is UiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
                 else -> Unit
             }
         }

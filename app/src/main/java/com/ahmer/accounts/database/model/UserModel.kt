@@ -40,4 +40,16 @@ data class UserModel(
 
     @ColumnInfo(name = "LastModified")
     val modified: Long = 0.toLong(),
-) : Parcelable
+) : Parcelable {
+    override fun toString(): String {
+        return "UserModel(" +
+                "id=$id, " +
+                "name=$name, " +
+                "address=$address, " +
+                "phone=$phone, " +
+                "email=$email, " +
+                "notes=$notes, " +
+                "created=$created, " +
+                "modified=$modified)"
+    }
+}

@@ -7,25 +7,28 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.database.repository.UserRepositoryImp
 import com.ahmer.accounts.event.AddEditEvent
 import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.usecase.user.UserUseCase
+import com.ahmer.accounts.utils.InvalidUsersException
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddEditViewModel @Inject constructor(
-    private val repository: UserRepositoryImp,
+    private val useCase: UserUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val _uiEvent = Channel<UiEvent>()
-    val uiEvent = _uiEvent.receiveAsFlow()
 
-    private val mUserId = savedStateHandle.get<Int>("userId")
-    private var mGetUserModelData by mutableStateOf<UserModel?>(null)
+    private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
+    val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
+
+    private var mGetUserModelData: UserModel? by mutableStateOf(null)
+    private var userId: Int? = 0
 
     var address by mutableStateOf("")
     var email by mutableStateOf("")
@@ -35,16 +38,19 @@ class AddEditViewModel @Inject constructor(
     var titleBar by mutableStateOf("Add User Data")
 
     init {
-        if (mUserId != -1) {
-            titleBar = "Edit User Data"
-            viewModelScope.launch {
-                repository.getUserById(mUserId!!)?.let { user ->
-                    name = user.name ?: ""
-                    address = user.address ?: ""
-                    phone = user.phone ?: ""
-                    email = user.email ?: ""
-                    notes = user.notes ?: ""
-                    this@AddEditViewModel.mGetUserModelData = user
+        savedStateHandle.get<Int>("userId")?.let { id ->
+            userId = id
+            if (id != -1) {
+                titleBar = "Edit User Data"
+                viewModelScope.launch {
+                    useCase.getUserByIdUseCase(id)?.also { user ->
+                        name = user.name ?: ""
+                        address = user.address ?: ""
+                        phone = user.phone ?: ""
+                        email = user.email ?: ""
+                        notes = user.notes ?: ""
+                        this@AddEditViewModel.mGetUserModelData = user
+                    }
                 }
             }
         }
@@ -74,44 +80,45 @@ class AddEditViewModel @Inject constructor(
 
             AddEditEvent.OnSaveClick -> {
                 viewModelScope.launch {
-                    if (name.isEmpty()) {
-                        sendUiEvent(
-                            UiEvent.ShowSnackBar(message = "The name must not be empty")
+                    try {
+                        var mUser: UserModel? by mutableStateOf(null)
+                        var mMessage by mutableStateOf("")
+                        if (userId == -1) {
+                            mUser = UserModel(
+                                id = mGetUserModelData?.id,
+                                name = name,
+                                address = address,
+                                phone = phone,
+                                email = email,
+                                notes = notes,
+                            )
+                            mMessage = "User added successfully!"
+                        } else {
+                            mUser = mGetUserModelData!!.copy(
+                                id = mGetUserModelData?.id,
+                                name = name,
+                                address = address,
+                                phone = phone,
+                                email = email,
+                                notes = notes,
+                                modified = System.currentTimeMillis()
+                            )
+                            mMessage = "User updated successfully!"
+                        }
+                        useCase.addUserUseCase(mUser!!)
+                        _eventFlow.emit(UiEvent.SaveUserSuccess)
+                        _eventFlow.emit(UiEvent.ShowToast(mMessage))
+                    } catch (e: InvalidUsersException) {
+                        _eventFlow.emit(
+                            UiEvent.ShowToast(message = e.message ?: "User couldn't be added")
                         )
-                        return@launch
+                    } catch (e: Exception) {
+                        _eventFlow.emit(
+                            UiEvent.ShowToast(message = e.message ?: "User couldn't be added")
+                        )
                     }
-
-                    val mUser = if (mUserId == -1) {
-                        UserModel(
-                            id = mGetUserModelData?.id,
-                            name = name,
-                            address = address,
-                            phone = phone,
-                            email = email,
-                            notes = notes,
-                        )
-                    } else {
-                        mGetUserModelData!!.copy(
-                            id = mGetUserModelData?.id,
-                            name = name,
-                            address = address,
-                            phone = phone,
-                            email = email,
-                            notes = notes,
-                            modified = System.currentTimeMillis()
-                        )
-                    }
-
-                    repository.insertOrUpdate(mUser)
-                    sendUiEvent(UiEvent.PopBackStack)
                 }
             }
-        }
-    }
-
-    private fun sendUiEvent(event: UiEvent) {
-        viewModelScope.launch {
-            _uiEvent.send(event)
         }
     }
 }

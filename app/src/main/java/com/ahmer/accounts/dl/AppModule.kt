@@ -9,6 +9,11 @@ import com.ahmer.accounts.database.dao.UserDao
 import com.ahmer.accounts.database.repository.UserRepository
 import com.ahmer.accounts.database.repository.UserRepositoryImp
 import com.ahmer.accounts.preferences.PreferencesManager
+import com.ahmer.accounts.usecase.user.AddUserUseCase
+import com.ahmer.accounts.usecase.user.DeleteUserUseCase
+import com.ahmer.accounts.usecase.user.GetAllUsersUseCase
+import com.ahmer.accounts.usecase.user.GetUserByIdUseCase
+import com.ahmer.accounts.usecase.user.UserUseCase
 import com.ahmer.accounts.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -49,4 +54,15 @@ object AppModule {
     @Provides
     @Singleton
     fun providesUserRepository(userDao: UserDao): UserRepository = UserRepositoryImp(userDao)
+
+    @Provides
+    @Singleton
+    fun providesUserUseCase(repository: UserRepository): UserUseCase {
+        return UserUseCase(
+            AddUserUseCase(repository),
+            DeleteUserUseCase(repository),
+            GetAllUsersUseCase(repository),
+            GetUserByIdUseCase(repository)
+        )
+    }
 }

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,6 +33,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -60,7 +60,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.dialogs.DeleteAlertDialog
@@ -84,15 +83,19 @@ import com.ahmer.accounts.utils.SortByDateIcon
 import com.ahmer.accounts.utils.SortByNameIcon
 import com.ahmer.accounts.utils.SortIcon
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @Composable
 fun LoadingProgressBar(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularProgressIndicator(
-            modifier = Modifier.then(Modifier.size(80.dp)), strokeWidth = 8.dp
+            modifier = modifier.then(Modifier.size(80.dp)),
+            strokeWidth = 8.dp
         )
     }
 }
@@ -145,7 +148,7 @@ private fun UserItem(
                 ) { InfoIcon() }
                 IconButton(
                     onClick = {
-                        onEvent(HomeEvent.OnItemClick(userModel))
+                        onEvent(HomeEvent.OnEditClick(userModel))
                     },
                     modifier = Modifier.then(Modifier.size(mIconSize)),
                 ) { EditIcon() }
@@ -191,27 +194,29 @@ fun TopAppBarWithNavigationBar(
     val mNavItemsList: List<DrawerItems> = drawerItemsList()
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val mUserData =
-        mHomeViewModel.getAllUsersBySearchAndSort.collectAsStateWithLifecycle(emptyList())
     var mSelectedItems by rememberSaveable { mutableIntStateOf(0) }
     var mShowDropdownMenu by remember { mutableStateOf(false) }
     var mShowSearch by remember { mutableStateOf(false) }
+    val mState = mHomeViewModel.state.value
     var mTextSearch by remember { mutableStateOf(mHomeViewModel.searchQuery.value) }
 
+
     LaunchedEffect(key1 = true) {
-        mHomeViewModel.uiEvent.collect { event ->
+        mHomeViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.Navigate -> onNavigation(event)
                 is UiEvent.ShowSnackBar -> {
                     val mResult = mSnackBarHostState.showSnackbar(
                         message = event.message,
-                        actionLabel = event.action
+                        actionLabel = event.action,
+                        duration = SnackbarDuration.Short
                     )
                     if (mResult == SnackbarResult.ActionPerformed) {
                         mHomeViewModel.onEvent(HomeEvent.OnUndoDeleteClick)
                     }
                 }
 
+                is UiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
                 else -> Unit
             }
         }
@@ -319,7 +324,7 @@ fun TopAppBarWithNavigationBar(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(
-                        items = mUserData.value,
+                        items = mState.getAllUsersList,
                         key = { listUser -> listUser.id!! }) { user ->
                         UserItem(
                             userModel = user,
@@ -327,6 +332,9 @@ fun TopAppBarWithNavigationBar(
                         )
                     }
                 }
+            }
+            if (mState.isLoading) {
+                LoadingProgressBar()
             }
         }
     }
