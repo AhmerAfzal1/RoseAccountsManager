@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -132,7 +133,10 @@ fun AddOrEditScreen(
                                 textAlign = TextAlign.End,
                             )
                         },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            capitalization = KeyboardCapitalization.Sentences,
+                            imeAction = ImeAction.Next
+                        ),
                         keyboardActions = KeyboardActions(onNext = {
                             mFocusManager.moveFocus(FocusDirection.Down)
                         })
@@ -166,7 +170,10 @@ fun AddOrEditScreen(
                                 textAlign = TextAlign.End,
                             )
                         },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            capitalization = KeyboardCapitalization.Sentences,
+                            imeAction = ImeAction.Next
+                        ),
                         keyboardActions = KeyboardActions(onNext = {
                             mFocusManager.moveFocus(FocusDirection.Down)
                         })
@@ -200,8 +207,10 @@ fun AddOrEditScreen(
                                 textAlign = TextAlign.End,
                             )
                         },
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Next, keyboardType = KeyboardType.Phone
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            capitalization = KeyboardCapitalization.Sentences,
+                            keyboardType = KeyboardType.Phone,
+                            imeAction = ImeAction.Next
                         ),
                         keyboardActions = KeyboardActions(onNext = {
                             mFocusManager.moveFocus(FocusDirection.Down)
@@ -236,8 +245,10 @@ fun AddOrEditScreen(
                                 textAlign = TextAlign.End,
                             )
                         },
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Next, keyboardType = KeyboardType.Email
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            capitalization = KeyboardCapitalization.Sentences,
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next
                         ),
                         keyboardActions = KeyboardActions(onNext = {
                             mFocusManager.moveFocus(FocusDirection.Down)
@@ -272,7 +283,10 @@ fun AddOrEditScreen(
                                 textAlign = TextAlign.End,
                             )
                         },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            capitalization = KeyboardCapitalization.Sentences,
+                            imeAction = ImeAction.Done
+                        ),
                         keyboardActions = KeyboardActions(onDone = { clear() }),
                         minLines = 4
                     )
