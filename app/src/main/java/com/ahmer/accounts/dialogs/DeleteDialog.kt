@@ -59,7 +59,8 @@ fun DeleteAlertDialog(
                 DeleteIcon(
                     modifier = Modifier
                         .size(48.dp)
-                        .align(Alignment.CenterHorizontally),
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 5.dp),
                     tint = AlertDialogDefaults.iconContentColor
                 )
 
