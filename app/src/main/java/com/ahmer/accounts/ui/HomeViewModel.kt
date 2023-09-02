@@ -60,7 +60,7 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeEvent.OnItemClick -> {
-                sendUiEvent(UiEvent.Navigate(ScreenRoutes.AddEditScreen + "?userId=${event.userModel.id}"))
+                sendUiEvent(UiEvent.Navigate(route = ScreenRoutes.AddEditScreen + "?userId=${event.userModel.id}"))
             }
 
             is HomeEvent.OnSortBy -> {

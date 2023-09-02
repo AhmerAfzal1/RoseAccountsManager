@@ -27,6 +27,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -51,6 +54,7 @@ fun AddOrEditScreen(
     onPopBackStack: () -> Unit, modifier: Modifier = Modifier
 ) {
     val mFocusManager: FocusManager = LocalFocusManager.current
+    val mFocusRequester: FocusRequester = remember { FocusRequester() }
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
@@ -77,6 +81,10 @@ fun AddOrEditScreen(
                 else -> Unit
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        mFocusRequester.requestFocus()
     }
 
     fun clear() {
@@ -114,7 +122,14 @@ fun AddOrEditScreen(
                                 mViewModel.onEvent(AddEditEvent.OnNameChange(text))
                             }
                         },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(mFocusRequester)
+                            .onFocusChanged { focus ->
+                                if (focus.isFocused) {
+                                    mKeyboardController?.show()
+                                }
+                            },
                         label = { Text(stringResource(R.string.label_name)) },
                         placeholder = { Text(stringResource(R.string.label_name)) },
                         trailingIcon = {
@@ -134,7 +149,7 @@ fun AddOrEditScreen(
                             )
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.Sentences,
+                            capitalization = KeyboardCapitalization.Words,
                             imeAction = ImeAction.Next
                         ),
                         keyboardActions = KeyboardActions(onNext = {
@@ -171,7 +186,7 @@ fun AddOrEditScreen(
                             )
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.Sentences,
+                            capitalization = KeyboardCapitalization.Words,
                             imeAction = ImeAction.Next
                         ),
                         keyboardActions = KeyboardActions(onNext = {
@@ -208,7 +223,7 @@ fun AddOrEditScreen(
                             )
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.Sentences,
+                            capitalization = KeyboardCapitalization.Words,
                             keyboardType = KeyboardType.Phone,
                             imeAction = ImeAction.Next
                         ),
@@ -246,7 +261,7 @@ fun AddOrEditScreen(
                             )
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.Sentences,
+                            capitalization = KeyboardCapitalization.Words,
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Next
                         ),
@@ -284,7 +299,7 @@ fun AddOrEditScreen(
                             )
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.Sentences,
+                            capitalization = KeyboardCapitalization.Words,
                             imeAction = ImeAction.Done
                         ),
                         keyboardActions = KeyboardActions(onDone = { clear() }),

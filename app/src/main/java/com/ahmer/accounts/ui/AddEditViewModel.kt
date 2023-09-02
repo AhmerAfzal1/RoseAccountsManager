@@ -25,30 +25,28 @@ class AddEditViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     private val mUserId = savedStateHandle.get<Int>("userId")
-    private var userModelData by mutableStateOf<UserModel?>(null)
+    private var mGetUserModelData by mutableStateOf<UserModel?>(null)
 
     var address by mutableStateOf("")
     var email by mutableStateOf("")
     var name by mutableStateOf("")
     var notes by mutableStateOf("")
     var phone by mutableStateOf("")
-    var titleBar by mutableStateOf("")
+    var titleBar by mutableStateOf("Add User Data")
 
     init {
         if (mUserId != -1) {
+            titleBar = "Edit User Data"
             viewModelScope.launch {
-                titleBar = "Edit User Data"
                 repository.getUserById(mUserId!!)?.let { user ->
                     name = user.name ?: ""
                     address = user.address ?: ""
                     phone = user.phone ?: ""
                     email = user.email ?: ""
                     notes = user.notes ?: ""
-                    this@AddEditViewModel.userModelData = user
+                    this@AddEditViewModel.mGetUserModelData = user
                 }
             }
-        } else {
-            titleBar = "Add User Data"
         }
     }
 
@@ -85,6 +83,7 @@ class AddEditViewModel @Inject constructor(
 
                     val mUser = if (mUserId == -1) {
                         UserModel(
+                            id = mGetUserModelData?.id,
                             name = name,
                             address = address,
                             phone = phone,
@@ -92,8 +91,8 @@ class AddEditViewModel @Inject constructor(
                             notes = notes,
                         )
                     } else {
-                        userModelData!!.copy(
-                            id = userModelData?.id,
+                        mGetUserModelData!!.copy(
+                            id = mGetUserModelData?.id,
                             name = name,
                             address = address,
                             phone = phone,
