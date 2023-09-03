@@ -1,14 +1,12 @@
 package com.ahmer.accounts.ui
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.core.event.HomeEvent
 import com.ahmer.accounts.core.event.UiEvent
-import com.ahmer.accounts.core.event.UserState
+import com.ahmer.accounts.core.state.UserState
+import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.navigation.ScreenRoutes
 import com.ahmer.accounts.preferences.PreferencesFilter
 import com.ahmer.accounts.preferences.PreferencesManager
@@ -30,43 +28,29 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val useCase: UserUseCase,
+    private val userUseCase: UserUseCase,
     private val preferencesManager: PreferencesManager,
 ) : ViewModel(), LifecycleObserver {
-    private val _searchQuery: MutableStateFlow<String> = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
-
-    private val _preferences: Flow<PreferencesFilter> = preferencesManager.preferencesFlow
-
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
-    private var mDeletedUser: UserModel? = null
+    private val _preferences: Flow<PreferencesFilter> = preferencesManager.preferencesFlow
+
+    private val _searchQuery: MutableStateFlow<String> = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     private val _uiState = MutableStateFlow(UserState())
     val uiState = _uiState.asStateFlow()
 
-    /*private val _state: MutableState<UserState> = mutableStateOf(UserState())
-    val state: MutableState<UserState> = _state*/
-
-    private var loadUsersJob: Job? = null
-
-    fun getAllUsers() {
-        loadUsersJob?.cancel()
-        loadUsersJob =
-            useCase.getAllUsersUseCase(_searchQuery, _preferences).onEach { resultState ->
-                _uiState.update {
-                    it.copy(getAllUsersList = resultState)
-                }
-            }.launchIn(viewModelScope)
-    }
+    private var mDeletedUser: UserModel? = null
+    private var mLoadUsersJob: Job? = null
 
     fun onEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.OnDeleteClick -> {
                 viewModelScope.launch {
                     mDeletedUser = event.userModel
-                    useCase.deleteUserUseCase(event.userModel)
+                    userUseCase.deleteUser(event.userModel)
                     _eventFlow.emit(
                         UiEvent.ShowSnackBar(
                             message = "User ${event.userModel.name} deleted", action = "Undo"
@@ -96,14 +80,22 @@ class HomeViewModel @Inject constructor(
             HomeEvent.OnUndoDeleteClick -> {
                 mDeletedUser?.let { user ->
                     viewModelScope.launch {
-                        useCase.addUserUseCase(user)
+                        userUseCase.addUser(user)
                     }
                 }
             }
         }
     }
 
+    fun getAllUsersData() {
+        mLoadUsersJob?.cancel()
+        mLoadUsersJob =
+            userUseCase.getAllUsers(_searchQuery, _preferences).onEach { resultState ->
+                _uiState.update { userState -> userState.copy(getAllUsersList = resultState) }
+            }.launchIn(viewModelScope)
+    }
+
     init {
-        getAllUsers()
+        getAllUsersData()
     }
 }

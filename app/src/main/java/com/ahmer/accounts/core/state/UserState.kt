@@ -1,4 +1,4 @@
-package com.ahmer.accounts.core.event
+package com.ahmer.accounts.core.state
 
 import com.ahmer.accounts.core.state.ResultState
 import com.ahmer.accounts.database.model.UserModel

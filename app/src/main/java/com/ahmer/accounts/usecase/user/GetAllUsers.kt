@@ -10,8 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 
-class GetAllUsersUseCase(private val repository: UserRepository) {
-
+class GetAllUsers(private val repository: UserRepository) {
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
         searchQuery: MutableStateFlow<String>, preferences: Flow<PreferencesFilter>

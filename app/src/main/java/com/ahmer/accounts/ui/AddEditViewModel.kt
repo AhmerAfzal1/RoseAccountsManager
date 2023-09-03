@@ -6,11 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.core.event.AddEditEvent
 import com.ahmer.accounts.core.event.UiEvent
+import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.usecase.user.UserUseCase
-import com.ahmer.accounts.utils.InvalidUsersException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -20,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditViewModel @Inject constructor(
-    private val useCase: UserUseCase,
+    private val userUseCase: UserUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -43,7 +42,7 @@ class AddEditViewModel @Inject constructor(
             if (id != -1) {
                 titleBar = "Edit User Data"
                 viewModelScope.launch {
-                    useCase.getUserByIdUseCase(id)?.also { user ->
+                    userUseCase.getUserById(id)?.also { user ->
                         name = user.name ?: ""
                         address = user.address ?: ""
                         phone = user.phone ?: ""
@@ -83,6 +82,10 @@ class AddEditViewModel @Inject constructor(
                     try {
                         var mUser: UserModel? by mutableStateOf(null)
                         var mMessage by mutableStateOf("")
+                        if (name.isEmpty()) {
+                            _eventFlow.emit(UiEvent.ShowToast("The name can't be empty"))
+                            return@launch
+                        }
                         if (userId == -1) {
                             mUser = UserModel(
                                 id = mGetUserModelData?.id,
@@ -105,13 +108,9 @@ class AddEditViewModel @Inject constructor(
                             )
                             mMessage = "User updated successfully!"
                         }
-                        useCase.addUserUseCase(mUser!!)
+                        userUseCase.addUser(mUser!!)
                         _eventFlow.emit(UiEvent.SaveUserSuccess)
                         _eventFlow.emit(UiEvent.ShowToast(mMessage))
-                    } catch (e: InvalidUsersException) {
-                        _eventFlow.emit(
-                            UiEvent.ShowToast(message = e.message ?: "User couldn't be added")
-                        )
                     } catch (e: Exception) {
                         _eventFlow.emit(
                             UiEvent.ShowToast(message = e.message ?: "User couldn't be added")

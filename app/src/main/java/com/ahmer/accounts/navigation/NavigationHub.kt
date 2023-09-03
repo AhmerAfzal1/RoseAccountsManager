@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ahmer.accounts.ui.AddOrEditScreen
-import com.ahmer.accounts.ui.TopAppBarWithNavigationBar
+import com.ahmer.accounts.ui.HomeScreen
 
 @Composable
 fun MainNavigation() {
@@ -18,7 +18,7 @@ fun MainNavigation() {
         startDestination = ScreenRoutes.HomeScreen,
         builder = {
             composable(route = ScreenRoutes.HomeScreen) {
-                TopAppBarWithNavigationBar(onNavigation = {
+                HomeScreen(onNavigation = {
                     mNavHostController.navigate(it.route)
                 })
             }

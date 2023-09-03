@@ -1,6 +1,5 @@
 package com.ahmer.accounts.core.components
 
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +17,7 @@ import com.ahmer.accounts.R
 
 @Composable
 fun GenericLoading(
+    modifier: Modifier = Modifier,
     message: String? = null
 ) {
     Column(
@@ -27,7 +27,10 @@ fun GenericLoading(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(
+            modifier = modifier.then(Modifier.size(80.dp)),
+            strokeWidth = 8.dp
+        )
         Spacer(modifier = Modifier.size(16.dp))
         Text(text = message ?: stringResource(id = R.string.msg_loading))
     }

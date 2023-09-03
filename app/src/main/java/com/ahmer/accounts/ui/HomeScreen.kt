@@ -2,31 +2,14 @@ package com.ahmer.accounts.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -56,142 +39,36 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.R
-import com.ahmer.accounts.core.components.AsyncData
-import com.ahmer.accounts.core.components.GenericError
-import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.dialogs.DeleteAlertDialog
-import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
+import com.ahmer.accounts.core.event.HomeEvent
+import com.ahmer.accounts.core.event.UiEvent
 import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.drawerItemsList
-import com.ahmer.accounts.core.event.HomeEvent
-import com.ahmer.accounts.core.event.UiEvent
-import com.ahmer.accounts.core.state.ResultState
+import com.ahmer.accounts.ui.components.HomeUserListScreen
 import com.ahmer.accounts.utils.AddIcon
-import com.ahmer.accounts.utils.DeleteIcon
-import com.ahmer.accounts.utils.EditIcon
 import com.ahmer.accounts.utils.HelperFunctions
-import com.ahmer.accounts.utils.InfoIcon
 import com.ahmer.accounts.utils.MenuIcon
-import com.ahmer.accounts.utils.PinIcon
 import com.ahmer.accounts.utils.SearchIcon
 import com.ahmer.accounts.utils.SortBy
 import com.ahmer.accounts.utils.SortByDateIcon
 import com.ahmer.accounts.utils.SortByNameIcon
 import com.ahmer.accounts.utils.SortIcon
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
-@Composable
-fun LoadingProgressBar(modifier: Modifier = Modifier) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CircularProgressIndicator(
-            modifier = modifier.then(Modifier.size(80.dp)),
-            strokeWidth = 8.dp
-        )
-    }
-}
-
-@Composable
-private fun UserItem(
-    userModel: UserModel,
-    onEvent: (HomeEvent) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val mIconSize: Dp = 36.dp
-    val mPadding: Dp = 5.dp
-    var mShowDeleteDialog by remember { mutableStateOf(false) }
-    var mShowInfoDialog by remember { mutableStateOf(false) }
-
-    if (mShowDeleteDialog) {
-        DeleteAlertDialog(
-            nameAccount = userModel.name!!,
-            onConfirmClick = { onEvent(HomeEvent.OnDeleteClick(userModel)) }
-        )
-    }
-
-    if (mShowInfoDialog) {
-        MoreInfoAlertDialog(userModel)
-    }
-
-    ElevatedCard(
-        modifier = modifier.clickable { /*TODO*/ },
-        shape = RoundedCornerShape(10.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(end = mPadding)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.then(Modifier.size(mIconSize)),
-                ) { PinIcon() }
-                IconButton(
-                    onClick = { mShowInfoDialog = true },
-                    modifier = Modifier.then(Modifier.size(mIconSize)),
-                ) { InfoIcon() }
-                IconButton(
-                    onClick = {
-                        onEvent(HomeEvent.OnEditClick(userModel))
-                    },
-                    modifier = Modifier.then(Modifier.size(mIconSize)),
-                ) { EditIcon() }
-                IconButton(
-                    onClick = { mShowDeleteDialog = true },
-                    modifier = Modifier.then(Modifier.size(mIconSize)),
-                ) { DeleteIcon() }
-            }
-        }
-        Column(
-            modifier = Modifier.padding(start = mPadding, end = mPadding, bottom = mPadding)
-        ) {
-            Text(
-                modifier = Modifier.padding(start = mPadding),
-                text = "${userModel.name}",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text(
-                modifier = Modifier.padding(start = mPadding),
-                text = "Phone: ${userModel.phone}  |  Balance: ",
-                maxLines = 1,
-                style = MaterialTheme.typography.titleSmall
-            )
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun TopAppBarWithNavigationBar(
+fun HomeScreen(
     onNavigation: (UiEvent.Navigate) -> Unit
 ) {
     val mContext: Context = LocalContext.current.applicationContext
@@ -208,7 +85,6 @@ fun TopAppBarWithNavigationBar(
     var mShowSearch by remember { mutableStateOf(false) }
     val mState by mHomeViewModel.uiState.collectAsState()
     var mTextSearch by remember { mutableStateOf(mHomeViewModel.searchQuery.value) }
-
 
     LaunchedEffect(key1 = true) {
         mHomeViewModel.eventFlow.collectLatest { event ->
@@ -325,59 +201,8 @@ fun TopAppBarWithNavigationBar(
                 padding = innerPadding,
                 usersListState = mState.getAllUsersList,
                 onEvent = mHomeViewModel::onEvent,
-                reloadBooks = mHomeViewModel::getAllUsers
+                reloadData = mHomeViewModel::getAllUsersData
             )
         }
     }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun HomeUserListScreen(
-    modifier: Modifier = Modifier,
-    padding: PaddingValues,
-    usersListState: ResultState<List<UserModel>>,
-    onEvent: (HomeEvent) -> Unit,
-    reloadBooks: () -> Unit
-) {
-    var refreshing by remember { mutableStateOf(false) }
-    val refreshScope = rememberCoroutineScope()
-    fun refresh() = refreshScope.launch {
-        refreshing = true
-        reloadBooks()
-        delay(500)
-        refreshing = false
-    }
-
-    val state = rememberPullRefreshState(refreshing, ::refresh)
-
-    Box(Modifier.padding(padding)) {
-        AsyncData(resultState = usersListState, errorContent = {
-            GenericError(
-                onDismissAction = reloadBooks
-            )
-        }) { usersList ->
-            usersList?.let {
-                Column(
-                    modifier = modifier
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(
-                            items = usersList,
-                            key = { listUser -> listUser.id!! }) { user ->
-                            UserItem(userModel = user, onEvent = onEvent)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    PullRefreshIndicator(refreshing, state)
 }
