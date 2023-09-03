@@ -35,7 +35,4 @@ interface UserDao {
             SortBy.NAME -> getAllUsersSortedByNames(searchQuery)
         }
     }
-
-    @Query("SELECT * FROM customers WHERE _id=:id")
-    fun getPinnedUsers(id: Int): Flow<UserModel>
 }

@@ -38,6 +38,4 @@ class UserRepositoryImp @Inject constructor(private val userDao: UserDao) : User
             }
         }
     }
-
-    override fun getPinnedUsers(id: Int): Flow<UserModel> = userDao.getPinnedUsers(id)
 }

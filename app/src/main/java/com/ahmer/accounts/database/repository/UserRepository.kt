@@ -18,6 +18,4 @@ interface UserRepository {
     fun getAllUsersBySearchAndSort(
         searchQuery: String, sortBy: SortBy
     ): Flow<ResultState<List<UserModel>>>
-
-    fun getPinnedUsers(id: Int): Flow<UserModel>
 }
