@@ -7,8 +7,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.event.AddEditEvent
-import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.core.event.AddEditEvent
+import com.ahmer.accounts.core.event.UiEvent
 import com.ahmer.accounts.usecase.user.UserUseCase
 import com.ahmer.accounts.utils.InvalidUsersException
 import dagger.hilt.android.lifecycle.HiltViewModel

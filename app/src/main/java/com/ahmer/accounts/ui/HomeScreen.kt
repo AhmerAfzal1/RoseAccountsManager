@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
@@ -44,6 +48,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -61,6 +66,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.R
+import com.ahmer.accounts.core.components.AsyncData
+import com.ahmer.accounts.core.components.GenericError
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.dialogs.DeleteAlertDialog
 import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
@@ -68,8 +75,9 @@ import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.drawerItemsList
-import com.ahmer.accounts.event.HomeEvent
-import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.core.event.HomeEvent
+import com.ahmer.accounts.core.event.UiEvent
+import com.ahmer.accounts.core.state.ResultState
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.EditIcon
@@ -83,6 +91,7 @@ import com.ahmer.accounts.utils.SortByDateIcon
 import com.ahmer.accounts.utils.SortByNameIcon
 import com.ahmer.accounts.utils.SortIcon
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -197,7 +206,7 @@ fun TopAppBarWithNavigationBar(
     var mSelectedItems by rememberSaveable { mutableIntStateOf(0) }
     var mShowDropdownMenu by remember { mutableStateOf(false) }
     var mShowSearch by remember { mutableStateOf(false) }
-    val mState = mHomeViewModel.state.value
+    val mState by mHomeViewModel.uiState.collectAsState()
     var mTextSearch by remember { mutableStateOf(mHomeViewModel.searchQuery.value) }
 
 
@@ -312,30 +321,63 @@ fun TopAppBarWithNavigationBar(
                     mHomeViewModel.onEvent(HomeEvent.OnAddClick)
                 }) { AddIcon() }
             }) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+            HomeUserListScreen(
+                padding = innerPadding,
+                usersListState = mState.getAllUsersList,
+                onEvent = mHomeViewModel::onEvent,
+                reloadBooks = mHomeViewModel::getAllUsers
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun HomeUserListScreen(
+    modifier: Modifier = Modifier,
+    padding: PaddingValues,
+    usersListState: ResultState<List<UserModel>>,
+    onEvent: (HomeEvent) -> Unit,
+    reloadBooks: () -> Unit
+) {
+    var refreshing by remember { mutableStateOf(false) }
+    val refreshScope = rememberCoroutineScope()
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        reloadBooks()
+        delay(500)
+        refreshing = false
+    }
+
+    val state = rememberPullRefreshState(refreshing, ::refresh)
+
+    Box(Modifier.padding(padding)) {
+        AsyncData(resultState = usersListState, errorContent = {
+            GenericError(
+                onDismissAction = reloadBooks
+            )
+        }) { usersList ->
+            usersList?.let {
+                Column(
+                    modifier = modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(
-                        items = mState.getAllUsersList,
-                        key = { listUser -> listUser.id!! }) { user ->
-                        UserItem(
-                            userModel = user,
-                            onEvent = mHomeViewModel::onEvent,
-                        )
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(
+                            items = usersList,
+                            key = { listUser -> listUser.id!! }) { user ->
+                            UserItem(userModel = user, onEvent = onEvent)
+                        }
                     }
                 }
             }
-            if (mState.isLoading) {
-                LoadingProgressBar()
-            }
         }
     }
+
+    PullRefreshIndicator(refreshing, state)
 }

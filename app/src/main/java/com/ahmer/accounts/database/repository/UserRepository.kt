@@ -1,5 +1,6 @@
 package com.ahmer.accounts.database.repository
 
+import com.ahmer.accounts.core.state.ResultState
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.utils.SortBy
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +15,9 @@ interface UserRepository {
 
     fun getAllUsers(): Flow<List<UserModel>>
 
-    fun getAllUsersBySearchAndSort(searchQuery: String, sortBy: SortBy): Flow<List<UserModel>>
+    fun getAllUsersBySearchAndSort(
+        searchQuery: String, sortBy: SortBy
+    ): Flow<ResultState<List<UserModel>>>
 
     fun getPinnedUsers(id: Int): Flow<UserModel>
 }

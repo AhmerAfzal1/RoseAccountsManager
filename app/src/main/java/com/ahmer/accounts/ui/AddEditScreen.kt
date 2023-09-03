@@ -43,8 +43,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.R
-import com.ahmer.accounts.event.AddEditEvent
-import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.core.event.AddEditEvent
+import com.ahmer.accounts.core.event.UiEvent
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.HelperFunctions
