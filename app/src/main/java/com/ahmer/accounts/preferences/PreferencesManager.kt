@@ -4,10 +4,8 @@ import android.content.Context
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.SortBy
@@ -24,18 +22,6 @@ class PreferencesManager @Inject constructor(@ApplicationContext private val con
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.PREFERENCES_NAME)
 
-    private object PreferencesKeys {
-        val APP_LOCK = booleanPreferencesKey("AppLockKey")
-        val APP_THEME = booleanPreferencesKey("AppThemeKey")
-        val SORT_ORDER = stringPreferencesKey("SortOrderKey")
-    }
-
-    data class FilterPreferences(
-        val appLock: Boolean,
-        val appTheme: Boolean,
-        val sortBy: SortBy
-    )
-
     val preferencesFlow = context.dataStore.data
         .catch { exception ->
             if (exception is IOException) {
@@ -51,7 +37,7 @@ class PreferencesManager @Inject constructor(@ApplicationContext private val con
             val themeIsChecked = preferences[PreferencesKeys.APP_THEME] ?: false
             val sortBy =
                 SortBy.valueOf(preferences[PreferencesKeys.SORT_ORDER] ?: SortBy.DATE.name)
-            FilterPreferences(lockIsChecked, themeIsChecked, sortBy)
+            PreferencesFilter(lockIsChecked, themeIsChecked, sortBy)
         }
 
     suspend fun updateAppLock(isChecked: Boolean) = context.dataStore.edit { preferences ->

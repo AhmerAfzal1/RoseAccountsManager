@@ -62,4 +62,7 @@
     <string name="label_sort_by_name">Sort by name</string>
     <string name="title_add_user">Add User Data</string>
     <string name="title_edit_user">Edit User Data</string>
+
+    <string name="msg_generic_error">Ops! Something went wrong…</string>
+    <string name="msg_loading">Please wait…</string>
 </resources>

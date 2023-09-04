@@ -21,19 +21,19 @@ data class UserModel(
     val id: Long = 0.toLong(),
 
     @ColumnInfo(name = "Name")
-    val name: String?,
+    val name: String = "",
 
     @ColumnInfo(name = "Address")
-    val address: String?,
+    val address: String = "",
 
     @ColumnInfo(name = "Phone")
-    val phone: String?,
+    val phone: String = "",
 
     @ColumnInfo(name = "Email")
-    val email: String?,
+    val email: String = "",
 
     @ColumnInfo(name = "Notes")
-    val notes: String?,
+    val notes: String = "",
 
     @ColumnInfo(name = "Created")
     val created: Long = System.currentTimeMillis(),

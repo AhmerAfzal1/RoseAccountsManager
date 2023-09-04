@@ -1,97 +1,114 @@
 package com.ahmer.accounts.ui
 
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.database.repository.UserRepository
-import com.ahmer.accounts.database.state.HomeUiState
-import com.ahmer.accounts.database.state.Result
-import com.ahmer.accounts.database.state.UiState
-import com.ahmer.accounts.database.state.asResult
+import com.ahmer.accounts.database.repository.UserRepositoryImp
+import com.ahmer.accounts.event.HomeEvent
+import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.navigation.ScreenRoutes
+import com.ahmer.accounts.preferences.PreferencesFilter
 import com.ahmer.accounts.preferences.PreferencesManager
-import com.ahmer.accounts.utils.SortBy
+import com.ahmer.accounts.state.UserState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: UserRepository,
+    private val repositoryImp: UserRepositoryImp,
     private val preferencesManager: PreferencesManager,
-) : ViewModel() {
-    private val mExceptionHandler = CoroutineExceptionHandler { _, _ ->
-        viewModelScope.launch {
-            isError.emit(true)
-        }
-    }
-    private val _preferences = preferencesManager.preferencesFlow
+) : ViewModel(), LifecycleObserver {
+    private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
+    val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
+
+    private val _preferences: Flow<PreferencesFilter> = preferencesManager.preferencesFlow
 
     private val _searchQuery: MutableStateFlow<String> = MutableStateFlow("")
-    val searchQuery: MutableStateFlow<String> = _searchQuery
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val isError: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private val isRefreshing: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private val getAllUsers: Flow<Result<List<UserModel>>> = repository.getAllUsers().asResult()
+    private val _uiState = MutableStateFlow(UserState())
+    val uiState = _uiState.asStateFlow()
 
-    private val getAllUsersBySearchAndSort: Flow<Result<List<UserModel>>> =
-        combine(_searchQuery, _preferences) { searchQuery, preferences ->
-            Pair(searchQuery, preferences)
-        }.flatMapLatest { (search, preference) ->
-            repository.getAllUsersBySearchAndSort(search, preference.sortBy)
-        }.asResult()
+    private var mDeletedUser: UserModel? = null
+    private var mLoadUsersJob: Job? = null
 
-    val uiState: StateFlow<HomeUiState> = combine(
-        getAllUsersBySearchAndSort, isRefreshing, isError
-    ) { userData, refreshing, error ->
-        val mUserModelUi: UiState = when (userData) {
-            is Result.Success -> UiState.Success(userData.data)
-            is Result.Error -> UiState.Error
-            Result.Loading -> UiState.Loading
-        }
+    fun onEvent(event: HomeEvent) {
+        when (event) {
+            is HomeEvent.OnDeleteClick -> {
+                viewModelScope.launch {
+                    mDeletedUser = event.userModel
+                    repositoryImp.delete(event.userModel)
+                    _eventFlow.emit(
+                        UiEvent.ShowSnackBar(
+                            message = "User ${event.userModel.name} deleted", action = "Undo"
+                        )
+                    )
+                }
+            }
 
-        HomeUiState(mUserModelUi, refreshing, error)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5.seconds),
-        initialValue = HomeUiState(UiState.Loading, isRefreshing = false, isError = false)
-    )
+            is HomeEvent.OnEditClick -> {
+                viewModelScope.launch {
+                    _eventFlow.emit(UiEvent.Navigate(route = ScreenRoutes.AddEditScreen + "?userId=${event.userModel.id}"))
+                }
+            }
 
-    fun onRefresh() {
-        viewModelScope.launch(mExceptionHandler) {
-            val mGetUserModelData = async { uiState }
-            isRefreshing.emit(true)
-            try {
-                awaitAll(mGetUserModelData)
-            } finally {
-                isRefreshing.emit(false)
+            is HomeEvent.OnSortBy -> {
+                viewModelScope.launch {
+                    preferencesManager.updateSortOrder(event.sortBy)
+                }
+            }
+
+            HomeEvent.OnAddClick -> {
+                viewModelScope.launch {
+                    _eventFlow.emit(UiEvent.Navigate(ScreenRoutes.AddEditScreen))
+                }
+            }
+
+            HomeEvent.OnUndoDeleteClick -> {
+                mDeletedUser?.let { user ->
+                    viewModelScope.launch {
+                        repositoryImp.insertOrUpdate(user)
+                    }
+                }
             }
         }
     }
 
-    fun onErrorConsumed() = viewModelScope.launch {
-        isError.emit(false)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun getAllUsersBySearchAndSort(
+        searchQuery: MutableStateFlow<String>, preferences: Flow<PreferencesFilter>
+    ): Flow<ResultState<List<UserModel>>> = combine(searchQuery, preferences) { query, preference ->
+        Pair(query, preference)
+    }.flatMapLatest { (search, pref) ->
+        repositoryImp.getAllUsersBySearchAndSort(search, pref.sortBy)
     }
 
-    fun deleteUser(userModel: UserModel) = viewModelScope.launch {
-        repository.delete(userModel)
+    fun getAllUsersData() {
+        mLoadUsersJob?.cancel()
+        mLoadUsersJob =
+            getAllUsersBySearchAndSort(_searchQuery, _preferences).onEach { resultState ->
+                _uiState.update { userState -> userState.copy(getAllUsersList = resultState) }
+            }.launchIn(viewModelScope)
     }
 
-    fun updateSortOrder(sortBy: SortBy) = viewModelScope.launch {
-        preferencesManager.updateSortOrder(sortBy)
+    init {
+        getAllUsersData()
     }
-
 }

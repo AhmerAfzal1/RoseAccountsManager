@@ -1,11 +1,13 @@
 package com.ahmer.accounts.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ahmer.accounts.ui.AddOrEditScreen
-import com.ahmer.accounts.ui.TopAppBarWithNavigationBar
+import com.ahmer.accounts.ui.HomeScreen
 
 @Composable
 fun MainNavigation() {
@@ -13,13 +15,23 @@ fun MainNavigation() {
 
     NavHost(
         navController = mNavHostController,
-        startDestination = NavScreens.HomeScreen.route,
+        startDestination = ScreenRoutes.HomeScreen,
         builder = {
-            composable(NavScreens.HomeScreen.route) {
-                TopAppBarWithNavigationBar(navHostController = mNavHostController)
+            composable(route = ScreenRoutes.HomeScreen) {
+                HomeScreen(onNavigation = {
+                    mNavHostController.navigate(it.route)
+                })
             }
-            composable(NavScreens.AddEditScreen.route) {
-                AddOrEditScreen(navHostController = mNavHostController)
+            composable(
+                route = ScreenRoutes.AddEditScreen + "?userId={userId}",
+                arguments = listOf(navArgument(name = "userId") {
+                    type = NavType.IntType
+                    defaultValue = -1
+                })
+            ) {
+                AddOrEditScreen(onPopBackStack = {
+                    mNavHostController.popBackStack()
+                })
             }
         }
     )

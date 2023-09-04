@@ -33,6 +33,6 @@ interface UserDao {
         }
     }
 
-    @Query("SELECT * FROM customers WHERE _id=:id")
-    fun getPinnedUsers(id: Int): Flow<UserModel>
+    @Query("SELECT * FROM customers WHERE _id = :id")
+    fun getUserById(id: Int): Flow<UserModel?>
 }
