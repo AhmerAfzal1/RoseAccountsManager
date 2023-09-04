@@ -1,4 +1,4 @@
-package com.ahmer.accounts.core
+package com.ahmer.accounts.core.state
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.take

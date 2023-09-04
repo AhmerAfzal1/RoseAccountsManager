@@ -1,4 +1,4 @@
-package com.ahmer.accounts.core
+package com.ahmer.accounts.core.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
+import com.ahmer.accounts.core.state.ErrorEntity
 
 @Composable
 fun GenericError(

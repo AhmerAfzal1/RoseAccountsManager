@@ -20,11 +20,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ahmer.accounts.core.AsyncData
-import com.ahmer.accounts.core.GenericError
-import com.ahmer.accounts.core.ResultState
+import com.ahmer.accounts.core.components.AsyncData
+import com.ahmer.accounts.core.components.GenericError
+import com.ahmer.accounts.core.event.HomeEvent
+import com.ahmer.accounts.core.state.ResultState
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.event.HomeEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

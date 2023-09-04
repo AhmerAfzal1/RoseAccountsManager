@@ -1,6 +1,7 @@
-package com.ahmer.accounts.core
+package com.ahmer.accounts.core.components
 
 import androidx.compose.runtime.Composable
+import com.ahmer.accounts.core.state.ResultState
 
 @Composable
 fun <T> AsyncData(

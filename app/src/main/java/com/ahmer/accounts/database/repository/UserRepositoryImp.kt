@@ -1,7 +1,7 @@
 package com.ahmer.accounts.database.repository
 
-import com.ahmer.accounts.core.ResultState
-import com.ahmer.accounts.core.ResultState.Companion.flowMap
+import com.ahmer.accounts.core.state.ResultState
+import com.ahmer.accounts.core.state.ResultState.Companion.flowMap
 import com.ahmer.accounts.database.dao.UserDao
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.utils.SortBy
@@ -23,12 +23,8 @@ class UserRepositoryImp @Inject constructor(private val userDao: UserDao) : User
         userDao.delete(userModel)
     }
 
-    override fun getUserById(id: Int): Flow<ResultState<UserModel?>> {
-        return flowMap {
-            userDao.getUserById(id).map { user ->
-                ResultState.Success(user)
-            }
-        }
+    override suspend fun getUserById(id: Int): UserModel? = withContext(Dispatchers.IO) {
+        userDao.getUserById(id)
     }
 
     override fun getAllUsers(): Flow<List<UserModel>> = userDao.getAllUsers()

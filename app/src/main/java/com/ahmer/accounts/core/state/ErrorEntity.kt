@@ -1,4 +1,4 @@
-package com.ahmer.accounts.core
+package com.ahmer.accounts.core.state
 
 data class ErrorEntity(
     val throwable: Throwable? = null,

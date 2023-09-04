@@ -1,4 +1,4 @@
-package com.ahmer.accounts.core
+package com.ahmer.accounts.core.state
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

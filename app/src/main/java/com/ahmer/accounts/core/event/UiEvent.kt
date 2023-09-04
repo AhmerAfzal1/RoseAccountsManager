@@ -1,4 +1,4 @@
-package com.ahmer.accounts.event
+package com.ahmer.accounts.core.event
 
 sealed class UiEvent {
     data class Navigate(val route: String) : UiEvent()
