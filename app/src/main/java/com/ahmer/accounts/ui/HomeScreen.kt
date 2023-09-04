@@ -46,12 +46,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.R
-import com.ahmer.accounts.core.event.HomeEvent
-import com.ahmer.accounts.core.event.UiEvent
 import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.drawerItemsList
+import com.ahmer.accounts.event.HomeEvent
+import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.ui.components.HomeUserListScreen
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.HelperFunctions

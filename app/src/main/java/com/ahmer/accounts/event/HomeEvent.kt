@@ -1,4 +1,4 @@
-package com.ahmer.accounts.core.event
+package com.ahmer.accounts.event
 
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.utils.SortBy

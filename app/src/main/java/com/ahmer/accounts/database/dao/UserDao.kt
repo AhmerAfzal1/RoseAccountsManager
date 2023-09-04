@@ -17,9 +17,6 @@ interface UserDao {
     @Delete
     suspend fun delete(userModel: UserModel)
 
-    @Query("SELECT * FROM customers WHERE _id = :id")
-    suspend fun getUserById(id: Int): UserModel?
-
     @Query("SELECT * FROM customers")
     fun getAllUsers(): Flow<List<UserModel>>
 
@@ -35,4 +32,7 @@ interface UserDao {
             SortBy.NAME -> getAllUsersSortedByNames(searchQuery)
         }
     }
+
+    @Query("SELECT * FROM customers WHERE _id = :id")
+    fun getUserById(id: Int): Flow<UserModel?>
 }
