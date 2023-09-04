@@ -1,56 +1,77 @@
 package com.ahmer.accounts.ui
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmer.accounts.core.event.AddEditEvent
-import com.ahmer.accounts.core.event.UiEvent
+import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.usecase.user.UserUseCase
+import com.ahmer.accounts.database.repository.UserRepositoryImp
+import com.ahmer.accounts.event.AddEditEvent
+import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.state.UserAddEditState
+import com.ahmer.accounts.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddEditViewModel @Inject constructor(
-    private val userUseCase: UserUseCase,
+    private val repositoryImp: UserRepositoryImp,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
-    private var mGetUserModelData: UserModel? by mutableStateOf(null)
-    private var userId: Int? = 0
+    private val _uiState = MutableStateFlow(UserAddEditState())
+    val uiState = _uiState.asStateFlow()
 
-    var address by mutableStateOf("")
-    var email by mutableStateOf("")
-    var name by mutableStateOf("")
-    var notes by mutableStateOf("")
-    var phone by mutableStateOf("")
+    private var mLoadUsersJob: Job? = null
+    private var mUserId: Int? = 0
+
     var titleBar by mutableStateOf("Add User Data")
+
+    var currentUser: UserModel?
+        get() {
+            return _uiState.value.getUserDetails.let {
+                if (it is ResultState.Success) it.data else null
+            }
+        }
+        private set(value) {
+            _uiState.update {
+                it.copy(getUserDetails = ResultState.Success(value))
+            }
+        }
 
     init {
         savedStateHandle.get<Int>("userId")?.let { id ->
-            userId = id
+            Log.v(Constants.LOG_TAG, "User id: $id")
+            mUserId = id
             if (id != -1) {
                 titleBar = "Edit User Data"
-                viewModelScope.launch {
-                    userUseCase.getUserById(id)?.also { user ->
-                        name = user.name ?: ""
-                        address = user.address ?: ""
-                        phone = user.phone ?: ""
-                        email = user.email ?: ""
-                        notes = user.notes ?: ""
-                        this@AddEditViewModel.mGetUserModelData = user
+                mLoadUsersJob?.cancel()
+                mLoadUsersJob = repositoryImp.getUserById(id).onEach { resultState ->
+                    _uiState.update { addEditState ->
+                        if (resultState is ResultState.Success) {
+                            currentUser = resultState.data
+                        }
+                        addEditState.copy(getUserDetails = resultState)
                     }
-                }
+                }.launchIn(viewModelScope)
+            } else {
+                currentUser = UserModel()
             }
         }
     }
@@ -58,23 +79,23 @@ class AddEditViewModel @Inject constructor(
     fun onEvent(event: AddEditEvent) {
         when (event) {
             is AddEditEvent.OnAddressChange -> {
-                address = event.address
+                currentUser = currentUser?.copy(address = event.address)
             }
 
             is AddEditEvent.OnEmailChange -> {
-                email = event.email
+                currentUser = currentUser?.copy(email = event.email)
             }
 
             is AddEditEvent.OnNameChange -> {
-                name = event.name
+                currentUser = currentUser?.copy(name = event.name)
             }
 
             is AddEditEvent.OnNotesChange -> {
-                notes = event.notes
+                currentUser = currentUser?.copy(notes = event.notes)
             }
 
             is AddEditEvent.OnPhoneChange -> {
-                phone = event.phone
+                currentUser = currentUser?.copy(phone = event.phone)
             }
 
             AddEditEvent.OnSaveClick -> {
@@ -82,33 +103,35 @@ class AddEditViewModel @Inject constructor(
                     try {
                         var mUser: UserModel? by mutableStateOf(null)
                         var mMessage by mutableStateOf("")
-                        if (name.isEmpty()) {
+                        if (currentUser!!.name.isEmpty()) {
                             _eventFlow.emit(UiEvent.ShowToast("The name can't be empty"))
                             return@launch
                         }
-                        if (userId == -1) {
-                            mUser = UserModel(
-                                id = mGetUserModelData?.id,
-                                name = name,
-                                address = address,
-                                phone = phone,
-                                email = email,
-                                notes = notes,
-                            )
-                            mMessage = "User added successfully!"
+                        if (mUserId == -1) {
+                            mUser = currentUser?.let { user ->
+                                UserModel(
+                                    id = user.id,
+                                    name = user.name,
+                                    address = user.address,
+                                    phone = user.phone,
+                                    email = user.email,
+                                    notes = user.notes,
+                                )
+                            }
+                            mMessage = "${mUser?.name} added successfully!"
                         } else {
-                            mUser = mGetUserModelData!!.copy(
-                                id = mGetUserModelData?.id,
-                                name = name,
-                                address = address,
-                                phone = phone,
-                                email = email,
-                                notes = notes,
+                            mUser = currentUser?.copy(
+                                id = currentUser!!.id,
+                                name = currentUser!!.name,
+                                address = currentUser!!.address,
+                                phone = currentUser!!.phone,
+                                email = currentUser!!.email,
+                                notes = currentUser!!.notes,
                                 modified = System.currentTimeMillis()
                             )
-                            mMessage = "User updated successfully!"
+                            mMessage = "${mUser?.name} updated successfully!"
                         }
-                        userUseCase.addUser(mUser!!)
+                        repositoryImp.insertOrUpdate(mUser!!)
                         _eventFlow.emit(UiEvent.SaveUserSuccess)
                         _eventFlow.emit(UiEvent.ShowToast(mMessage))
                     } catch (e: Exception) {

@@ -1,4 +1,4 @@
-package com.ahmer.accounts.core.components
+package com.ahmer.accounts.core
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

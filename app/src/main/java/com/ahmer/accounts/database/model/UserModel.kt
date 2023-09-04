@@ -18,38 +18,26 @@ import kotlinx.parcelize.Parcelize
 data class UserModel(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "_id")
-    val id: Long? = 0.toLong(),
+    val id: Long = 0.toLong(),
 
     @ColumnInfo(name = "Name")
-    val name: String?,
+    val name: String = "",
 
     @ColumnInfo(name = "Address")
-    val address: String?,
+    val address: String = "",
 
     @ColumnInfo(name = "Phone")
-    val phone: String?,
+    val phone: String = "",
 
     @ColumnInfo(name = "Email")
-    val email: String?,
+    val email: String = "",
 
     @ColumnInfo(name = "Notes")
-    val notes: String?,
+    val notes: String = "",
 
     @ColumnInfo(name = "Created")
     val created: Long = System.currentTimeMillis(),
 
     @ColumnInfo(name = "LastModified")
     val modified: Long = 0.toLong(),
-) : Parcelable {
-    override fun toString(): String {
-        return "UserModel(" +
-                "id=$id, " +
-                "name=$name, " +
-                "address=$address, " +
-                "phone=$phone, " +
-                "email=$email, " +
-                "notes=$notes, " +
-                "created=$created, " +
-                "modified=$modified)"
-    }
-}
+) : Parcelable

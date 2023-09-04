@@ -1,4 +1,4 @@
-package com.ahmer.accounts.core.event
+package com.ahmer.accounts.event
 
 sealed class AddEditEvent {
     data class OnAddressChange(val address: String) : AddEditEvent()

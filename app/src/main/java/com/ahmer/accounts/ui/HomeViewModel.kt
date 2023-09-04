@@ -3,15 +3,17 @@ package com.ahmer.accounts.ui
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmer.accounts.core.event.HomeEvent
-import com.ahmer.accounts.core.event.UiEvent
-import com.ahmer.accounts.core.state.UserState
+import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.UserModel
+import com.ahmer.accounts.database.repository.UserRepositoryImp
+import com.ahmer.accounts.event.HomeEvent
+import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.navigation.ScreenRoutes
 import com.ahmer.accounts.preferences.PreferencesFilter
 import com.ahmer.accounts.preferences.PreferencesManager
-import com.ahmer.accounts.usecase.user.UserUseCase
+import com.ahmer.accounts.state.UserState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,6 +22,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -28,7 +32,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val userUseCase: UserUseCase,
+    private val repositoryImp: UserRepositoryImp,
     private val preferencesManager: PreferencesManager,
 ) : ViewModel(), LifecycleObserver {
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
@@ -50,7 +54,7 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.OnDeleteClick -> {
                 viewModelScope.launch {
                     mDeletedUser = event.userModel
-                    userUseCase.deleteUser(event.userModel)
+                    repositoryImp.delete(event.userModel)
                     _eventFlow.emit(
                         UiEvent.ShowSnackBar(
                             message = "User ${event.userModel.name} deleted", action = "Undo"
@@ -80,17 +84,26 @@ class HomeViewModel @Inject constructor(
             HomeEvent.OnUndoDeleteClick -> {
                 mDeletedUser?.let { user ->
                     viewModelScope.launch {
-                        userUseCase.addUser(user)
+                        repositoryImp.insertOrUpdate(user)
                     }
                 }
             }
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun getAllUsersBySearchAndSort(
+        searchQuery: MutableStateFlow<String>, preferences: Flow<PreferencesFilter>
+    ): Flow<ResultState<List<UserModel>>> = combine(searchQuery, preferences) { query, preference ->
+        Pair(query, preference)
+    }.flatMapLatest { (search, pref) ->
+        repositoryImp.getAllUsersBySearchAndSort(search, pref.sortBy)
+    }
+
     fun getAllUsersData() {
         mLoadUsersJob?.cancel()
         mLoadUsersJob =
-            userUseCase.getAllUsers(_searchQuery, _preferences).onEach { resultState ->
+            getAllUsersBySearchAndSort(_searchQuery, _preferences).onEach { resultState ->
                 _uiState.update { userState -> userState.copy(getAllUsersList = resultState) }
             }.launchIn(viewModelScope)
     }
