@@ -31,7 +31,6 @@ import com.ahmer.accounts.event.HomeEvent
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.EditIcon
 import com.ahmer.accounts.utils.InfoIcon
-import com.ahmer.accounts.utils.PinIcon
 
 @Composable
 fun UserItem(
@@ -46,7 +45,7 @@ fun UserItem(
 
     if (mShowDeleteDialog) {
         DeleteAlertDialog(
-            nameAccount = userModel.name!!,
+            nameAccount = userModel.name,
             onConfirmClick = { onEvent(HomeEvent.OnDeleteClick(userModel)) }
         )
     }
@@ -61,20 +60,22 @@ fun UserItem(
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
-            modifier = Modifier
-                .padding(end = mPadding)
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Text(
+                text = userModel.name,
+                modifier = Modifier.padding(start = mPadding),
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleLarge
+            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                IconButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.then(Modifier.size(mIconSize)),
-                ) { PinIcon() }
                 IconButton(
                     onClick = { mShowInfoDialog = true },
                     modifier = Modifier.then(Modifier.size(mIconSize)),
@@ -92,16 +93,8 @@ fun UserItem(
             }
         }
         Column(
-            modifier = Modifier.padding(start = mPadding, end = mPadding, bottom = mPadding)
+            modifier = Modifier.padding(end = mPadding, bottom = mPadding)
         ) {
-            Text(
-                modifier = Modifier.padding(start = mPadding),
-                text = "${userModel.name}",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleLarge
-            )
             Text(
                 modifier = Modifier.padding(start = mPadding),
                 text = "Phone: ${userModel.phone}  |  Balance: ",
