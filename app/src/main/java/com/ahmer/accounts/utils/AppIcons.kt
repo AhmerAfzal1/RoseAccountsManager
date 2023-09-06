@@ -8,7 +8,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
@@ -97,16 +96,6 @@ fun MenuIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
     Icon(
         imageVector = Icons.Filled.Menu,
         contentDescription = stringResource(id = R.string.content_description_menu),
-        modifier = modifier,
-        tint = tint
-    )
-}
-
-@Composable
-fun PinIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
-    Icon(
-        imageVector = Icons.Filled.PushPin,
-        contentDescription = stringResource(id = R.string.content_description_pin),
         modifier = modifier,
         tint = tint
     )

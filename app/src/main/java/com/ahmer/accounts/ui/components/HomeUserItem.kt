@@ -38,7 +38,7 @@ fun UserItem(
     onEvent: (HomeEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val mIconSize: Dp = 36.dp
+    val mIconSize: Dp = 30.dp
     val mPadding: Dp = 5.dp
     var mShowDeleteDialog by remember { mutableStateOf(false) }
     var mShowInfoDialog by remember { mutableStateOf(false) }
@@ -95,9 +95,14 @@ fun UserItem(
         Column(
             modifier = Modifier.padding(end = mPadding, bottom = mPadding)
         ) {
+            val mText: String = if (userModel.phone.isEmpty()) {
+                "Balance: "
+            } else {
+                "Phone: ${userModel.phone}  |  Balance: "
+            }
             Text(
                 modifier = Modifier.padding(start = mPadding),
-                text = "Phone: ${userModel.phone}  |  Balance: ",
+                text = mText,
                 maxLines = 1,
                 style = MaterialTheme.typography.titleSmall
             )
