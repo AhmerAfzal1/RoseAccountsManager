@@ -9,9 +9,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.database.repository.UserRepositoryImp
-import com.ahmer.accounts.event.AddEditEvent
-import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.database.repository.UserRepository
+import com.ahmer.accounts.event.UserAddEditEvent
+import com.ahmer.accounts.event.UserUiEvent
 import com.ahmer.accounts.state.UserAddEditState
 import com.ahmer.accounts.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,12 +28,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddEditViewModel @Inject constructor(
-    private val repositoryImp: UserRepositoryImp,
+class UserAddEditViewModel @Inject constructor(
+    private val repository: UserRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
-    val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
+    private val _eventFlow: MutableSharedFlow<UserUiEvent> = MutableSharedFlow()
+    val eventFlow: SharedFlow<UserUiEvent> = _eventFlow.asSharedFlow()
 
     private val _uiState = MutableStateFlow(UserAddEditState())
     val uiState = _uiState.asStateFlow()
@@ -62,7 +62,7 @@ class AddEditViewModel @Inject constructor(
             if (id != -1) {
                 titleBar = "Edit User Data"
                 mLoadUsersJob?.cancel()
-                mLoadUsersJob = repositoryImp.getUserById(id).onEach { resultState ->
+                mLoadUsersJob = repository.getUserById(id).onEach { resultState ->
                     _uiState.update { addEditState ->
                         if (resultState is ResultState.Success) {
                             currentUser = resultState.data
@@ -76,35 +76,35 @@ class AddEditViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: AddEditEvent) {
+    fun onEvent(event: UserAddEditEvent) {
         when (event) {
-            is AddEditEvent.OnAddressChange -> {
+            is UserAddEditEvent.OnAddressChange -> {
                 currentUser = currentUser?.copy(address = event.address)
             }
 
-            is AddEditEvent.OnEmailChange -> {
+            is UserAddEditEvent.OnEmailChange -> {
                 currentUser = currentUser?.copy(email = event.email)
             }
 
-            is AddEditEvent.OnNameChange -> {
+            is UserAddEditEvent.OnNameChange -> {
                 currentUser = currentUser?.copy(name = event.name)
             }
 
-            is AddEditEvent.OnNotesChange -> {
+            is UserAddEditEvent.OnNotesChange -> {
                 currentUser = currentUser?.copy(notes = event.notes)
             }
 
-            is AddEditEvent.OnPhoneChange -> {
+            is UserAddEditEvent.OnPhoneChange -> {
                 currentUser = currentUser?.copy(phone = event.phone)
             }
 
-            AddEditEvent.OnSaveClick -> {
+            UserAddEditEvent.OnSaveClick -> {
                 viewModelScope.launch {
                     try {
                         var mUser: UserModel? by mutableStateOf(null)
                         var mMessage by mutableStateOf("")
                         if (currentUser!!.name.isEmpty()) {
-                            _eventFlow.emit(UiEvent.ShowToast("The name can't be empty"))
+                            _eventFlow.emit(UserUiEvent.ShowToast("The name can't be empty"))
                             return@launch
                         }
                         if (mUserId == -1) {
@@ -131,12 +131,12 @@ class AddEditViewModel @Inject constructor(
                             )
                             mMessage = "${mUser?.name} updated successfully!"
                         }
-                        repositoryImp.insertOrUpdate(mUser!!)
-                        _eventFlow.emit(UiEvent.SaveUserSuccess)
-                        _eventFlow.emit(UiEvent.ShowToast(mMessage))
+                        repository.insertOrUpdate(mUser!!)
+                        _eventFlow.emit(UserUiEvent.SaveUserSuccess)
+                        _eventFlow.emit(UserUiEvent.ShowToast(mMessage))
                     } catch (e: Exception) {
                         _eventFlow.emit(
-                            UiEvent.ShowToast(message = e.message ?: "User couldn't be added")
+                            UserUiEvent.ShowToast(message = e.message ?: "User couldn't be added")
                         )
                     }
                 }

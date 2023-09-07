@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.database.repository.UserRepositoryImp
-import com.ahmer.accounts.event.HomeEvent
-import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.database.repository.UserRepository
+import com.ahmer.accounts.event.UserEvent
+import com.ahmer.accounts.event.UserUiEvent
 import com.ahmer.accounts.navigation.ScreenRoutes
 import com.ahmer.accounts.preferences.PreferencesFilter
 import com.ahmer.accounts.preferences.PreferencesManager
@@ -31,12 +31,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    private val repositoryImp: UserRepositoryImp,
+class UserViewModel @Inject constructor(
+    private val repository: UserRepository,
     private val preferencesManager: PreferencesManager,
 ) : ViewModel(), LifecycleObserver {
-    private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
-    val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
+    private val _eventFlow: MutableSharedFlow<UserUiEvent> = MutableSharedFlow()
+    val eventFlow: SharedFlow<UserUiEvent> = _eventFlow.asSharedFlow()
 
     private val _preferences: Flow<PreferencesFilter> = preferencesManager.preferencesFlow
 
@@ -49,42 +49,42 @@ class HomeViewModel @Inject constructor(
     private var mDeletedUser: UserModel? = null
     private var mLoadUsersJob: Job? = null
 
-    fun onEvent(event: HomeEvent) {
+    fun onEvent(event: UserEvent) {
         when (event) {
-            is HomeEvent.OnDeleteClick -> {
+            is UserEvent.OnDeleteClick -> {
                 viewModelScope.launch {
                     mDeletedUser = event.userModel
-                    repositoryImp.delete(event.userModel)
+                    repository.delete(event.userModel)
                     _eventFlow.emit(
-                        UiEvent.ShowSnackBar(
+                        UserUiEvent.ShowSnackBar(
                             message = "User ${event.userModel.name} deleted", action = "Undo"
                         )
                     )
                 }
             }
 
-            is HomeEvent.OnEditClick -> {
+            is UserEvent.OnEditClick -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.Navigate(route = ScreenRoutes.AddEditScreen + "?userId=${event.userModel.id}"))
+                    _eventFlow.emit(UserUiEvent.Navigate(route = ScreenRoutes.AddEditScreen + "?userId=${event.userModel.id}"))
                 }
             }
 
-            is HomeEvent.OnSortBy -> {
+            is UserEvent.OnSortBy -> {
                 viewModelScope.launch {
                     preferencesManager.updateSortOrder(event.sortBy)
                 }
             }
 
-            HomeEvent.OnAddClick -> {
+            UserEvent.OnAddClick -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.Navigate(ScreenRoutes.AddEditScreen))
+                    _eventFlow.emit(UserUiEvent.Navigate(ScreenRoutes.AddEditScreen))
                 }
             }
 
-            HomeEvent.OnUndoDeleteClick -> {
+            UserEvent.OnUndoDeleteClick -> {
                 mDeletedUser?.let { user ->
                     viewModelScope.launch {
-                        repositoryImp.insertOrUpdate(user)
+                        repository.insertOrUpdate(user)
                     }
                 }
             }
@@ -97,7 +97,7 @@ class HomeViewModel @Inject constructor(
     ): Flow<ResultState<List<UserModel>>> = combine(searchQuery, preferences) { query, preference ->
         Pair(query, preference)
     }.flatMapLatest { (search, pref) ->
-        repositoryImp.getAllUsersBySearchAndSort(search, pref.sortBy)
+        repository.getAllUsersBySearchAndSort(search, pref.sortBy)
     }
 
     fun getAllUsersData() {

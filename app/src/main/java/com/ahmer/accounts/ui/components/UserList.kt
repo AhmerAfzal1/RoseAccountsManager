@@ -24,7 +24,7 @@ import com.ahmer.accounts.core.AsyncData
 import com.ahmer.accounts.core.GenericError
 import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.event.HomeEvent
+import com.ahmer.accounts.event.UserEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -34,7 +34,7 @@ fun HomeUserListScreen(
     modifier: Modifier = Modifier,
     padding: PaddingValues,
     usersListState: ResultState<List<UserModel>>,
-    onEvent: (HomeEvent) -> Unit,
+    onEvent: (UserEvent) -> Unit,
     reloadData: () -> Unit
 ) {
     var mRefreshing by remember { mutableStateOf(false) }

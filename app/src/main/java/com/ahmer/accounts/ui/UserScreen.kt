@@ -50,8 +50,8 @@ import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.drawerItemsList
-import com.ahmer.accounts.event.HomeEvent
-import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.event.UserEvent
+import com.ahmer.accounts.event.UserUiEvent
 import com.ahmer.accounts.ui.components.HomeUserListScreen
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.HelperFunctions
@@ -69,39 +69,39 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
-    onNavigation: (UiEvent.Navigate) -> Unit
+    onNavigation: (UserUiEvent.Navigate) -> Unit
 ) {
     val mContext: Context = LocalContext.current.applicationContext
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mCredit = 10000.00
     val mDebit = 8000.00
     val mDrawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val mHomeViewModel: HomeViewModel = hiltViewModel()
+    val mUserViewModel: UserViewModel = hiltViewModel()
     val mNavItemsList: List<DrawerItems> = drawerItemsList()
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     var mSelectedItems by rememberSaveable { mutableIntStateOf(0) }
     var mShowDropdownMenu by remember { mutableStateOf(false) }
     var mShowSearch by remember { mutableStateOf(false) }
-    val mState by mHomeViewModel.uiState.collectAsState()
-    var mTextSearch by remember { mutableStateOf(mHomeViewModel.searchQuery.value) }
+    val mState by mUserViewModel.uiState.collectAsState()
+    var mTextSearch by remember { mutableStateOf(mUserViewModel.searchQuery.value) }
 
     LaunchedEffect(key1 = true) {
-        mHomeViewModel.eventFlow.collectLatest { event ->
+        mUserViewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is UiEvent.Navigate -> onNavigation(event)
-                is UiEvent.ShowSnackBar -> {
+                is UserUiEvent.Navigate -> onNavigation(event)
+                is UserUiEvent.ShowSnackBar -> {
                     val mResult = mSnackBarHostState.showSnackbar(
                         message = event.message,
                         actionLabel = event.action,
                         duration = SnackbarDuration.Short
                     )
                     if (mResult == SnackbarResult.ActionPerformed) {
-                        mHomeViewModel.onEvent(HomeEvent.OnUndoDeleteClick)
+                        mUserViewModel.onEvent(UserEvent.OnUndoDeleteClick)
                     }
                 }
 
-                is UiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
+                is UserUiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
                 else -> Unit
             }
         }
@@ -173,13 +173,13 @@ fun HomeScreen(
                     onDismissRequest = { mShowDropdownMenu = false }) {
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_name)) },
                         onClick = {
-                            mHomeViewModel.onEvent(HomeEvent.OnSortBy(SortBy.NAME))
+                            mUserViewModel.onEvent(UserEvent.OnSortBy(SortBy.NAME))
                             mShowDropdownMenu = false
                         },
                         leadingIcon = { SortByNameIcon() })
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_date_created)) },
                         onClick = {
-                            mHomeViewModel.onEvent(HomeEvent.OnSortBy(SortBy.DATE))
+                            mUserViewModel.onEvent(UserEvent.OnSortBy(SortBy.DATE))
                             mShowDropdownMenu = false
                         },
                         leadingIcon = { SortByDateIcon() })
@@ -194,14 +194,14 @@ fun HomeScreen(
         }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
             floatingActionButton = {
                 FloatingActionButton(onClick = {
-                    mHomeViewModel.onEvent(HomeEvent.OnAddClick)
+                    mUserViewModel.onEvent(UserEvent.OnAddClick)
                 }) { AddIcon() }
             }) { innerPadding ->
             HomeUserListScreen(
                 padding = innerPadding,
                 usersListState = mState.getAllUsersList,
-                onEvent = mHomeViewModel::onEvent,
-                reloadData = mHomeViewModel::getAllUsersData
+                onEvent = mUserViewModel::onEvent,
+                reloadData = mUserViewModel::getAllUsersData
             )
         }
     }

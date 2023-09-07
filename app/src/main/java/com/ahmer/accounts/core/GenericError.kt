@@ -39,7 +39,7 @@ fun GenericError(
             modifier = Modifier.size(96.dp)
         )
         Spacer(modifier = Modifier.size(16.dp))
-        Text(text = error?.message ?: stringResource(id = R.string.msg_generic_error))
+        Text(text = error?.message ?: stringResource(id = R.string.title_generic_error))
         onDismissAction?.let {
             Spacer(modifier = Modifier.size(16.dp))
             Button(onClick = onDismissAction) {

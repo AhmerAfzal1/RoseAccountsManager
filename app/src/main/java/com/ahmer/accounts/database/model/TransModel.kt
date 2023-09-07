@@ -27,6 +27,9 @@ data class TransModel(
     @ColumnInfo(name = "UserID")
     val userId: Long = 0.toLong(),
 
+    @ColumnInfo(name = "Date")
+    val date: String = "",
+
     @ColumnInfo(name = "Type")
     val type: String = "",
 

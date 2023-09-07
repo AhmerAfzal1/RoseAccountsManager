@@ -31,14 +31,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.event.AddEditEvent
+import com.ahmer.accounts.event.UserAddEditEvent
 import com.ahmer.accounts.utils.CloseIcon
 
 @Composable
 fun AddEditTextFields(
     modifier: Modifier = Modifier,
     userModel: UserModel?,
-    onEvent: (AddEditEvent) -> Unit
+    onEvent: (UserAddEditEvent) -> Unit
 ) {
     val mFocusManager: FocusManager = LocalFocusManager.current
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
@@ -73,7 +73,7 @@ fun AddEditTextFields(
                         value = userModel?.name ?: "",
                         onValueChange = { text ->
                             if (text.length <= mLenName) {
-                                onEvent(AddEditEvent.OnNameChange(text))
+                                onEvent(UserAddEditEvent.OnNameChange(text))
                             }
                         },
                         modifier = Modifier
@@ -90,7 +90,7 @@ fun AddEditTextFields(
                             if (userModel?.name!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
                                     if (userModel.name.isNotEmpty()) {
-                                        onEvent(AddEditEvent.OnNameChange(""))
+                                        onEvent(UserAddEditEvent.OnNameChange(""))
                                     }
                                 })
                             }
@@ -115,7 +115,7 @@ fun AddEditTextFields(
                         value = userModel?.address ?: "",
                         onValueChange = { text ->
                             if (text.length <= mLenAddress) {
-                                onEvent(AddEditEvent.OnAddressChange(text))
+                                onEvent(UserAddEditEvent.OnAddressChange(text))
                             }
                         },
                         modifier = Modifier
@@ -127,7 +127,7 @@ fun AddEditTextFields(
                             if (userModel?.address!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
                                     if (userModel.address.isNotEmpty()) {
-                                        onEvent(AddEditEvent.OnAddressChange(""))
+                                        onEvent(UserAddEditEvent.OnAddressChange(""))
                                     }
                                 })
                             }
@@ -152,7 +152,7 @@ fun AddEditTextFields(
                         value = userModel?.phone ?: "",
                         onValueChange = { text ->
                             if (text.length <= mLenPhone) {
-                                onEvent(AddEditEvent.OnPhoneChange(text))
+                                onEvent(UserAddEditEvent.OnPhoneChange(text))
                             }
                         },
                         modifier = Modifier
@@ -164,7 +164,7 @@ fun AddEditTextFields(
                             if (userModel?.phone!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
                                     if (userModel.phone.isNotEmpty()) {
-                                        onEvent(AddEditEvent.OnPhoneChange(""))
+                                        onEvent(UserAddEditEvent.OnPhoneChange(""))
                                     }
                                 })
                             }
@@ -190,7 +190,7 @@ fun AddEditTextFields(
                         value = userModel?.email ?: "",
                         onValueChange = { text ->
                             if (text.length <= mLenEmail) {
-                                onEvent(AddEditEvent.OnEmailChange(text))
+                                onEvent(UserAddEditEvent.OnEmailChange(text))
                             }
                         },
                         modifier = Modifier
@@ -202,7 +202,7 @@ fun AddEditTextFields(
                             if (userModel?.email!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
                                     if (userModel.email.isNotEmpty()) {
-                                        onEvent(AddEditEvent.OnEmailChange(""))
+                                        onEvent(UserAddEditEvent.OnEmailChange(""))
                                     }
                                 })
                             }
@@ -228,7 +228,7 @@ fun AddEditTextFields(
                         value = userModel?.notes ?: "",
                         onValueChange = { text ->
                             if (text.length <= mLenNotes) {
-                                onEvent(AddEditEvent.OnNotesChange(text))
+                                onEvent(UserAddEditEvent.OnNotesChange(text))
                             }
                         },
                         modifier = Modifier
@@ -240,7 +240,7 @@ fun AddEditTextFields(
                             if (userModel?.notes!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
                                     if (userModel.notes.isNotEmpty()) {
-                                        onEvent(AddEditEvent.OnNotesChange(""))
+                                        onEvent(UserAddEditEvent.OnNotesChange(""))
                                     }
                                 })
                             }

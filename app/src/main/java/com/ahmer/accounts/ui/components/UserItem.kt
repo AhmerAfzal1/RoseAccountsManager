@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.dialogs.DeleteAlertDialog
 import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
-import com.ahmer.accounts.event.HomeEvent
+import com.ahmer.accounts.event.UserEvent
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.EditIcon
@@ -36,7 +36,7 @@ import com.ahmer.accounts.utils.InfoIcon
 @Composable
 fun UserItem(
     userModel: UserModel,
-    onEvent: (HomeEvent) -> Unit,
+    onEvent: (UserEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val mPadding: Dp = 5.dp
@@ -46,7 +46,7 @@ fun UserItem(
     if (mShowDeleteDialog) {
         DeleteAlertDialog(
             nameAccount = userModel.name,
-            onConfirmClick = { onEvent(HomeEvent.OnDeleteClick(userModel)) }
+            onConfirmClick = { onEvent(UserEvent.OnDeleteClick(userModel)) }
         )
     }
 
@@ -81,7 +81,7 @@ fun UserItem(
                     modifier = Modifier.then(Modifier.size(Constants.ICON_SIZE)),
                 ) { InfoIcon() }
                 IconButton(
-                    onClick = { onEvent(HomeEvent.OnEditClick(userModel)) },
+                    onClick = { onEvent(UserEvent.OnEditClick(userModel)) },
                     modifier = Modifier.then(Modifier.size(Constants.ICON_SIZE)),
                 ) { EditIcon() }
                 IconButton(

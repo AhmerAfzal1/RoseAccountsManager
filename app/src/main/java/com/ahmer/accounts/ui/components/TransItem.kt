@@ -75,7 +75,7 @@ fun TransItem(
                 }
                 Spacer(modifier = Modifier.size(3.dp))
                 Text(
-                    text = HelperFunctions.getDateTime(transModel.created),
+                    text = transModel.date,
                     color = Color.Gray,
                     style = MaterialTheme.typography.bodySmall
                 )

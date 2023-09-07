@@ -25,8 +25,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.core.AsyncData
-import com.ahmer.accounts.event.AddEditEvent
-import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.event.UserAddEditEvent
+import com.ahmer.accounts.event.UserUiEvent
 import com.ahmer.accounts.ui.components.AddEditTextFields
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.HelperFunctions
@@ -41,14 +41,14 @@ fun AddOrEditScreen(
     val mContext: Context = LocalContext.current
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val mViewModel: AddEditViewModel = hiltViewModel()
+    val mViewModel: UserAddEditViewModel = hiltViewModel()
     val mState by mViewModel.uiState.collectAsState()
 
     LaunchedEffect(key1 = true) {
         mViewModel.eventFlow.collectLatest { event ->
             when (event) {
-                UiEvent.SaveUserSuccess -> onPopBackStack()
-                is UiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
+                UserUiEvent.SaveUserSuccess -> onPopBackStack()
+                is UserUiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
                 else -> Unit
             }
         }
@@ -68,7 +68,7 @@ fun AddOrEditScreen(
         )
     }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) }, floatingActionButton = {
         FloatingActionButton(onClick = {
-            mViewModel.onEvent(AddEditEvent.OnSaveClick)
+            mViewModel.onEvent(UserAddEditEvent.OnSaveClick)
         }) { SaveIcon() }
     }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {

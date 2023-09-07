@@ -32,6 +32,6 @@ fun GenericLoading(
             strokeWidth = 8.dp
         )
         Spacer(modifier = Modifier.size(16.dp))
-        Text(text = message ?: stringResource(id = R.string.msg_loading))
+        Text(text = message ?: stringResource(id = R.string.title_generic_loading))
     }
 }
