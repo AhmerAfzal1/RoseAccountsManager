@@ -1,6 +1,7 @@
 package com.ahmer.accounts.navigation
 
 object ScreenRoutes {
-    const val HomeScreen = "Home"
-    const val AddEditScreen = "AddEdit"
+    const val UserListScreen = "UserListScreen"
+    const val UserAddEditScreen = "UserAddEdit"
+    const val TransListScreen = "TransListScreen"
 }

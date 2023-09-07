@@ -6,8 +6,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.ahmer.accounts.ui.AddOrEditScreen
-import com.ahmer.accounts.ui.HomeScreen
+import com.ahmer.accounts.ui.TransListScreen
+import com.ahmer.accounts.ui.UserAddEditScreen
+import com.ahmer.accounts.ui.UsersListScreen
 
 @Composable
 fun MainNavigation() {
@@ -15,23 +16,35 @@ fun MainNavigation() {
 
     NavHost(
         navController = mNavHostController,
-        startDestination = ScreenRoutes.HomeScreen,
+        startDestination = ScreenRoutes.UserListScreen,
         builder = {
-            composable(route = ScreenRoutes.HomeScreen) {
-                HomeScreen(onNavigation = {
+            composable(route = ScreenRoutes.UserListScreen) {
+                UsersListScreen(onNavigation = {
                     mNavHostController.navigate(it.route)
                 })
             }
             composable(
-                route = ScreenRoutes.AddEditScreen + "?userId={userId}",
+                route = ScreenRoutes.UserAddEditScreen + "?userId={userId}",
                 arguments = listOf(navArgument(name = "userId") {
                     type = NavType.IntType
                     defaultValue = -1
                 })
             ) {
-                AddOrEditScreen(onPopBackStack = {
+                UserAddEditScreen(onPopBackStack = {
                     mNavHostController.popBackStack()
                 })
+            }
+            composable(
+                route = ScreenRoutes.TransListScreen + "?transUserId={transUserId}",
+                arguments = listOf(navArgument(name = "transUserId") {
+                    type = NavType.IntType
+                    defaultValue = -1
+                })
+            ) {
+                TransListScreen(
+                    onNavigation = { mNavHostController.navigate(it.route) },
+                    onPopBackStack = { mNavHostController.popBackStack() }
+                )
             }
         }
     )
