@@ -65,4 +65,6 @@
 
     <string name="msg_generic_error">Ops! Something went wrong…</string>
     <string name="msg_loading">Please wait…</string>
+    <string name="content_description_credit">Credit icon</string>
+    <string name="content_description_debit">Debit icon</string>
 </resources>

@@ -3,11 +3,13 @@ package com.ahmer.accounts.utils
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
@@ -46,6 +48,26 @@ fun CloseIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
     Icon(
         imageVector = Icons.Filled.Close,
         contentDescription = stringResource(id = R.string.content_description_close),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun CreditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        imageVector = Icons.Filled.AddCircleOutline,
+        contentDescription = stringResource(id = R.string.content_description_credit),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun DebitIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        imageVector = Icons.Filled.RemoveCircleOutline,
+        contentDescription = stringResource(id = R.string.content_description_debit),
         modifier = modifier,
         tint = tint
     )

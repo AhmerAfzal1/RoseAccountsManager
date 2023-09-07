@@ -28,6 +28,7 @@ import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.dialogs.DeleteAlertDialog
 import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
 import com.ahmer.accounts.event.HomeEvent
+import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.EditIcon
 import com.ahmer.accounts.utils.InfoIcon
@@ -38,7 +39,6 @@ fun UserItem(
     onEvent: (HomeEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val mIconSize: Dp = 30.dp
     val mPadding: Dp = 5.dp
     var mShowDeleteDialog by remember { mutableStateOf(false) }
     var mShowInfoDialog by remember { mutableStateOf(false) }
@@ -78,15 +78,15 @@ fun UserItem(
             ) {
                 IconButton(
                     onClick = { mShowInfoDialog = true },
-                    modifier = Modifier.then(Modifier.size(mIconSize)),
+                    modifier = Modifier.then(Modifier.size(Constants.ICON_SIZE)),
                 ) { InfoIcon() }
                 IconButton(
                     onClick = { onEvent(HomeEvent.OnEditClick(userModel)) },
-                    modifier = Modifier.then(Modifier.size(mIconSize)),
+                    modifier = Modifier.then(Modifier.size(Constants.ICON_SIZE)),
                 ) { EditIcon() }
                 IconButton(
                     onClick = { mShowDeleteDialog = true },
-                    modifier = Modifier.then(Modifier.size(mIconSize)),
+                    modifier = Modifier.then(Modifier.size(Constants.ICON_SIZE)),
                 ) { DeleteIcon() }
             }
         }

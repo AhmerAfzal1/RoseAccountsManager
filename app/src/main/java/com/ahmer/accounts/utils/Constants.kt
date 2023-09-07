@@ -1,5 +1,8 @@
 package com.ahmer.accounts.utils
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
 class Constants {
     companion object {
         const val ADS_WAIT_TIME: Long = 250L
@@ -10,5 +13,6 @@ class Constants {
         const val LOG_TAG: String = "RoseAccounts"
         const val PLAY_STORE_LINK: String = "https://play.google.com/store/apps/details?id="
         const val PREFERENCES_NAME: String = "RoseAccountsPrefs"
+        val ICON_SIZE: Dp = 30.dp
     }
 }

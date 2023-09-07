@@ -55,11 +55,11 @@ fun RowScope.InfoText(text: String, weight: Float, isTitle: Boolean = false) {
 @Composable
 fun MoreInfoAlertDialog(userModel: UserModel) {
     val mDataList = listOf(
-        "${userModel.name}",
-        "${userModel.address}",
-        "${userModel.phone}",
-        "${userModel.email}",
-        "${userModel.notes}",
+        userModel.name,
+        userModel.address,
+        userModel.phone,
+        userModel.email,
+        userModel.notes,
         HelperFunctions.getDateTime(userModel.created),
         HelperFunctions.getDateTime(userModel.modified),
     )
