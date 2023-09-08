@@ -1,7 +1,6 @@
 package com.ahmer.accounts.dialogs
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -56,21 +55,24 @@ import com.ahmer.accounts.database.model.TransModel
 import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.utils.CloseIcon
-import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperFunctions
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransAddEditAlertDialog() {
+    val mContext: Context = LocalContext.current.applicationContext
     val mOpenDialog = remember { mutableStateOf(true) }
     val mViewModel: TransAddEditViewModel = hiltViewModel()
     val mState by mViewModel.uiState.collectAsState()
-    val mContext: Context = LocalContext.current.applicationContext
 
     LaunchedEffect(key1 = true) {
         mViewModel.eventFlow.collectLatest { event ->
             when (event) {
+                UiEvent.SaveSuccess -> {
+                    mOpenDialog.value = false
+                }
+
                 is UiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
                 else -> Unit
             }
@@ -90,9 +92,7 @@ fun TransAddEditAlertDialog() {
                     AsyncData(resultState = mState.getTransDetails,
                         loadingContent = { GenericLoading(isDialog = true) }) {
                         mViewModel.currentTransaction?.let { transaction ->
-                            DialogAddEdit(
-                                transModel = transaction, onEvent = mViewModel::onEvent
-                            )
+                            DialogAddEdit(transModel = transaction, onEvent = mViewModel::onEvent)
                         }
                     }
                 }
@@ -100,25 +100,11 @@ fun TransAddEditAlertDialog() {
                     .align(Alignment.End)
                     .padding(end = 10.dp, bottom = 5.dp), content = {
                     item {
-                        TextButton(
-                            onClick = { mOpenDialog.value = false },
-                        ) {
-                            Text(
-                                text = stringResource(R.string.label_cancel),
-                                fontSize = 14.sp
-                            )
+                        TextButton(onClick = { mOpenDialog.value = false }) {
+                            Text(text = stringResource(R.string.label_cancel), fontSize = 14.sp)
                         }
-                        TextButton(
-                            onClick = {
-                                Log.v(Constants.LOG_TAG, "Click press: ${mOpenDialog.value}")
-                                mViewModel.onEvent(TransAddEditEvent.OnSaveClick)
-                                mOpenDialog.value = false
-                            },
-                        ) {
-                            Text(
-                                text = stringResource(R.string.label_save),
-                                fontSize = 14.sp
-                            )
+                        TextButton(onClick = { mViewModel.onEvent(TransAddEditEvent.OnSaveClick) }) {
+                            Text(text = stringResource(R.string.label_save), fontSize = 14.sp)
                         }
                     }
                 })
@@ -128,9 +114,7 @@ fun TransAddEditAlertDialog() {
 }
 
 @Composable
-private fun DialogAddEdit(
-    transModel: TransModel, onEvent: (TransAddEditEvent) -> Unit
-) {
+private fun DialogAddEdit(transModel: TransModel, onEvent: (TransAddEditEvent) -> Unit) {
     val mFocusManager: FocusManager = LocalFocusManager.current
     val mFocusRequester: FocusRequester = remember { FocusRequester() }
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
@@ -174,11 +158,7 @@ private fun DialogAddEdit(
             mOptions.forEach { text ->
                 val mType = buildAnnotatedString {
                     append(text)
-                    if (text == "Credit") {
-                        append(" (+)")
-                    } else {
-                        append(" (-)")
-                    }
+                    if (text == "Credit") append(" (+)") else append(" (-)")
                 }
                 Box(contentAlignment = Alignment.Center,
                     modifier = Modifier

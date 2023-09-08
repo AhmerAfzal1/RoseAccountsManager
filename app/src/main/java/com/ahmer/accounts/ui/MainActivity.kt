@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.ahmer.accounts.navigation.MainNavigation
+import com.ahmer.accounts.ui.components.TransDatePickDialog
 import com.ahmer.accounts.ui.theme.RoseAccountsManagerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,7 +21,8 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
-                    MainNavigation()
+                    //MainNavigation()
+                    TransDatePickDialog()
                 }
             }
         }

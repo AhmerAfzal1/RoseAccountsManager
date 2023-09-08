@@ -43,8 +43,6 @@ class TransAddEditViewModel @Inject constructor(
     private var mTransId: Int? = 0
     private var mUserId: Int? = 0
 
-    var titleBar by mutableStateOf("Add Transaction")
-
     var currentTransaction: TransModel?
         get() {
             return _uiState.value.getTransDetails.let {
@@ -66,7 +64,6 @@ class TransAddEditViewModel @Inject constructor(
             Log.v(Constants.LOG_TAG, "Trans id: $id")
             mTransId = id
             if (id != -1) {
-                titleBar = "Edit Transaction"
                 mLoadTransJob?.cancel()
                 mLoadTransJob = repository.getAllTransById(id.toLong()).onEach { resultState ->
                     _uiState.update { addEditState ->
@@ -101,49 +98,51 @@ class TransAddEditViewModel @Inject constructor(
             }
 
             TransAddEditEvent.OnSaveClick -> {
-                viewModelScope.launch {
-                    try {
-                        var mTransaction: TransModel? by mutableStateOf(null)
-                        if (currentTransaction!!.type.isEmpty()) {
-                            _eventFlow.emit(UiEvent.ShowToast("Please select credit or debit type"))
-                            return@launch
-                        }
-                        if (currentTransaction?.amount.toString().isEmpty()) {
-                            _eventFlow.emit(UiEvent.ShowToast("Amount cannot be empty"))
-                            return@launch
-                        }
+                save()
+            }
+        }
+    }
 
-                        if (mTransId == -1) {
-                            mTransaction = currentTransaction?.let { transaction ->
-                                TransModel(
-                                    id = transaction.id,
-                                    userId = mUserId!!.toLong(),
-                                    date = transaction.date,
-                                    type = transaction.type,
-                                    description = transaction.description,
-                                    amount = transaction.amount
-                                )
-                            }
-                        } else {
-                            mTransaction = currentTransaction?.copy(
-                                id = currentTransaction!!.id,
-                                userId = currentTransaction!!.userId,
-                                date = currentTransaction!!.date,
-                                type = currentTransaction!!.type,
-                                description = currentTransaction!!.description,
-                                amount = currentTransaction!!.amount
-                            )
-                        }
-                        repository.insertOrUpdate(mTransaction!!)
-                        _eventFlow.emit(UiEvent.SaveSuccess)
-                    } catch (e: Exception) {
-                        _eventFlow.emit(
-                            UiEvent.ShowToast(
-                                message = e.localizedMessage ?: "Transaction couldn't be added"
-                            )
+    private fun save() {
+        viewModelScope.launch {
+            try {
+                var mTransaction: TransModel? by mutableStateOf(null)
+                if (currentTransaction!!.type.isEmpty()) {
+                    _eventFlow.emit(UiEvent.ShowToast("Please select credit or debit type"))
+                    return@launch
+                }
+                if (currentTransaction!!.amount.isEmpty()) {
+                    _eventFlow.emit(UiEvent.ShowToast("Amount cannot be empty"))
+                    return@launch
+                }
+
+                if (mTransId == -1) {
+                    mTransaction = currentTransaction?.let { transaction ->
+                        TransModel(
+                            id = transaction.id,
+                            userId = mUserId!!.toLong(),
+                            date = transaction.date,
+                            type = transaction.type,
+                            description = transaction.description,
+                            amount = transaction.amount
                         )
                     }
+                } else {
+                    mTransaction = currentTransaction?.copy(
+                        id = currentTransaction!!.id,
+                        userId = currentTransaction!!.userId,
+                        date = currentTransaction!!.date,
+                        type = currentTransaction!!.type,
+                        description = currentTransaction!!.description,
+                        amount = currentTransaction!!.amount
+                    )
                 }
+                repository.insertOrUpdate(mTransaction!!)
+                _eventFlow.emit(UiEvent.SaveSuccess)
+            } catch (e: Exception) {
+                _eventFlow.emit(
+                    UiEvent.ShowToast(e.localizedMessage ?: "Transaction couldn't be added")
+                )
             }
         }
     }

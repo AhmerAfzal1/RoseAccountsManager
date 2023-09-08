@@ -1,6 +1,7 @@
 package com.ahmer.accounts.ui
 
 import android.util.Log
+import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -84,6 +85,7 @@ class UserAddEditViewModel @Inject constructor(
             }
 
             is UserAddEditEvent.OnEmailChange -> {
+                //if (!Patterns.EMAIL_ADDRESS.matcher(event.email).matches())
                 currentUser = currentUser?.copy(email = event.email)
             }
 
