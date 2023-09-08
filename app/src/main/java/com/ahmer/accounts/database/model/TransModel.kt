@@ -37,7 +37,7 @@ data class TransModel(
     val description: String = "",
 
     @ColumnInfo(name = "Amount")
-    val amount: Double = 0.00,
+    val amount: String = "",
 
     @ColumnInfo(name = "Created")
     val created: Long = System.currentTimeMillis(),

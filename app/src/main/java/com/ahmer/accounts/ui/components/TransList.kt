@@ -23,18 +23,20 @@ import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.core.AsyncData
 import com.ahmer.accounts.core.GenericError
 import com.ahmer.accounts.core.ResultState
+import com.ahmer.accounts.database.model.TransModel
 import com.ahmer.accounts.database.model.UserModel
+import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UserEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun UsersList(
+fun TransList(
     modifier: Modifier = Modifier,
     padding: PaddingValues,
-    usersListState: ResultState<List<UserModel>>,
-    onEvent: (UserEvent) -> Unit,
+    transListState: ResultState<List<TransModel>>,
+    onEvent: (TransEvent) -> Unit,
     reloadData: () -> Unit
 ) {
     var mRefreshing by remember { mutableStateOf(false) }
@@ -50,12 +52,12 @@ fun UsersList(
     val mState = rememberPullRefreshState(mRefreshing, ::refresh)
 
     Box(Modifier.padding(padding)) {
-        AsyncData(resultState = usersListState, errorContent = {
+        AsyncData(resultState = transListState, errorContent = {
             GenericError(
                 onDismissAction = reloadData
             )
-        }) { usersList ->
-            usersList?.let {
+        }) { transList ->
+            transList?.let {
                 Column(
                     modifier = modifier
                         .fillMaxSize(),
@@ -67,9 +69,9 @@ fun UsersList(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(
-                            items = usersList,
-                            key = { listUser -> listUser.id }) { user ->
-                            UserItem(userModel = user, onEvent = onEvent)
+                            items = transList,
+                            key = { listTrans -> listTrans.id }) { transaction ->
+                            TransItem(transModel = transaction, onEvent = onEvent)
                         }
                     }
                 }

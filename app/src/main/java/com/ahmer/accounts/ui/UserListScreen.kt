@@ -51,8 +51,8 @@ import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.drawerItemsList
 import com.ahmer.accounts.event.UserEvent
-import com.ahmer.accounts.event.UserUiEvent
-import com.ahmer.accounts.ui.components.HomeUserListScreen
+import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.ui.components.UsersList
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.HelperFunctions
 import com.ahmer.accounts.utils.MenuIcon
@@ -68,8 +68,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(
-    onNavigation: (UserUiEvent.Navigate) -> Unit
+fun UsersListScreen(
+    onNavigation: (UiEvent.Navigate) -> Unit
 ) {
     val mContext: Context = LocalContext.current.applicationContext
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
@@ -89,8 +89,8 @@ fun HomeScreen(
     LaunchedEffect(key1 = true) {
         mUserViewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is UserUiEvent.Navigate -> onNavigation(event)
-                is UserUiEvent.ShowSnackBar -> {
+                is UiEvent.Navigate -> onNavigation(event)
+                is UiEvent.ShowSnackBar -> {
                     val mResult = mSnackBarHostState.showSnackbar(
                         message = event.message,
                         actionLabel = event.action,
@@ -101,7 +101,7 @@ fun HomeScreen(
                     }
                 }
 
-                is UserUiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
+                is UiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
                 else -> Unit
             }
         }
@@ -194,10 +194,10 @@ fun HomeScreen(
         }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
             floatingActionButton = {
                 FloatingActionButton(onClick = {
-                    mUserViewModel.onEvent(UserEvent.OnAddClick)
+                    mUserViewModel.onEvent(UserEvent.OnNewAddClick)
                 }) { AddIcon() }
             }) { innerPadding ->
-            HomeUserListScreen(
+            UsersList(
                 padding = innerPadding,
                 usersListState = mState.getAllUsersList,
                 onEvent = mUserViewModel::onEvent,

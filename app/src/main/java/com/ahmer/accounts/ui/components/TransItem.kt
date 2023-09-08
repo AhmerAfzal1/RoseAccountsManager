@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.database.model.TransModel
+import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.CreditIcon
 import com.ahmer.accounts.utils.DebitIcon
@@ -29,15 +30,14 @@ import com.ahmer.accounts.utils.HelperFunctions
 @Composable
 fun TransItem(
     transModel: TransModel,
-    onDeleteClick: () -> Unit,
-    onEditClick: () -> Unit,
+    onEvent: (TransEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 5.dp)
-            .clickable { onEditClick() },
+            .clickable { onEvent(TransEvent.OnEditClick(transModel)) },
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
@@ -81,7 +81,7 @@ fun TransItem(
                 )
             }
 
-            IconButton(onClick = onDeleteClick) {
+            IconButton(onClick = { onEvent(TransEvent.OnDeleteClick(transModel)) }) {
                 DeleteIcon(modifier = Modifier.size(Constants.ICON_SIZE))
             }
         }

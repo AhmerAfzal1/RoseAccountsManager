@@ -55,7 +55,7 @@ fun UserItem(
     }
 
     ElevatedCard(
-        modifier = modifier.clickable { /*TODO*/ },
+        modifier = modifier.clickable { onEvent(UserEvent.OnAddTransactionClick(userModel)) },
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {

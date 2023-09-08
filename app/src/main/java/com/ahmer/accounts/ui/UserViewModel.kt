@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.database.repository.UserRepository
+import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.event.UserEvent
-import com.ahmer.accounts.event.UserUiEvent
 import com.ahmer.accounts.navigation.ScreenRoutes
 import com.ahmer.accounts.preferences.PreferencesFilter
 import com.ahmer.accounts.preferences.PreferencesManager
@@ -35,8 +35,8 @@ class UserViewModel @Inject constructor(
     private val repository: UserRepository,
     private val preferencesManager: PreferencesManager,
 ) : ViewModel(), LifecycleObserver {
-    private val _eventFlow: MutableSharedFlow<UserUiEvent> = MutableSharedFlow()
-    val eventFlow: SharedFlow<UserUiEvent> = _eventFlow.asSharedFlow()
+    private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
+    val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
     private val _preferences: Flow<PreferencesFilter> = preferencesManager.preferencesFlow
 
@@ -51,12 +51,18 @@ class UserViewModel @Inject constructor(
 
     fun onEvent(event: UserEvent) {
         when (event) {
+            is UserEvent.OnAddTransactionClick -> {
+                viewModelScope.launch {
+                    _eventFlow.emit(UiEvent.Navigate(ScreenRoutes.TransListScreen + "?transUserId=${event.userModel.id}"))
+                }
+            }
+
             is UserEvent.OnDeleteClick -> {
                 viewModelScope.launch {
                     mDeletedUser = event.userModel
                     repository.delete(event.userModel)
                     _eventFlow.emit(
-                        UserUiEvent.ShowSnackBar(
+                        UiEvent.ShowSnackBar(
                             message = "User ${event.userModel.name} deleted", action = "Undo"
                         )
                     )
@@ -65,7 +71,7 @@ class UserViewModel @Inject constructor(
 
             is UserEvent.OnEditClick -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(UserUiEvent.Navigate(route = ScreenRoutes.AddEditScreen + "?userId=${event.userModel.id}"))
+                    _eventFlow.emit(UiEvent.Navigate(route = ScreenRoutes.UserAddEditScreen + "?userId=${event.userModel.id}"))
                 }
             }
 
@@ -75,9 +81,9 @@ class UserViewModel @Inject constructor(
                 }
             }
 
-            UserEvent.OnAddClick -> {
+            UserEvent.OnNewAddClick -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(UserUiEvent.Navigate(ScreenRoutes.AddEditScreen))
+                    _eventFlow.emit(UiEvent.Navigate(ScreenRoutes.UserAddEditScreen))
                 }
             }
 

@@ -1,11 +1,14 @@
 package com.ahmer.accounts.database.repository
 
+import com.ahmer.accounts.core.ResultState
+import com.ahmer.accounts.core.ResultState.Companion.flowMap
 import com.ahmer.accounts.database.dao.TransDao
 import com.ahmer.accounts.database.model.TransModel
 import com.ahmer.accounts.database.model.TransSumModel
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -20,14 +23,26 @@ class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : T
         transDao.delete(transModel)
     }
 
+    override fun getAllTransById(id: Long): Flow<ResultState<TransModel?>> {
+        return flowMap {
+            transDao.getAllTransById(id).map { transaction ->
+                ResultState.Success(transaction)
+            }
+        }
+    }
+
     override fun getAllTransByUserId(userId: Long): Flow<List<TransModel>> {
         return transDao.getAllTransByUserId(userId)
     }
 
     override fun getAllTransByUserIdWithSearch(
         userId: Long, searchQuery: String
-    ): Flow<List<TransModel>> {
-        return transDao.getAllTransByUserIdWithSearch(userId, searchQuery)
+    ): Flow<ResultState<List<TransModel>>> {
+        return flowMap {
+            transDao.getAllTransByUserIdWithSearch(userId, searchQuery).map { transactionsList ->
+                ResultState.Success(transactionsList)
+            }
+        }
     }
 
     override fun getAccountBalanceByUser(userId: Long): Flow<TransSumModel> {

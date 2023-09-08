@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +12,7 @@ import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.database.repository.UserRepository
 import com.ahmer.accounts.event.UserAddEditEvent
-import com.ahmer.accounts.event.UserUiEvent
+import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.UserAddEditState
 import com.ahmer.accounts.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,9 +32,9 @@ import javax.inject.Inject
 class UserAddEditViewModel @Inject constructor(
     private val repository: UserRepository,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
-    private val _eventFlow: MutableSharedFlow<UserUiEvent> = MutableSharedFlow()
-    val eventFlow: SharedFlow<UserUiEvent> = _eventFlow.asSharedFlow()
+) : ViewModel(), LifecycleObserver {
+    private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
+    val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
     private val _uiState = MutableStateFlow(UserAddEditState())
     val uiState = _uiState.asStateFlow()
@@ -104,7 +105,7 @@ class UserAddEditViewModel @Inject constructor(
                         var mUser: UserModel? by mutableStateOf(null)
                         var mMessage by mutableStateOf("")
                         if (currentUser!!.name.isEmpty()) {
-                            _eventFlow.emit(UserUiEvent.ShowToast("The name can't be empty"))
+                            _eventFlow.emit(UiEvent.ShowToast("The name can't be empty"))
                             return@launch
                         }
                         if (mUserId == -1) {
@@ -132,11 +133,13 @@ class UserAddEditViewModel @Inject constructor(
                             mMessage = "${mUser?.name} updated successfully!"
                         }
                         repository.insertOrUpdate(mUser!!)
-                        _eventFlow.emit(UserUiEvent.SaveUserSuccess)
-                        _eventFlow.emit(UserUiEvent.ShowToast(mMessage))
+                        _eventFlow.emit(UiEvent.SaveSuccess)
+                        _eventFlow.emit(UiEvent.ShowToast(mMessage))
                     } catch (e: Exception) {
                         _eventFlow.emit(
-                            UserUiEvent.ShowToast(message = e.message ?: "User couldn't be added")
+                            UiEvent.ShowToast(
+                                message = e.localizedMessage ?: "User couldn't be added"
+                            )
                         )
                     }
                 }

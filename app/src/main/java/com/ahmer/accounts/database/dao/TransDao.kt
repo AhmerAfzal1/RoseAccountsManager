@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
+import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.TransModel
 import com.ahmer.accounts.database.model.TransSumModel
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +17,9 @@ interface TransDao {
 
     @Delete
     suspend fun delete(transModel: TransModel)
+
+    @Query("SELECT * FROM Transactions WHERE _id =:id ORDER BY Created ASC")
+    fun getAllTransById(id: Long): Flow<TransModel?>
 
     @Query("SELECT * FROM Transactions WHERE UserID =:userId ORDER BY Created ASC")
     fun getAllTransByUserId(userId: Long): Flow<List<TransModel>>

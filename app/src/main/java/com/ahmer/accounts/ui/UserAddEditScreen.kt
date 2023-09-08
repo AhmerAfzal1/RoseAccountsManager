@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.core.AsyncData
 import com.ahmer.accounts.event.UserAddEditEvent
-import com.ahmer.accounts.event.UserUiEvent
+import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.ui.components.AddEditTextFields
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.HelperFunctions
@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddOrEditScreen(
+fun UserAddEditScreen(
     onPopBackStack: () -> Unit, modifier: Modifier = Modifier
 ) {
     val mContext: Context = LocalContext.current
@@ -47,8 +47,8 @@ fun AddOrEditScreen(
     LaunchedEffect(key1 = true) {
         mViewModel.eventFlow.collectLatest { event ->
             when (event) {
-                UserUiEvent.SaveUserSuccess -> onPopBackStack()
-                is UserUiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
+                UiEvent.SaveSuccess -> onPopBackStack()
+                is UiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
                 else -> Unit
             }
         }
