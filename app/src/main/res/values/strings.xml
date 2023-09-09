@@ -14,6 +14,7 @@
     <string name="content_description_backup">Backup icon</string>
     <string name="content_description_close">Close icon</string>
     <string name="content_description_credit">Credit icon</string>
+    <string name="content_description_date">Select a date</string>
     <string name="content_description_debit">Debit icon</string>
     <string name="content_description_delete">Delete icon</string>
     <string name="content_description_edit">Edit icon</string>
@@ -36,7 +37,7 @@
 
     //Labels
     <string name="label_address">Address</string>
-    <string name="label_amount">Enter Amount</string>
+    <string name="label_amount">Amount</string>
     <string name="label_backup">Backup</string>
     <string name="label_balance">Balance</string>
     <string name="label_cancel">Cancel</string>
@@ -45,7 +46,7 @@
     <string name="label_date">Date</string>
     <string name="label_debit">Debit</string>
     <string name="label_delete">Delete</string>
-    <string name="label_description">Enter Description</string>
+    <string name="label_description">Description</string>
     <string name="label_email">Email Address</string>
     <string name="label_exit">EXIT</string>
     <string name="label_home">Home</string>
@@ -69,5 +70,6 @@
     <string name="title_generic_error">Ops! Something went wrong…</string>
     <string name="title_generic_loading">Please wait…</string>
     <string name="title_snack_bar_text_field">Name text field must not be empty</string>
+    <string name="label_trans_id">Transaction Id</string>
 
 </resources>

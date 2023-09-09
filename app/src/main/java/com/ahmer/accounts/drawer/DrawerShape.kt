@@ -56,9 +56,9 @@ fun RowScope.TableCell(text: String, weight: Float, isBold: Boolean = false) {
 
 @Composable
 fun NavShape(credit: Double, debit: Double) {
-    val mAmountBalance = HelperFunctions.getRoundedValue((credit - debit))
-    val mAmountCredit = HelperFunctions.getRoundedValue(credit)
-    val mAmountDebit = HelperFunctions.getRoundedValue(debit)
+    val mAmountBalance = HelperFunctions.getDecimalRoundedValue((credit - debit))
+    val mAmountCredit = HelperFunctions.getDecimalRoundedValue(credit)
+    val mAmountDebit = HelperFunctions.getDecimalRoundedValue(debit)
     val mContentPadding = 5.dp
     val mCornerDp = 100.dp
     val mFirstRowWeight = 1.5f

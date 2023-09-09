@@ -50,8 +50,8 @@ import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.drawerItemsList
-import com.ahmer.accounts.event.UserEvent
 import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.event.UserEvent
 import com.ahmer.accounts.ui.components.UsersList
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.HelperFunctions

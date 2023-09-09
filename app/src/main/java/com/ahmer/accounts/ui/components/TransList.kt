@@ -24,9 +24,7 @@ import com.ahmer.accounts.core.AsyncData
 import com.ahmer.accounts.core.GenericError
 import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.TransModel
-import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.event.TransEvent
-import com.ahmer.accounts.event.UserEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

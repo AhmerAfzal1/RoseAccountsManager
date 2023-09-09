@@ -1,7 +1,6 @@
 package com.ahmer.accounts.ui
 
 import android.util.Log
-import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,8 +11,8 @@ import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.database.repository.UserRepository
-import com.ahmer.accounts.event.UserAddEditEvent
 import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.event.UserAddEditEvent
 import com.ahmer.accounts.state.UserAddEditState
 import com.ahmer.accounts.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel

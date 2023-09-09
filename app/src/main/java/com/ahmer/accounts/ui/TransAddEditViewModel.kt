@@ -1,4 +1,4 @@
-package com.ahmer.accounts.dialogs
+package com.ahmer.accounts.ui
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -15,6 +15,7 @@ import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.TransAddEditState
 import com.ahmer.accounts.utils.Constants
+import com.ahmer.accounts.utils.HelperFunctions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -43,6 +44,9 @@ class TransAddEditViewModel @Inject constructor(
     private var mTransId: Int? = 0
     private var mUserId: Int? = 0
 
+    var titleBar by mutableStateOf("Add Transaction")
+    var titleButton by mutableStateOf("Save")
+
     var currentTransaction: TransModel?
         get() {
             return _uiState.value.getTransDetails.let {
@@ -64,6 +68,8 @@ class TransAddEditViewModel @Inject constructor(
             Log.v(Constants.LOG_TAG, "Trans id: $id")
             mTransId = id
             if (id != -1) {
+                titleBar = "Edit Transaction"
+                titleButton = "Update"
                 mLoadTransJob?.cancel()
                 mLoadTransJob = repository.getAllTransById(id.toLong()).onEach { resultState ->
                     _uiState.update { addEditState ->
@@ -74,7 +80,11 @@ class TransAddEditViewModel @Inject constructor(
                     }
                 }.launchIn(viewModelScope)
             } else {
-                currentTransaction = TransModel()
+                currentTransaction = TransModel(
+                    date = HelperFunctions.getDateTime(
+                        System.currentTimeMillis(), Constants.DATE_PATTERN
+                    )
+                )
             }
         }
     }

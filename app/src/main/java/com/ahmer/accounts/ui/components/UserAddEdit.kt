@@ -35,7 +35,7 @@ import com.ahmer.accounts.event.UserAddEditEvent
 import com.ahmer.accounts.utils.CloseIcon
 
 @Composable
-fun AddEditTextFields(
+fun UserAddEditTextFields(
     modifier: Modifier = Modifier,
     userModel: UserModel?,
     onEvent: (UserAddEditEvent) -> Unit

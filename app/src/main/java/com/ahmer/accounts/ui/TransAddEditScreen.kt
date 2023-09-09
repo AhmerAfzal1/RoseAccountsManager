@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -26,22 +25,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.core.AsyncData
 import com.ahmer.accounts.event.UiEvent
-import com.ahmer.accounts.event.UserAddEditEvent
-import com.ahmer.accounts.ui.components.UserAddEditTextFields
+import com.ahmer.accounts.ui.components.TransAddEditTextFields
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.HelperFunctions
-import com.ahmer.accounts.utils.SaveIcon
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserAddEditScreen(
-    onPopBackStack: () -> Unit, modifier: Modifier = Modifier
-) {
+fun TransAddEditScreen(onPopBackStack: () -> Unit, modifier: Modifier = Modifier) {
     val mContext: Context = LocalContext.current
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val mViewModel: UserAddEditViewModel = hiltViewModel()
+    val mViewModel: TransAddEditViewModel = hiltViewModel()
     val mState by mViewModel.uiState.collectAsState()
 
     LaunchedEffect(key1 = true) {
@@ -66,18 +61,14 @@ fun UserAddEditScreen(
             actionIconContentColor = MaterialTheme.colorScheme.onPrimary
         ), scrollBehavior = mScrollBehavior
         )
-    }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) }, floatingActionButton = {
-        FloatingActionButton(onClick = {
-            mViewModel.onEvent(UserAddEditEvent.OnSaveClick)
-        }) { SaveIcon() }
-    }) { innerPadding ->
+    }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
-            AsyncData(resultState = mState.getUserDetails) {
-                mViewModel.currentUser?.let { userModel ->
-                    UserAddEditTextFields(
-                        modifier = modifier,
-                        userModel = userModel,
-                        onEvent = mViewModel::onEvent
+            AsyncData(resultState = mState.getTransDetails) {
+                mViewModel.currentTransaction?.let { transaction ->
+                    TransAddEditTextFields(
+                        transModel = transaction,
+                        onEvent = mViewModel::onEvent,
+                        titleButton = mViewModel.titleButton
                     )
                 }
             }

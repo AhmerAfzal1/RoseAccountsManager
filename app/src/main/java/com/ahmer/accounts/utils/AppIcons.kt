@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
@@ -58,6 +59,16 @@ fun CreditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
     Icon(
         imageVector = Icons.Filled.AddCircleOutline,
         contentDescription = stringResource(id = R.string.content_description_credit),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun DateIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        imageVector = Icons.Filled.DateRange,
+        contentDescription = stringResource(id = R.string.content_description_date),
         modifier = modifier,
         tint = tint
     )

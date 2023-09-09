@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.database.model.TransModel
 import com.ahmer.accounts.event.TransEvent
@@ -36,13 +37,12 @@ fun TransItem(
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 5.dp)
             .clickable { onEvent(TransEvent.OnEditClick(transModel)) },
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
-            modifier = Modifier.padding(6.dp),
+            modifier = Modifier.padding(all = 3.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (transModel.type == "Debit") {
@@ -60,20 +60,19 @@ fun TransItem(
             ) {
                 val mDescription: String = transModel.description
                 Text(
-                    text = "${transModel.amount}",
+                    text = "Rs. ${HelperFunctions.getDecimalRoundedValue(transModel.amount.toDouble())}",
+                    fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     style = MaterialTheme.typography.titleMedium
                 )
                 if (mDescription.isNotEmpty()) {
                     Text(
                         text = mDescription,
-                        modifier = Modifier.padding(top = 5.dp),
                         color = Color.DarkGray,
                         maxLines = 3,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
-                Spacer(modifier = Modifier.size(3.dp))
                 Text(
                     text = transModel.date,
                     color = Color.Gray,

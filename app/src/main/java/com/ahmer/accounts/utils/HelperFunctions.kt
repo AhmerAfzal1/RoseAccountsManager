@@ -3,8 +3,6 @@ package com.ahmer.accounts.utils
 import android.content.Context
 import android.os.Build
 import android.widget.Toast
-import java.math.RoundingMode
-import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
@@ -17,25 +15,30 @@ import kotlin.math.roundToInt
 object HelperFunctions {
 
     @JvmStatic
-    fun getDateTime(time: Long): String = if (time == 0.toLong()) {
+    fun getDateTime(time: Long, pattern: String = ""): String = if (time == 0.toLong()) {
         ""
     } else {
+        val mPattern = pattern.ifEmpty {
+            Constants.DATE_TIME_PATTERN
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern(Constants.DATE_TIME_PATTERN))
+                .format(DateTimeFormatter.ofPattern(mPattern))
         } else {
-            SimpleDateFormat(Constants.DATE_TIME_PATTERN, Locale.getDefault()).format(Date(time))
+            SimpleDateFormat(mPattern, Locale.getDefault()).format(Date(time))
         }
     }
-
 
     fun getPlayStoreLink(context: Context): String = Constants.PLAY_STORE_LINK + context.packageName
 
     @JvmStatic
-    fun getRoundedValue(value: Double): String {
-        val mRound = DecimalFormat("#,##0.##")
-        mRound.roundingMode = RoundingMode.HALF_UP
-        return mRound.format(value)
+    fun getDecimalRoundedValue(value: Double): String {
+        return if (value % 1 != 0.toDouble()) {
+            String.format("%.2f", value)
+        } else {
+            String.format("%.0f", value)
+        }
+
     }
 
     @JvmStatic
