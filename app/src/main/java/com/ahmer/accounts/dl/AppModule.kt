@@ -33,7 +33,7 @@ object AppModule {
         context.applicationContext, AppDatabase::class.java, Constants.DATABASE_NAME
     ).setJournalMode(RoomDatabase.JournalMode.TRUNCATE) //For backup in single file
         .fallbackToDestructiveMigration()
-        //.addCallback(UsersCallback(usersProvider))
+        //.addCallback(DbCallback(usersProvider))
         .build()
 
     @Provides

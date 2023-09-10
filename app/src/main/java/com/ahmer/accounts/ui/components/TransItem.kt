@@ -22,7 +22,6 @@ import com.ahmer.accounts.database.model.TransModel
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorRedDark
-import com.ahmer.accounts.ui.theme.colorRedLight
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.CreditIcon
 import com.ahmer.accounts.utils.DebitIcon

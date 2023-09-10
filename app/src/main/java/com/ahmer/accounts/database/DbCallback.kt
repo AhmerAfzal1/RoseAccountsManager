@@ -10,7 +10,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Provider
 
-class UsersCallback(private val userDao: Provider<UserDao>) : RoomDatabase.Callback() {
+class DbCallback(private val userDao: Provider<UserDao>) : RoomDatabase.Callback() {
     private val mScope = CoroutineScope(SupervisorJob())
 
     override fun onCreate(db: SupportSQLiteDatabase) {
