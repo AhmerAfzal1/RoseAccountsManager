@@ -56,8 +56,8 @@ fun TransList(
             transList?.let {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    contentPadding = PaddingValues(start = 10.dp, end = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
                     items(
                         items = transList,
