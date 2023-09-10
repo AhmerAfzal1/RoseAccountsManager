@@ -18,12 +18,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.database.model.TransSumModel
+import com.ahmer.accounts.ui.theme.colorGreenDark
+import com.ahmer.accounts.ui.theme.colorGreenLight
+import com.ahmer.accounts.ui.theme.colorRedDark
+import com.ahmer.accounts.ui.theme.colorRedLight
 
 @Composable
 fun TransTotal(transSumModel: TransSumModel) {
+    val mColorBackground: Color
+    val mColorText: Color
     val mCredit = transSumModel.creditSum ?: "0.0"
     val mDebit = transSumModel.debitSum ?: "0.0"
-    val mBalance = mCredit.toDouble().minus(mDebit.toDouble()).toString()
+    val mTotalBalance = mCredit.toDouble().minus(mDebit.toDouble())
+
+    if (mTotalBalance >= 0) {
+        mColorBackground = colorGreenLight
+        mColorText = colorGreenDark
+    } else {
+        mColorBackground = colorRedLight
+        mColorText = colorRedDark
+    }
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Bottom,
@@ -36,7 +51,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                     .weight(1f)
                     .clip(RoundedCornerShape(10.dp))
                     .padding(horizontal = 3.dp)
-                    .background(Color.Green)
+                    .background(colorGreenLight)
             ) {
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -45,14 +60,14 @@ fun TransTotal(transSumModel: TransSumModel) {
                     Text(
                         text = "CREDIT",
                         modifier = Modifier.padding(top = 5.dp),
-                        color = Color.White,
+                        color = colorGreenDark,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
                     )
 
                     Text(
                         text = mCredit,
-                        color = Color.White,
+                        color = colorGreenDark,
                         modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
@@ -66,7 +81,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                     .weight(1f)
                     .clip(RoundedCornerShape(10.dp))
                     .padding(horizontal = 3.dp)
-                    .background(Color.Red)
+                    .background(colorRedLight)
             ) {
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -75,14 +90,14 @@ fun TransTotal(transSumModel: TransSumModel) {
                     Text(
                         text = "DEBIT",
                         modifier = Modifier.padding(top = 5.dp),
-                        color = Color.White,
+                        color = colorRedDark,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
                     )
 
                     Text(
                         text = mDebit,
-                        color = Color.White,
+                        color = colorRedDark,
                         modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
@@ -96,7 +111,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                     .weight(1f)
                     .clip(RoundedCornerShape(10.dp))
                     .padding(horizontal = 3.dp)
-                    .background(Color.Blue)
+                    .background(mColorBackground)
             ) {
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -105,14 +120,14 @@ fun TransTotal(transSumModel: TransSumModel) {
                     Text(
                         text = "BALANCE",
                         modifier = Modifier.padding(top = 5.dp),
-                        color = Color.White,
+                        color = mColorText,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
                     )
 
                     Text(
-                        text = mBalance,
-                        color = Color.White,
+                        text = mTotalBalance.toString(),
+                        color = mColorText,
                         modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
