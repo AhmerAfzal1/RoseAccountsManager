@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransAddEditScreen(onPopBackStack: () -> Unit, modifier: Modifier = Modifier) {
+fun TransAddEditScreen(onPopBackStack: () -> Unit) {
     val mContext: Context = LocalContext.current
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }

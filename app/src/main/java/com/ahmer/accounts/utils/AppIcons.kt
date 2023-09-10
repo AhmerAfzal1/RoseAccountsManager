@@ -1,6 +1,8 @@
 package com.ahmer.accounts.utils
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
@@ -37,7 +39,7 @@ fun AddIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curre
 @Composable
 fun BackIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.ArrowBack,
+        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
         contentDescription = stringResource(id = R.string.content_description_back),
         modifier = modifier,
         tint = tint
@@ -167,7 +169,7 @@ fun SortByNameIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColo
 @Composable
 fun SortIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.Sort,
+        imageVector = Icons.AutoMirrored.Filled.Sort,
         contentDescription = stringResource(id = R.string.content_description_sort),
         modifier = modifier,
         tint = tint

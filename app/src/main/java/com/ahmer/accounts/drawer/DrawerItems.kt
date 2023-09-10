@@ -1,6 +1,8 @@
 package com.ahmer.accounts.drawer
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.ExitToApp
@@ -76,8 +78,8 @@ fun drawerItemsList(): List<DrawerItems> = listOf(
     ),
     DrawerItems(
         label = stringResource(R.string.label_exit),
-        selectedIcon = Icons.Filled.ExitToApp,
-        unselectedIcon = Icons.Outlined.ExitToApp,
+        selectedIcon = Icons.AutoMirrored.Filled.ExitToApp,
+        unselectedIcon = Icons.AutoMirrored.Outlined.ExitToApp,
         contentDescription = stringResource(id = R.string.content_description_exit),
     )
 )
