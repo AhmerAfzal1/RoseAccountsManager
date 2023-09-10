@@ -2,7 +2,6 @@ package com.ahmer.accounts.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,6 +23,7 @@ import com.ahmer.accounts.core.AsyncData
 import com.ahmer.accounts.core.GenericError
 import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.TransModel
+import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.event.TransEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,9 +31,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TransList(
-    modifier: Modifier = Modifier,
     padding: PaddingValues,
     transListState: ResultState<List<TransModel>>,
+    transBalanceState: ResultState<TransSumModel>,
     onEvent: (TransEvent) -> Unit,
     reloadData: () -> Unit
 ) {
@@ -49,29 +49,28 @@ fun TransList(
 
     val mState = rememberPullRefreshState(mRefreshing, ::refresh)
 
-    Box(Modifier.padding(padding)) {
+    Box(modifier = Modifier.padding(padding), contentAlignment = Alignment.BottomCenter) {
         AsyncData(resultState = transListState, errorContent = {
-            GenericError(
-                onDismissAction = reloadData
-            )
+            GenericError(onDismissAction = reloadData)
         }) { transList ->
             transList?.let {
-                Column(
-                    modifier = modifier
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(
-                            items = transList,
-                            key = { listTrans -> listTrans.id }) { transaction ->
-                            TransItem(transModel = transaction, onEvent = onEvent)
-                        }
+                    items(
+                        items = transList,
+                        key = { listTrans -> listTrans.id }) { transaction ->
+                        TransItem(transModel = transaction, onEvent = onEvent)
                     }
+                }
+            }
+        }
+        AsyncData(resultState = transBalanceState) { balanceSum ->
+            balanceSum?.let { transSum ->
+                LazyColumn {
+                    item { TransTotal(transSumModel = transSum) }
                 }
             }
         }

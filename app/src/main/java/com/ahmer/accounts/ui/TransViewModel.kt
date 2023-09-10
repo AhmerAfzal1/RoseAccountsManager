@@ -45,7 +45,8 @@ class TransViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private var mDeletedTrans: TransModel? = null
-    private var mLoadTransJob: Job? = null
+    private var mLoadAllTransJob: Job? = null
+    private var mLoadAllTransByIdJob: Job? = null
 
     var userId: Long = 0
 
@@ -93,10 +94,18 @@ class TransViewModel @Inject constructor(
     }
 
     fun getAllUserTransactions() {
-        mLoadTransJob?.cancel()
-        mLoadTransJob =
+        mLoadAllTransJob?.cancel()
+        mLoadAllTransJob =
             getAllTransactionWithSearch(userId, _searchQuery).onEach { resultState ->
                 _uiState.update { transState -> transState.copy(getAllUsersTransList = resultState) }
+            }.launchIn(viewModelScope)
+    }
+
+    private fun getAccountBalanceByUser() {
+        mLoadAllTransByIdJob?.cancel()
+        mLoadAllTransByIdJob =
+            repository.getAccountBalanceByUser(userId).onEach { resultState ->
+                _uiState.update { it.copy(getUserTransBalance = resultState) }
             }.launchIn(viewModelScope)
     }
 
@@ -105,6 +114,7 @@ class TransViewModel @Inject constructor(
             Log.v(Constants.LOG_TAG, "Transaction user id: $id")
             userId = id.toLong()
             getAllUserTransactions()
+            getAccountBalanceByUser()
         }
     }
 }

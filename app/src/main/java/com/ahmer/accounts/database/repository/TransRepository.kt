@@ -16,11 +16,10 @@ interface TransRepository {
     fun getAllTransByUserId(userId: Long): Flow<List<TransModel>>
 
     fun getAllTransByUserIdWithSearch(
-        userId: Long,
-        searchQuery: String
+        userId: Long, searchQuery: String
     ): Flow<ResultState<List<TransModel>>>
 
-    fun getAccountBalanceByUser(userId: Long): Flow<TransSumModel>
+    fun getAccountBalanceByUser(userId: Long): Flow<ResultState<TransSumModel>>
 
     fun getAllAccountsBalance(): Flow<TransSumModel>
 }

@@ -116,7 +116,7 @@ class TransAddEditViewModel @Inject constructor(
     private fun save() {
         viewModelScope.launch {
             try {
-                var mTransaction: TransModel? by mutableStateOf(null)
+                var mTransaction: TransModel? by mutableStateOf(TransModel())
                 if (currentTransaction!!.type.isEmpty()) {
                     _eventFlow.emit(UiEvent.ShowToast("Please select credit or debit type"))
                     return@launch

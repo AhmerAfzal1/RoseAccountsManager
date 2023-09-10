@@ -85,6 +85,7 @@ fun TransListScreen(
         TransList(
             padding = innerPadding,
             transListState = mState.getAllUsersTransList,
+            transBalanceState = mState.getUserTransBalance,
             onEvent = mViewModel::onEvent,
             reloadData = mViewModel::getAllUserTransactions
         )

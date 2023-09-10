@@ -71,7 +71,7 @@ fun TransAddEditTextFields(
     }
 
     Column(
-        Modifier
+        modifier = Modifier
             .fillMaxWidth()
             .padding(all = 15.dp)
     ) {

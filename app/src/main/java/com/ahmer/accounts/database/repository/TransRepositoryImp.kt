@@ -45,8 +45,12 @@ class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : T
         }
     }
 
-    override fun getAccountBalanceByUser(userId: Long): Flow<TransSumModel> {
-        return transDao.getAccountBalanceByUser(userId)
+    override fun getAccountBalanceByUser(userId: Long): Flow<ResultState<TransSumModel>> {
+        return flowMap {
+            transDao.getAccountBalanceByUser(userId).map { balance ->
+                ResultState.Success(balance)
+            }
+        }
     }
 
     override fun getAllAccountsBalance(): Flow<TransSumModel> {

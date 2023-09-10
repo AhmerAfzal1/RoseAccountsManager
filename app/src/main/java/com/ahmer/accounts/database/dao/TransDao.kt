@@ -19,7 +19,7 @@ interface TransDao {
     suspend fun delete(transModel: TransModel)
 
     @Query("SELECT * FROM Transactions WHERE _id =:id ORDER BY Created ASC")
-    fun getAllTransById(id: Long): Flow<TransModel?>
+    fun getAllTransById(id: Long): Flow<TransModel>
 
     @Query("SELECT * FROM Transactions WHERE UserID =:userId ORDER BY Created ASC")
     fun getAllTransByUserId(userId: Long): Flow<List<TransModel>>
