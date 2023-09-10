@@ -81,9 +81,7 @@ fun UserItem(
                     modifier = Modifier.then(Modifier.size(mIconSize)),
                 ) { InfoIcon() }
                 IconButton(
-                    onClick = {
-                        onEvent(HomeEvent.OnEditClick(userModel))
-                    },
+                    onClick = { onEvent(HomeEvent.OnEditClick(userModel)) },
                     modifier = Modifier.then(Modifier.size(mIconSize)),
                 ) { EditIcon() }
                 IconButton(

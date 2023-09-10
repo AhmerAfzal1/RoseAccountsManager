@@ -5,7 +5,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ahmer.accounts.database.AppDatabase
 import com.ahmer.accounts.database.dao.AdminDao
+import com.ahmer.accounts.database.dao.TransDao
 import com.ahmer.accounts.database.dao.UserDao
+import com.ahmer.accounts.database.repository.TransRepository
+import com.ahmer.accounts.database.repository.TransRepositoryImp
 import com.ahmer.accounts.database.repository.UserRepository
 import com.ahmer.accounts.database.repository.UserRepositoryImp
 import com.ahmer.accounts.preferences.PreferencesManager
@@ -40,11 +43,19 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun providesAdminDao(database: AppDatabase): AdminDao = database.adminDao()
+
+    @Provides
+    @Singleton
+    fun providesTransDao(database: AppDatabase): TransDao = database.transDao()
+
+    @Provides
+    @Singleton
     fun providesUsersDao(database: AppDatabase): UserDao = database.usersDao()
 
     @Provides
     @Singleton
-    fun providesAdminDao(database: AppDatabase): AdminDao = database.adminDao()
+    fun providesTransRepository(transDao: TransDao): TransRepository = TransRepositoryImp(transDao)
 
     @Provides
     @Singleton
