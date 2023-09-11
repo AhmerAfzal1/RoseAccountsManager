@@ -73,8 +73,6 @@ fun UsersListScreen(
 ) {
     val mContext: Context = LocalContext.current.applicationContext
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
-    val mCredit = 10000.00
-    val mDebit = 8000.00
     val mDrawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val mUserViewModel: UserViewModel = hiltViewModel()
     val mNavItemsList: List<DrawerItems> = drawerItemsList()
@@ -123,7 +121,7 @@ fun UsersListScreen(
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
-                NavShape(mCredit, mDebit)
+                NavShape(mState.getAllUsersBalance)
                 Spacer(Modifier.height(12.dp))
                 mNavItemsList.forEachIndexed { index, item ->
                     //Spacer(Modifier.height(6.dp))
@@ -200,6 +198,7 @@ fun UsersListScreen(
             UsersList(
                 padding = innerPadding,
                 usersListState = mState.getAllUsersList,
+                transSumModel = mState.getUserBalance,
                 onEvent = mUserViewModel::onEvent,
                 reloadData = mUserViewModel::getAllUsersData
             )

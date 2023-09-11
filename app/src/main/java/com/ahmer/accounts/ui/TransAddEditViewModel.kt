@@ -71,7 +71,7 @@ class TransAddEditViewModel @Inject constructor(
                 titleBar = "Edit Transaction"
                 titleButton = "Update"
                 mLoadTransJob?.cancel()
-                mLoadTransJob = repository.getAllTransById(id.toLong()).onEach { resultState ->
+                mLoadTransJob = repository.getAllTransById(id).onEach { resultState ->
                     _uiState.update { addEditState ->
                         if (resultState is ResultState.Success) {
                             currentTransaction = resultState.data
@@ -130,7 +130,7 @@ class TransAddEditViewModel @Inject constructor(
                     mTransaction = currentTransaction?.let { transaction ->
                         TransModel(
                             id = transaction.id,
-                            userId = mUserId!!.toLong(),
+                            userId = mUserId!!,
                             date = transaction.date,
                             type = transaction.type,
                             description = transaction.description,

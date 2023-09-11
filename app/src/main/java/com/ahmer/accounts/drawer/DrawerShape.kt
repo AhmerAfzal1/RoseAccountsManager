@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
+import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.utils.HelperFunctions
 
 @Composable
@@ -55,14 +56,15 @@ fun RowScope.TableCell(text: String, weight: Float, isBold: Boolean = false) {
 }
 
 @Composable
-fun NavShape(credit: Double, debit: Double) {
-    val mAmountBalance = HelperFunctions.getDecimalRoundedValue((credit - debit))
-    val mAmountCredit = HelperFunctions.getDecimalRoundedValue(credit)
-    val mAmountDebit = HelperFunctions.getDecimalRoundedValue(debit)
+fun NavShape(transSumModel: TransSumModel) {
     val mContentPadding = 5.dp
     val mCornerDp = 100.dp
     val mFirstRowWeight = 1.5f
     val mSecondRowWeight = 2f
+    val mTotalCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
+    val mTotalDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
+    val mTotalBalance = HelperFunctions.getRoundedValue((mTotalCredit.minus(mTotalDebit)))
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -111,13 +113,13 @@ fun NavShape(credit: Double, debit: Double) {
                             TableCell(
                                 stringResource(id = R.string.label_nav_credit), mFirstRowWeight
                             )
-                            TableCell(mAmountCredit, mSecondRowWeight)
+                            TableCell(mTotalCredit.toString(), mSecondRowWeight)
                         }
                         Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
                             TableCell(
                                 stringResource(id = R.string.label_nav_debit), mFirstRowWeight
                             )
-                            TableCell(mAmountDebit, mSecondRowWeight)
+                            TableCell(mTotalDebit.toString(), mSecondRowWeight)
                         }
                         Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
                             HorizontalDivider(
@@ -129,7 +131,7 @@ fun NavShape(credit: Double, debit: Double) {
                             TableCell(
                                 stringResource(id = R.string.label_balance), mFirstRowWeight, true
                             )
-                            TableCell(mAmountBalance, mSecondRowWeight, true)
+                            TableCell(mTotalBalance.toString(), mSecondRowWeight, true)
                         }
                     }
                 }

@@ -11,15 +11,15 @@ interface TransRepository {
 
     suspend fun delete(transModel: TransModel)
 
-    fun getAllTransById(id: Long): Flow<ResultState<TransModel?>>
+    fun getAllTransById(id: Int): Flow<ResultState<TransModel?>>
 
-    fun getAllTransByUserId(userId: Long): Flow<List<TransModel>>
+    fun getAllTransByUserId(userId: Int): Flow<List<TransModel>>
 
     fun getAllTransByUserIdWithSearch(
-        userId: Long, searchQuery: String
+        userId: Int, searchQuery: String
     ): Flow<ResultState<List<TransModel>>>
 
-    fun getAccountBalanceByUser(userId: Long): Flow<ResultState<TransSumModel>>
+    fun getAccountBalanceByUser(userId: Int): Flow<ResultState<TransSumModel>>
 
     fun getAllAccountsBalance(): Flow<TransSumModel>
 }

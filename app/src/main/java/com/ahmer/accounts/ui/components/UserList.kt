@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.core.AsyncData
 import com.ahmer.accounts.core.GenericError
 import com.ahmer.accounts.core.ResultState
+import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.event.UserEvent
 
@@ -23,6 +24,7 @@ fun UsersList(
     modifier: Modifier = Modifier,
     padding: PaddingValues,
     usersListState: ResultState<List<UserModel>>,
+    transSumModel: TransSumModel,
     onEvent: (UserEvent) -> Unit,
     reloadData: () -> Unit
 ) {
@@ -46,7 +48,9 @@ fun UsersList(
                         items(
                             items = usersList,
                             key = { listUser -> listUser.id }) { user ->
-                            UserItem(userModel = user, onEvent = onEvent)
+                            UserItem(
+                                userModel = user, onEvent = onEvent, transSumModel = transSumModel
+                            )
                         }
                     }
                 }

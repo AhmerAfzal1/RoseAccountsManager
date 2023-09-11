@@ -22,10 +22,10 @@ import kotlinx.parcelize.Parcelize
 data class TransModel(
     @ColumnInfo(name = "_id")
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0.toLong(),
+    val id: Int = 0,
 
     @ColumnInfo(name = "UserID")
-    val userId: Long = 0.toLong(),
+    val userId: Int = 0,
 
     @ColumnInfo(name = "Date")
     val date: String = "",

@@ -48,6 +48,8 @@ class UserViewModel @Inject constructor(
 
     private var mDeletedUser: UserModel? = null
     private var mLoadUsersJob: Job? = null
+    private var mLoadUsersTotalBalanceJob: Job? = null
+    private var mLoadUserBalanceByIdJob: Job? = null
 
     fun onEvent(event: UserEvent) {
         when (event) {
@@ -114,7 +116,22 @@ class UserViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
+    fun getUserBalanceById(id: Int) {
+        mLoadUserBalanceByIdJob?.cancel()
+        mLoadUserBalanceByIdJob = repository.getAccountBalanceByUser(id).onEach { resultState ->
+            _uiState.update { userState -> userState.copy(getUserBalance = resultState) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getAllUsersBalance() {
+        mLoadUsersTotalBalanceJob?.cancel()
+        mLoadUsersTotalBalanceJob = repository.getAllAccountsBalance().onEach { resultState ->
+            _uiState.update { userState -> userState.copy(getAllUsersBalance = resultState) }
+        }.launchIn(viewModelScope)
+    }
+
     init {
         getAllUsersData()
+        getAllUsersBalance()
     }
 }

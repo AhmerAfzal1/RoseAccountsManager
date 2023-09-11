@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.dialogs.DeleteAlertDialog
 import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
@@ -31,12 +32,14 @@ import com.ahmer.accounts.event.UserEvent
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.EditIcon
+import com.ahmer.accounts.utils.HelperFunctions
 import com.ahmer.accounts.utils.InfoIcon
 
 @Composable
 fun UserItem(
     userModel: UserModel,
     onEvent: (UserEvent) -> Unit,
+    transSumModel: TransSumModel,
     modifier: Modifier = Modifier
 ) {
     val mPadding: Dp = 5.dp
@@ -93,10 +96,14 @@ fun UserItem(
         Column(
             modifier = Modifier.padding(end = mPadding, bottom = mPadding)
         ) {
+            val mTotalCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
+            val mTotalDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
+            val mTotalBalance = HelperFunctions.getRoundedValue((mTotalCredit.minus(mTotalDebit)))
+
             val mText: String = if (userModel.phone.isEmpty()) {
-                "Balance: "
+                "Balance: $mTotalBalance"
             } else {
-                "Phone: ${userModel.phone}  |  Balance: "
+                "Phone: ${userModel.phone}  |  Balance: $mTotalBalance"
             }
             Text(
                 modifier = Modifier.padding(start = mPadding),

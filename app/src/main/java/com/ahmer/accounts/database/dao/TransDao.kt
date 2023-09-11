@@ -19,17 +19,17 @@ interface TransDao {
     suspend fun delete(transModel: TransModel)
 
     @Query("SELECT * FROM Transactions WHERE _id =:id ORDER BY Created ASC")
-    fun getAllTransById(id: Long): Flow<TransModel>
+    fun getAllTransById(id: Int): Flow<TransModel>
 
     @Query("SELECT * FROM Transactions WHERE UserID =:userId ORDER BY Created ASC")
-    fun getAllTransByUserId(userId: Long): Flow<List<TransModel>>
+    fun getAllTransByUserId(userId: Int): Flow<List<TransModel>>
 
     @Query("SELECT * FROM Transactions WHERE UserID = :userId AND Description LIKE '%' || :searchQuery || '%' ORDER BY Created ASC")
-    fun getAllTransByUserIdWithSearch(userId: Long, searchQuery: String): Flow<List<TransModel>>
+    fun getAllTransByUserIdWithSearch(userId: Int, searchQuery: String): Flow<List<TransModel>>
 
     @Transaction
     @Query("SELECT SUM(CASE WHEN Type = 'Credit' THEN Amount ELSE 0 END) AS creditSum, SUM(CASE WHEN Type = 'Debit' THEN Amount ELSE 0 END) AS debitSum FROM Transactions WHERE (Type IN('Credit', 'Debit') AND UserID = :userId)")
-    fun getAccountBalanceByUser(userId: Long): Flow<TransSumModel>
+    fun getAccountBalanceByUser(userId: Int): Flow<TransSumModel>
 
     @Transaction
     @Query("SELECT SUM(CASE WHEN Type = 'Credit' THEN Amount ELSE 0 END) AS creditSum, SUM(CASE WHEN Type = 'Debit' THEN Amount ELSE 0 END) AS debitSum FROM Transactions WHERE Type IN('Credit', 'Debit')")

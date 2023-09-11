@@ -129,7 +129,7 @@ class UserAddEditViewModel @Inject constructor(
                                 phone = currentUser!!.phone,
                                 email = currentUser!!.email,
                                 notes = currentUser!!.notes,
-                                modified = System.currentTimeMillis()
+                                updated = System.currentTimeMillis()
                             )
                             mMessage = "${mUser?.name} updated successfully!"
                         }

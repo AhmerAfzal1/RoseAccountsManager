@@ -18,7 +18,7 @@ import kotlinx.parcelize.Parcelize
 data class UserModel(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "_id")
-    val id: Long = 0.toLong(),
+    val id: Int = 0,
 
     @ColumnInfo(name = "Name")
     val name: String = "",
@@ -38,6 +38,6 @@ data class UserModel(
     @ColumnInfo(name = "Created")
     val created: Long = System.currentTimeMillis(),
 
-    @ColumnInfo(name = "LastModified")
-    val modified: Long = 0.toLong(),
+    @ColumnInfo(name = "Updated")
+    val updated: Long = 0.toLong(),
 ) : Parcelable

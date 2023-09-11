@@ -61,7 +61,7 @@ fun MoreInfoAlertDialog(userModel: UserModel) {
         userModel.email,
         userModel.notes,
         HelperFunctions.getDateTime(userModel.created),
-        HelperFunctions.getDateTime(userModel.modified),
+        HelperFunctions.getDateTime(userModel.updated),
     )
     val mTitleList = listOf(
         "Name:",
@@ -70,7 +70,7 @@ fun MoreInfoAlertDialog(userModel: UserModel) {
         "Email:",
         "Notes:",
         "Created:",
-        "Modified:",
+        "Updated:",
     )
     val mOpenDialog = remember { mutableStateOf(true) }
 

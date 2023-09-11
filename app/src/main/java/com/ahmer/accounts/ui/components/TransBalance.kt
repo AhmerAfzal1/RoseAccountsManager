@@ -22,14 +22,15 @@ import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorGreenLight
 import com.ahmer.accounts.ui.theme.colorRedDark
 import com.ahmer.accounts.ui.theme.colorRedLight
+import com.ahmer.accounts.utils.HelperFunctions
 
 @Composable
 fun TransTotal(transSumModel: TransSumModel) {
     val mColorBackground: Color
     val mColorText: Color
-    val mCredit = transSumModel.creditSum ?: "0.0"
-    val mDebit = transSumModel.debitSum ?: "0.0"
-    val mTotalBalance = mCredit.toDouble().minus(mDebit.toDouble())
+    val mCredit = transSumModel.creditSum?.toDouble() ?: 0.0
+    val mDebit = transSumModel.debitSum?.toDouble() ?: 0.0
+    val mTotalBalance = mCredit.minus(mDebit)
 
     if (mTotalBalance >= 0) {
         mColorBackground = colorGreenLight
@@ -66,7 +67,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                     )
 
                     Text(
-                        text = mCredit,
+                        text = HelperFunctions.getRoundedValue(mCredit),
                         color = colorGreenDark,
                         modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
@@ -96,7 +97,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                     )
 
                     Text(
-                        text = mDebit,
+                        text = HelperFunctions.getRoundedValue(mDebit),
                         color = colorRedDark,
                         modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
@@ -126,7 +127,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                     )
 
                     Text(
-                        text = mTotalBalance.toString(),
+                        text = HelperFunctions.getRoundedValue(mTotalBalance),
                         color = mColorText,
                         modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,

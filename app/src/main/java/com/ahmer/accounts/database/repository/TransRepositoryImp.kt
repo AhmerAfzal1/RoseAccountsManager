@@ -23,7 +23,7 @@ class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : T
         transDao.delete(transModel)
     }
 
-    override fun getAllTransById(id: Long): Flow<ResultState<TransModel?>> {
+    override fun getAllTransById(id: Int): Flow<ResultState<TransModel?>> {
         return flowMap {
             transDao.getAllTransById(id).map { transaction ->
                 ResultState.Success(transaction)
@@ -31,12 +31,12 @@ class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : T
         }
     }
 
-    override fun getAllTransByUserId(userId: Long): Flow<List<TransModel>> {
+    override fun getAllTransByUserId(userId: Int): Flow<List<TransModel>> {
         return transDao.getAllTransByUserId(userId)
     }
 
     override fun getAllTransByUserIdWithSearch(
-        userId: Long, searchQuery: String
+        userId: Int, searchQuery: String
     ): Flow<ResultState<List<TransModel>>> {
         return flowMap {
             transDao.getAllTransByUserIdWithSearch(userId, searchQuery).map { transactionsList ->
@@ -45,7 +45,7 @@ class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : T
         }
     }
 
-    override fun getAccountBalanceByUser(userId: Long): Flow<ResultState<TransSumModel>> {
+    override fun getAccountBalanceByUser(userId: Int): Flow<ResultState<TransSumModel>> {
         return flowMap {
             transDao.getAccountBalanceByUser(userId).map { balance ->
                 ResultState.Success(balance)

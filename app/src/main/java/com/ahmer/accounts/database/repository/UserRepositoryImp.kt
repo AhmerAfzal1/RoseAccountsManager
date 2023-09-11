@@ -3,6 +3,7 @@ package com.ahmer.accounts.database.repository
 import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.core.ResultState.Companion.flowMap
 import com.ahmer.accounts.database.dao.UserDao
+import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.database.model.UserModel
 import com.ahmer.accounts.utils.SortBy
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -41,5 +42,13 @@ class UserRepositoryImp @Inject constructor(private val userDao: UserDao) : User
                 ResultState.Success(userList)
             }
         }
+    }
+
+    override fun getAccountBalanceByUser(userId: Int): Flow<TransSumModel> {
+        return userDao.getAccountBalanceByUser(userId)
+    }
+
+    override fun getAllAccountsBalance(): Flow<TransSumModel> {
+        return userDao.getAllAccountsBalance()
     }
 }

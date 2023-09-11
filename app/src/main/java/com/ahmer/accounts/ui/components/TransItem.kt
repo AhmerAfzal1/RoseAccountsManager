@@ -54,7 +54,7 @@ fun TransItem(
         ) {
             val mDescription: String = transModel.description
             Text(
-                text = "Rs. ${HelperFunctions.getDecimalRoundedValue(transModel.amount.toDouble())}",
+                text = "Rs. ${HelperFunctions.getRoundedValue(transModel.amount.toDouble())}",
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 style = MaterialTheme.typography.titleMedium

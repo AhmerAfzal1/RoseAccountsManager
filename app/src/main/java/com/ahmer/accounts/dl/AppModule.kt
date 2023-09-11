@@ -28,12 +28,13 @@ object AppModule {
     @Singleton
     fun providesDatabase(
         @ApplicationContext context: Context,
-        //usersProvider: Provider<UserDao>
+        //usersProvider: Provider<UserDao>,
+        //transProvider: Provider<TransDao>
     ): AppDatabase = Room.databaseBuilder(
         context.applicationContext, AppDatabase::class.java, Constants.DATABASE_NAME
     ).setJournalMode(RoomDatabase.JournalMode.TRUNCATE) //For backup in single file
         .fallbackToDestructiveMigration()
-        //.addCallback(DbCallback(usersProvider))
+        //.addCallback(DbCallback(usersProvider, transProvider))
         .build()
 
     @Provides

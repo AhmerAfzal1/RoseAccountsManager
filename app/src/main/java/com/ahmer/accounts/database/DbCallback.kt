@@ -2,7 +2,9 @@ package com.ahmer.accounts.database
 
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.ahmer.accounts.database.dao.TransDao
 import com.ahmer.accounts.database.dao.UserDao
+import com.ahmer.accounts.database.model.TransModel
 import com.ahmer.accounts.database.model.UserModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -10,7 +12,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Provider
 
-class DbCallback(private val userDao: Provider<UserDao>) : RoomDatabase.Callback() {
+class DbCallback(
+    private val userDao: Provider<UserDao>,
+    private val transDao: Provider<TransDao>
+) : RoomDatabase.Callback() {
     private val mScope = CoroutineScope(SupervisorJob())
 
     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -108,8 +113,53 @@ class DbCallback(private val userDao: Provider<UserDao>) : RoomDatabase.Callback
                 notes = "Computer Operator at Bajwa's Collection"
             ),
         )
+        val mTransModelLists = listOf(
+            TransModel(
+                userId = 1,
+                date = "07 Sep 2023",
+                type = "Credit",
+                description = "",
+                amount = "563.5"
+            ),
+            TransModel(
+                userId = 1,
+                date = "08 Sep 2023",
+                type = "Credit",
+                description = "Add",
+                amount = "1503.55"
+            ),
+            TransModel(
+                userId = 1,
+                date = "09 Sep 2023",
+                type = "Debit",
+                description = "",
+                amount = "203.5"
+            ),
+            TransModel(
+                userId = 2,
+                date = "06 Sep 2023",
+                type = "Credit",
+                description = "",
+                amount = "874.5"
+            ),
+            TransModel(
+                userId = 2,
+                date = "07 Sep 2023",
+                type = "Debit",
+                description = "Minus",
+                amount = "325.54"
+            ),
+            TransModel(
+                userId = 3,
+                date = "07 Sep 2023",
+                type = "Credit",
+                description = "",
+                amount = "413.5"
+            ),
+        )
         mScope.launch(Dispatchers.IO) {
             mUserModelLists.forEach { userDao.get().insertOrUpdate(it) }
+            mTransModelLists.forEach { transDao.get().insertOrUpdate(it) }
         }
     }
 }

@@ -3,6 +3,8 @@ package com.ahmer.accounts.utils
 import android.content.Context
 import android.os.Build
 import android.widget.Toast
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
@@ -32,13 +34,10 @@ object HelperFunctions {
     fun getPlayStoreLink(context: Context): String = Constants.PLAY_STORE_LINK + context.packageName
 
     @JvmStatic
-    fun getDecimalRoundedValue(value: Double): String {
-        return if (value % 1 != 0.toDouble()) {
-            String.format("%.2f", value)
-        } else {
-            String.format("%.0f", value)
-        }
-
+    fun getRoundedValue(value: Double): String {
+        val mRound = DecimalFormat("#,##0.##")
+        mRound.roundingMode = RoundingMode.HALF_UP
+        return mRound.format(value)
     }
 
     @JvmStatic

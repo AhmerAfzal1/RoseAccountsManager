@@ -5,6 +5,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class TransSumModel(
-    var creditSum: String? = "",
-    var debitSum: String? = ""
+    var creditSum: String? = "0.0",
+    var debitSum: String? = "0.0"
 ) : Parcelable

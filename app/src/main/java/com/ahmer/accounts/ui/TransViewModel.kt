@@ -48,7 +48,7 @@ class TransViewModel @Inject constructor(
     private var mLoadAllTransJob: Job? = null
     private var mLoadAllTransByIdJob: Job? = null
 
-    var userId: Long = 0
+    var userId: MutableState<Int> = mutableStateOf(0)
 
     fun onEvent(event: TransEvent) {
         when (event) {
@@ -88,7 +88,7 @@ class TransViewModel @Inject constructor(
     }
 
     private fun getAllTransactionWithSearch(
-        userId: Long, searchQuery: MutableState<String>
+        userId: Int, searchQuery: MutableState<String>
     ): Flow<ResultState<List<TransModel>>> {
         return repository.getAllTransByUserIdWithSearch(userId, searchQuery.value)
     }
@@ -96,7 +96,7 @@ class TransViewModel @Inject constructor(
     fun getAllUserTransactions() {
         mLoadAllTransJob?.cancel()
         mLoadAllTransJob =
-            getAllTransactionWithSearch(userId, _searchQuery).onEach { resultState ->
+            getAllTransactionWithSearch(userId.value, _searchQuery).onEach { resultState ->
                 _uiState.update { transState -> transState.copy(getAllUsersTransList = resultState) }
             }.launchIn(viewModelScope)
     }
@@ -104,7 +104,7 @@ class TransViewModel @Inject constructor(
     private fun getAccountBalanceByUser() {
         mLoadAllTransByIdJob?.cancel()
         mLoadAllTransByIdJob =
-            repository.getAccountBalanceByUser(userId).onEach { resultState ->
+            repository.getAccountBalanceByUser(userId.value).onEach { resultState ->
                 _uiState.update { it.copy(getUserTransBalance = resultState) }
             }.launchIn(viewModelScope)
     }
@@ -112,7 +112,7 @@ class TransViewModel @Inject constructor(
     init {
         savedStateHandle.get<Int>("transUserId")?.let { id ->
             Log.v(Constants.LOG_TAG, "Transaction user id: $id")
-            userId = id.toLong()
+            userId.value = id
             getAllUserTransactions()
             getAccountBalanceByUser()
         }
