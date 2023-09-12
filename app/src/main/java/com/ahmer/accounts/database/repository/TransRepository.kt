@@ -1,25 +1,25 @@
 package com.ahmer.accounts.database.repository
 
 import com.ahmer.accounts.core.ResultState
-import com.ahmer.accounts.database.model.TransModel
+import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import kotlinx.coroutines.flow.Flow
 
 interface TransRepository {
 
-    suspend fun insertOrUpdate(transModel: TransModel)
+    suspend fun insertOrUpdate(transEntity: TransEntity)
 
-    suspend fun delete(transModel: TransModel)
+    suspend fun delete(transEntity: TransEntity)
 
-    fun getAllTransById(id: Int): Flow<ResultState<TransModel?>>
+    fun getAllTransById(transId: Int): Flow<ResultState<TransEntity?>>
 
-    fun getAllTransByUserId(userId: Int): Flow<List<TransModel>>
+    fun getAllTransByPersonId(personId: Int): Flow<List<TransEntity>>
 
-    fun getAllTransByUserIdWithSearch(
-        userId: Int, searchQuery: String
-    ): Flow<ResultState<List<TransModel>>>
+    fun getAllTransByPersonIdWithSearch(
+        personId: Int, searchQuery: String
+    ): Flow<ResultState<List<TransEntity>>>
 
-    fun getAccountBalanceByUser(userId: Int): Flow<ResultState<TransSumModel>>
+    fun getAccountBalanceByPerson(personId: Int): Flow<ResultState<TransSumModel>>
 
     fun getAllAccountsBalance(): Flow<TransSumModel>
 }

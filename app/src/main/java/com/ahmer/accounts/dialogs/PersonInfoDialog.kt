@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.model.UserModel
+import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.utils.HelperFunctions
 import com.ahmer.accounts.utils.InfoIcon
 
@@ -53,15 +53,15 @@ fun RowScope.InfoText(text: String, weight: Float, isTitle: Boolean = false) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MoreInfoAlertDialog(userModel: UserModel) {
+fun MoreInfoAlertDialog(personsEntity: PersonsEntity) {
     val mDataList = listOf(
-        userModel.name,
-        userModel.address,
-        userModel.phone,
-        userModel.email,
-        userModel.notes,
-        HelperFunctions.getDateTime(userModel.created),
-        HelperFunctions.getDateTime(userModel.updated),
+        personsEntity.name,
+        personsEntity.address,
+        personsEntity.phone,
+        personsEntity.email,
+        personsEntity.notes,
+        HelperFunctions.getDateTime(personsEntity.created),
+        HelperFunctions.getDateTime(personsEntity.updated),
     )
     val mTitleList = listOf(
         "Name:",

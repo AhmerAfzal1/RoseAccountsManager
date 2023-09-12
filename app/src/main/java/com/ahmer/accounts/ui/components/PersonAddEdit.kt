@@ -30,15 +30,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.event.UserAddEditEvent
+import com.ahmer.accounts.database.model.PersonsEntity
+import com.ahmer.accounts.event.PersonAddEditEvent
 import com.ahmer.accounts.utils.CloseIcon
 
 @Composable
-fun UserAddEditTextFields(
+fun PersonAddEditTextFields(
     modifier: Modifier = Modifier,
-    userModel: UserModel?,
-    onEvent: (UserAddEditEvent) -> Unit
+    personsEntity: PersonsEntity?,
+    onEvent: (PersonAddEditEvent) -> Unit
 ) {
     val mFocusManager: FocusManager = LocalFocusManager.current
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
@@ -70,10 +70,10 @@ fun UserAddEditTextFields(
             content = {
                 item {
                     OutlinedTextField(
-                        value = userModel?.name ?: "",
+                        value = personsEntity?.name ?: "",
                         onValueChange = { text ->
                             if (text.length <= mLenName) {
-                                onEvent(UserAddEditEvent.OnNameChange(text))
+                                onEvent(PersonAddEditEvent.OnNameChange(text))
                             }
                         },
                         modifier = Modifier
@@ -87,17 +87,17 @@ fun UserAddEditTextFields(
                         label = { Text(stringResource(R.string.label_name)) },
                         placeholder = { Text(stringResource(R.string.label_name)) },
                         trailingIcon = {
-                            if (userModel?.name!!.isNotEmpty()) {
+                            if (personsEntity?.name!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (userModel.name.isNotEmpty()) {
-                                        onEvent(UserAddEditEvent.OnNameChange(""))
+                                    if (personsEntity.name.isNotEmpty()) {
+                                        onEvent(PersonAddEditEvent.OnNameChange(""))
                                     }
                                 })
                             }
                         },
                         supportingText = {
                             Text(
-                                text = "${userModel?.name?.length} / $mLenName",
+                                text = "${personsEntity?.name?.length} / $mLenName",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.End,
                             )
@@ -112,10 +112,10 @@ fun UserAddEditTextFields(
                     )
 
                     OutlinedTextField(
-                        value = userModel?.address ?: "",
+                        value = personsEntity?.address ?: "",
                         onValueChange = { text ->
                             if (text.length <= mLenAddress) {
-                                onEvent(UserAddEditEvent.OnAddressChange(text))
+                                onEvent(PersonAddEditEvent.OnAddressChange(text))
                             }
                         },
                         modifier = Modifier
@@ -124,17 +124,17 @@ fun UserAddEditTextFields(
                         label = { Text(stringResource(R.string.label_address)) },
                         placeholder = { Text(stringResource(R.string.label_address)) },
                         trailingIcon = {
-                            if (userModel?.address!!.isNotEmpty()) {
+                            if (personsEntity?.address!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (userModel.address.isNotEmpty()) {
-                                        onEvent(UserAddEditEvent.OnAddressChange(""))
+                                    if (personsEntity.address.isNotEmpty()) {
+                                        onEvent(PersonAddEditEvent.OnAddressChange(""))
                                     }
                                 })
                             }
                         },
                         supportingText = {
                             Text(
-                                text = "${userModel?.address?.length} / $mLenAddress",
+                                text = "${personsEntity?.address?.length} / $mLenAddress",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.End,
                             )
@@ -149,10 +149,10 @@ fun UserAddEditTextFields(
                     )
 
                     OutlinedTextField(
-                        value = userModel?.phone ?: "",
+                        value = personsEntity?.phone ?: "",
                         onValueChange = { text ->
                             if (text.length <= mLenPhone) {
-                                onEvent(UserAddEditEvent.OnPhoneChange(text))
+                                onEvent(PersonAddEditEvent.OnPhoneChange(text))
                             }
                         },
                         modifier = Modifier
@@ -161,17 +161,17 @@ fun UserAddEditTextFields(
                         label = { Text(stringResource(R.string.label_phone_number)) },
                         placeholder = { Text(stringResource(R.string.label_phone_number)) },
                         trailingIcon = {
-                            if (userModel?.phone!!.isNotEmpty()) {
+                            if (personsEntity?.phone!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (userModel.phone.isNotEmpty()) {
-                                        onEvent(UserAddEditEvent.OnPhoneChange(""))
+                                    if (personsEntity.phone.isNotEmpty()) {
+                                        onEvent(PersonAddEditEvent.OnPhoneChange(""))
                                     }
                                 })
                             }
                         },
                         supportingText = {
                             Text(
-                                text = "${userModel?.phone?.length} / $mLenPhone",
+                                text = "${personsEntity?.phone?.length} / $mLenPhone",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.End,
                             )
@@ -187,10 +187,10 @@ fun UserAddEditTextFields(
                     )
 
                     OutlinedTextField(
-                        value = userModel?.email ?: "",
+                        value = personsEntity?.email ?: "",
                         onValueChange = { text ->
                             if (text.length <= mLenEmail) {
-                                onEvent(UserAddEditEvent.OnEmailChange(text))
+                                onEvent(PersonAddEditEvent.OnEmailChange(text))
                             }
                         },
                         modifier = Modifier
@@ -199,17 +199,17 @@ fun UserAddEditTextFields(
                         label = { Text(stringResource(R.string.label_email)) },
                         placeholder = { Text(stringResource(R.string.label_email)) },
                         trailingIcon = {
-                            if (userModel?.email!!.isNotEmpty()) {
+                            if (personsEntity?.email!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (userModel.email.isNotEmpty()) {
-                                        onEvent(UserAddEditEvent.OnEmailChange(""))
+                                    if (personsEntity.email.isNotEmpty()) {
+                                        onEvent(PersonAddEditEvent.OnEmailChange(""))
                                     }
                                 })
                             }
                         },
                         supportingText = {
                             Text(
-                                text = "${userModel?.email?.length} / $mLenEmail",
+                                text = "${personsEntity?.email?.length} / $mLenEmail",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.End,
                             )
@@ -225,10 +225,10 @@ fun UserAddEditTextFields(
                     )
 
                     OutlinedTextField(
-                        value = userModel?.notes ?: "",
+                        value = personsEntity?.notes ?: "",
                         onValueChange = { text ->
                             if (text.length <= mLenNotes) {
-                                onEvent(UserAddEditEvent.OnNotesChange(text))
+                                onEvent(PersonAddEditEvent.OnNotesChange(text))
                             }
                         },
                         modifier = Modifier
@@ -237,17 +237,17 @@ fun UserAddEditTextFields(
                         label = { Text(stringResource(R.string.label_notes)) },
                         placeholder = { Text(stringResource(R.string.label_notes)) },
                         trailingIcon = {
-                            if (userModel?.notes!!.isNotEmpty()) {
+                            if (personsEntity?.notes!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
-                                    if (userModel.notes.isNotEmpty()) {
-                                        onEvent(UserAddEditEvent.OnNotesChange(""))
+                                    if (personsEntity.notes.isNotEmpty()) {
+                                        onEvent(PersonAddEditEvent.OnNotesChange(""))
                                     }
                                 })
                             }
                         },
                         supportingText = {
                             Text(
-                                text = "${userModel?.notes?.length} / $mLenNotes",
+                                text = "${personsEntity?.notes?.length} / $mLenNotes",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.End,
                             )

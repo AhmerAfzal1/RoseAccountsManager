@@ -24,11 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.ahmer.accounts.database.model.TransSumModel
-import com.ahmer.accounts.database.model.UserModel
+import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.dialogs.DeleteAlertDialog
 import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
-import com.ahmer.accounts.event.UserEvent
+import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.EditIcon
@@ -36,10 +35,9 @@ import com.ahmer.accounts.utils.HelperFunctions
 import com.ahmer.accounts.utils.InfoIcon
 
 @Composable
-fun UserItem(
-    userModel: UserModel,
-    onEvent: (UserEvent) -> Unit,
-    transSumModel: TransSumModel,
+fun PersonItem(
+    personsEntity: PersonsEntity,
+    onEvent: (PersonEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val mPadding: Dp = 5.dp
@@ -48,17 +46,17 @@ fun UserItem(
 
     if (mShowDeleteDialog) {
         DeleteAlertDialog(
-            nameAccount = userModel.name,
-            onConfirmClick = { onEvent(UserEvent.OnDeleteClick(userModel)) }
+            nameAccount = personsEntity.name,
+            onConfirmClick = { onEvent(PersonEvent.OnDeleteClick(personsEntity)) }
         )
     }
 
     if (mShowInfoDialog) {
-        MoreInfoAlertDialog(userModel)
+        MoreInfoAlertDialog(personsEntity)
     }
 
     ElevatedCard(
-        modifier = modifier.clickable { onEvent(UserEvent.OnAddTransactionClick(userModel)) },
+        modifier = modifier.clickable { onEvent(PersonEvent.OnAddTransactionClick(personsEntity)) },
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
@@ -67,7 +65,7 @@ fun UserItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = userModel.name,
+                text = personsEntity.name,
                 modifier = Modifier.padding(start = mPadding),
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
@@ -84,7 +82,7 @@ fun UserItem(
                     modifier = Modifier.then(Modifier.size(Constants.ICON_SIZE)),
                 ) { InfoIcon() }
                 IconButton(
-                    onClick = { onEvent(UserEvent.OnEditClick(userModel)) },
+                    onClick = { onEvent(PersonEvent.OnEditClick(personsEntity)) },
                     modifier = Modifier.then(Modifier.size(Constants.ICON_SIZE)),
                 ) { EditIcon() }
                 IconButton(
@@ -96,14 +94,14 @@ fun UserItem(
         Column(
             modifier = Modifier.padding(end = mPadding, bottom = mPadding)
         ) {
-            val mTotalCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
-            val mTotalDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
+            val mTotalCredit: Double = 0.0
+            val mTotalDebit: Double = 0.0
             val mTotalBalance = HelperFunctions.getRoundedValue((mTotalCredit.minus(mTotalDebit)))
 
-            val mText: String = if (userModel.phone.isEmpty()) {
+            val mText: String = if (personsEntity.phone.isEmpty()) {
                 "Balance: $mTotalBalance"
             } else {
-                "Phone: ${userModel.phone}  |  Balance: $mTotalBalance"
+                "Phone: ${personsEntity.phone}  |  Balance: $mTotalBalance"
             }
             Text(
                 modifier = Modifier.padding(start = mPadding),

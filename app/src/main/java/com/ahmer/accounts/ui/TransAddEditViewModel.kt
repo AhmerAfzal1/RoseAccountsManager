@@ -9,7 +9,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.core.ResultState
-import com.ahmer.accounts.database.model.TransModel
+import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.repository.TransRepository
 import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.event.UiEvent
@@ -41,13 +41,13 @@ class TransAddEditViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private var mLoadTransJob: Job? = null
+    private var mPersonId: Int? = 0
     private var mTransId: Int? = 0
-    private var mUserId: Int? = 0
 
     var titleBar by mutableStateOf("Add Transaction")
     var titleButton by mutableStateOf("Save")
 
-    var currentTransaction: TransModel?
+    var currentTransaction: TransEntity?
         get() {
             return _uiState.value.getTransDetails.let {
                 if (it is ResultState.Success) it.data else null
@@ -60,18 +60,18 @@ class TransAddEditViewModel @Inject constructor(
         }
 
     init {
-        savedStateHandle.get<Int>("transUserId")?.let { id ->
-            Log.v(Constants.LOG_TAG, "TransUserId: $id")
-            mUserId = id
+        savedStateHandle.get<Int>("transPersonId")?.let { personId ->
+            Log.v(Constants.LOG_TAG, "Get person id for add in transaction, id: $personId")
+            mPersonId = personId
         }
-        savedStateHandle.get<Int>("transId")?.let { id ->
-            Log.v(Constants.LOG_TAG, "Trans id: $id")
-            mTransId = id
-            if (id != -1) {
+        savedStateHandle.get<Int>("transId")?.let { transId ->
+            Log.v(Constants.LOG_TAG, "Get transaction id: $transId")
+            mTransId = transId
+            if (transId != -1) {
                 titleBar = "Edit Transaction"
                 titleButton = "Update"
                 mLoadTransJob?.cancel()
-                mLoadTransJob = repository.getAllTransById(id).onEach { resultState ->
+                mLoadTransJob = repository.getAllTransById(transId).onEach { resultState ->
                     _uiState.update { addEditState ->
                         if (resultState is ResultState.Success) {
                             currentTransaction = resultState.data
@@ -80,7 +80,7 @@ class TransAddEditViewModel @Inject constructor(
                     }
                 }.launchIn(viewModelScope)
             } else {
-                currentTransaction = TransModel(
+                currentTransaction = TransEntity(
                     date = HelperFunctions.getDateTime(
                         System.currentTimeMillis(), Constants.DATE_PATTERN
                     )
@@ -116,7 +116,7 @@ class TransAddEditViewModel @Inject constructor(
     private fun save() {
         viewModelScope.launch {
             try {
-                var mTransaction: TransModel? by mutableStateOf(TransModel())
+                var mTransaction: TransEntity? by mutableStateOf(TransEntity())
                 if (currentTransaction!!.type.isEmpty()) {
                     _eventFlow.emit(UiEvent.ShowToast("Please select credit or debit type"))
                     return@launch
@@ -128,9 +128,9 @@ class TransAddEditViewModel @Inject constructor(
 
                 if (mTransId == -1) {
                     mTransaction = currentTransaction?.let { transaction ->
-                        TransModel(
+                        TransEntity(
                             id = transaction.id,
-                            userId = mUserId!!,
+                            personId = mPersonId!!,
                             date = transaction.date,
                             type = transaction.type,
                             description = transaction.description,
@@ -140,7 +140,7 @@ class TransAddEditViewModel @Inject constructor(
                 } else {
                     mTransaction = currentTransaction?.copy(
                         id = currentTransaction!!.id,
-                        userId = currentTransaction!!.userId,
+                        personId = currentTransaction!!.personId,
                         date = currentTransaction!!.date,
                         type = currentTransaction!!.type,
                         description = currentTransaction!!.description,

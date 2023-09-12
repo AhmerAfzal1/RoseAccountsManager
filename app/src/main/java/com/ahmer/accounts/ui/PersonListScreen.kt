@@ -50,9 +50,9 @@ import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.drawerItemsList
+import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
-import com.ahmer.accounts.event.UserEvent
-import com.ahmer.accounts.ui.components.UsersList
+import com.ahmer.accounts.ui.components.PersonsList
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.HelperFunctions
 import com.ahmer.accounts.utils.MenuIcon
@@ -68,24 +68,24 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun UsersListScreen(
+fun PersonsListScreen(
     onNavigation: (UiEvent.Navigate) -> Unit
 ) {
     val mContext: Context = LocalContext.current.applicationContext
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mDrawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val mUserViewModel: UserViewModel = hiltViewModel()
+    val mPersonViewModel: PersonViewModel = hiltViewModel()
     val mNavItemsList: List<DrawerItems> = drawerItemsList()
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     var mSelectedItems by rememberSaveable { mutableIntStateOf(0) }
     var mShowDropdownMenu by remember { mutableStateOf(false) }
     var mShowSearch by remember { mutableStateOf(false) }
-    val mState by mUserViewModel.uiState.collectAsState()
-    var mTextSearch by remember { mutableStateOf(mUserViewModel.searchQuery.value) }
+    val mState by mPersonViewModel.uiState.collectAsState()
+    var mTextSearch by remember { mutableStateOf(mPersonViewModel.searchQuery.value) }
 
     LaunchedEffect(key1 = true) {
-        mUserViewModel.eventFlow.collectLatest { event ->
+        mPersonViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.Navigate -> onNavigation(event)
                 is UiEvent.ShowSnackBar -> {
@@ -95,7 +95,7 @@ fun UsersListScreen(
                         duration = SnackbarDuration.Short
                     )
                     if (mResult == SnackbarResult.ActionPerformed) {
-                        mUserViewModel.onEvent(UserEvent.OnUndoDeleteClick)
+                        mPersonViewModel.onEvent(PersonEvent.OnUndoDeleteClick)
                     }
                 }
 
@@ -121,7 +121,7 @@ fun UsersListScreen(
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
-                NavShape(mState.getAllUsersBalance)
+                NavShape(mState.getAllPersonsBalance)
                 Spacer(Modifier.height(12.dp))
                 mNavItemsList.forEachIndexed { index, item ->
                     //Spacer(Modifier.height(6.dp))
@@ -171,13 +171,13 @@ fun UsersListScreen(
                     onDismissRequest = { mShowDropdownMenu = false }) {
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_name)) },
                         onClick = {
-                            mUserViewModel.onEvent(UserEvent.OnSortBy(SortBy.NAME))
+                            mPersonViewModel.onEvent(PersonEvent.OnSortBy(SortBy.NAME))
                             mShowDropdownMenu = false
                         },
                         leadingIcon = { SortByNameIcon() })
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_date_created)) },
                         onClick = {
-                            mUserViewModel.onEvent(UserEvent.OnSortBy(SortBy.DATE))
+                            mPersonViewModel.onEvent(PersonEvent.OnSortBy(SortBy.DATE))
                             mShowDropdownMenu = false
                         },
                         leadingIcon = { SortByDateIcon() })
@@ -192,15 +192,14 @@ fun UsersListScreen(
         }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
             floatingActionButton = {
                 FloatingActionButton(onClick = {
-                    mUserViewModel.onEvent(UserEvent.OnNewAddClick)
+                    mPersonViewModel.onEvent(PersonEvent.OnNewAddClick)
                 }) { AddIcon() }
             }) { innerPadding ->
-            UsersList(
+            PersonsList(
                 padding = innerPadding,
-                usersListState = mState.getAllUsersList,
-                transSumModel = mState.getUserBalance,
-                onEvent = mUserViewModel::onEvent,
-                reloadData = mUserViewModel::getAllUsersData
+                personsListState = mState.getAllPersonsList,
+                onEvent = mPersonViewModel::onEvent,
+                reloadData = mPersonViewModel::getAllPersonsData
             )
         }
     }

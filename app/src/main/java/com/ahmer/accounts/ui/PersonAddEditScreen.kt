@@ -25,9 +25,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.core.AsyncData
+import com.ahmer.accounts.event.PersonAddEditEvent
 import com.ahmer.accounts.event.UiEvent
-import com.ahmer.accounts.event.UserAddEditEvent
-import com.ahmer.accounts.ui.components.UserAddEditTextFields
+import com.ahmer.accounts.ui.components.PersonAddEditTextFields
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.HelperFunctions
 import com.ahmer.accounts.utils.SaveIcon
@@ -35,13 +35,13 @@ import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserAddEditScreen(
+fun PersonAddEditScreen(
     onPopBackStack: () -> Unit, modifier: Modifier = Modifier
 ) {
     val mContext: Context = LocalContext.current
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val mViewModel: UserAddEditViewModel = hiltViewModel()
+    val mViewModel: PersonAddEditViewModel = hiltViewModel()
     val mState by mViewModel.uiState.collectAsState()
 
     LaunchedEffect(key1 = true) {
@@ -68,15 +68,15 @@ fun UserAddEditScreen(
         )
     }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) }, floatingActionButton = {
         FloatingActionButton(onClick = {
-            mViewModel.onEvent(UserAddEditEvent.OnSaveClick)
+            mViewModel.onEvent(PersonAddEditEvent.OnSaveClick)
         }) { SaveIcon() }
     }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
-            AsyncData(resultState = mState.getUserDetails) {
-                mViewModel.currentUser?.let { userModel ->
-                    UserAddEditTextFields(
+            AsyncData(resultState = mState.getPersonDetails) {
+                mViewModel.currentPerson?.let { personEntity ->
+                    PersonAddEditTextFields(
                         modifier = modifier,
-                        userModel = userModel,
+                        personsEntity = personEntity,
                         onEvent = mViewModel::onEvent
                     )
                 }

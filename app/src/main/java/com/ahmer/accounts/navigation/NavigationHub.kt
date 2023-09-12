@@ -6,10 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.ahmer.accounts.ui.PersonAddEditScreen
+import com.ahmer.accounts.ui.PersonsListScreen
 import com.ahmer.accounts.ui.TransAddEditScreen
 import com.ahmer.accounts.ui.TransListScreen
-import com.ahmer.accounts.ui.UserAddEditScreen
-import com.ahmer.accounts.ui.UsersListScreen
 
 @Composable
 fun MainNavigation() {
@@ -17,25 +17,25 @@ fun MainNavigation() {
 
     NavHost(
         navController = mNavHostController,
-        startDestination = ScreenRoutes.UserListScreen,
+        startDestination = ScreenRoutes.PersonListScreen,
         builder = {
-            composable(route = ScreenRoutes.UserListScreen) {
-                UsersListScreen(onNavigation = {
+            composable(route = ScreenRoutes.PersonListScreen) {
+                PersonsListScreen(onNavigation = {
                     mNavHostController.navigate(it.route)
                 })
             }
             composable(
-                route = ScreenRoutes.UserAddEditScreen + "?userId={userId}",
-                arguments = listOf(navArgument(name = "userId") {
+                route = ScreenRoutes.PersonAddEditScreen + "?personId={personId}",
+                arguments = listOf(navArgument(name = "personId") {
                     type = NavType.IntType
                     defaultValue = -1
                 })
             ) {
-                UserAddEditScreen(onPopBackStack = { mNavHostController.popBackStack() })
+                PersonAddEditScreen(onPopBackStack = { mNavHostController.popBackStack() })
             }
             composable(
-                route = ScreenRoutes.TransListScreen + "?transUserId={transUserId}",
-                arguments = listOf(navArgument(name = "transUserId") {
+                route = ScreenRoutes.TransListScreen + "?transPersonId={transPersonId}",
+                arguments = listOf(navArgument(name = "transPersonId") {
                     type = NavType.IntType
                     defaultValue = -1
                 })
@@ -46,11 +46,11 @@ fun MainNavigation() {
                 )
             }
             composable(
-                route = ScreenRoutes.TransAddEditScreen + "?transId={transId}/transUserId={transUserId}",
+                route = ScreenRoutes.TransAddEditScreen + "?transId={transId}/transPersonId={transPersonId}",
                 arguments = listOf(navArgument(name = "transId") {
                     type = NavType.IntType
                     defaultValue = -1
-                }, navArgument(name = "transUserId") {
+                }, navArgument(name = "transPersonId") {
                     type = NavType.IntType
                     defaultValue = -1
                 })

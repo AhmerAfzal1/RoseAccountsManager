@@ -84,10 +84,10 @@ fun TransListScreen(
     }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) }) { innerPadding ->
         TransList(
             padding = innerPadding,
-            transListState = mState.getAllUsersTransList,
-            transBalanceState = mState.getUserTransBalance,
+            transListState = mState.getAllPersonsTransList,
+            transBalanceState = mState.getPersonTransBalance,
             onEvent = mViewModel::onEvent,
-            reloadData = mViewModel::getAllUserTransactions
+            reloadData = mViewModel::getAllPersonsTransactions
         )
     }
 }

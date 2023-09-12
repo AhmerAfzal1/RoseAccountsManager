@@ -14,14 +14,14 @@ import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.core.AsyncData
 import com.ahmer.accounts.core.GenericError
 import com.ahmer.accounts.core.ResultState
-import com.ahmer.accounts.database.model.TransModel
+import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.event.TransEvent
 
 @Composable
 fun TransList(
     padding: PaddingValues,
-    transListState: ResultState<List<TransModel>>,
+    transListState: ResultState<List<TransEntity>>,
     transBalanceState: ResultState<TransSumModel>,
     onEvent: (TransEvent) -> Unit,
     reloadData: () -> Unit
@@ -39,7 +39,7 @@ fun TransList(
                     items(
                         items = transList,
                         key = { listTrans -> listTrans.id }) { transaction ->
-                        TransItem(transModel = transaction, onEvent = onEvent)
+                        TransItem(transEntity = transaction, onEvent = onEvent)
                     }
                 }
             }

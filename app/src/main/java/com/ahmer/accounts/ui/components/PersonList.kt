@@ -15,26 +15,24 @@ import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.core.AsyncData
 import com.ahmer.accounts.core.GenericError
 import com.ahmer.accounts.core.ResultState
-import com.ahmer.accounts.database.model.TransSumModel
-import com.ahmer.accounts.database.model.UserModel
-import com.ahmer.accounts.event.UserEvent
+import com.ahmer.accounts.database.model.PersonsEntity
+import com.ahmer.accounts.event.PersonEvent
 
 @Composable
-fun UsersList(
+fun PersonsList(
     modifier: Modifier = Modifier,
     padding: PaddingValues,
-    usersListState: ResultState<List<UserModel>>,
-    transSumModel: TransSumModel,
-    onEvent: (UserEvent) -> Unit,
+    personsListState: ResultState<List<PersonsEntity>>,
+    onEvent: (PersonEvent) -> Unit,
     reloadData: () -> Unit
 ) {
     Box(Modifier.padding(padding)) {
-        AsyncData(resultState = usersListState, errorContent = {
+        AsyncData(resultState = personsListState, errorContent = {
             GenericError(
                 onDismissAction = reloadData
             )
-        }) { usersList ->
-            usersList?.let {
+        }) { personsList ->
+            personsList?.let {
                 Column(
                     modifier = modifier
                         .fillMaxSize(),
@@ -46,11 +44,9 @@ fun UsersList(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(
-                            items = usersList,
-                            key = { listUser -> listUser.id }) { user ->
-                            UserItem(
-                                userModel = user, onEvent = onEvent, transSumModel = transSumModel
-                            )
+                            items = personsList,
+                            key = { persons -> persons.id }) { person ->
+                            PersonItem(personsEntity = person, onEvent = onEvent)
                         }
                     }
                 }

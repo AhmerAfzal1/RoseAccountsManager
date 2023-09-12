@@ -5,12 +5,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ahmer.accounts.database.AppDatabase
 import com.ahmer.accounts.database.dao.AdminDao
+import com.ahmer.accounts.database.dao.PersonDao
 import com.ahmer.accounts.database.dao.TransDao
-import com.ahmer.accounts.database.dao.UserDao
+import com.ahmer.accounts.database.repository.PersonRepository
+import com.ahmer.accounts.database.repository.PersonRepositoryImp
 import com.ahmer.accounts.database.repository.TransRepository
 import com.ahmer.accounts.database.repository.TransRepositoryImp
-import com.ahmer.accounts.database.repository.UserRepository
-import com.ahmer.accounts.database.repository.UserRepositoryImp
 import com.ahmer.accounts.preferences.PreferencesManager
 import com.ahmer.accounts.utils.Constants
 import dagger.Module
@@ -28,13 +28,12 @@ object AppModule {
     @Singleton
     fun providesDatabase(
         @ApplicationContext context: Context,
-        //usersProvider: Provider<UserDao>,
-        //transProvider: Provider<TransDao>
+        //personsProvider: Provider<PersonDao>, transProvider: Provider<TransDao>
     ): AppDatabase = Room.databaseBuilder(
         context.applicationContext, AppDatabase::class.java, Constants.DATABASE_NAME
     ).setJournalMode(RoomDatabase.JournalMode.TRUNCATE) //For backup in single file
         .fallbackToDestructiveMigration()
-        //.addCallback(DbCallback(usersProvider, transProvider))
+        //.addCallback(DbCallback(personsProvider, transProvider))
         .build()
 
     @Provides
@@ -52,7 +51,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesUsersDao(database: AppDatabase): UserDao = database.usersDao()
+    fun providesPersonsDao(database: AppDatabase): PersonDao = database.personDao()
 
     @Provides
     @Singleton
@@ -60,5 +59,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesUserRepository(userDao: UserDao): UserRepository = UserRepositoryImp(userDao)
+    fun providesPersonRepository(personDao: PersonDao): PersonRepository =
+        PersonRepositoryImp(personDao)
 }

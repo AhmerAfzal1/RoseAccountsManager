@@ -66,7 +66,7 @@ fun TransAddEditScreen(onPopBackStack: () -> Unit) {
             AsyncData(resultState = mState.getTransDetails) {
                 mViewModel.currentTransaction?.let { transaction ->
                     TransAddEditTextFields(
-                        transModel = transaction,
+                        transEntity = transaction,
                         onEvent = mViewModel::onEvent,
                         titleButton = mViewModel.titleButton
                     )

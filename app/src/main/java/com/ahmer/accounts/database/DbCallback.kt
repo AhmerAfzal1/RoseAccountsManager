@@ -2,10 +2,10 @@ package com.ahmer.accounts.database
 
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.ahmer.accounts.database.dao.PersonDao
 import com.ahmer.accounts.database.dao.TransDao
-import com.ahmer.accounts.database.dao.UserDao
-import com.ahmer.accounts.database.model.TransModel
-import com.ahmer.accounts.database.model.UserModel
+import com.ahmer.accounts.database.model.PersonsEntity
+import com.ahmer.accounts.database.model.TransEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -13,99 +13,99 @@ import kotlinx.coroutines.launch
 import javax.inject.Provider
 
 class DbCallback(
-    private val userDao: Provider<UserDao>,
+    private val personDao: Provider<PersonDao>,
     private val transDao: Provider<TransDao>
 ) : RoomDatabase.Callback() {
     private val mScope = CoroutineScope(SupervisorJob())
 
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
-        val mUserModelLists = listOf(
-            UserModel(
+        val mPersonsEntityLists = listOf(
+            PersonsEntity(
                 name = "Ahmer Afzal",
                 address = "Street No. 1, House No. 548, Darbar Road",
                 phone = "03023339589",
                 email = "ahmerafzal@yahoo.com",
                 notes = ""
             ),
-            UserModel(
+            PersonsEntity(
                 name = "Rida Hasan",
                 address = "Street No. 2",
                 phone = "",
                 email = "",
                 notes = ""
             ),
-            UserModel(
+            PersonsEntity(
                 name = "Maham Hasan",
                 address = "Street No. 2",
                 phone = "",
                 email = "",
                 notes = ""
             ),
-            UserModel(
+            PersonsEntity(
                 name = "Arfa Hasan",
                 address = "Street No. 2",
                 phone = "",
                 email = "",
                 notes = ""
             ),
-            UserModel(
+            PersonsEntity(
                 name = "Umar Riaz",
                 address = "Dharanwala",
                 phone = "03005095665",
                 email = "umarriaz665@gmail.com",
                 notes = ""
             ),
-            UserModel(
+            PersonsEntity(
                 name = "Sajjad Hussain Bhutta",
                 address = "Street No. 2, House No. 547",
                 phone = "03024159211",
                 email = "sajjad.bhutta@live.com",
                 notes = ""
             ),
-            UserModel(
+            PersonsEntity(
                 name = "Imtiaz Bhutta",
                 address = "",
                 phone = "03014652092",
                 email = "",
                 notes = ""
             ),
-            UserModel(
+            PersonsEntity(
                 name = "Ijaz Bhutta",
                 address = "",
                 phone = "03024585268",
                 email = "",
                 notes = ""
             ),
-            UserModel(
+            PersonsEntity(
                 name = "Abbas Bhutta",
                 address = "",
                 phone = "03002039589",
                 email = "",
                 notes = ""
             ),
-            UserModel(
+            PersonsEntity(
                 name = "Yasir Shahid",
                 address = "",
                 phone = "03057039270",
                 email = "",
                 notes = ""
             ),
-            UserModel(
+            PersonsEntity(
                 name = "Faisal Shahid",
                 address = "",
                 phone = "03117511575",
                 email = "",
                 notes = ""
             ),
-            UserModel(
+            PersonsEntity(
                 name = "Adil Shahid",
                 address = "",
                 phone = "03106900089",
                 email = "",
                 notes = ""
             ),
-            UserModel(
+            PersonsEntity(
                 name = "Umar Farooq",
                 address = "Chak No. 63f, Hasilpur",
                 phone = "03012882943",
@@ -113,44 +113,44 @@ class DbCallback(
                 notes = "Computer Operator at Bajwa's Collection"
             ),
         )
-        val mTransModelLists = listOf(
-            TransModel(
-                userId = 1,
+        val mTransEntityLists = listOf(
+            TransEntity(
+                personId = 1,
                 date = "07 Sep 2023",
                 type = "Credit",
                 description = "",
                 amount = "563.5"
             ),
-            TransModel(
-                userId = 1,
+            TransEntity(
+                personId = 1,
                 date = "08 Sep 2023",
                 type = "Credit",
                 description = "Add",
                 amount = "1503.55"
             ),
-            TransModel(
-                userId = 1,
+            TransEntity(
+                personId = 1,
                 date = "09 Sep 2023",
                 type = "Debit",
                 description = "",
                 amount = "203.5"
             ),
-            TransModel(
-                userId = 2,
+            TransEntity(
+                personId = 2,
                 date = "06 Sep 2023",
                 type = "Credit",
                 description = "",
                 amount = "874.5"
             ),
-            TransModel(
-                userId = 2,
+            TransEntity(
+                personId = 2,
                 date = "07 Sep 2023",
                 type = "Debit",
                 description = "Minus",
                 amount = "325.54"
             ),
-            TransModel(
-                userId = 3,
+            TransEntity(
+                personId = 3,
                 date = "07 Sep 2023",
                 type = "Credit",
                 description = "",
@@ -158,8 +158,8 @@ class DbCallback(
             ),
         )
         mScope.launch(Dispatchers.IO) {
-            mUserModelLists.forEach { userDao.get().insertOrUpdate(it) }
-            mTransModelLists.forEach { transDao.get().insertOrUpdate(it) }
+            mPersonsEntityLists.forEach { personDao.get().insertOrUpdate(it) }
+            mTransEntityLists.forEach { transDao.get().insertOrUpdate(it) }
         }
     }
 }

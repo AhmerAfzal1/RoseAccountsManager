@@ -39,14 +39,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.model.TransModel
+import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.DateIcon
 
 @Composable
 fun TransAddEditTextFields(
-    transModel: TransModel,
+    transEntity: TransEntity,
     onEvent: (TransAddEditEvent) -> Unit,
     titleButton: String
 ) {
@@ -75,7 +75,7 @@ fun TransAddEditTextFields(
             .fillMaxWidth()
             .padding(all = 15.dp)
     ) {
-        OutlinedTextField(value = transModel.date,
+        OutlinedTextField(value = transEntity.date,
             onValueChange = {},
             modifier = Modifier
                 .fillMaxWidth()
@@ -103,7 +103,7 @@ fun TransAddEditTextFields(
                         .weight(1f)
                         .padding(horizontal = 5.dp)
                         .background(
-                            color = if (text == transModel.type) {
+                            color = if (text == transEntity.type) {
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 Color.LightGray
@@ -114,14 +114,14 @@ fun TransAddEditTextFields(
                         text = mType.text.uppercase(),
                         modifier = Modifier.padding(vertical = 12.dp),
                         color = Color.White,
-                        fontWeight = if (text == transModel.type) FontWeight.Bold else FontWeight.Normal,
+                        fontWeight = if (text == transEntity.type) FontWeight.Bold else FontWeight.Normal,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
         }
         OutlinedTextField(
-            value = transModel.amount,
+            value = transEntity.amount,
             onValueChange = { text ->
                 onEvent(TransAddEditEvent.OnAmountChange(text))
             },
@@ -137,9 +137,9 @@ fun TransAddEditTextFields(
             label = { Text(stringResource(R.string.label_amount)) },
             placeholder = { Text(stringResource(R.string.label_amount)) },
             trailingIcon = {
-                if (transModel.amount.isNotEmpty()) {
+                if (transEntity.amount.isNotEmpty()) {
                     CloseIcon(modifier = Modifier.clickable {
-                        if (transModel.amount.isNotEmpty()) {
+                        if (transEntity.amount.isNotEmpty()) {
                             onEvent(TransAddEditEvent.OnAmountChange(""))
                         }
                     })
@@ -153,7 +153,7 @@ fun TransAddEditTextFields(
             })
         )
         OutlinedTextField(
-            value = transModel.description,
+            value = transEntity.description,
             onValueChange = { text ->
                 if (text.length <= mLenDes) {
                     onEvent(TransAddEditEvent.OnDescriptionChange(text))
@@ -165,9 +165,9 @@ fun TransAddEditTextFields(
             label = { Text(stringResource(R.string.label_description)) },
             placeholder = { Text(stringResource(R.string.label_description)) },
             trailingIcon = {
-                if (transModel.description.isNotEmpty()) {
+                if (transEntity.description.isNotEmpty()) {
                     CloseIcon(modifier = Modifier.clickable {
-                        if (transModel.description.isNotEmpty()) {
+                        if (transEntity.description.isNotEmpty()) {
                             onEvent(TransAddEditEvent.OnDescriptionChange(""))
                         }
                     })
@@ -175,7 +175,7 @@ fun TransAddEditTextFields(
             },
             supportingText = {
                 Text(
-                    text = "${transModel.description.length} / $mLenDes",
+                    text = "${transEntity.description.length} / $mLenDes",
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.End,
                 )
