@@ -8,7 +8,7 @@ class Constants {
         const val ADS_WAIT_TIME: Long = 250L
         const val DATABASE_NAME: String = "RoseDatabase.db"
         const val DATABASE_TRANSACTION_TABLE: String = "Transactions"
-        const val DATABASE_USER_TABLE: String = "Customers"
+        const val DATABASE_USER_TABLE: String = "Persons"
         const val DATE_TIME_PATTERN: String = "dd MMM yyyy hh:mm:ss a"
         const val DATE_PATTERN: String = "dd MMM yyyy"
         const val LOG_TAG: String = "RoseAccounts"
