@@ -2,6 +2,7 @@ package com.ahmer.accounts.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -47,13 +48,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.R
 import com.ahmer.accounts.drawer.DrawerItems
-import com.ahmer.accounts.drawer.MenuSearchBar
 import com.ahmer.accounts.drawer.NavShape
+import com.ahmer.accounts.drawer.TopAppBarSearchBox
 import com.ahmer.accounts.drawer.drawerItemsList
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.ui.components.PersonsList
 import com.ahmer.accounts.utils.AddIcon
+import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperFunctions
 import com.ahmer.accounts.utils.MenuIcon
 import com.ahmer.accounts.utils.SearchIcon
@@ -62,6 +64,7 @@ import com.ahmer.accounts.utils.SortByDateIcon
 import com.ahmer.accounts.utils.SortByNameIcon
 import com.ahmer.accounts.utils.SortIcon
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -105,19 +108,6 @@ fun PersonsListScreen(
         }
     }
 
-    if (mShowSearch) {
-        MenuSearchBar(text = mTextSearch, onTextChange = { mTextSearch = it }) {
-            mShowSearch = false
-        }/*CustomSearchView(
-               text = mTextSearch,
-               onTextChange = { mTextSearch = it },
-               onCloseClick = {
-                   mCoroutineScope.launch { delay(200L) }
-               },
-               onSearchClick = { mTextSearch = it }
-           )*/
-    }
-
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
@@ -153,17 +143,33 @@ fun PersonsListScreen(
     ) {
         Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
             TopAppBar(title = {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                if (mShowSearch) {
+                    TopAppBarSearchBox(
+                        text = mTextSearch,
+                        onTextChange = {
+                            mPersonViewModel.onEvent(PersonEvent.OnSearchTextChange(it))
+                            mTextSearch = it
+                        },
+                        onCloseClick = {
+                            mCoroutineScope.launch { delay(200L) }
+                            mShowSearch = false
+                        }
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }, navigationIcon = {
                 IconButton(onClick = {
                     mCoroutineScope.launch { mDrawerState.open() }
                 }) { MenuIcon() }
             }, actions = {
-                IconButton(onClick = { mShowSearch = true }) { SearchIcon() }
+                if (!mShowSearch) {
+                    IconButton(onClick = { mShowSearch = true }) { SearchIcon() }
+                }
                 IconButton(onClick = {
                     mShowDropdownMenu = !mShowDropdownMenu
                 }) { SortIcon() }

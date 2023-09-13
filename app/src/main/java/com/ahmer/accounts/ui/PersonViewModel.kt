@@ -87,6 +87,12 @@ class PersonViewModel @Inject constructor(
                 }
             }
 
+            is PersonEvent.OnSearchTextChange -> {
+                viewModelScope.launch {
+                    _searchQuery.value = event.searchQuery
+                }
+            }
+
             is PersonEvent.OnSortBy -> {
                 viewModelScope.launch {
                     preferencesManager.updateSortOrder(event.sortBy)
@@ -110,21 +116,18 @@ class PersonViewModel @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getAllPersonsBySearchAndSort(
-        searchQuery: MutableStateFlow<String>, preferences: Flow<PreferencesFilter>
-    ): Flow<ResultState<List<PersonsEntity>>> =
-        combine(searchQuery, preferences) { query, preference ->
-            Pair(query, preference)
-        }.flatMapLatest { (search, pref) ->
-            repository.getAllPersonsByFilter(search, pref.sortBy)
+    private fun getAllPersonsBySearchAndSort(): Flow<ResultState<List<PersonsEntity>>> =
+        combine(_searchQuery, _preferences) { query, preferences ->
+            Pair(query, preferences)
+        }.flatMapLatest { (search, preference) ->
+            repository.getAllPersonsByFilter(search, preference.sortBy)
         }
 
     fun getAllPersonsData() {
         mLoadPersonsJob?.cancel()
-        mLoadPersonsJob =
-            getAllPersonsBySearchAndSort(_searchQuery, _preferences).onEach { resultState ->
-                _uiState.update { personState -> personState.copy(getAllPersonsList = resultState) }
-            }.launchIn(viewModelScope)
+        mLoadPersonsJob = getAllPersonsBySearchAndSort().onEach { resultState ->
+            _uiState.update { personState -> personState.copy(getAllPersonsList = resultState) }
+        }.launchIn(viewModelScope)
     }
 
     private fun getAllPersonsBalance() {
