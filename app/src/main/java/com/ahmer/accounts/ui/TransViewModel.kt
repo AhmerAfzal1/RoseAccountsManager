@@ -67,13 +67,23 @@ class TransViewModel @Inject constructor(
 
             is TransEvent.OnEditClick -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.Navigate(route = ScreenRoutes.TransAddEditScreen + "?transId=${event.transEntity.id}/transPersonId=-1"))
+                    _eventFlow.emit(
+                        UiEvent.Navigate(
+                            route = ScreenRoutes.TransAddEditScreen +
+                                    "?transId=${event.transEntity.id}/transPersonId=-1"
+                        )
+                    )
                 }
             }
 
             TransEvent.OnAddClick -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.Navigate(ScreenRoutes.TransAddEditScreen + "?transId=-1/transPersonId=${personId.value}"))
+                    _eventFlow.emit(
+                        UiEvent.Navigate(
+                            route = ScreenRoutes.TransAddEditScreen +
+                                    "?transId=-1/transPersonId=${personId.value}"
+                        )
+                    )
                 }
             }
 

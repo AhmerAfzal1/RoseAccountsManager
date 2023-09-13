@@ -55,7 +55,12 @@ class PersonViewModel @Inject constructor(
         when (event) {
             is PersonEvent.OnAddTransactionClick -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.Navigate(ScreenRoutes.TransListScreen + "?transPersonId=${event.personsEntity.id}"))
+                    _eventFlow.emit(
+                        UiEvent.Navigate(
+                            route = ScreenRoutes.TransListScreen +
+                                    "?transPersonId=${event.personsEntity.id}"
+                        )
+                    )
                 }
             }
 
@@ -73,7 +78,12 @@ class PersonViewModel @Inject constructor(
 
             is PersonEvent.OnEditClick -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.Navigate(route = ScreenRoutes.PersonAddEditScreen + "?personId=${event.personsEntity.id}"))
+                    _eventFlow.emit(
+                        UiEvent.Navigate(
+                            route = ScreenRoutes.PersonAddEditScreen +
+                                    "?personId=${event.personsEntity.id}"
+                        )
+                    )
                 }
             }
 
