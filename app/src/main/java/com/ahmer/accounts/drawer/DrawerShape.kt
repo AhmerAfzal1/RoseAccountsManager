@@ -2,6 +2,7 @@ package com.ahmer.accounts.drawer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -104,34 +105,41 @@ fun NavShape(transSumModel: TransSumModel) {
                                 start = mContentPadding,
                                 end = mContentPadding
                             )
-                            .size(width = 200.dp, height = 75.dp),
+                            .size(width = 200.dp, height = 85.dp),
                         shape = RoundedCornerShape(10.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
                         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondaryContainer)
                     ) {
-                        Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
-                            TableCell(
-                                stringResource(id = R.string.label_nav_credit), mFirstRowWeight
-                            )
-                            TableCell(mTotalCredit.toString(), mSecondRowWeight)
-                        }
-                        Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
-                            TableCell(
-                                stringResource(id = R.string.label_nav_debit), mFirstRowWeight
-                            )
-                            TableCell(mTotalDebit.toString(), mSecondRowWeight)
-                        }
-                        Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
-                            HorizontalDivider(
-                                thickness = 2.dp,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                        }
-                        Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
-                            TableCell(
-                                stringResource(id = R.string.label_balance), mFirstRowWeight, true
-                            )
-                            TableCell(mTotalBalance.toString(), mSecondRowWeight, true)
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
+                                TableCell(
+                                    stringResource(id = R.string.label_nav_credit), mFirstRowWeight
+                                )
+                                TableCell(mTotalCredit.toString(), mSecondRowWeight)
+                            }
+                            Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
+                                TableCell(
+                                    stringResource(id = R.string.label_nav_debit), mFirstRowWeight
+                                )
+                                TableCell(mTotalDebit.toString(), mSecondRowWeight)
+                            }
+                            Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
+                                HorizontalDivider(
+                                    thickness = 2.dp,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            }
+                            Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
+                                TableCell(
+                                    stringResource(id = R.string.label_balance),
+                                    mFirstRowWeight, isBold = true
+                                )
+                                TableCell(mTotalBalance, mSecondRowWeight, true)
+                            }
                         }
                     }
                 }
