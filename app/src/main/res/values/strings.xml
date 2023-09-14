@@ -69,6 +69,9 @@
     <string name="label_share_the_app">Share the app</string>
     <string name="label_sort_by_date_created">Sort by date created</string>
     <string name="label_sort_by_name">Sort by name</string>
+    <string name="label_total_balance">TOTAL BALANCE</string>
+    <string name="label_total_credit">TOTAL CREDIT</string>
+    <string name="label_total_debit">TOTAL DEBIT</string>
     <string name="label_trans_id">Transaction Id</string>
 
 </resources>

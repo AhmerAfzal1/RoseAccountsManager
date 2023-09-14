@@ -73,10 +73,7 @@ fun TransItem(
                 style = MaterialTheme.typography.bodySmall
             )
         }
-
-        IconButton(onClick = { onEvent(TransEvent.OnDeleteClick(transEntity)) }) {
-            DeleteIcon(modifier = Modifier.size(Constants.ICON_SIZE))
-        }
+        IconButton(onClick = { onEvent(TransEvent.OnDeleteClick(transEntity)) }) { DeleteIcon() }
     }
     HorizontalDivider(thickness = 1.dp)
 }

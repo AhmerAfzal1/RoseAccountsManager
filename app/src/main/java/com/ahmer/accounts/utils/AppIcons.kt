@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SortByAlpha
@@ -67,7 +66,7 @@ fun CloseIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
 @Composable
 fun CreditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.AddCircleOutline,
+        painter = painterResource(id = R.drawable.ic_credit),
         contentDescription = stringResource(id = R.string.content_description_credit),
         modifier = modifier,
         tint = tint
@@ -87,7 +86,7 @@ fun DateIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 @Composable
 fun DebitIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.RemoveCircleOutline,
+        painter = painterResource(id = R.drawable.ic_debit),
         contentDescription = stringResource(id = R.string.content_description_debit),
         modifier = modifier,
         tint = tint
