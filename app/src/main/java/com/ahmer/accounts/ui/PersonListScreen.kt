@@ -2,7 +2,6 @@ package com.ahmer.accounts.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -55,7 +54,6 @@ import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.ui.components.PersonsList
 import com.ahmer.accounts.utils.AddIcon
-import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperFunctions
 import com.ahmer.accounts.utils.MenuIcon
 import com.ahmer.accounts.utils.SearchIcon
@@ -67,6 +65,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -77,18 +76,18 @@ fun PersonsListScreen(
     val mContext: Context = LocalContext.current.applicationContext
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mDrawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val mPersonViewModel: PersonViewModel = hiltViewModel()
     val mNavItemsList: List<DrawerItems> = drawerItemsList()
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    val mViewModel: PersonViewModel = hiltViewModel()
+    val mState by mViewModel.uiState.collectAsState()
     var mSelectedItems by rememberSaveable { mutableIntStateOf(0) }
     var mShowDropdownMenu by remember { mutableStateOf(false) }
     var mShowSearch by remember { mutableStateOf(false) }
-    val mState by mPersonViewModel.uiState.collectAsState()
-    var mTextSearch by remember { mutableStateOf(mPersonViewModel.searchQuery.value) }
+    var mTextSearch by remember { mutableStateOf(mViewModel.searchQuery.value) }
 
     LaunchedEffect(key1 = true) {
-        mPersonViewModel.eventFlow.collectLatest { event ->
+        mViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.Navigate -> onNavigation(event)
                 is UiEvent.ShowSnackBar -> {
@@ -98,7 +97,7 @@ fun PersonsListScreen(
                         duration = SnackbarDuration.Short
                     )
                     if (mResult == SnackbarResult.ActionPerformed) {
-                        mPersonViewModel.onEvent(PersonEvent.OnUndoDeleteClick)
+                        mViewModel.onEvent(PersonEvent.OnUndoDeleteClick)
                     }
                 }
 
@@ -147,11 +146,11 @@ fun PersonsListScreen(
                     TopAppBarSearchBox(
                         text = mTextSearch,
                         onTextChange = {
-                            mPersonViewModel.onEvent(PersonEvent.OnSearchTextChange(it))
+                            mViewModel.onEvent(PersonEvent.OnSearchTextChange(it))
                             mTextSearch = it
                         },
                         onCloseClick = {
-                            mCoroutineScope.launch { delay(200L) }
+                            mCoroutineScope.launch { delay(200.milliseconds) }
                             mShowSearch = false
                         }
                     )
@@ -177,13 +176,13 @@ fun PersonsListScreen(
                     onDismissRequest = { mShowDropdownMenu = false }) {
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_name)) },
                         onClick = {
-                            mPersonViewModel.onEvent(PersonEvent.OnSortBy(SortBy.NAME))
+                            mViewModel.onEvent(PersonEvent.OnSortBy(SortBy.NAME))
                             mShowDropdownMenu = false
                         },
                         leadingIcon = { SortByNameIcon() })
                     DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_date_created)) },
                         onClick = {
-                            mPersonViewModel.onEvent(PersonEvent.OnSortBy(SortBy.DATE))
+                            mViewModel.onEvent(PersonEvent.OnSortBy(SortBy.DATE))
                             mShowDropdownMenu = false
                         },
                         leadingIcon = { SortByDateIcon() })
@@ -198,14 +197,14 @@ fun PersonsListScreen(
         }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
             floatingActionButton = {
                 FloatingActionButton(onClick = {
-                    mPersonViewModel.onEvent(PersonEvent.OnNewAddClick)
+                    mViewModel.onEvent(PersonEvent.OnNewAddClick)
                 }) { AddIcon() }
             }) { innerPadding ->
             PersonsList(
                 padding = innerPadding,
                 personsListState = mState.getAllPersonsList,
-                onEvent = mPersonViewModel::onEvent,
-                reloadData = mPersonViewModel::getAllPersonsData
+                onEvent = mViewModel::onEvent,
+                reloadData = mViewModel::getAllPersonsData
             )
         }
     }

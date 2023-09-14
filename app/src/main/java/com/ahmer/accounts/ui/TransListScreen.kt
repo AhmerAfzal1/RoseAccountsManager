@@ -18,19 +18,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ahmer.accounts.drawer.TopAppBarSearchBox
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.ui.components.TransList
-import com.ahmer.accounts.utils.AddIcon
+import com.ahmer.accounts.utils.AddCircleIcon
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.HelperFunctions
 import com.ahmer.accounts.utils.SearchIcon
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,10 +47,13 @@ fun TransListScreen(
     onPopBackStack: () -> Unit
 ) {
     val mContext: Context = LocalContext.current
+    val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mViewModel: TransViewModel = hiltViewModel()
     val mState by mViewModel.uiState.collectAsState()
+    var mShowSearch by remember { mutableStateOf(false) }
+    var mTextSearch by remember { mutableStateOf(mViewModel.searchQuery.value) }
 
     LaunchedEffect(key1 = true) {
         mViewModel.eventFlow.collectLatest { event ->
@@ -67,12 +78,28 @@ fun TransListScreen(
 
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
         TopAppBar(title = {
-            Text(text = "All Transactions", maxLines = 1, overflow = TextOverflow.Ellipsis)
+            if (mShowSearch) {
+                TopAppBarSearchBox(
+                    text = mTextSearch,
+                    onTextChange = {
+                        mViewModel.onEvent(TransEvent.OnSearchTextChange(it))
+                        mTextSearch = it
+                    },
+                    onCloseClick = {
+                        mCoroutineScope.launch { delay(200.milliseconds) }
+                        mShowSearch = false
+                    }
+                )
+            } else {
+                Text(text = "All Transactions", maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
         }, navigationIcon = {
             IconButton(onClick = { onPopBackStack() }) { BackIcon() }
         }, actions = {
-            IconButton(onClick = { mViewModel.onEvent(TransEvent.OnAddClick) }) { AddIcon() }
-            IconButton(onClick = { /*TODO*/ }) { SearchIcon() }
+            if (!mShowSearch) {
+                IconButton(onClick = { mShowSearch = true }) { SearchIcon() }
+            }
+            IconButton(onClick = { mViewModel.onEvent(TransEvent.OnAddClick) }) { AddCircleIcon() }
         },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primary,

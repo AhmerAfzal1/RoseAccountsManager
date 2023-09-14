@@ -35,6 +35,16 @@ fun AddIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curre
 }
 
 @Composable
+fun AddCircleIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        imageVector = Icons.Filled.AddCircleOutline,
+        contentDescription = stringResource(id = R.string.content_description_add),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
 fun BackIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
