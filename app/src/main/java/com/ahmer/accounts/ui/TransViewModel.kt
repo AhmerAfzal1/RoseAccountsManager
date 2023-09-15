@@ -8,8 +8,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.core.ResultState
+import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransEntity
-import com.ahmer.accounts.database.model.TransSumModel
+import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.database.repository.TransRepository
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UiEvent
@@ -19,7 +20,6 @@ import com.ahmer.accounts.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -35,6 +35,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransViewModel @Inject constructor(
+    private val repositoryPerson: PersonRepository,
     private val repository: TransRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), LifecycleObserver {
@@ -50,8 +51,10 @@ class TransViewModel @Inject constructor(
     private var mDeletedTrans: TransEntity? = null
     private var mLoadAccountBalanceJob: Job? = null
     private var mLoadAllTransJob: Job? = null
+    private var mLoadPersonDataJob: Job? = null
+    private var mPersonId: MutableState<Int> = mutableStateOf(0)
 
-    var personId: MutableState<Int> = mutableStateOf(0)
+    var getPersonsEntity: PersonsEntity? = PersonsEntity()
 
     fun onEvent(event: TransEvent) {
         when (event) {
@@ -90,7 +93,7 @@ class TransViewModel @Inject constructor(
                     _eventFlow.emit(
                         UiEvent.Navigate(
                             route = ScreenRoutes.TransAddEditScreen +
-                                    "?transId=-1/transPersonId=${personId.value}"
+                                    "?transId=-1/transPersonId=${mPersonId.value}"
                         )
                     )
                 }
@@ -106,37 +109,40 @@ class TransViewModel @Inject constructor(
         }
     }
 
+    private fun getPersonByIdData() {
+        mLoadPersonDataJob?.cancel()
+        mLoadPersonDataJob = repositoryPerson.getPersonById(mPersonId.value).onEach { resultState ->
+            if (resultState is ResultState.Success) {
+                getPersonsEntity = resultState.data
+            }
+        }.launchIn(viewModelScope)
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getAllTransactionWithSearch(): Flow<ResultState<List<TransEntity>>> {
-        return _searchQuery.flatMapLatest { search ->
-            repository.getAllTransByPersonIdWithSearch(personId.value, search)
-        }
-    }
-
-    private fun getAccountBalanceByPerson(): Flow<ResultState<TransSumModel>> {
-        return repository.getAccountBalanceByPerson(personId.value)
-    }
-
     fun getAllPersonsTransactions() {
         mLoadAllTransJob?.cancel()
-        mLoadAllTransJob = getAllTransactionWithSearch().onEach { resultState ->
+        mLoadAllTransJob = _searchQuery.flatMapLatest { search ->
+            repository.getAllTransByPersonIdWithSearch(mPersonId.value, search)
+        }.onEach { resultState ->
             _uiState.update { transState -> transState.copy(getAllPersonsTransList = resultState) }
         }.launchIn(viewModelScope)
     }
 
     private fun getAccountBalance() {
         mLoadAccountBalanceJob?.cancel()
-        mLoadAccountBalanceJob = getAccountBalanceByPerson().onEach { resultState ->
-            _uiState.update { it.copy(getPersonTransBalance = resultState) }
-        }.launchIn(viewModelScope)
+        mLoadAccountBalanceJob =
+            repository.getAccountBalanceByPerson(mPersonId.value).onEach { resultState ->
+                _uiState.update { it.copy(getPersonTransBalance = resultState) }
+            }.launchIn(viewModelScope)
     }
 
     init {
         savedStateHandle.get<Int>("transPersonId")?.let { id ->
             Log.v(Constants.LOG_TAG, "Clicked on person id: $id for add transaction")
-            personId.value = id
+            mPersonId.value = id
             getAllPersonsTransactions()
             getAccountBalance()
+            getPersonByIdData()
         }
     }
 }
