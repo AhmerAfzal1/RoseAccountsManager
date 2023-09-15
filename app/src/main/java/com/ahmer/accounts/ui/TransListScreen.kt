@@ -2,6 +2,8 @@ package com.ahmer.accounts.ui
 
 import android.content.Context
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,16 +26,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ahmer.accounts.R
 import com.ahmer.accounts.drawer.TopAppBarSearchBox
+import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.ui.components.TransList
 import com.ahmer.accounts.utils.AddCircleIcon
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.HelperFunctions
+import com.ahmer.accounts.utils.MoreIcon
+import com.ahmer.accounts.utils.PdfIcon
 import com.ahmer.accounts.utils.SearchIcon
+import com.ahmer.accounts.utils.SortBy
+import com.ahmer.accounts.utils.SortByDateIcon
+import com.ahmer.accounts.utils.SortByNameIcon
+import com.ahmer.accounts.utils.SortIcon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -52,6 +63,7 @@ fun TransListScreen(
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mViewModel: TransViewModel = hiltViewModel()
     val mState by mViewModel.uiState.collectAsState()
+    var mShowDropdownMenu by remember { mutableStateOf(false) }
     var mShowSearch by remember { mutableStateOf(false) }
     var mTextSearch by remember { mutableStateOf(mViewModel.searchQuery.value) }
 
@@ -100,6 +112,19 @@ fun TransListScreen(
                 IconButton(onClick = { mShowSearch = true }) { SearchIcon() }
             }
             IconButton(onClick = { mViewModel.onEvent(TransEvent.OnAddClick) }) { AddCircleIcon() }
+            if (!mShowSearch) {
+                IconButton(onClick = { mShowDropdownMenu = !mShowDropdownMenu }) { MoreIcon() }
+            }
+            DropdownMenu(expanded = mShowDropdownMenu,
+                onDismissRequest = { mShowDropdownMenu = false }) {
+                DropdownMenuItem(text = { Text(text = stringResource(R.string.label_generate_pdf)) },
+                    onClick = {
+                        HelperFunctions.toastLong(mContext, "This feature under progress")
+                        mShowDropdownMenu = false
+                    },
+                    leadingIcon = { PdfIcon() })
+            }
+
         },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primary,

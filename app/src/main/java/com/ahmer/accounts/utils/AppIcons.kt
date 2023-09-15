@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SortByAlpha
@@ -138,6 +139,26 @@ fun MenuIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
     Icon(
         imageVector = Icons.Filled.Menu,
         contentDescription = stringResource(id = R.string.content_description_menu),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun MoreIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        imageVector = Icons.Filled.MoreVert,
+        contentDescription = stringResource(id = R.string.content_description_more),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun PdfIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_pdf),
+        contentDescription = stringResource(id = R.string.content_description_pdf),
         modifier = modifier,
         tint = tint
     )

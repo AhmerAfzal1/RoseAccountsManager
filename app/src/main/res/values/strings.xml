@@ -22,7 +22,9 @@
     <string name="content_description_home">Home icon</string>
     <string name="content_description_info">More info icon</string>
     <string name="content_description_menu">Menu icon</string>
-    <string name="content_description_more_app">More app icon</string>
+    <string name="content_description_more">More icon</string>
+    <string name="content_description_more_app">More apps icon</string>
+    <string name="content_description_pdf">Pdf icon</string>
     <string name="content_description_pin">Pin icon</string>
     <string name="content_description_play_store">Playstore icon</string>
     <string name="content_description_rate_app">Rate app icon</string>
@@ -51,6 +53,7 @@
     <string name="label_edit_user">Edit User Data</string>
     <string name="label_email">Email Address</string>
     <string name="label_exit">EXIT</string>
+    <string name="label_generate_pdf">Generate PDF</string>
     <string name="label_generic_error">Ops! Something went wrong…</string>
     <string name="label_generic_loading">Please wait…</string>
     <string name="label_home">Home</string>
@@ -69,7 +72,7 @@
     <string name="label_share_the_app">Share the app</string>
     <string name="label_sort_by_date_created">Sort by date created</string>
     <string name="label_sort_by_name">Sort by name</string>
-    <string name="label_total_balance">TOTAL BALANCE</string>
+    <string name="label_total_balance">BALANCE</string>
     <string name="label_total_credit">TOTAL CREDIT</string>
     <string name="label_total_debit">TOTAL DEBIT</string>
     <string name="label_trans_id">Transaction Id</string>
