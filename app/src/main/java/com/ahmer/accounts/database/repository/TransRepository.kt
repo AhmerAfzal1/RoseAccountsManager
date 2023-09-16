@@ -15,6 +15,8 @@ interface TransRepository {
 
     fun getAllTransByPersonId(personId: Int): Flow<List<TransEntity>>
 
+    fun getAllTransByPersonIdForPdf(personId: Int): Flow<List<TransEntity>>
+
     fun getAllTransByPersonIdWithSearch(
         personId: Int, searchQuery: String
     ): Flow<ResultState<List<TransEntity>>>

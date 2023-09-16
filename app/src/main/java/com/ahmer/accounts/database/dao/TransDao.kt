@@ -24,6 +24,9 @@ interface TransDao {
     @Query("SELECT * FROM Transactions WHERE personId =:personId ORDER BY created ASC")
     fun getAllTransByPersonId(personId: Int): Flow<List<TransEntity>>
 
+    @Query("SELECT * FROM Transactions WHERE personId =:personId ORDER BY date ASC")
+    fun getAllTransByPersonIdForPdf(personId: Int): Flow<List<TransEntity>>
+
     @Query("SELECT * FROM Transactions WHERE personId = :personId AND (date LIKE '%' || :searchQuery || '%' OR description LIKE '%' || :searchQuery || '%' OR amount LIKE '%' || :searchQuery || '%') ORDER BY created ASC")
     fun getAllTransByPersonIdWithSearch(personId: Int, searchQuery: String): Flow<List<TransEntity>>
 

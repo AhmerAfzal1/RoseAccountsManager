@@ -35,6 +35,10 @@ class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : T
         return transDao.getAllTransByPersonId(personId)
     }
 
+    override fun getAllTransByPersonIdForPdf(personId: Int): Flow<List<TransEntity>> {
+        return transDao.getAllTransByPersonIdForPdf(personId)
+    }
+
     override fun getAllTransByPersonIdWithSearch(
         personId: Int, searchQuery: String
     ): Flow<ResultState<List<TransEntity>>> {

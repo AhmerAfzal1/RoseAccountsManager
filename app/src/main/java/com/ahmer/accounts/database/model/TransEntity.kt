@@ -7,6 +7,8 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.ahmer.accounts.utils.Constants
 import kotlinx.parcelize.Parcelize
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Entity(
     tableName = Constants.DATABASE_TRANSACTION_TABLE, foreignKeys = [ForeignKey(
@@ -27,4 +29,9 @@ data class TransEntity(
     val description: String = "",
     val amount: String = "",
     val created: Long = System.currentTimeMillis(),
-) : Parcelable
+) : Parcelable {
+    val newCurrentShortDate: String
+        get() = SimpleDateFormat(Constants.DATE_SHORT_PATTERN, Locale.getDefault()).format(
+            SimpleDateFormat(Constants.DATE_PATTERN, Locale.getDefault()).parse(date)!!
+        )
+}

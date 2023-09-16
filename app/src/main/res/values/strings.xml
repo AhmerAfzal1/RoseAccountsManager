@@ -77,4 +77,7 @@
     <string name="label_total_debit">TOTAL DEBIT</string>
     <string name="label_trans_id">Transaction Id</string>
 
+    <string name="pdf_generated">Successfully PDF file generated.</string>
+    <string name="pdf_not_generated">There is no transaction for generate PDF file.</string>
+
 </resources>
