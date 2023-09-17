@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.PersonsEntity
-import com.ahmer.accounts.utils.HelperFunctions
+import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.InfoIcon
 
 @Composable
@@ -60,8 +60,8 @@ fun MoreInfoAlertDialog(personsEntity: PersonsEntity) {
         personsEntity.phone,
         personsEntity.email,
         personsEntity.notes,
-        HelperFunctions.getDateTime(personsEntity.created),
-        HelperFunctions.getDateTime(personsEntity.updated),
+        HelperUtils.getDateTime(personsEntity.created),
+        HelperUtils.getDateTime(personsEntity.updated),
     )
     val mTitleList = listOf(
         "Name:",

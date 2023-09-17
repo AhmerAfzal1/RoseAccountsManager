@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import com.ahmer.accounts.R
 import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.utils.Constants
-import com.ahmer.accounts.utils.HelperFunctions
+import com.ahmer.accounts.utils.HelperUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +32,7 @@ fun TransDatePickDialog(onEvent: (TransAddEditEvent) -> Unit) {
                     onClick = {
                         mOpenDialog.value = false
                         mDatePickerState.selectedDateMillis?.let {
-                            val mDate = HelperFunctions.getDateTime(it, Constants.DATE_PATTERN)
+                            val mDate = HelperUtils.getDateTime(it, Constants.DATE_PATTERN)
                             onEvent(TransAddEditEvent.OnDateChange(mDate))
                         }
                     }, enabled = confirmEnabled.value

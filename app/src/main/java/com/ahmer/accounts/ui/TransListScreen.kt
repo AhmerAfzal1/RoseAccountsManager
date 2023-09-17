@@ -2,7 +2,6 @@ package com.ahmer.accounts.ui
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,17 +33,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.R
-import com.ahmer.accounts.core.ResultState
-import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.drawer.TopAppBarSearchBox
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.ui.components.TransList
 import com.ahmer.accounts.utils.AddCircleIcon
 import com.ahmer.accounts.utils.BackIcon
-import com.ahmer.accounts.utils.HelperFunctions
+import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.MoreIcon
 import com.ahmer.accounts.utils.PdfIcon
+import com.ahmer.accounts.utils.PdfUtils
 import com.ahmer.accounts.utils.SearchIcon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -72,10 +70,7 @@ fun TransListScreen(
     ) {
         if (it.resultCode == Activity.RESULT_OK) {
             val mUri = it.data?.data ?: return@rememberLauncherForActivityResult
-            val isSuccessful = mViewModel.generatePdf(mContext, mUri)
-            if (isSuccessful) {
-                HelperFunctions.toastLong(mContext, mContext.getString(R.string.pdf_generated))
-            }
+            mViewModel.generatePdf(mContext, mUri)
         }
     }
 
@@ -94,30 +89,8 @@ fun TransListScreen(
                     }
                 }
 
-                is UiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
+                is UiEvent.ShowToast -> HelperUtils.toastLong(mContext, event.message)
                 else -> Unit
-            }
-        }
-    }
-
-    fun exportToPdf(list: ResultState<List<TransEntity>>) {
-        if (list is ResultState.Success) {
-            if (list.data.isNotEmpty()) {
-                val mTime: Long = System.currentTimeMillis()
-                val mFileName: String = HelperFunctions.getDateTime(mTime, "ddMMyyHHmmss") + ".pdf"
-                val mIntent: Intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                    val mMimeType = "application/pdf"
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    putExtra(Intent.EXTRA_MIME_TYPES, arrayOf(mMimeType))
-                    putExtra(Intent.EXTRA_TITLE, mFileName)
-                    type = mMimeType
-                }
-                mLauncher.launch(mIntent)
-            } else {
-                HelperFunctions.toastLong(
-                    mContext, mContext.getString(R.string.pdf_not_generated)
-                )
             }
         }
     }
@@ -150,7 +123,7 @@ fun TransListScreen(
                 onDismissRequest = { mShowDropdownMenu = false }) {
                 DropdownMenuItem(text = { Text(text = stringResource(R.string.label_generate_pdf)) },
                     onClick = {
-                        exportToPdf(mState.getAllPersonsTransList)
+                        PdfUtils.exportToPdf(mContext, mLauncher, mState.getAllPersonsTransList)
                         mShowDropdownMenu = false
                     },
                     leadingIcon = { PdfIcon() })

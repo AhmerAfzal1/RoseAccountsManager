@@ -15,7 +15,7 @@ import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.TransAddEditState
 import com.ahmer.accounts.utils.Constants
-import com.ahmer.accounts.utils.HelperFunctions
+import com.ahmer.accounts.utils.HelperUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -81,7 +81,7 @@ class TransAddEditViewModel @Inject constructor(
                 }.launchIn(viewModelScope)
             } else {
                 currentTransaction = TransEntity(
-                    date = HelperFunctions.getDateTime(
+                    date = HelperUtils.getDateTime(
                         System.currentTimeMillis(), Constants.DATE_PATTERN
                     )
                 )

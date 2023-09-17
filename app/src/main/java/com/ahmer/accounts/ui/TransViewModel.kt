@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ahmer.accounts.R
 import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransEntity
@@ -20,8 +21,11 @@ import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.navigation.ScreenRoutes
 import com.ahmer.accounts.state.TransState
 import com.ahmer.accounts.utils.Constants
-import com.ahmer.accounts.utils.GeneratePdf
+import com.ahmer.accounts.utils.PdfUtils
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,8 +34,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -57,6 +63,7 @@ class TransViewModel @Inject constructor(
     private var mLoadAccountBalanceJob: Job? = null
     private var mLoadAllTransJob: Job? = null
     private var mLoadPersonDataJob: Job? = null
+    private var mGeneratePdfJob: Job? = null
     private var mPersonId: MutableState<Int> = mutableStateOf(0)
 
     private var getPersonsEntity: PersonsEntity = PersonsEntity()
@@ -113,13 +120,14 @@ class TransViewModel @Inject constructor(
         }
     }
 
-    fun generatePdf(context: Context, uri: Uri): Boolean {
-        var isSuccessfully = false
-        viewModelScope.launch {
-            repository.getAllTransByPersonIdForPdf(getPersonsEntity.id)
-                .filterNotNull()
-                .collect { transEntityList ->
-                    isSuccessfully = GeneratePdf.createPdf(
+    fun generatePdf(context: Context, uri: Uri) {
+        mGeneratePdfJob?.cancel()
+        mGeneratePdfJob = repository.getAllTransByPersonIdForPdf(getPersonsEntity.id)
+            .filterNotNull()
+            .onEach { transEntityList ->
+                var isSuccessfully = false
+                val mJob = CoroutineScope(Dispatchers.IO).launch {
+                    isSuccessfully = PdfUtils.generatePdf(
                         context = context,
                         uri = uri,
                         transEntity = transEntityList,
@@ -127,8 +135,25 @@ class TransViewModel @Inject constructor(
                         accountName = getPersonsEntity.name
                     )
                 }
-        }
-        return isSuccessfully
+
+                mJob.invokeOnCompletion {
+                    viewModelScope.launch {
+                        if (isSuccessfully) {
+                            val mMsg = context.getString(R.string.pdf_generated)
+                            _eventFlow.emit(UiEvent.ShowToast(mMsg))
+                        }
+                    }
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .catch { e ->
+                Log.e(
+                    Constants.LOG_TAG,
+                    "Error occurred while getting generate pdf: ${e.localizedMessage}", e
+                )
+                FirebaseCrashlytics.getInstance().recordException(e)
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun getPersonByIdData() {

@@ -29,7 +29,7 @@ import com.ahmer.accounts.event.PersonAddEditEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.ui.components.PersonAddEditTextFields
 import com.ahmer.accounts.utils.BackIcon
-import com.ahmer.accounts.utils.HelperFunctions
+import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.SaveIcon
 import kotlinx.coroutines.flow.collectLatest
 
@@ -48,7 +48,7 @@ fun PersonAddEditScreen(
         mViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 UiEvent.SaveSuccess -> onPopBackStack()
-                is UiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
+                is UiEvent.ShowToast -> HelperUtils.toastLong(mContext, event.message)
                 else -> Unit
             }
         }

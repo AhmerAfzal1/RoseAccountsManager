@@ -28,7 +28,7 @@ import com.ahmer.accounts.ui.theme.colorRedDark
 import com.ahmer.accounts.ui.theme.colorRedLight
 import com.ahmer.accounts.utils.CreditIcon
 import com.ahmer.accounts.utils.DebitIcon
-import com.ahmer.accounts.utils.HelperFunctions
+import com.ahmer.accounts.utils.HelperUtils
 
 @Composable
 fun TransTotal(transSumModel: TransSumModel) {
@@ -81,7 +81,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = HelperFunctions.getRoundedValue(mCredit),
+                        text = HelperUtils.getRoundedValue(mCredit),
                         color = colorGreenDark,
                         modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
@@ -118,7 +118,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                     )
 
                     Text(
-                        text = HelperFunctions.getRoundedValue(mDebit),
+                        text = HelperUtils.getRoundedValue(mDebit),
                         color = colorRedDark,
                         modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
@@ -165,7 +165,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                     )
 
                     Text(
-                        text = HelperFunctions.getRoundedValue(mTotalBalance),
+                        text = HelperUtils.getRoundedValue(mTotalBalance),
                         color = mColorText,
                         modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,

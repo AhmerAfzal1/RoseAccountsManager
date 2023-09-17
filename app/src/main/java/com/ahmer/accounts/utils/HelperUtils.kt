@@ -14,7 +14,7 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
 
-object HelperFunctions {
+object HelperUtils {
 
     @JvmStatic
     fun getDateTime(time: Long, pattern: String = ""): String = if (time == 0.toLong()) {

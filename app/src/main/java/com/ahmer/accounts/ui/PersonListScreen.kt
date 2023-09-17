@@ -54,7 +54,7 @@ import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.ui.components.PersonsList
 import com.ahmer.accounts.utils.AddIcon
-import com.ahmer.accounts.utils.HelperFunctions
+import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.MenuIcon
 import com.ahmer.accounts.utils.SearchIcon
 import com.ahmer.accounts.utils.SortBy
@@ -101,7 +101,7 @@ fun PersonsListScreen(
                     }
                 }
 
-                is UiEvent.ShowToast -> HelperFunctions.toastLong(mContext, event.message)
+                is UiEvent.ShowToast -> HelperUtils.toastLong(mContext, event.message)
                 else -> Unit
             }
         }
@@ -121,7 +121,7 @@ fun PersonsListScreen(
                             //navController.navigate(item.route)
                             mSelectedItems = index
                             mCoroutineScope.launch { mDrawerState.close() }
-                            HelperFunctions.toastLong(mContext, item.label)
+                            HelperUtils.toastLong(mContext, item.label)
                         },
                         icon = {
                             Icon(

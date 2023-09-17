@@ -26,7 +26,7 @@ import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.CreditIcon
 import com.ahmer.accounts.utils.DebitIcon
 import com.ahmer.accounts.utils.DeleteIcon
-import com.ahmer.accounts.utils.HelperFunctions
+import com.ahmer.accounts.utils.HelperUtils
 
 @Composable
 fun TransItem(
@@ -54,7 +54,7 @@ fun TransItem(
         ) {
             val mDescription: String = transEntity.description
             Text(
-                text = "Rs. ${HelperFunctions.getRoundedValue(transEntity.amount.toDouble())}",
+                text = "Rs. ${HelperUtils.getRoundedValue(transEntity.amount.toDouble())}",
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 style = MaterialTheme.typography.titleMedium

@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.TransSumModel
-import com.ahmer.accounts.utils.HelperFunctions
+import com.ahmer.accounts.utils.HelperUtils
 
 @Composable
 fun RowScope.TableCell(text: String, weight: Float, isBold: Boolean = false) {
@@ -64,7 +64,7 @@ fun NavShape(transSumModel: TransSumModel) {
     val mSecondRowWeight = 2f
     val mTotalCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
     val mTotalDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
-    val mTotalBalance = HelperFunctions.getRoundedValue((mTotalCredit.minus(mTotalDebit)))
+    val mTotalBalance = HelperUtils.getRoundedValue((mTotalCredit.minus(mTotalDebit)))
 
     Column(
         modifier = Modifier
