@@ -2,7 +2,6 @@ package com.ahmer.accounts.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -33,21 +32,16 @@ fun PersonsList(
             )
         }) { personsList ->
             personsList?.let {
-                Column(
-                    modifier = modifier
-                        .fillMaxSize(),
+                LazyColumn(
+                    modifier = modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(
-                            items = personsList,
-                            key = { persons -> persons.id }) { person ->
-                            PersonItem(personsEntity = person, onEvent = onEvent)
-                        }
+                    items(
+                        items = personsList,
+                        key = { persons -> persons.id }) { person ->
+                        PersonItem(personsEntity = person, onEvent = onEvent)
                     }
                 }
             }
