@@ -59,15 +59,14 @@ class TransViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(TransState())
     val uiState = _uiState.asStateFlow()
 
+    private var getPersonsEntity: PersonsEntity = PersonsEntity()
+    private var getTransSumModel: TransSumModel = TransSumModel()
     private var mDeletedTrans: TransEntity? = null
     private var mLoadAccountBalanceJob: Job? = null
     private var mLoadAllTransJob: Job? = null
+    private var mLoadGeneratePdfJob: Job? = null
     private var mLoadPersonDataJob: Job? = null
-    private var mGeneratePdfJob: Job? = null
     private var mPersonId: MutableState<Int> = mutableStateOf(0)
-
-    private var getPersonsEntity: PersonsEntity = PersonsEntity()
-    private var getTransSumModel: TransSumModel = TransSumModel()
 
     fun onEvent(event: TransEvent) {
         when (event) {
@@ -121,8 +120,8 @@ class TransViewModel @Inject constructor(
     }
 
     fun generatePdf(context: Context, uri: Uri) {
-        mGeneratePdfJob?.cancel()
-        mGeneratePdfJob = repository.getAllTransByPersonIdForPdf(getPersonsEntity.id)
+        mLoadGeneratePdfJob?.cancel()
+        mLoadGeneratePdfJob = repository.getAllTransByPersonIdForPdf(getPersonsEntity.id)
             .filterNotNull()
             .onEach { transEntityList ->
                 var isSuccessfully = false
@@ -180,9 +179,7 @@ class TransViewModel @Inject constructor(
         mLoadAccountBalanceJob =
             repository.getAccountBalanceByPerson(mPersonId.value).onEach { resultState ->
                 _uiState.update { it.copy(getPersonTransBalance = resultState) }
-                if (resultState is ResultState.Success) {
-                    getTransSumModel = resultState.data
-                }
+                getTransSumModel = resultState
             }.launchIn(viewModelScope)
     }
 

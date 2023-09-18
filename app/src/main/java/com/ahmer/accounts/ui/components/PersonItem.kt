@@ -94,8 +94,8 @@ fun PersonItem(
         Column(
             modifier = Modifier.padding(end = mPadding, bottom = mPadding)
         ) {
-            val mTotalCredit: Double = 0.0
-            val mTotalDebit: Double = 0.0
+            val mTotalCredit = 0.0
+            val mTotalDebit = 0.0
             val mTotalBalance = HelperUtils.getRoundedValue((mTotalCredit.minus(mTotalDebit)))
 
             val mText: String = if (personsEntity.phone.isEmpty()) {

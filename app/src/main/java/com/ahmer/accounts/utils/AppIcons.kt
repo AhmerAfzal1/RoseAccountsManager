@@ -2,19 +2,13 @@ package com.ahmer.accounts.utils
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Sort
-import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -37,7 +31,7 @@ fun AddIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curre
 @Composable
 fun AddCircleIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.AddCircleOutline,
+        painter = painterResource(id = R.drawable.ic_add_circle_outline),
         contentDescription = stringResource(id = R.string.content_description_add),
         modifier = modifier,
         tint = tint
@@ -97,7 +91,7 @@ fun DebitIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
 @Composable
 fun DeleteIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.DeleteForever,
+        painter = painterResource(id = R.drawable.ic_delete_forever),
         contentDescription = stringResource(id = R.string.content_description_delete),
         modifier = modifier,
         tint = tint
@@ -107,7 +101,7 @@ fun DeleteIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 @Composable
 fun SaveIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.Save,
+        painter = painterResource(id = R.drawable.ic_save),
         contentDescription = stringResource(id = R.string.content_description_save),
         modifier = modifier,
         tint = tint
@@ -119,6 +113,16 @@ fun EditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
     Icon(
         painter = painterResource(id = R.drawable.ic_edit_square),
         contentDescription = stringResource(id = R.string.content_description_edit),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun ErrorIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_error),
+        contentDescription = stringResource(id = R.string.content_description_error),
         modifier = modifier,
         tint = tint
     )
@@ -177,7 +181,7 @@ fun SearchIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 @Composable
 fun SortByDateIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.AccessTime,
+        painter = painterResource(id = R.drawable.ic_access_time),
         contentDescription = stringResource(id = R.string.content_description_sort_by_date),
         modifier = modifier,
         tint = tint
@@ -187,7 +191,7 @@ fun SortByDateIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColo
 @Composable
 fun SortByNameIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.SortByAlpha,
+        painter = painterResource(id = R.drawable.ic_sort_by_alpha),
         contentDescription = stringResource(id = R.string.content_description_sort_by_name),
         modifier = modifier,
         tint = tint
@@ -197,7 +201,7 @@ fun SortByNameIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColo
 @Composable
 fun SortIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.AutoMirrored.Filled.Sort,
+        painter = painterResource(id = R.drawable.ic_sort),
         contentDescription = stringResource(id = R.string.content_description_sort),
         modifier = modifier,
         tint = tint

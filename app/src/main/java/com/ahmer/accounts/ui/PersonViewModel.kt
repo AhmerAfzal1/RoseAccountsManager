@@ -3,7 +3,6 @@ package com.ahmer.accounts.ui
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.event.PersonEvent
@@ -47,7 +46,6 @@ class PersonViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private var mDeletedPerson: PersonsEntity? = null
-    private var mLoadAllPersonsAndTransDataJob: Job? = null
     private var mLoadPersonsJob: Job? = null
     private var mLoadPersonsTotalBalanceJob: Job? = null
 
@@ -116,16 +114,13 @@ class PersonViewModel @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getAllPersonsBySearchAndSort(): Flow<ResultState<List<PersonsEntity>>> =
-        combine(_searchQuery, _preferences) { query, preferences ->
+    fun getAllPersonsData() {
+        mLoadPersonsJob?.cancel()
+        mLoadPersonsJob = combine(_searchQuery, _preferences) { query, preferences ->
             Pair(query, preferences)
         }.flatMapLatest { (search, preference) ->
             repository.getAllPersonsByFilter(search, preference.sortBy)
-        }
-
-    fun getAllPersonsData() {
-        mLoadPersonsJob?.cancel()
-        mLoadPersonsJob = getAllPersonsBySearchAndSort().onEach { resultState ->
+        }.onEach { resultState ->
             _uiState.update { personState -> personState.copy(getAllPersonsList = resultState) }
         }.launchIn(viewModelScope)
     }

@@ -125,7 +125,7 @@ fun PersonsListScreen(
                         },
                         icon = {
                             Icon(
-                                imageVector = if (index == mSelectedItems) {
+                                painter = if (index == mSelectedItems) {
                                     item.selectedIcon
                                 } else item.unselectedIcon,
                                 contentDescription = item.contentDescription

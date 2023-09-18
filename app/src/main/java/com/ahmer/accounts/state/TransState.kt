@@ -6,5 +6,5 @@ import com.ahmer.accounts.database.model.TransSumModel
 
 data class TransState(
     val getAllPersonsTransList: ResultState<List<TransEntity>> = ResultState.Loading,
-    val getPersonTransBalance: ResultState<TransSumModel> = ResultState.Loading
+    val getPersonTransBalance: TransSumModel = TransSumModel(),
 )

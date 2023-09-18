@@ -18,6 +18,7 @@
     <string name="content_description_debit">Debit icon</string>
     <string name="content_description_delete">Delete icon</string>
     <string name="content_description_edit">Edit icon</string>
+    <string name="content_description_error">Error icon</string>
     <string name="content_description_exit">Exit icon</string>
     <string name="content_description_home">Home icon</string>
     <string name="content_description_info">More info icon</string>

@@ -22,7 +22,7 @@ import com.ahmer.accounts.event.TransEvent
 fun TransList(
     padding: PaddingValues,
     transListState: ResultState<List<TransEntity>>,
-    transBalanceState: ResultState<TransSumModel>,
+    transSumModel: TransSumModel,
     onEvent: (TransEvent) -> Unit,
     reloadData: () -> Unit
 ) {
@@ -42,12 +42,9 @@ fun TransList(
                         TransItem(transEntity = transaction, onEvent = onEvent)
                     }
                 }
-            }
-        }
-        AsyncData(resultState = transBalanceState) { balanceSum ->
-            balanceSum?.let { transSum ->
+
                 LazyColumn {
-                    item { TransTotal(transSumModel = transSum) }
+                    item { TransTotal(transSumModel = transSumModel) }
                 }
             }
         }

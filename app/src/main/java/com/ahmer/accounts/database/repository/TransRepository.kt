@@ -21,7 +21,7 @@ interface TransRepository {
         personId: Int, searchQuery: String
     ): Flow<ResultState<List<TransEntity>>>
 
-    fun getAccountBalanceByPerson(personId: Int): Flow<ResultState<TransSumModel>>
+    fun getAccountBalanceByPerson(personId: Int): Flow<TransSumModel>
 
     fun getAllAccountsBalance(): Flow<TransSumModel>
 }
