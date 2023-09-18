@@ -68,13 +68,12 @@ dependencies {
 
     //Jetpack Compose BOM
     implementation(platform("androidx.compose:compose-bom:2023.09.00"))
-    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.material3:material3:1.2.0-alpha07")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
 
     //Firebase BOM
-    implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
+    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
@@ -82,7 +81,7 @@ dependencies {
     implementation("com.google.firebase:firebase-perf-ktx")
 
     //Ads
-    implementation("com.google.android.gms:play-services-ads:22.3.0")
+    implementation("com.google.android.gms:play-services-ads:22.4.0")
 
     //Jetpack Compose View Model
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
@@ -117,6 +116,6 @@ dependencies {
 
     //Others
     implementation("com.guardanis:applock:3.0.2")
-    implementation("com.itextpdf:itextpdf:5.5.13")
+    implementation("com.itextpdf:itextpdf:5.5.13.3")
     implementation("io.github.ahmerafzal1:ahmer-utils:1.1.1")
 }
