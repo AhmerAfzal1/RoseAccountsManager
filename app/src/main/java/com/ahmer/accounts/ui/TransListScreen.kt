@@ -123,7 +123,8 @@ fun TransListScreen(
                 onDismissRequest = { mShowDropdownMenu = false }) {
                 DropdownMenuItem(text = { Text(text = stringResource(R.string.label_generate_pdf)) },
                     onClick = {
-                        PdfUtils.exportToPdf(mContext, mLauncher, mState.getAllPersonsTransList)
+                        val mIntent = PdfUtils.exportToPdf(mContext, mState.getAllPersonsTransList)
+                        mLauncher.launch(mIntent)
                         mShowDropdownMenu = false
                     },
                     leadingIcon = { PdfIcon() })

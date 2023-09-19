@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.ActivityResult
 import com.ahmer.accounts.R
 import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.TransEntity
@@ -29,17 +27,14 @@ import com.itextpdf.text.pdf.PdfWriter
 object PdfUtils {
 
     @JvmStatic
-    fun exportToPdf(
-        context: Context,
-        launcher: ManagedActivityResultLauncher<Intent, ActivityResult>,
-        transList: ResultState<List<TransEntity>>
-    ) {
+    fun exportToPdf(context: Context, transList: ResultState<List<TransEntity>>): Intent {
+        val mIntent = Intent(Intent.ACTION_CREATE_DOCUMENT)
         if (transList is ResultState.Success) {
             if (transList.data.isNotEmpty()) {
                 val mFileName = HelperUtils.getDateTime(
                     time = System.currentTimeMillis(), pattern = "ddMMyyHHmmss"
                 ) + ".pdf"
-                val mIntent: Intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                mIntent.apply {
                     val mMimeType = "application/pdf"
                     addCategory(Intent.CATEGORY_OPENABLE)
                     flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -47,13 +42,13 @@ object PdfUtils {
                     putExtra(Intent.EXTRA_TITLE, mFileName)
                     type = mMimeType
                 }
-                launcher.launch(mIntent)
             } else {
                 HelperUtils.toastLong(
                     context = context, msg = context.getString(R.string.pdf_not_generated)
                 )
             }
         }
+        return mIntent
     }
 
     @JvmStatic
@@ -70,173 +65,106 @@ object PdfUtils {
             val mOutPutStream = context.contentResolver.openOutputStream(uri)
                 ?: throw NullPointerException("OutputStream for given input Uri is null")
 
-            val mPdfWriter = PdfWriter.getInstance(mDocument, mOutPutStream)
+            PdfWriter.getInstance(mDocument, mOutPutStream).apply {
+                pageEvent = HeaderFooterPageEvent(context)
+            }
+
             val mTitleStatement = "$accountName Account Statement"
             val mTotalCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
             val mTotalDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
             val mTotalBalance: Double = mTotalCredit.minus(mTotalDebit)
 
-            mPdfWriter.pageEvent = HeaderFooterPageEvent(context)
-            mDocument.open()
-            mDocument.addCreationDate()
-            mDocument.addAuthor(context.getString(R.string.app_name))
-            mDocument.addTitle(mTitleStatement)
-            mDocument.addCreator(context.getString(R.string.app_name))
-            mDocument.addSubject(context.getString(R.string.app_name))
+            val mFont: Font = Font(Font.FontFamily.HELVETICA).apply {
+                color = BaseColor.BLACK
+                size = 16F
+                style = Font.NORMAL
+            }
 
-            val mFont = Font(Font.FontFamily.HELVETICA)
-            mFont.color = BaseColor.BLACK
-            mFont.size = 16F
-            mFont.style = Font.NORMAL
-            val mParagraph = Paragraph(mTitleStatement, mFont)
-            mParagraph.spacingAfter = 20F
-            mParagraph.alignment = Element.ALIGN_CENTER
-            mDocument.add(mParagraph)
+            val mParagraph = Paragraph(mTitleStatement, mFont).apply {
+                spacingAfter = 20F
+                alignment = Element.ALIGN_CENTER
+            }
 
-            val mTableMain = PdfPTable(5)
-            mTableMain.widthPercentage = 100F
-            mTableMain.setTotalWidth(floatArrayOf(72F, 148F, 90F, 90F, 90F))
-            mTableMain.isLockedWidth = true
-            mTableMain.addCell(
-                cellFormat(
-                    text = "Date",
-                    isHeading = true,
-                    alignment = "",
-                    isTotal = false
-                )
-            )
-            mTableMain.addCell(
-                cellFormat(
-                    text = "Description",
-                    isHeading = true,
-                    alignment = "",
-                    isTotal = false
-                )
-            )
-            mTableMain.addCell(
-                cellFormat(
-                    text = "Debit",
-                    isHeading = true,
-                    alignment = "",
-                    isTotal = false
-                )
-            )
-            mTableMain.addCell(
-                cellFormat(
-                    text = "Credit",
-                    isHeading = true,
-                    alignment = "",
-                    isTotal = false
-                )
-            )
-            mTableMain.addCell(
-                cellFormat(
-                    text = "Balance",
-                    isHeading = true,
-                    alignment = "",
-                    isTotal = false
-                )
-            )
+            mDocument.apply {
+                open()
+                addCreationDate()
+                addAuthor(context.getString(R.string.app_name))
+                addTitle(mTitleStatement)
+                addCreator(context.getString(R.string.app_name))
+                addSubject(context.getString(R.string.app_name))
+                add(mParagraph)
+            }
+
+            val mTableMain = PdfPTable(5).apply {
+                widthPercentage = 100F
+                setTotalWidth(floatArrayOf(72F, 148F, 90F, 90F, 90F))
+                isLockedWidth = true
+                addCell(cellFormat(text = "Date", isHeading = true))
+                addCell(cellFormat(text = "Description", isHeading = true))
+                addCell(cellFormat(text = "Debit", isHeading = true))
+                addCell(cellFormat(text = "Credit", isHeading = true))
+                addCell(cellFormat(text = "Balance", isHeading = true))
+            }
 
             val mSortedList = transEntity.sortedWith { o1, o2 -> o1.id - o2.id }
-            var mBalanceList = 0.0
-            mSortedList.forEach { list ->
+            var mBalanceEntity = 0.0
+            mSortedList.forEach { entity ->
                 mTableMain.addCell(
-                    cellFormat(
-                        text = list.newCurrentShortDate,
-                        isHeading = false,
-                        alignment = "Center",
-                        isTotal = false
-                    )
+                    cellFormat(text = entity.newCurrentShortDate, alignment = AlignmentCell.Center)
                 )
-                mTableMain.addCell(
-                    cellFormat(
-                        text = list.description,
-                        isHeading = false,
-                        alignment = "",
-                        isTotal = false
-                    )
-                )
-                var mCreditList = 0.0
-                var mDebitList = 0.0
-                if (list.type == "Credit") {
-                    mCreditList = list.amount.toDouble()
+                mTableMain.addCell(cellFormat(text = entity.description))
+                var mCreditEntity = 0.0
+                var mDebitEntity = 0.0
+                if (entity.type == "Credit") {
+                    mCreditEntity = entity.amount.toDouble()
                 } else {
-                    mDebitList = list.amount.toDouble()
+                    mDebitEntity = entity.amount.toDouble()
                 }
-                mBalanceList += mCreditList - mDebitList
-                val mDebit = HelperUtils.getRoundedValue(value = mDebitList)
-                val mCredit = HelperUtils.getRoundedValue(value = mCreditList)
-                val mBalance = HelperUtils.getRoundedValue(value = mBalanceList)
+                mBalanceEntity += mCreditEntity - mDebitEntity
+                val mDebit: String = HelperUtils.getRoundedValue(value = mDebitEntity)
+                val mCredit: String = HelperUtils.getRoundedValue(value = mCreditEntity)
+                val mBalance: String = HelperUtils.getRoundedValue(value = mBalanceEntity)
                 if (mDebit == "0") {
                     mTableMain.addCell("")
                 } else {
-                    mTableMain.addCell(
-                        cellFormat(
-                            text = mDebit,
-                            isHeading = false,
-                            alignment = "Right",
-                            isTotal = false
-                        )
-                    )
+                    mTableMain.addCell(cellFormat(text = mDebit, alignment = AlignmentCell.Right))
                 }
                 if (mCredit == "0") {
                     mTableMain.addCell("")
                 } else {
-                    mTableMain.addCell(
-                        cellFormat(
-                            text = mCredit,
-                            isHeading = false,
-                            alignment = "Right",
-                            isTotal = false
-                        )
-                    )
+                    mTableMain.addCell(cellFormat(text = mCredit, alignment = AlignmentCell.Right))
                 }
-                mTableMain.addCell(
+                mTableMain.addCell(cellFormat(text = mBalance, alignment = AlignmentCell.Right))
+            }
+            val mTableTotal = PdfPTable(4).apply {
+                widthPercentage = 100F
+                setTotalWidth(floatArrayOf(220F, 90F, 90F, 90F))
+                isLockedWidth = true
+                addCell(
+                    cellFormat(text = "Total", alignment = AlignmentCell.Center, isTotal = true)
+                )
+                addCell(
                     cellFormat(
-                        text = mBalance,
-                        isHeading = false,
-                        alignment = "Right",
-                        isTotal = false
+                        text = HelperUtils.getRoundedValue(value = mTotalDebit),
+                        alignment = AlignmentCell.Right,
+                        isTotal = true
+                    )
+                )
+                addCell(
+                    cellFormat(
+                        text = HelperUtils.getRoundedValue(value = mTotalCredit),
+                        alignment = AlignmentCell.Right,
+                        isTotal = true
+                    )
+                )
+                addCell(
+                    cellFormat(
+                        text = HelperUtils.getRoundedValue(value = mTotalBalance),
+                        alignment = AlignmentCell.Right,
+                        isTotal = true
                     )
                 )
             }
-            val mTableTotal = PdfPTable(4)
-            mTableTotal.widthPercentage = 100F
-            mTableTotal.setTotalWidth(floatArrayOf(220F, 90F, 90F, 90F))
-            mTableTotal.isLockedWidth = true
-            mTableTotal.addCell(
-                cellFormat(
-                    text = "Total",
-                    isHeading = false,
-                    alignment = "Center",
-                    isTotal = true
-                )
-            )
-            mTableTotal.addCell(
-                cellFormat(
-                    text = HelperUtils.getRoundedValue(value = mTotalDebit),
-                    isHeading = false,
-                    alignment = "Right",
-                    isTotal = true
-                )
-            )
-            mTableTotal.addCell(
-                cellFormat(
-                    text = HelperUtils.getRoundedValue(value = mTotalCredit),
-                    isHeading = false,
-                    alignment = "Right",
-                    isTotal = true
-                )
-            )
-            mTableTotal.addCell(
-                cellFormat(
-                    text = HelperUtils.getRoundedValue(value = mTotalBalance),
-                    isHeading = false,
-                    alignment = "Right",
-                    isTotal = true
-                )
-            )
 
             mDocument.add(mTableMain)
             mDocument.add(mTableTotal)
@@ -255,50 +183,72 @@ object PdfUtils {
     }
 
     private fun cellFormat(
-        text: String, isHeading: Boolean, alignment: String = "", isTotal: Boolean = false
+        text: String,
+        isHeading: Boolean = false,
+        alignment: AlignmentCell = AlignmentCell.Empty,
+        isTotal: Boolean = false
     ): PdfPCell {
-        val mFont = Font(Font.FontFamily.HELVETICA)
-        mFont.color = BaseColor.BLACK
+        val mFont = Font(Font.FontFamily.HELVETICA).apply {
+            color = BaseColor.BLACK
+        }
         if (isHeading) {
-            mFont.size = 14F
-            mFont.style = Font.BOLD
+            mFont.apply {
+                size = 14F
+                style = Font.BOLD
+            }
         } else {
             if (isTotal) {
-                mFont.size = 14F
-                mFont.style = Font.BOLD
+                mFont.apply {
+                    size = 14F
+                    style = Font.BOLD
+                }
             } else {
-                mFont.size = 10F
-                mFont.style = Font.NORMAL
+                mFont.apply {
+                    size = 10F
+                    style = Font.NORMAL
+                }
             }
         }
         val mPdfPCell = PdfPCell(Phrase(text, mFont))
         if (isHeading) {
-            mPdfPCell.verticalAlignment = Element.ALIGN_MIDDLE
-            mPdfPCell.horizontalAlignment = Element.ALIGN_CENTER
-            mPdfPCell.paddingTop = 5F
-            mPdfPCell.paddingBottom = 8F
+            mPdfPCell.apply {
+                verticalAlignment = Element.ALIGN_MIDDLE
+                horizontalAlignment = Element.ALIGN_CENTER
+                paddingTop = 5F
+                paddingBottom = 8F
+            }
         } else {
             when (alignment) {
-                "Right" -> {
-                    mPdfPCell.verticalAlignment = Element.ALIGN_MIDDLE
-                    mPdfPCell.horizontalAlignment = Element.ALIGN_RIGHT
+                AlignmentCell.Center -> {
+                    mPdfPCell.apply {
+                        verticalAlignment = Element.ALIGN_MIDDLE
+                        horizontalAlignment = Element.ALIGN_CENTER
+                    }
                 }
 
-                "Center" -> {
-                    mPdfPCell.verticalAlignment = Element.ALIGN_MIDDLE
-                    mPdfPCell.horizontalAlignment = Element.ALIGN_CENTER
+                AlignmentCell.Empty -> {
+                    mPdfPCell.apply {
+                        verticalAlignment = Element.ALIGN_MIDDLE
+                    }
                 }
 
-                "" -> {
-                    mPdfPCell.verticalAlignment = Element.ALIGN_MIDDLE
+                AlignmentCell.Right -> {
+                    mPdfPCell.apply {
+                        verticalAlignment = Element.ALIGN_MIDDLE
+                        horizontalAlignment = Element.ALIGN_RIGHT
+                    }
                 }
             }
             if (isTotal) {
-                mPdfPCell.paddingTop = 5F
-                mPdfPCell.paddingBottom = 7F
+                mPdfPCell.apply {
+                    paddingTop = 5F
+                    paddingBottom = 7F
+                }
             } else {
-                mPdfPCell.paddingTop = 3F
-                mPdfPCell.paddingBottom = 5F
+                mPdfPCell.apply {
+                    paddingTop = 3F
+                    paddingBottom = 5F
+                }
             }
         }
         return mPdfPCell
@@ -307,10 +257,11 @@ object PdfUtils {
     class HeaderFooterPageEvent(private val context: Context) : PdfPageEventHelper() {
 
         override fun onStartPage(writer: PdfWriter, document: Document?) {
-            val mFont = Font(Font.FontFamily.HELVETICA)
-            mFont.color = BaseColor.BLACK
-            mFont.size = 10F
-            mFont.style = Font.NORMAL
+            val mFont: Font = Font(Font.FontFamily.HELVETICA).apply {
+                color = BaseColor.BLACK
+                size = 10F
+                style = Font.NORMAL
+            }
 
             ColumnText.showTextAligned(
                 writer.directContent,
@@ -322,32 +273,35 @@ object PdfUtils {
             )
 
             ColumnText.showTextAligned(
-                writer.directContent, Element.ALIGN_CENTER, Phrase(
-                    "${
-                        HelperUtils.getDateTime(
-                            time = System.currentTimeMillis(), pattern = "dd MMM yyyy"
-                        )
-                    } - ${
-                        HelperUtils.getDateTime(
-                            time = System.currentTimeMillis(), pattern = "hh:mm:ss a"
-                        )
-                    }", mFont
-                ), 477F, 800F, 0F
+                writer.directContent,
+                Element.ALIGN_CENTER,
+                Phrase(
+                    HelperUtils.getDateTime(
+                        time = System.currentTimeMillis(),
+                        pattern = Constants.DATE_TIME_FOR_PDF_PATTERN
+                    ), mFont
+                ),
+                477F,
+                800F,
+                0F
             )
 
         }
 
         override fun onEndPage(writer: PdfWriter, document: Document) {
-            val mFont = Font(Font.FontFamily.HELVETICA)
-            mFont.color = BaseColor.BLACK
-            mFont.size = 10F
-            mFont.style = Font.NORMAL
+            val mFont: Font = Font(Font.FontFamily.HELVETICA).apply {
+                color = BaseColor.BLACK
+                size = 10F
+                style = Font.NORMAL
+            }
 
-            val mPhrase = Phrase("", mFont)
             val mPlayStoreLink = HelperUtils.getPlayStoreLink(context = context)
-            val mChunk = Chunk(mPlayStoreLink)
-            mChunk.setAnchor(mPlayStoreLink)
-            mPhrase.add(mChunk)
+            val mChunk = Chunk(mPlayStoreLink).apply {
+                setAnchor(mPlayStoreLink)
+            }
+            val mPhrase = Phrase("", mFont).apply {
+                add(mChunk)
+            }
 
             ColumnText.showTextAligned(
                 writer.directContent,
@@ -366,5 +320,11 @@ object PdfUtils {
                 0F
             )
         }
+    }
+
+    sealed class AlignmentCell {
+        data object Center : AlignmentCell()
+        data object Empty : AlignmentCell()
+        data object Right : AlignmentCell()
     }
 }

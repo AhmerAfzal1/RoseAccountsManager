@@ -12,6 +12,7 @@ class Constants {
         const val DATE_PATTERN: String = "dd MMM yyyy"
         const val DATE_SHORT_PATTERN: String = "dd-MMM-yy"
         const val DATE_TIME_PATTERN: String = "dd MMM yyyy hh:mm:ss a"
+        const val DATE_TIME_FOR_PDF_PATTERN: String = "dd MMMM yyyy - hh:mm:ss a"
         const val LOG_TAG: String = "RoseAccounts"
         const val PLAY_STORE_LINK: String = "https://play.google.com/store/apps/details?id="
         const val PREFERENCES_NAME: String = "RoseAccountsPrefs"
