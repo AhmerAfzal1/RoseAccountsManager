@@ -26,12 +26,12 @@ interface PersonDao {
     fun getAllPersonsSortedByDate(searchQuery: String): Flow<List<PersonsEntity>>
 
     @Query("SELECT * FROM Persons WHERE name LIKE '%' || :searchQuery || '%' ORDER BY name ASC")
-    fun getAllPersonsSortedByNames(searchQuery: String): Flow<List<PersonsEntity>>
+    fun getAllPersonsSortedByName(searchQuery: String): Flow<List<PersonsEntity>>
 
     fun getAllPersonsByFilter(searchQuery: String, sortBy: SortBy): Flow<List<PersonsEntity>> {
         return when (sortBy) {
             SortBy.DATE -> getAllPersonsSortedByDate(searchQuery)
-            SortBy.NAME -> getAllPersonsSortedByNames(searchQuery)
+            SortBy.NAME -> getAllPersonsSortedByName(searchQuery)
         }
     }
 

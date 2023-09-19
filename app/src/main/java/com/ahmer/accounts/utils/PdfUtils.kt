@@ -36,10 +36,9 @@ object PdfUtils {
     ) {
         if (transList is ResultState.Success) {
             if (transList.data.isNotEmpty()) {
-                val mFileName =
-                    HelperUtils.getDateTime(
-                        time = System.currentTimeMillis(), pattern = "ddMMyyHHmmss"
-                    ) + ".pdf"
+                val mFileName = HelperUtils.getDateTime(
+                    time = System.currentTimeMillis(), pattern = "ddMMyyHHmmss"
+                ) + ".pdf"
                 val mIntent: Intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                     val mMimeType = "application/pdf"
                     addCategory(Intent.CATEGORY_OPENABLE)
@@ -51,8 +50,7 @@ object PdfUtils {
                 launcher.launch(mIntent)
             } else {
                 HelperUtils.toastLong(
-                    context = context,
-                    msg = context.getString(R.string.pdf_not_generated)
+                    context = context, msg = context.getString(R.string.pdf_not_generated)
                 )
             }
         }
@@ -60,8 +58,11 @@ object PdfUtils {
 
     @JvmStatic
     fun generatePdf(
-        context: Context, uri: Uri, transEntity: List<TransEntity>,
-        transSumModel: TransSumModel, accountName: String
+        context: Context,
+        uri: Uri,
+        transEntity: List<TransEntity>,
+        transSumModel: TransSumModel,
+        accountName: String
     ): Boolean {
         //One inch size equal to 70F; margin using 0.75% of a inch
         val mDocument = Document(PageSize.A4, 52.5F, 52.5F, 52.5F, 52.5F)
@@ -94,21 +95,68 @@ object PdfUtils {
 
             val mTableMain = PdfPTable(5)
             mTableMain.widthPercentage = 100F
-            mTableMain.setTotalWidth(floatArrayOf(36F, 72F, 202F, 90F, 90F))
+            mTableMain.setTotalWidth(floatArrayOf(72F, 148F, 90F, 90F, 90F))
             mTableMain.isLockedWidth = true
-            mTableMain.addCell(cellFormat("Sr", true))
-            mTableMain.addCell(cellFormat("Date", true))
-            mTableMain.addCell(cellFormat("Description", true))
-            mTableMain.addCell(cellFormat("Debit", true))
-            mTableMain.addCell(cellFormat("Credit", true))
+            mTableMain.addCell(
+                cellFormat(
+                    text = "Date",
+                    isHeading = true,
+                    alignment = "",
+                    isTotal = false
+                )
+            )
+            mTableMain.addCell(
+                cellFormat(
+                    text = "Description",
+                    isHeading = true,
+                    alignment = "",
+                    isTotal = false
+                )
+            )
+            mTableMain.addCell(
+                cellFormat(
+                    text = "Debit",
+                    isHeading = true,
+                    alignment = "",
+                    isTotal = false
+                )
+            )
+            mTableMain.addCell(
+                cellFormat(
+                    text = "Credit",
+                    isHeading = true,
+                    alignment = "",
+                    isTotal = false
+                )
+            )
+            mTableMain.addCell(
+                cellFormat(
+                    text = "Balance",
+                    isHeading = true,
+                    alignment = "",
+                    isTotal = false
+                )
+            )
 
             val mSortedList = transEntity.sortedWith { o1, o2 -> o1.id - o2.id }
-            var mSrNo = 0
+            var mBalanceList = 0.0
             mSortedList.forEach { list ->
-                mSrNo += 1
-                mTableMain.addCell(cellFormat(mSrNo.toString(), false, "Center"))
-                mTableMain.addCell(cellFormat(list.newCurrentShortDate, false, "Center"))
-                mTableMain.addCell(cellFormat(list.description, false))
+                mTableMain.addCell(
+                    cellFormat(
+                        text = list.newCurrentShortDate,
+                        isHeading = false,
+                        alignment = "Center",
+                        isTotal = false
+                    )
+                )
+                mTableMain.addCell(
+                    cellFormat(
+                        text = list.description,
+                        isHeading = false,
+                        alignment = "",
+                        isTotal = false
+                    )
+                )
                 var mCreditList = 0.0
                 var mDebitList = 0.0
                 if (list.type == "Credit") {
@@ -116,50 +164,82 @@ object PdfUtils {
                 } else {
                     mDebitList = list.amount.toDouble()
                 }
+                mBalanceList += mCreditList - mDebitList
                 val mDebit = HelperUtils.getRoundedValue(value = mDebitList)
                 val mCredit = HelperUtils.getRoundedValue(value = mCreditList)
+                val mBalance = HelperUtils.getRoundedValue(value = mBalanceList)
                 if (mDebit == "0") {
                     mTableMain.addCell("")
                 } else {
-                    mTableMain.addCell(cellFormat(mDebit, false, "Right"))
+                    mTableMain.addCell(
+                        cellFormat(
+                            text = mDebit,
+                            isHeading = false,
+                            alignment = "Right",
+                            isTotal = false
+                        )
+                    )
                 }
                 if (mCredit == "0") {
                     mTableMain.addCell("")
                 } else {
-                    mTableMain.addCell(cellFormat(mCredit, false, "Right"))
+                    mTableMain.addCell(
+                        cellFormat(
+                            text = mCredit,
+                            isHeading = false,
+                            alignment = "Right",
+                            isTotal = false
+                        )
+                    )
                 }
+                mTableMain.addCell(
+                    cellFormat(
+                        text = mBalance,
+                        isHeading = false,
+                        alignment = "Right",
+                        isTotal = false
+                    )
+                )
             }
-
-            val mTableTotal = PdfPTable(3)
+            val mTableTotal = PdfPTable(4)
             mTableTotal.widthPercentage = 100F
-            mTableTotal.setTotalWidth(floatArrayOf(310F, 90F, 90F))
+            mTableTotal.setTotalWidth(floatArrayOf(220F, 90F, 90F, 90F))
             mTableTotal.isLockedWidth = true
-            mTableTotal.addCell(cellFormat("Total", false, "Center", true))
             mTableTotal.addCell(
                 cellFormat(
-                    HelperUtils.getRoundedValue(value = mTotalDebit), false, "Right", true
+                    text = "Total",
+                    isHeading = false,
+                    alignment = "Center",
+                    isTotal = true
                 )
             )
             mTableTotal.addCell(
                 cellFormat(
-                    HelperUtils.getRoundedValue(value = mTotalCredit), false, "Right", true
+                    text = HelperUtils.getRoundedValue(value = mTotalDebit),
+                    isHeading = false,
+                    alignment = "Right",
+                    isTotal = true
                 )
             )
-
-            val mTableBalance = PdfPTable(2)
-            mTableBalance.widthPercentage = 100F
-            mTableBalance.setTotalWidth(floatArrayOf(310F, 180F))
-            mTableBalance.isLockedWidth = true
-            mTableBalance.addCell(cellFormat("Balance", false, "Center", true))
-            mTableBalance.addCell(
+            mTableTotal.addCell(
                 cellFormat(
-                    HelperUtils.getRoundedValue(value = mTotalBalance), false, "Right", true
+                    text = HelperUtils.getRoundedValue(value = mTotalCredit),
+                    isHeading = false,
+                    alignment = "Right",
+                    isTotal = true
+                )
+            )
+            mTableTotal.addCell(
+                cellFormat(
+                    text = HelperUtils.getRoundedValue(value = mTotalBalance),
+                    isHeading = false,
+                    alignment = "Right",
+                    isTotal = true
                 )
             )
 
             mDocument.add(mTableMain)
             mDocument.add(mTableTotal)
-            mDocument.add(mTableBalance)
             return true
         } catch (de: DocumentException) {
             Log.e(Constants.LOG_TAG, de.localizedMessage, de)
@@ -175,24 +255,24 @@ object PdfUtils {
     }
 
     private fun cellFormat(
-        text: String, isForTable: Boolean, alignment: String = "", isCellForTotal: Boolean = false
+        text: String, isHeading: Boolean, alignment: String = "", isTotal: Boolean = false
     ): PdfPCell {
         val mFont = Font(Font.FontFamily.HELVETICA)
         mFont.color = BaseColor.BLACK
-        if (isForTable) {
+        if (isHeading) {
             mFont.size = 14F
             mFont.style = Font.BOLD
         } else {
-            if (isCellForTotal) {
+            if (isTotal) {
                 mFont.size = 14F
                 mFont.style = Font.BOLD
             } else {
-                mFont.size = 12F
+                mFont.size = 10F
                 mFont.style = Font.NORMAL
             }
         }
         val mPdfPCell = PdfPCell(Phrase(text, mFont))
-        if (isForTable) {
+        if (isHeading) {
             mPdfPCell.verticalAlignment = Element.ALIGN_MIDDLE
             mPdfPCell.horizontalAlignment = Element.ALIGN_CENTER
             mPdfPCell.paddingTop = 5F
@@ -213,7 +293,7 @@ object PdfUtils {
                     mPdfPCell.verticalAlignment = Element.ALIGN_MIDDLE
                 }
             }
-            if (isCellForTotal) {
+            if (isTotal) {
                 mPdfPCell.paddingTop = 5F
                 mPdfPCell.paddingBottom = 7F
             } else {
@@ -233,14 +313,16 @@ object PdfUtils {
             mFont.style = Font.NORMAL
 
             ColumnText.showTextAligned(
-                writer.directContent, Element.ALIGN_CENTER,
-                Phrase(context.getString(R.string.app_name), mFont), 80F, 800F, 0F
+                writer.directContent,
+                Element.ALIGN_CENTER,
+                Phrase(context.getString(R.string.app_name), mFont),
+                80F,
+                800F,
+                0F
             )
 
             ColumnText.showTextAligned(
-                writer.directContent,
-                Element.ALIGN_CENTER,
-                Phrase(
+                writer.directContent, Element.ALIGN_CENTER, Phrase(
                     "${
                         HelperUtils.getDateTime(
                             time = System.currentTimeMillis(), pattern = "dd MMM yyyy"
@@ -268,12 +350,20 @@ object PdfUtils {
             mPhrase.add(mChunk)
 
             ColumnText.showTextAligned(
-                writer.directContent, Element.ALIGN_CENTER,
-                Phrase(mPhrase), 170F, 35F, 0F
+                writer.directContent,
+                Element.ALIGN_CENTER,
+                Phrase(mPhrase),
+                170F,
+                35F,
+                0F
             )
             ColumnText.showTextAligned(
-                writer.directContent, Element.ALIGN_CENTER,
-                Phrase("Page " + document.pageNumber, mFont), 530F, 35F, 0F
+                writer.directContent,
+                Element.ALIGN_CENTER,
+                Phrase("Page " + document.pageNumber, mFont),
+                530F,
+                35F,
+                0F
             )
         }
     }
