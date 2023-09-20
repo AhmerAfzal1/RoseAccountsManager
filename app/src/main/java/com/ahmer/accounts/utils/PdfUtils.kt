@@ -27,15 +27,15 @@ import com.itextpdf.text.pdf.PdfWriter
 object PdfUtils {
 
     @JvmStatic
-    fun exportToPdf(context: Context, transList: ResultState<List<TransEntity>>): Intent {
-        val mIntent = Intent(Intent.ACTION_CREATE_DOCUMENT)
+    fun exportToPdf(context: Context, transList: ResultState<List<TransEntity>>): Intent? {
+        var mIntent: Intent? = null
         if (transList is ResultState.Success) {
             if (transList.data.isNotEmpty()) {
                 val mFileName = HelperUtils.getDateTime(
                     time = System.currentTimeMillis(),
                     pattern = Constants.DATE_TIME_FILE_NAME_PATTERN
                 ) + ".pdf"
-                mIntent.apply {
+                mIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                     val mMimeType = "application/pdf"
                     addCategory(Intent.CATEGORY_OPENABLE)
                     flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -47,6 +47,7 @@ object PdfUtils {
                 HelperUtils.toastLong(
                     context = context, msg = context.getString(R.string.pdf_not_generated)
                 )
+                mIntent = null
             }
         }
         return mIntent
