@@ -32,7 +32,8 @@ object PdfUtils {
         if (transList is ResultState.Success) {
             if (transList.data.isNotEmpty()) {
                 val mFileName = HelperUtils.getDateTime(
-                    time = System.currentTimeMillis(), pattern = "ddMMyyHHmmss"
+                    time = System.currentTimeMillis(),
+                    pattern = Constants.DATE_TIME_FILE_NAME_PATTERN
                 ) + ".pdf"
                 mIntent.apply {
                     val mMimeType = "application/pdf"
@@ -57,7 +58,7 @@ object PdfUtils {
         uri: Uri,
         transEntity: List<TransEntity>,
         transSumModel: TransSumModel,
-        accountName: String
+        personName: String
     ): Boolean {
         //One inch size equal to 70F; margin using 0.75% of a inch
         val mDocument = Document(PageSize.A4, 52.5F, 52.5F, 52.5F, 52.5F)
@@ -69,7 +70,9 @@ object PdfUtils {
                 pageEvent = HeaderFooterPageEvent(context)
             }
 
-            val mTitleStatement = "$accountName Account Statement"
+            val mAppName = context.getString(R.string.app_name)
+            val mKeywords = "$personName, Statement, Balance, Sheet"
+            val mTitle = "$personName Account Statement"
             val mTotalCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
             val mTotalDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
             val mTotalBalance: Double = mTotalCredit.minus(mTotalDebit)
@@ -80,18 +83,19 @@ object PdfUtils {
                 style = Font.NORMAL
             }
 
-            val mParagraph = Paragraph(mTitleStatement, mFont).apply {
+            val mParagraph = Paragraph(mTitle, mFont).apply {
                 spacingAfter = 20F
                 alignment = Element.ALIGN_CENTER
             }
 
             mDocument.apply {
                 open()
+                addAuthor(mAppName)
                 addCreationDate()
-                addAuthor(context.getString(R.string.app_name))
-                addTitle(mTitleStatement)
-                addCreator(context.getString(R.string.app_name))
-                addSubject(context.getString(R.string.app_name))
+                addCreator(mAppName)
+                addKeywords(mKeywords)
+                addSubject(mAppName)
+                addTitle(mTitle)
                 add(mParagraph)
             }
 
@@ -110,7 +114,7 @@ object PdfUtils {
             var mBalanceEntity = 0.0
             mSortedList.forEach { entity ->
                 mTableMain.addCell(
-                    cellFormat(text = entity.newCurrentShortDate, alignment = AlignmentCell.Center)
+                    cellFormat(text = entity.newCurrentShortDate, alignment = AlignmentCell.CENTER)
                 )
                 mTableMain.addCell(cellFormat(text = entity.description))
                 var mCreditEntity = 0.0
@@ -127,40 +131,40 @@ object PdfUtils {
                 if (mDebit == "0") {
                     mTableMain.addCell("")
                 } else {
-                    mTableMain.addCell(cellFormat(text = mDebit, alignment = AlignmentCell.Right))
+                    mTableMain.addCell(cellFormat(text = mDebit, alignment = AlignmentCell.RIGHT))
                 }
                 if (mCredit == "0") {
                     mTableMain.addCell("")
                 } else {
-                    mTableMain.addCell(cellFormat(text = mCredit, alignment = AlignmentCell.Right))
+                    mTableMain.addCell(cellFormat(text = mCredit, alignment = AlignmentCell.RIGHT))
                 }
-                mTableMain.addCell(cellFormat(text = mBalance, alignment = AlignmentCell.Right))
+                mTableMain.addCell(cellFormat(text = mBalance, alignment = AlignmentCell.RIGHT))
             }
             val mTableTotal = PdfPTable(4).apply {
                 widthPercentage = 100F
                 setTotalWidth(floatArrayOf(220F, 90F, 90F, 90F))
                 isLockedWidth = true
                 addCell(
-                    cellFormat(text = "Total", alignment = AlignmentCell.Center, isTotal = true)
+                    cellFormat(text = "Total", alignment = AlignmentCell.CENTER, isTotal = true)
                 )
                 addCell(
                     cellFormat(
                         text = HelperUtils.getRoundedValue(value = mTotalDebit),
-                        alignment = AlignmentCell.Right,
+                        alignment = AlignmentCell.RIGHT,
                         isTotal = true
                     )
                 )
                 addCell(
                     cellFormat(
                         text = HelperUtils.getRoundedValue(value = mTotalCredit),
-                        alignment = AlignmentCell.Right,
+                        alignment = AlignmentCell.RIGHT,
                         isTotal = true
                     )
                 )
                 addCell(
                     cellFormat(
                         text = HelperUtils.getRoundedValue(value = mTotalBalance),
-                        alignment = AlignmentCell.Right,
+                        alignment = AlignmentCell.RIGHT,
                         isTotal = true
                     )
                 )
@@ -185,7 +189,7 @@ object PdfUtils {
     private fun cellFormat(
         text: String,
         isHeading: Boolean = false,
-        alignment: AlignmentCell = AlignmentCell.Empty,
+        alignment: AlignmentCell = AlignmentCell.EMPTY,
         isTotal: Boolean = false
     ): PdfPCell {
         val mFont = Font(Font.FontFamily.HELVETICA).apply {
@@ -219,20 +223,20 @@ object PdfUtils {
             }
         } else {
             when (alignment) {
-                AlignmentCell.Center -> {
+                AlignmentCell.CENTER -> {
                     mPdfPCell.apply {
                         verticalAlignment = Element.ALIGN_MIDDLE
                         horizontalAlignment = Element.ALIGN_CENTER
                     }
                 }
 
-                AlignmentCell.Empty -> {
+                AlignmentCell.EMPTY -> {
                     mPdfPCell.apply {
                         verticalAlignment = Element.ALIGN_MIDDLE
                     }
                 }
 
-                AlignmentCell.Right -> {
+                AlignmentCell.RIGHT -> {
                     mPdfPCell.apply {
                         verticalAlignment = Element.ALIGN_MIDDLE
                         horizontalAlignment = Element.ALIGN_RIGHT
@@ -277,8 +281,7 @@ object PdfUtils {
                 Element.ALIGN_CENTER,
                 Phrase(
                     HelperUtils.getDateTime(
-                        time = System.currentTimeMillis(),
-                        pattern = Constants.DATE_TIME_FOR_PDF_PATTERN
+                        time = System.currentTimeMillis(), pattern = Constants.DATE_TIME_PDF_PATTERN
                     ), mFont
                 ),
                 477F,
@@ -323,8 +326,8 @@ object PdfUtils {
     }
 
     sealed class AlignmentCell {
-        data object Center : AlignmentCell()
-        data object Empty : AlignmentCell()
-        data object Right : AlignmentCell()
+        data object CENTER : AlignmentCell()
+        data object EMPTY : AlignmentCell()
+        data object RIGHT : AlignmentCell()
     }
 }

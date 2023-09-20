@@ -131,7 +131,7 @@ class TransViewModel @Inject constructor(
                         uri = uri,
                         transEntity = transEntityList,
                         transSumModel = getTransSumModel,
-                        accountName = getPersonsEntity.name
+                        personName = getPersonsEntity.name
                     )
                 }
 
