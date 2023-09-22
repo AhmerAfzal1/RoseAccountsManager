@@ -1,5 +1,6 @@
 package com.ahmer.accounts.utils
 
+import android.Manifest
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -18,5 +19,8 @@ class Constants {
         const val PLAY_STORE_LINK: String = "https://play.google.com/store/apps/details?id="
         const val PREFERENCES_NAME: String = "RoseAccountsPrefs"
         val ICON_SIZE: Dp = 30.dp
+        val PERMISSIONS: Array<String> = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        )
     }
 }

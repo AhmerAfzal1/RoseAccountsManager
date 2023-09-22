@@ -1,7 +1,11 @@
 package com.ahmer.accounts.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -52,8 +56,10 @@ import com.ahmer.accounts.drawer.TopAppBarSearchBox
 import com.ahmer.accounts.drawer.drawerItemsList
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.navigation.NavRoutes
 import com.ahmer.accounts.ui.components.PersonsList
 import com.ahmer.accounts.utils.AddIcon
+import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.MenuIcon
 import com.ahmer.accounts.utils.SearchIcon
@@ -65,6 +71,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,6 +93,24 @@ fun PersonsListScreen(
     var mShowSearch by remember { mutableStateOf(false) }
     var mTextSearch by remember { mutableStateOf(mViewModel.searchQuery.value) }
 
+    val mBackupDatabaseLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val mUri = result.data?.data ?: return@rememberLauncherForActivityResult
+            mViewModel.backupDatabase(mContext, mUri)
+        }
+    }
+
+    val mRestoreDatabaseBackupLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val mUri = result.data?.data ?: return@rememberLauncherForActivityResult
+            mViewModel.restoreDatabase(mContext, mUri)
+        }
+    }
+
     LaunchedEffect(key1 = true) {
         mViewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -101,8 +126,52 @@ fun PersonsListScreen(
                     }
                 }
 
+                is UiEvent.RelaunchApp -> HelperUtils.relaunchApp(mContext)
                 is UiEvent.ShowToast -> HelperUtils.toastLong(mContext, event.message)
                 else -> Unit
+            }
+        }
+    }
+
+    fun navController(route: String) {
+        when (route) {
+            NavRoutes.Home -> {}
+            NavRoutes.Backup -> {
+                val mFileName = "backup_${
+                    HelperUtils.getDateTime(
+                        time = System.currentTimeMillis(),
+                        pattern = Constants.DATE_TIME_FILE_NAME_PATTERN
+                    )
+                }.db"
+                val mBackupIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                    val mMimeType = "application/octet-stream"
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    putExtra(Intent.EXTRA_MIME_TYPES, arrayOf(mMimeType))
+                    putExtra(Intent.EXTRA_TITLE, mFileName)
+                    type = mMimeType
+                }
+                mBackupDatabaseLauncher.launch(mBackupIntent)
+            }
+
+            NavRoutes.Restore -> {
+                val mRestoreIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    type = "*/*"
+                    Intent.createChooser(this, "Select the database backup file")
+                }
+                mRestoreDatabaseBackupLauncher.launch(mRestoreIntent)
+            }
+
+            NavRoutes.Settings -> {}
+            NavRoutes.Rate -> {}
+            NavRoutes.Share -> {}
+            NavRoutes.MoreApp -> {}
+            NavRoutes.Exit -> {
+                mViewModel.closeDatabase(mContext)
+                MainActivity().finish()
+                exitProcess(0)
             }
         }
     }
@@ -118,10 +187,9 @@ fun PersonsListScreen(
                         label = { Text(text = item.label) },
                         selected = index == mSelectedItems,
                         onClick = {
-                            //navController.navigate(item.route)
+                            navController(item.route)
                             mSelectedItems = index
                             mCoroutineScope.launch { mDrawerState.close() }
-                            HelperUtils.toastLong(mContext, item.label)
                         },
                         icon = {
                             Icon(
@@ -140,61 +208,59 @@ fun PersonsListScreen(
             }
         }, drawerState = mDrawerState
     ) {
-        Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-            TopAppBar(title = {
-                if (mShowSearch) {
-                    TopAppBarSearchBox(
-                        text = mTextSearch,
-                        onTextChange = {
+        Scaffold(modifier = Modifier.fillMaxSize(),
+            topBar = {
+                TopAppBar(title = {
+                    if (mShowSearch) {
+                        TopAppBarSearchBox(text = mTextSearch, onTextChange = {
                             mViewModel.onEvent(PersonEvent.OnSearchTextChange(it))
                             mTextSearch = it
-                        },
-                        onCloseClick = {
+                        }, onCloseClick = {
                             mCoroutineScope.launch { delay(200.milliseconds) }
                             mShowSearch = false
-                        }
-                    )
-                } else {
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    mCoroutineScope.launch { mDrawerState.open() }
-                }) { MenuIcon() }
-            }, actions = {
-                if (!mShowSearch) {
-                    IconButton(onClick = { mShowSearch = true }) { SearchIcon() }
-                }
-                IconButton(onClick = {
-                    mShowDropdownMenu = !mShowDropdownMenu
-                }) { SortIcon() }
-                DropdownMenu(expanded = mShowDropdownMenu,
-                    onDismissRequest = { mShowDropdownMenu = false }) {
-                    DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_name)) },
-                        onClick = {
-                            mViewModel.onEvent(PersonEvent.OnSortBy(SortBy.NAME))
-                            mShowDropdownMenu = false
-                        },
-                        leadingIcon = { SortByNameIcon() })
-                    DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_date_created)) },
-                        onClick = {
-                            mViewModel.onEvent(PersonEvent.OnSortBy(SortBy.DATE))
-                            mShowDropdownMenu = false
-                        },
-                        leadingIcon = { SortByDateIcon() })
-                }
-            }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-            ), scrollBehavior = mScrollBehavior
-            )
-        }, snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
+                        })
+                    } else {
+                        Text(
+                            text = stringResource(R.string.app_name),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }, navigationIcon = {
+                    IconButton(onClick = {
+                        mCoroutineScope.launch { mDrawerState.open() }
+                    }) { MenuIcon() }
+                }, actions = {
+                    if (!mShowSearch) {
+                        IconButton(onClick = { mShowSearch = true }) { SearchIcon() }
+                    }
+                    IconButton(onClick = {
+                        mShowDropdownMenu = !mShowDropdownMenu
+                    }) { SortIcon() }
+                    DropdownMenu(expanded = mShowDropdownMenu,
+                        onDismissRequest = { mShowDropdownMenu = false }) {
+                        DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_name)) },
+                            onClick = {
+                                mViewModel.onEvent(PersonEvent.OnSortBy(SortBy.NAME))
+                                mShowDropdownMenu = false
+                            },
+                            leadingIcon = { SortByNameIcon() })
+                        DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_date_created)) },
+                            onClick = {
+                                mViewModel.onEvent(PersonEvent.OnSortBy(SortBy.DATE))
+                                mShowDropdownMenu = false
+                            },
+                            leadingIcon = { SortByDateIcon() })
+                    }
+                }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                ), scrollBehavior = mScrollBehavior
+                )
+            },
+            snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
             floatingActionButton = {
                 FloatingActionButton(onClick = {
                     mViewModel.onEvent(PersonEvent.OnNewAddClick)
