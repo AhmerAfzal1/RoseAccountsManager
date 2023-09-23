@@ -1,5 +1,6 @@
 package com.ahmer.accounts.utils
 
+import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.ContentResolver
 import android.content.Context
@@ -8,8 +9,11 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
+import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.ahmer.accounts.R
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.io.File
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -99,5 +103,67 @@ object HelperUtils {
         val mRestartIntent: Intent = Intent.makeRestartActivityTask(mComponentName)
         context.startActivity(mRestartIntent)
         Runtime.getRuntime().exit(0)
+    }
+
+    @JvmStatic
+    fun moreApps(context: Context, developerId: String = "Ahmer Afzal") {
+        try {
+            ContextCompat.startActivity(
+                context,
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://search?q=pub:$developerId&hl=en")
+                ),
+                null
+            )
+        } catch (e: ActivityNotFoundException) {
+            ContextCompat.startActivity(
+                context,
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/developer?id=$developerId&hl=en")
+                ),
+                null
+            )
+        }
+    }
+
+    @JvmStatic
+    fun runWeb(context: Context, packageName: String) {
+        try {
+            ContextCompat.startActivity(
+                context,
+                Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")),
+                null
+            )
+        } catch (e: ActivityNotFoundException) {
+            ContextCompat.startActivity(
+                context,
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                ),
+                null
+            )
+        }
+    }
+
+    @JvmStatic
+    fun shareApp(context: Context) {
+        try {
+            val mIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name))
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    "https://play.google.com/store/apps/details?id=${context.packageName}"
+                )
+            }
+            ContextCompat.startActivity(context, Intent.createChooser(mIntent, "Choose one"), null)
+        } catch (e: Exception) {
+            Log.e(Constants.LOG_TAG, "Exception while share app: ${e.localizedMessage}", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 }

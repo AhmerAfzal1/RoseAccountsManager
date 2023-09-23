@@ -57,6 +57,7 @@ import com.ahmer.accounts.drawer.drawerItemsList
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.navigation.NavRoutes
+import com.ahmer.accounts.navigation.ScreenRoutes
 import com.ahmer.accounts.ui.components.PersonsList
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.Constants
@@ -135,7 +136,10 @@ fun PersonsListScreen(
 
     fun navController(route: String) {
         when (route) {
-            NavRoutes.Home -> {}
+            NavRoutes.Home -> {
+                onNavigation(UiEvent.Navigate(ScreenRoutes.PersonListScreen))
+            }
+
             NavRoutes.Backup -> {
                 val mFileName = "backup_${
                     HelperUtils.getDateTime(
@@ -165,9 +169,18 @@ fun PersonsListScreen(
             }
 
             NavRoutes.Settings -> {}
-            NavRoutes.Rate -> {}
-            NavRoutes.Share -> {}
-            NavRoutes.MoreApp -> {}
+            NavRoutes.Rate -> {
+                HelperUtils.runWeb(context = mContext, packageName = mContext.packageName)
+            }
+
+            NavRoutes.Share -> {
+                HelperUtils.shareApp(context = mContext)
+            }
+
+            NavRoutes.MoreApp -> {
+                HelperUtils.moreApps(context = mContext)
+            }
+
             NavRoutes.Exit -> {
                 mViewModel.closeDatabase(mContext)
                 MainActivity().finish()
@@ -187,7 +200,7 @@ fun PersonsListScreen(
                         label = { Text(text = item.label) },
                         selected = index == mSelectedItems,
                         onClick = {
-                            navController(item.route)
+                            navController(route = item.route)
                             mSelectedItems = index
                             mCoroutineScope.launch { mDrawerState.close() }
                         },

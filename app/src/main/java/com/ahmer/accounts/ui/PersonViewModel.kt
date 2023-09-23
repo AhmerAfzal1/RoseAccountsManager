@@ -150,7 +150,9 @@ class PersonViewModel @Inject constructor(
         }
     }
 
-    fun closeDatabase(context: Context) = AppModule.providesDatabase(context).close()
+    fun closeDatabase(context: Context) {
+        AppModule.providesDatabase(context).close()
+    }
 
     fun restoreDatabase(context: Context, uri: Uri?) {
         val mJob = CoroutineScope(Dispatchers.IO).launch {
