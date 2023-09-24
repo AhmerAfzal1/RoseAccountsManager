@@ -45,6 +45,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -53,7 +54,6 @@ import com.ahmer.accounts.R
 import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.drawer.TopAppBarSearchBox
-import com.ahmer.accounts.drawer.drawerItemsList
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.navigation.NavRoutes
@@ -84,7 +84,7 @@ fun PersonsListScreen(
     val mContext: Context = LocalContext.current.applicationContext
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mDrawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val mNavItemsList: List<DrawerItems> = drawerItemsList()
+    val mNavItemsList: List<DrawerItems> = DrawerItems.listOfDrawerItems
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mViewModel: PersonViewModel = hiltViewModel()
@@ -197,19 +197,19 @@ fun PersonsListScreen(
                 mNavItemsList.forEachIndexed { index, item ->
                     //Spacer(Modifier.height(6.dp))
                     NavigationDrawerItem(
-                        label = { Text(text = item.label) },
+                        label = { Text(text = stringResource(id = item.label)) },
                         selected = index == mSelectedItems,
                         onClick = {
-                            navController(route = item.route)
                             mSelectedItems = index
+                            navController(route = item.route)
                             mCoroutineScope.launch { mDrawerState.close() }
                         },
                         icon = {
                             Icon(
                                 painter = if (index == mSelectedItems) {
-                                    item.selectedIcon
-                                } else item.unselectedIcon,
-                                contentDescription = item.contentDescription
+                                    painterResource(id = item.selectedIcon)
+                                } else painterResource(id = item.unselectedIcon),
+                                contentDescription = stringResource(id = item.contentDescription)
                             )
                         },
                         badge = {
