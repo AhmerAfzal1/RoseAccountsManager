@@ -168,7 +168,10 @@ fun PersonsListScreen(
                 mRestoreDatabaseBackupLauncher.launch(mRestoreIntent)
             }
 
-            NavRoutes.Settings -> {}
+            NavRoutes.Settings -> {
+                onNavigation(UiEvent.Navigate(ScreenRoutes.SettingsScreen))
+            }
+
             NavRoutes.Rate -> {
                 HelperUtils.runWeb(context = mContext, packageName = mContext.packageName)
             }
