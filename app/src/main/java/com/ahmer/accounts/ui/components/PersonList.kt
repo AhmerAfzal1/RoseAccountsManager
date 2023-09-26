@@ -1,5 +1,6 @@
 package com.ahmer.accounts.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +18,7 @@ import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.event.PersonEvent
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PersonsList(
     modifier: Modifier = Modifier,
@@ -41,7 +43,11 @@ fun PersonsList(
                     items(
                         items = personsList,
                         key = { persons -> persons.id }) { person ->
-                        PersonItem(personsEntity = person, onEvent = onEvent)
+                        PersonItem(
+                            personsEntity = person,
+                            onEvent = onEvent,
+                            modifier = Modifier.animateItemPlacement()
+                        )
                     }
                 }
             }

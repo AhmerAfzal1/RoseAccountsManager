@@ -1,5 +1,6 @@
 package com.ahmer.accounts.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,6 +19,7 @@ import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.event.TransEvent
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TransList(
     padding: PaddingValues,
@@ -39,7 +41,11 @@ fun TransList(
                     items(
                         items = transList,
                         key = { listTrans -> listTrans.id }) { transaction ->
-                        TransItem(transEntity = transaction, onEvent = onEvent)
+                        TransItem(
+                            transEntity = transaction,
+                            onEvent = onEvent,
+                            modifier = Modifier.animateItemPlacement()
+                        )
                     }
                 }
 
