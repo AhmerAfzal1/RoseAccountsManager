@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Divider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -75,5 +75,5 @@ fun TransItem(
         }
         IconButton(onClick = { onEvent(TransEvent.OnDeleteClick(transEntity)) }) { DeleteIcon() }
     }
-    HorizontalDivider(thickness = 1.dp)
+    Divider(thickness = 1.dp)
 }

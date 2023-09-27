@@ -57,6 +57,29 @@ object HelperUtils {
         }
     }
 
+    @JvmStatic
+    fun getDirSize(dir: File): Long {
+        var mSize = 0L
+        dir.listFiles()?.forEach { file ->
+            if (file != null && file.isDirectory) {
+                mSize += getDirSize(file)
+            } else if (file != null && file.isFile) {
+                mSize += file.length()
+            }
+        }
+        return mSize
+    }
+
+    @JvmStatic
+    fun getCacheSize(context: Context): String {
+        var mSize = 0L
+        mSize += getDirSize(context.cacheDir)
+        mSize += getDirSize(context.externalCacheDir!!)
+        mSize += getDirSize(context.codeCacheDir)
+        
+        return getSizeFormat(mSize)
+    }
+
     fun getPlayStoreLink(context: Context): String = Constants.PLAY_STORE_LINK + context.packageName
 
     @JvmStatic

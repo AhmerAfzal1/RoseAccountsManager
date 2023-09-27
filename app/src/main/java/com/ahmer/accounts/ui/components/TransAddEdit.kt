@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
@@ -44,6 +45,7 @@ import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.DateIcon
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TransAddEditTextFields(
     transEntity: TransEntity,

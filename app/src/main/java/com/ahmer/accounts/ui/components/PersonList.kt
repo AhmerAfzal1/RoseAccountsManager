@@ -1,5 +1,6 @@
 package com.ahmer.accounts.ui.components
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import com.ahmer.accounts.core.GenericError
 import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.event.PersonEvent
+import com.ahmer.accounts.utils.Constants
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -46,7 +48,7 @@ fun PersonsList(
                         PersonItem(
                             personsEntity = person,
                             onEvent = onEvent,
-                            modifier = Modifier.animateItemPlacement()
+                            modifier = Modifier.animateItemPlacement(tween(durationMillis = Constants.ANIMATE_ITEM_DURATION))
                         )
                     }
                 }

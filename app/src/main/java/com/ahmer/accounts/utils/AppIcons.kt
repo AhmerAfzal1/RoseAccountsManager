@@ -1,8 +1,8 @@
 package com.ahmer.accounts.utils
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
@@ -41,8 +41,18 @@ fun AddCircleIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor
 @Composable
 fun BackIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+        imageVector = Icons.Filled.ArrowBack,
         contentDescription = stringResource(id = R.string.content_description_back),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun ClearCachesIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_clear_cached),
+        contentDescription = stringResource(id = R.string.content_description_clear_cached),
         modifier = modifier,
         tint = tint
     )
@@ -203,6 +213,16 @@ fun SortIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
     Icon(
         painter = painterResource(id = R.drawable.ic_sort),
         contentDescription = stringResource(id = R.string.content_description_sort),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun ThemeIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_dark_mode),
+        contentDescription = stringResource(id = R.string.content_description_theme),
         modifier = modifier,
         tint = tint
     )

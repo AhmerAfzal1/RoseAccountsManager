@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.dp
 class Constants {
     companion object {
         const val ADS_WAIT_TIME: Long = 250L
+        const val ANIMATE_ITEM_DURATION: Int = 500
         const val DATABASE_NAME: String = "RoseDatabase.db"
         const val DATABASE_PERSONS_TABLE: String = "Persons"
         const val DATABASE_TRANSACTION_TABLE: String = "Transactions"

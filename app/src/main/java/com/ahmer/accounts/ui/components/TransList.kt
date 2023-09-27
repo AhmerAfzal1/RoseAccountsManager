@@ -1,5 +1,6 @@
 package com.ahmer.accounts.ui.components
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,8 @@ import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.event.TransEvent
+import com.ahmer.accounts.utils.Constants
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -44,7 +47,7 @@ fun TransList(
                         TransItem(
                             transEntity = transaction,
                             onEvent = onEvent,
-                            modifier = Modifier.animateItemPlacement()
+                            modifier = Modifier.animateItemPlacement(tween(durationMillis = Constants.ANIMATE_ITEM_DURATION))
                         )
                     }
                 }
