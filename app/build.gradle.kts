@@ -20,7 +20,7 @@ android {
         applicationId = "com.ahmer.accounts"
         minSdk = 24
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.00"
         multiDexEnabled = true
 
         vectorDrawables {

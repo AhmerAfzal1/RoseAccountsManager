@@ -28,6 +28,26 @@ import kotlin.math.roundToInt
 
 object HelperUtils {
 
+    @JvmStatic
+    fun getAppInfo(context: Context): AppVersion {
+        val mAppVersion: AppVersion by lazy {
+            val mVersion = AppVersion()
+            context.packageManager.getPackageInfo(
+                context.packageName, PackageManager.GET_ACTIVITIES
+            )?.let { packageInfo ->
+                mVersion.versionName = packageInfo.versionName
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    mVersion.versionCode = packageInfo.longVersionCode
+                } else {
+                    @Suppress("DEPRECATION")
+                    mVersion.versionCode = packageInfo.versionCode.toLong()
+                }
+            }
+            mVersion
+        }
+        return mAppVersion
+    }
+
     private fun getContentFileName(context: Context, uri: Uri): String? = runCatching {
         context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
             cursor.moveToFirst()
@@ -58,9 +78,9 @@ object HelperUtils {
     }
 
     @JvmStatic
-    fun getDirSize(dir: File): Long {
-        var mSize = 0L
-        dir.listFiles()?.forEach { file ->
+    fun getDirSize(directory: File): Long {
+        var mSize = 0.toLong()
+        directory.listFiles()?.forEach { file ->
             if (file != null && file.isDirectory) {
                 mSize += getDirSize(file)
             } else if (file != null && file.isFile) {
@@ -72,12 +92,14 @@ object HelperUtils {
 
     @JvmStatic
     fun getCacheSize(context: Context): String {
-        var mSize = 0L
-        mSize += getDirSize(context.cacheDir)
-        mSize += getDirSize(context.externalCacheDir!!)
-        mSize += getDirSize(context.codeCacheDir)
-        
-        return getSizeFormat(mSize)
+        var mSize = 0.toLong()
+        val mExternalCacheDir = context.externalCacheDir
+        mSize += getDirSize(directory = context.cacheDir)
+        if (mExternalCacheDir != null) {
+            mSize += getDirSize(directory = mExternalCacheDir)
+        }
+        mSize += getDirSize(directory = context.codeCacheDir)
+        return getSizeFormat(size = mSize)
     }
 
     fun getPlayStoreLink(context: Context): String = Constants.PLAY_STORE_LINK + context.packageName
@@ -97,7 +119,6 @@ object HelperUtils {
         if (mResult < 1024) return String.format("%.2f MB", mResult)
         mResult /= 1024
         return String.format("%.2f GB", mResult)
-
     }
 
     fun isGrantedPermission(context: Context, permission: String): Boolean {

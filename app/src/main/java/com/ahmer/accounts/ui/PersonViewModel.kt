@@ -179,7 +179,7 @@ class PersonViewModel @Inject constructor(
                     }
                 } restored. App will relaunch now"))
                 delay(1.seconds)
-                _eventFlow.emit(UiEvent.RelaunchApp)
+                //_eventFlow.emit(UiEvent.RelaunchApp)
             }
         }
     }

@@ -20,7 +20,6 @@ import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.utils.Constants
-import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

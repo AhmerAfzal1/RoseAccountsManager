@@ -1,5 +1,7 @@
 package com.ahmer.accounts.ui
 
+import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,5 +21,20 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             preferences.updateAppTheme(isChecked)
         }
+    }
+
+    fun updateAppTheme(theme: Theme) {
+        val mDefaultNightMode = when (theme) {
+            Theme.Dark -> AppCompatDelegate.MODE_NIGHT_YES
+            Theme.Light -> AppCompatDelegate.MODE_NIGHT_NO
+            Theme.System -> {
+                if (Build.VERSION.SDK_INT < 28) {
+                    AppCompatDelegate.MODE_NIGHT_NO
+                } else {
+                    AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                }
+            }
+        }
+        AppCompatDelegate.setDefaultNightMode(mDefaultNightMode)
     }
 }

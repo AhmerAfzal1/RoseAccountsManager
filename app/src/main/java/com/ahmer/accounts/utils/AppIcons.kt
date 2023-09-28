@@ -227,3 +227,13 @@ fun ThemeIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
         tint = tint
     )
 }
+
+@Composable
+fun VersionIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_version),
+        contentDescription = stringResource(id = R.string.content_description_version),
+        modifier = modifier,
+        tint = tint
+    )
+}
