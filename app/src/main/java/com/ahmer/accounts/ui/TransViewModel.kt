@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -66,7 +66,7 @@ class TransViewModel @Inject constructor(
     private var mLoadAllTransJob: Job? = null
     private var mLoadGeneratePdfJob: Job? = null
     private var mLoadPersonDataJob: Job? = null
-    private var mPersonId: MutableState<Int> = mutableStateOf(0)
+    private var mPersonId: MutableState<Int> = mutableIntStateOf(0)
 
     fun onEvent(event: TransEvent) {
         when (event) {

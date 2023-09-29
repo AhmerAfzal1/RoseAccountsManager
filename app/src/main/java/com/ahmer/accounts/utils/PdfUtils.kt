@@ -104,11 +104,23 @@ object PdfUtils {
                 widthPercentage = 100F
                 setTotalWidth(floatArrayOf(72F, 148F, 90F, 90F, 90F))
                 isLockedWidth = true
-                addCell(cellFormat(text = "Date", isHeading = true))
-                addCell(cellFormat(text = "Description", isHeading = true))
-                addCell(cellFormat(text = "Debit", isHeading = true))
-                addCell(cellFormat(text = "Credit", isHeading = true))
-                addCell(cellFormat(text = "Balance", isHeading = true))
+                addCell(
+                    cellFormat(text = "Date", isHeading = true, alignment = AlignmentCell.EMPTY)
+                )
+                addCell(
+                    cellFormat(
+                        text = "Description", isHeading = true, alignment = AlignmentCell.EMPTY
+                    )
+                )
+                addCell(
+                    cellFormat(text = "Debit", isHeading = true, alignment = AlignmentCell.EMPTY)
+                )
+                addCell(
+                    cellFormat(text = "Credit", isHeading = true, alignment = AlignmentCell.EMPTY)
+                )
+                addCell(
+                    cellFormat(text = "Balance", isHeading = true, alignment = AlignmentCell.EMPTY)
+                )
             }
 
             val mSortedList = transEntity.sortedWith { o1, o2 -> o1.id - o2.id }
@@ -117,7 +129,9 @@ object PdfUtils {
                 mTableMain.addCell(
                     cellFormat(text = entity.newCurrentShortDate, alignment = AlignmentCell.CENTER)
                 )
-                mTableMain.addCell(cellFormat(text = entity.description))
+                mTableMain.addCell(
+                    cellFormat(text = entity.description, alignment = AlignmentCell.EMPTY)
+                )
                 var mCreditEntity = 0.0
                 var mDebitEntity = 0.0
                 if (entity.type == "Credit") {
@@ -190,7 +204,7 @@ object PdfUtils {
     private fun cellFormat(
         text: String,
         isHeading: Boolean = false,
-        alignment: AlignmentCell = AlignmentCell.EMPTY,
+        alignment: AlignmentCell,
         isTotal: Boolean = false
     ): PdfPCell {
         val mFont = Font(Font.FontFamily.HELVETICA).apply {
