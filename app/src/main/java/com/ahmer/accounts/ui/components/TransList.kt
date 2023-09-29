@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -24,13 +23,12 @@ import com.ahmer.accounts.utils.Constants
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TransList(
-    padding: PaddingValues,
     transListState: ResultState<List<TransEntity>>,
     transSumModel: TransSumModel,
     onEvent: (TransEvent) -> Unit,
     reloadData: () -> Unit
 ) {
-    Box(modifier = Modifier.padding(padding), contentAlignment = Alignment.BottomCenter) {
+    Box(contentAlignment = Alignment.BottomCenter) {
         AsyncData(resultState = transListState, errorContent = {
             GenericError(onDismissAction = reloadData)
         }) { transList ->

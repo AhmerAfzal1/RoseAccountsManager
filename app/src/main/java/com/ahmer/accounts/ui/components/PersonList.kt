@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -24,16 +23,13 @@ import com.ahmer.accounts.utils.Constants
 @Composable
 fun PersonsList(
     modifier: Modifier = Modifier,
-    padding: PaddingValues,
     personsListState: ResultState<List<PersonsEntity>>,
     onEvent: (PersonEvent) -> Unit,
     reloadData: () -> Unit
 ) {
-    Box(Modifier.padding(padding)) {
+    Box {
         AsyncData(resultState = personsListState, errorContent = {
-            GenericError(
-                onDismissAction = reloadData
-            )
+            GenericError(onDismissAction = reloadData)
         }) { personsList ->
             personsList?.let {
                 LazyColumn(

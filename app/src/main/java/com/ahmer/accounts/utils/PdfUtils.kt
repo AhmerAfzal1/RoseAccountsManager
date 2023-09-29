@@ -45,7 +45,7 @@ object PdfUtils {
                 }
             } else {
                 HelperUtils.toastLong(
-                    context = context, msg = context.getString(R.string.pdf_not_generated)
+                    context = context, msg = context.getString(R.string.toast_pdf_not_generated)
                 )
                 mIntent = null
             }

@@ -138,7 +138,7 @@ class TransViewModel @Inject constructor(
                 mJob.invokeOnCompletion {
                     viewModelScope.launch {
                         if (isSuccessfully) {
-                            val mMsg = context.getString(R.string.pdf_generated)
+                            val mMsg = context.getString(R.string.toast_pdf_generated)
                             _eventFlow.emit(UiEvent.ShowToast(mMsg))
                         }
                     }

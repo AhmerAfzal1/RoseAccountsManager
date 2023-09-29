@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.TransSumModel
@@ -60,8 +61,6 @@ fun RowScope.TableCell(text: String, weight: Float, isBold: Boolean = false) {
 fun NavShape(transSumModel: TransSumModel) {
     val mContentPadding = 5.dp
     val mCornerDp = 100.dp
-    val mFirstRowWeight = 1.5f
-    val mSecondRowWeight = 2f
     val mTotalCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
     val mTotalDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
     val mTotalBalance = HelperUtils.getRoundedValue((mTotalCredit.minus(mTotalDebit)))
@@ -85,64 +84,69 @@ fun NavShape(transSumModel: TransSumModel) {
                 contentPadding = PaddingValues(vertical = mContentPadding)
             ) {
                 item {
-                    Image(
-                        modifier = Modifier
-                            .padding(top = mContentPadding)
-                            .size(size = 48.dp),
-                        painter = painterResource(id = R.drawable.ic_logo),
-                        contentDescription = stringResource(R.string.content_description_app_logo)
+                    Content(
+                        contentPadding = mContentPadding, totalCredit = mTotalCredit,
+                        totalDebit = mTotalDebit, totalBalance = mTotalBalance
                     )
-                    Text(
-                        modifier = Modifier.padding(top = mContentPadding),
-                        text = stringResource(id = R.string.app_name),
-                        fontWeight = FontWeight.W900,
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                    )
-                    ElevatedCard(
-                        modifier = Modifier
-                            .padding(
-                                top = mContentPadding,
-                                start = mContentPadding,
-                                end = mContentPadding
-                            )
-                            .size(width = 200.dp, height = 85.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondaryContainer)
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
-                                TableCell(
-                                    stringResource(id = R.string.label_nav_credit), mFirstRowWeight
-                                )
-                                TableCell(mTotalCredit.toString(), mSecondRowWeight)
-                            }
-                            Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
-                                TableCell(
-                                    stringResource(id = R.string.label_nav_debit), mFirstRowWeight
-                                )
-                                TableCell(mTotalDebit.toString(), mSecondRowWeight)
-                            }
-                            Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
-                                Divider(
-                                    thickness = 2.dp,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                            }
-                            Row(Modifier.padding(start = mContentPadding, end = mContentPadding)) {
-                                TableCell(
-                                    stringResource(id = R.string.label_balance),
-                                    mFirstRowWeight, isBold = true
-                                )
-                                TableCell(mTotalBalance, mSecondRowWeight, true)
-                            }
-                        }
-                    }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Content(
+    contentPadding: Dp, totalCredit: Double, totalDebit: Double, totalBalance: String
+) {
+    val mFirstRowWeight = 1.5f
+    val mSecondRowWeight = 2f
+
+    Image(
+        modifier = Modifier
+            .padding(top = contentPadding)
+            .size(size = 48.dp),
+        painter = painterResource(id = R.drawable.ic_logo),
+        contentDescription = stringResource(R.string.content_description_app_logo)
+    )
+    Text(
+        modifier = Modifier.padding(top = contentPadding),
+        text = stringResource(id = R.string.app_name),
+        fontWeight = FontWeight.W900,
+        color = MaterialTheme.colorScheme.secondaryContainer,
+    )
+    ElevatedCard(
+        modifier = Modifier
+            .padding(
+                top = contentPadding,
+                start = contentPadding,
+                end = contentPadding
+            )
+            .size(width = 200.dp, height = 85.dp),
+        shape = RoundedCornerShape(size = 10.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondaryContainer)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(Modifier.padding(start = contentPadding, end = contentPadding)) {
+                TableCell(stringResource(id = R.string.label_nav_credit), mFirstRowWeight)
+                TableCell(totalCredit.toString(), mSecondRowWeight)
+            }
+            Row(Modifier.padding(start = contentPadding, end = contentPadding)) {
+                TableCell(stringResource(id = R.string.label_nav_debit), mFirstRowWeight)
+                TableCell(totalDebit.toString(), mSecondRowWeight)
+            }
+            Row(Modifier.padding(start = contentPadding, end = contentPadding)) {
+                Divider(thickness = 2.dp, color = MaterialTheme.colorScheme.onSecondaryContainer)
+            }
+            Row(Modifier.padding(start = contentPadding, end = contentPadding)) {
+                TableCell(
+                    stringResource(id = R.string.label_balance), mFirstRowWeight, isBold = true
+                )
+                TableCell(totalBalance, mSecondRowWeight, isBold = true)
             }
         }
     }

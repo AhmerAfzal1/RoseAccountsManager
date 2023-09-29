@@ -1,11 +1,13 @@
 package com.ahmer.accounts.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.ahmer.accounts.state.AppBarState
 import com.ahmer.accounts.ui.PersonAddEditScreen
 import com.ahmer.accounts.ui.PersonsListScreen
 import com.ahmer.accounts.ui.SettingsScreen
@@ -13,15 +15,18 @@ import com.ahmer.accounts.ui.TransAddEditScreen
 import com.ahmer.accounts.ui.TransListScreen
 
 @Composable
-fun MainNavigation() {
-    val mNavHostController = rememberNavController()
-
-    NavHost(navController = mNavHostController,
+fun MainNavigation(
+    navHostController: NavHostController,
+    appBarState: (AppBarState) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    NavHost(navController = navHostController,
         startDestination = ScreenRoutes.PersonListScreen,
+        modifier = modifier,
         builder = {
             composable(route = ScreenRoutes.PersonListScreen) {
-                PersonsListScreen(onNavigation = {
-                    mNavHostController.navigate(it.route) /*{
+                PersonsListScreen(appBarState = appBarState, onNavigation = {
+                    navHostController.navigate(it.route) /*{
                         when (it.route) {
                             ScreenRoutes.PersonListScreen -> {
                                 popUpTo(ScreenRoutes.PersonListScreen)
@@ -42,10 +47,13 @@ fun MainNavigation() {
                     defaultValue = -1
                 })
             ) {
-                PersonAddEditScreen(onPopBackStack = { mNavHostController.popBackStack() })
+                PersonAddEditScreen(
+                    onPopBackStack = { navHostController.popBackStack() },
+                    appBarState = appBarState,
+                )
             }
             composable(route = ScreenRoutes.SettingsScreen) {
-                SettingsScreen(onPopBackStack = { mNavHostController.popBackStack() })
+                SettingsScreen(appBarState = appBarState)
             }
             composable(
                 route = ScreenRoutes.TransListScreen + "?transPersonId={transPersonId}",
@@ -54,8 +62,11 @@ fun MainNavigation() {
                     defaultValue = -1
                 })
             ) {
-                TransListScreen(onNavigation = { mNavHostController.navigate(it.route) },
-                    onPopBackStack = { mNavHostController.popBackStack() })
+                TransListScreen(
+                    onNavigation = { navHostController.navigate(it.route) },
+                    onPopBackStack = { navHostController.popBackStack() },
+                    appBarState = appBarState,
+                )
             }
             composable(
                 route = ScreenRoutes.TransAddEditScreen + "?transId={transId}/transPersonId={transPersonId}",
@@ -67,7 +78,10 @@ fun MainNavigation() {
                     defaultValue = -1
                 })
             ) {
-                TransAddEditScreen(onPopBackStack = { mNavHostController.popBackStack() })
+                TransAddEditScreen(
+                    onPopBackStack = { navHostController.popBackStack() },
+                    appBarState = appBarState,
+                )
             }
         })
 }
