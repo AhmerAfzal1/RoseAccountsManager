@@ -105,7 +105,7 @@ private fun Content(
         modifier = Modifier
             .padding(top = contentPadding)
             .size(size = 48.dp),
-        painter = painterResource(id = R.drawable.ic_logo),
+        painter = painterResource(id = R.drawable.ic_main),
         contentDescription = stringResource(R.string.content_description_app_logo)
     )
     Text(

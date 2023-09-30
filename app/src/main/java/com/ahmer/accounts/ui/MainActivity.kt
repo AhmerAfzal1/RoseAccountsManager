@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -45,9 +46,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.ahmer.accounts.R
 import com.ahmer.accounts.drawer.DrawerItems
 import com.ahmer.accounts.drawer.NavShape
 import com.ahmer.accounts.event.UiEvent
@@ -68,15 +70,23 @@ import kotlin.system.exitProcess
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val mViewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                mViewModel.isLoadingSplash.value
+            }
+        }
         setContent {
             RoseAccountsManagerTheme(darkTheme = false) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen()
+                    MainScreen(viewModel = mViewModel)
                 }
             }
         }
@@ -85,15 +95,14 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel: MainViewModel) {
     val mContext: Context = LocalContext.current.applicationContext
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mDrawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val mNavItemsList: List<DrawerItems> = DrawerItems.listOfDrawerItems
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val mViewModel: MainViewModel = hiltViewModel()
-    val mState: MainState by mViewModel.uiState.collectAsState()
+    val mState: MainState by viewModel.uiState.collectAsState()
     var mSelectedItems: Int by rememberSaveable { mutableIntStateOf(0) }
     val mNavHostController: NavHostController = rememberNavController()
 
@@ -102,7 +111,7 @@ fun MainScreen() {
     ) { result ->
         if (result.resultCode == ComponentActivity.RESULT_OK) {
             val mUri = result.data?.data ?: return@rememberLauncherForActivityResult
-            mViewModel.backupDatabase(mContext, mUri)
+            viewModel.backupDatabase(mContext, mUri)
         }
     }
 
@@ -111,12 +120,12 @@ fun MainScreen() {
     ) { result ->
         if (result.resultCode == ComponentActivity.RESULT_OK) {
             val mUri = result.data?.data ?: return@rememberLauncherForActivityResult
-            mViewModel.restoreDatabase(mContext, mUri)
+            viewModel.restoreDatabase(mContext, mUri)
         }
     }
 
     LaunchedEffect(key1 = true) {
-        mViewModel.eventFlow.collectLatest { event ->
+        viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.RelaunchApp -> HelperUtils.relaunchApp(mContext)
                 is UiEvent.ShowToast -> HelperUtils.toastLong(mContext, event.message)
@@ -154,7 +163,7 @@ fun MainScreen() {
                     addCategory(Intent.CATEGORY_OPENABLE)
                     flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                     type = "*/*"
-                    Intent.createChooser(this, "Select the database backup file")
+                    Intent.createChooser(this, mContext.getString(R.string.label_intent_chooser))
                 }
                 mRestoreDatabaseBackupLauncher.launch(mRestoreIntent)
             }
@@ -178,7 +187,7 @@ fun MainScreen() {
             }
 
             NavRoutes.Exit -> {
-                mViewModel.closeDatabase(mContext)
+                viewModel.closeDatabase(mContext)
                 MainActivity().finish()
                 exitProcess(0)
             }

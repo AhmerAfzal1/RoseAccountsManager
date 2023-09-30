@@ -12,8 +12,8 @@ import com.ahmer.accounts.preferences.PreferencesFilter
 import com.ahmer.accounts.preferences.PreferencesManager
 import com.ahmer.accounts.state.PersonState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -43,10 +44,9 @@ class PersonViewModel @Inject constructor(
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     private val _uiState = MutableStateFlow(PersonState())
-    val uiState = _uiState.asStateFlow()
+    val uiState: StateFlow<PersonState> = _uiState.asStateFlow()
 
     private var mDeletedPerson: PersonsEntity? = null
-    private var mLoadPersonsJob: Job? = null
 
     fun onEvent(event: PersonEvent) {
         when (event) {
@@ -112,12 +112,11 @@ class PersonViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getAllPersonsData() {
-        mLoadPersonsJob?.cancel()
-        mLoadPersonsJob = combine(_searchQuery, _preferences) { query, preferences ->
+        combine(_searchQuery, _preferences) { query, preferences ->
             Pair(query, preferences)
         }.flatMapLatest { (search, preference) ->
             repository.getAllPersonsByFilter(search, preference.sortBy)
-        }.onEach { resultState ->
+        }.flowOn(Dispatchers.IO).onEach { resultState ->
             _uiState.update { personState -> personState.copy(getAllPersonsList = resultState) }
         }.launchIn(viewModelScope)
     }

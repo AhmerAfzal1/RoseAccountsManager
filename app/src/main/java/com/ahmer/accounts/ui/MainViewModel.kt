@@ -16,18 +16,20 @@ import com.ahmer.accounts.utils.HelperUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
@@ -37,10 +39,11 @@ class MainViewModel @Inject constructor(
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
-    private val _uiState = MutableStateFlow(MainState())
-    val uiState = _uiState.asStateFlow()
+    private val _isLoadingSplash: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val isLoadingSplash: StateFlow<Boolean> = _isLoadingSplash.asStateFlow()
 
-    private var mLoadPersonsTotalBalanceJob: Job? = null
+    private val _uiState = MutableStateFlow(MainState())
+    val uiState: StateFlow<MainState> = _uiState.asStateFlow()
 
     fun backupDatabase(context: Context, uri: Uri?) {
         val mJob = CoroutineScope(Dispatchers.IO).launch {
@@ -64,7 +67,8 @@ class MainViewModel @Inject constructor(
                     UiEvent.ShowToast(
                         context.getString(
                             R.string.toast_msg_db_backup,
-                            uri?.let { HelperUtils.getFileNameFromDatabase(context, it) }, uri
+                            uri?.let { HelperUtils.getFileNameFromDatabase(context, it) },
+                            uri
                         )
                     )
                 )
@@ -97,10 +101,9 @@ class MainViewModel @Inject constructor(
             viewModelScope.launch {
                 _eventFlow.emit(
                     UiEvent.ShowToast(
-                        context.getString(R.string.toast_msg_db_restored,
-                            uri?.let {
-                                HelperUtils.getFileNameFromDatabase(context, it)
-                            })
+                        context.getString(R.string.toast_msg_db_restored, uri?.let {
+                            HelperUtils.getFileNameFromDatabase(context, it)
+                        })
                     )
                 )
                 delay(1.seconds)
@@ -110,10 +113,19 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getAllPersonsBalance() {
-        mLoadPersonsTotalBalanceJob?.cancel()
-        mLoadPersonsTotalBalanceJob = repository.getAllAccountsBalance().onEach { resultState ->
-            _uiState.update { balState -> balState.copy(getAllPersonsBalance = resultState) }
-        }.launchIn(viewModelScope)
+        repository.getAllAccountsBalance()
+            .flowOn(Dispatchers.IO)
+            .onEach { transSumModel ->
+                _uiState.update { balState ->
+                    balState.copy(getAllPersonsBalance = transSumModel)
+                }
+            }
+            .launchIn(viewModelScope)
+
+        viewModelScope.launch {
+            delay(500.milliseconds)
+            _isLoadingSplash.value = false
+        }
     }
 
     init {
