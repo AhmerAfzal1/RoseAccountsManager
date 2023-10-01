@@ -27,7 +27,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -37,7 +36,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -46,8 +44,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransViewModel @Inject constructor(
-    private val repositoryPerson: PersonRepository,
-    private val repository: TransRepository,
+    private val personRepository: PersonRepository,
+    private val transRepository: TransRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), LifecycleObserver {
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
@@ -57,15 +55,11 @@ class TransViewModel @Inject constructor(
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     private val _uiState = MutableStateFlow(TransState())
-    val uiState = _uiState.asStateFlow()
+    val uiState: StateFlow<TransState> = _uiState.asStateFlow()
 
     private var getPersonsEntity: PersonsEntity = PersonsEntity()
     private var getTransSumModel: TransSumModel = TransSumModel()
     private var mDeletedTrans: TransEntity? = null
-    private var mLoadAccountBalanceJob: Job? = null
-    private var mLoadAllTransJob: Job? = null
-    private var mLoadGeneratePdfJob: Job? = null
-    private var mLoadPersonDataJob: Job? = null
     private var mPersonId: MutableState<Int> = mutableIntStateOf(0)
 
     fun onEvent(event: TransEvent) {
@@ -73,7 +67,7 @@ class TransViewModel @Inject constructor(
             is TransEvent.OnDeleteClick -> {
                 viewModelScope.launch {
                     mDeletedTrans = event.transEntity
-                    repository.delete(event.transEntity)
+                    transRepository.delete(event.transEntity)
                     _eventFlow.emit(
                         UiEvent.ShowSnackBar(
                             message = "Transaction id ${event.transEntity.id} deleted",
@@ -112,7 +106,7 @@ class TransViewModel @Inject constructor(
             TransEvent.OnUndoDeleteClick -> {
                 mDeletedTrans?.let { transaction ->
                     viewModelScope.launch {
-                        repository.insertOrUpdate(transaction)
+                        transRepository.insertOrUpdate(transaction)
                     }
                 }
             }
@@ -120,8 +114,7 @@ class TransViewModel @Inject constructor(
     }
 
     fun generatePdf(context: Context, uri: Uri) {
-        mLoadGeneratePdfJob?.cancel()
-        mLoadGeneratePdfJob = repository.getAllTransByPersonIdForPdf(getPersonsEntity.id)
+        transRepository.getAllTransByPersonIdForPdf(getPersonsEntity.id)
             .filterNotNull()
             .onEach { transEntityList ->
                 var isSuccessfully = false
@@ -144,11 +137,10 @@ class TransViewModel @Inject constructor(
                     }
                 }
             }
-            .flowOn(Dispatchers.IO)
             .catch { e ->
                 Log.e(
                     Constants.LOG_TAG,
-                    "Error occurred while getting generate pdf: ${e.localizedMessage}", e
+                    context.getString(R.string.toast_pdf_generate_error, e.localizedMessage), e
                 )
                 FirebaseCrashlytics.getInstance().recordException(e)
             }
@@ -156,8 +148,7 @@ class TransViewModel @Inject constructor(
     }
 
     private fun getPersonByIdData() {
-        mLoadPersonDataJob?.cancel()
-        mLoadPersonDataJob = repositoryPerson.getPersonById(mPersonId.value).onEach { resultState ->
+        personRepository.getPersonById(mPersonId.value).onEach { resultState ->
             if (resultState is ResultState.Success) {
                 getPersonsEntity = resultState.data!!
             }
@@ -166,21 +157,18 @@ class TransViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getAllPersonsTransactions() {
-        mLoadAllTransJob?.cancel()
-        mLoadAllTransJob = _searchQuery.flatMapLatest { search ->
-            repository.getAllTransByPersonIdWithSearch(mPersonId.value, search)
+        _searchQuery.flatMapLatest { search ->
+            transRepository.getAllTransByPersonIdWithSearch(mPersonId.value, search)
         }.onEach { resultState ->
             _uiState.update { transState -> transState.copy(getAllPersonsTransList = resultState) }
         }.launchIn(viewModelScope)
     }
 
     private fun getAccountBalance() {
-        mLoadAccountBalanceJob?.cancel()
-        mLoadAccountBalanceJob =
-            repository.getAccountBalanceByPerson(mPersonId.value).onEach { resultState ->
-                _uiState.update { it.copy(getPersonTransBalance = resultState) }
-                getTransSumModel = resultState
-            }.launchIn(viewModelScope)
+        transRepository.getAccountBalanceByPerson(mPersonId.value).onEach { resultState ->
+            _uiState.update { it.copy(getPersonTransBalance = resultState) }
+            getTransSumModel = resultState
+        }.launchIn(viewModelScope)
     }
 
     init {

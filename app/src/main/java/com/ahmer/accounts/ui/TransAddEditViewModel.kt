@@ -21,6 +21,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -31,14 +32,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransAddEditViewModel @Inject constructor(
-    private val repository: TransRepository,
+    private val transRepository: TransRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), LifecycleObserver {
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
     private val _uiState = MutableStateFlow(TransAddEditState())
-    val uiState = _uiState.asStateFlow()
+    val uiState: StateFlow<TransAddEditState> = _uiState.asStateFlow()
 
     private var mLoadTransJob: Job? = null
     private var mPersonId: Int? = 0
@@ -54,8 +55,8 @@ class TransAddEditViewModel @Inject constructor(
             }
         }
         private set(value) {
-            _uiState.update {
-                it.copy(getTransDetails = ResultState.Success(value))
+            _uiState.update { transAddEditState ->
+                transAddEditState.copy(getTransDetails = ResultState.Success(value))
             }
         }
 
@@ -71,7 +72,7 @@ class TransAddEditViewModel @Inject constructor(
                 titleBar = "Edit Transaction"
                 titleButton = "Update"
                 mLoadTransJob?.cancel()
-                mLoadTransJob = repository.getAllTransById(transId).onEach { resultState ->
+                mLoadTransJob = transRepository.getAllTransById(transId).onEach { resultState ->
                     _uiState.update { addEditState ->
                         if (resultState is ResultState.Success) {
                             currentTransaction = resultState.data
@@ -147,7 +148,7 @@ class TransAddEditViewModel @Inject constructor(
                         amount = currentTransaction!!.amount
                     )
                 }
-                repository.insertOrUpdate(mTransaction!!)
+                transRepository.insertOrUpdate(mTransaction!!)
                 _eventFlow.emit(UiEvent.SaveSuccess)
             } catch (e: Exception) {
                 _eventFlow.emit(

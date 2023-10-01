@@ -76,9 +76,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().apply {
-            setKeepOnScreenCondition {
-                mViewModel.isLoadingSplash.value
-            }
+            setKeepOnScreenCondition { mViewModel.isLoadingSplash.value }
         }
         setContent {
             RoseAccountsManagerTheme(darkTheme = false) {

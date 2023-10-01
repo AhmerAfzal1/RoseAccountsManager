@@ -16,10 +16,10 @@ import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.PersonAddEditState
 import com.ahmer.accounts.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -30,18 +30,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PersonAddEditViewModel @Inject constructor(
-    private val repository: PersonRepository,
+    private val personRepository: PersonRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), LifecycleObserver {
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
     private val _uiState = MutableStateFlow(PersonAddEditState())
-    val uiState = _uiState.asStateFlow()
+    val uiState: StateFlow<PersonAddEditState> = _uiState.asStateFlow()
 
-    private var mLoadPersonsJob: Job? = null
     private var mPersonId: Int? = 0
-
     var titleBar by mutableStateOf("Add Person Data")
 
     var currentPerson: PersonsEntity?
@@ -51,8 +49,8 @@ class PersonAddEditViewModel @Inject constructor(
             }
         }
         private set(value) {
-            _uiState.update {
-                it.copy(getPersonDetails = ResultState.Success(value))
+            _uiState.update { personAddEditState ->
+                personAddEditState.copy(getPersonDetails = ResultState.Success(value))
             }
         }
 
@@ -62,8 +60,7 @@ class PersonAddEditViewModel @Inject constructor(
             mPersonId = personId
             if (personId != -1) {
                 titleBar = "Edit Person Data"
-                mLoadPersonsJob?.cancel()
-                mLoadPersonsJob = repository.getPersonById(personId).onEach { resultState ->
+                personRepository.getPersonById(personId).onEach { resultState ->
                     _uiState.update { addEditState ->
                         if (resultState is ResultState.Success) {
                             currentPerson = resultState.data
@@ -133,7 +130,7 @@ class PersonAddEditViewModel @Inject constructor(
                             )
                             mMessage = "${mPerson?.name} updated successfully!"
                         }
-                        repository.insertOrUpdate(mPerson!!)
+                        personRepository.insertOrUpdate(mPerson!!)
                         _eventFlow.emit(UiEvent.SaveSuccess)
                         _eventFlow.emit(UiEvent.ShowToast(mMessage))
                     } catch (e: Exception) {

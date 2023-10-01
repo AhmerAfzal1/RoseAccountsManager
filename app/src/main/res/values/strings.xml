@@ -61,6 +61,7 @@
     <string name="label_generic_error">Ops! Something went wrong…</string>
     <string name="label_generic_loading">Please wait…</string>
     <string name="label_home">Home</string>
+    <string name="label_intent_chooser">Select the database backup file</string>
     <string name="label_more_apps">More apps</string>
     <string name="label_name">Name</string>
     <string name="label_nav_credit">Credit(+)</string>
@@ -94,7 +95,7 @@
     //Toast messages
     <string name="toast_msg_db_backup">%1$s successfully backed up to %2$s</string>
     <string name="toast_msg_db_restored">%1$s restored. App will relaunch now</string>
+    <string name="toast_pdf_generate_error">Error occurred while getting generate pdf: %1$s</string>
     <string name="toast_pdf_generated">PDF file generated successfully.</string>
     <string name="toast_pdf_not_generated">There is no transaction to create a PDF file.</string>
-    <string name="label_intent_chooser">Select the database backup file</string>
 </resources>

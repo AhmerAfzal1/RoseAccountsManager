@@ -23,18 +23,16 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: PersonRepository,
+    private val personRepository: PersonRepository,
 ) : ViewModel(), LifecycleObserver {
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
@@ -67,8 +65,7 @@ class MainViewModel @Inject constructor(
                     UiEvent.ShowToast(
                         context.getString(
                             R.string.toast_msg_db_backup,
-                            uri?.let { HelperUtils.getFileNameFromDatabase(context, it) },
-                            uri
+                            uri?.let { HelperUtils.getFileNameFromDatabase(context, it) }, uri?.path
                         )
                     )
                 )
@@ -113,17 +110,12 @@ class MainViewModel @Inject constructor(
     }
 
     private fun getAllPersonsBalance() {
-        repository.getAllAccountsBalance()
-            .flowOn(Dispatchers.IO)
-            .onEach { transSumModel ->
-                _uiState.update { balState ->
-                    balState.copy(getAllPersonsBalance = transSumModel)
-                }
-            }
-            .launchIn(viewModelScope)
+        personRepository.getAllAccountsBalance().onEach { transSumModel ->
+            _uiState.update { balState -> balState.copy(getAllPersonsBalance = transSumModel) }
+        }.launchIn(viewModelScope)
 
         viewModelScope.launch {
-            delay(500.milliseconds)
+            delay(1.seconds)
             _isLoadingSplash.value = false
         }
     }

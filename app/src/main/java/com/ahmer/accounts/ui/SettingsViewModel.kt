@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ahmer.accounts.preferences.PreferencesFilter
 import com.ahmer.accounts.preferences.PreferencesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,7 +17,7 @@ class SettingsViewModel @Inject constructor(
     private val preferences: PreferencesManager
 ) : ViewModel(), LifecycleObserver {
 
-    val flow = preferences.preferencesFlow
+    val flow: Flow<PreferencesFilter> = preferences.preferencesFlow
 
     fun updateTheme(isChecked: Boolean) {
         viewModelScope.launch {

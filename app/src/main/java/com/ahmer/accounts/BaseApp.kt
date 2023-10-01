@@ -15,11 +15,11 @@ import dagger.hilt.android.HiltAndroidApp
 class BaseApp : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
-        MultiDex.install(this)
-        if (FirebaseApp.getApps(this).isEmpty()) {
-            FirebaseApp.initializeApp(this)
+        MultiDex.install(applicationContext)
+        if (FirebaseApp.getApps(applicationContext).isEmpty()) {
+            FirebaseApp.initializeApp(applicationContext)
         }
-        FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)
+        FirebaseAnalytics.getInstance(applicationContext).setAnalyticsCollectionEnabled(true)
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         FirebasePerformance.getInstance().isPerformanceCollectionEnabled = true
         FirebaseMessaging.getInstance().isAutoInitEnabled = true
@@ -28,7 +28,6 @@ class BaseApp : MultiDexApplication() {
             PlayIntegrityAppCheckProviderFactory.getInstance()
         )
         /*
-         Utils.init(this)
          if (NetworkUtils.isConnected()) {
              MobileAds.initialize(this) {
                  Log.v(Constants.LOG_TAG, "AdMob Sdk Initialize")

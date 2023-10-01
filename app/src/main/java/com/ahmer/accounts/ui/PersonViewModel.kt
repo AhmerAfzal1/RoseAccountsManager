@@ -12,7 +12,6 @@ import com.ahmer.accounts.preferences.PreferencesFilter
 import com.ahmer.accounts.preferences.PreferencesManager
 import com.ahmer.accounts.state.PersonState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,7 +22,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -32,7 +30,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PersonViewModel @Inject constructor(
-    private val repository: PersonRepository,
+    private val personRepository: PersonRepository,
     private val preferencesManager: PreferencesManager,
 ) : ViewModel(), LifecycleObserver {
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
@@ -63,7 +61,7 @@ class PersonViewModel @Inject constructor(
             is PersonEvent.OnDeleteClick -> {
                 viewModelScope.launch {
                     mDeletedPerson = event.personsEntity
-                    repository.delete(event.personsEntity)
+                    personRepository.delete(event.personsEntity)
                     _eventFlow.emit(
                         UiEvent.ShowSnackBar(
                             message = "${event.personsEntity.name} deleted", action = "Undo"
@@ -103,7 +101,7 @@ class PersonViewModel @Inject constructor(
             PersonEvent.OnUndoDeleteClick -> {
                 mDeletedPerson?.let { person ->
                     viewModelScope.launch {
-                        repository.insertOrUpdate(person)
+                        personRepository.insertOrUpdate(person)
                     }
                 }
             }
@@ -115,8 +113,8 @@ class PersonViewModel @Inject constructor(
         combine(_searchQuery, _preferences) { query, preferences ->
             Pair(query, preferences)
         }.flatMapLatest { (search, preference) ->
-            repository.getAllPersonsByFilter(search, preference.sortBy)
-        }.flowOn(Dispatchers.IO).onEach { resultState ->
+            personRepository.getAllPersonsByFilter(search, preference.sortBy)
+        }.onEach { resultState ->
             _uiState.update { personState -> personState.copy(getAllPersonsList = resultState) }
         }.launchIn(viewModelScope)
     }
