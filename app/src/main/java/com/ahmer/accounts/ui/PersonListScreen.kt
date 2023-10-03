@@ -53,9 +53,9 @@ fun PersonsListScreen(
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mViewModel: PersonViewModel = hiltViewModel()
     val mState by mViewModel.uiState.collectAsState()
-    var mShowDropdownMenu by remember { mutableStateOf(false) }
-    var mShowSearch by remember { mutableStateOf(false) }
-    var mTextSearch by remember { mutableStateOf(mViewModel.searchQuery.value) }
+    var mShowDropdownMenu by remember { mutableStateOf(value = false) }
+    var mShowSearch by remember { mutableStateOf(value = false) }
+    var mTextSearch by remember { mutableStateOf(value = mViewModel.searchQuery.value) }
 
     LaunchedEffect(key1 = true) {
         mViewModel.eventFlow.collectLatest { event ->
@@ -73,7 +73,10 @@ fun PersonsListScreen(
                 }
 
                 is UiEvent.RelaunchApp -> HelperUtils.relaunchApp(mContext)
-                is UiEvent.ShowToast -> HelperUtils.toastLong(mContext, event.message)
+                is UiEvent.ShowToast -> HelperUtils.showToast(
+                    context = mContext, msg = event.message
+                )
+
                 else -> Unit
             }
         }
@@ -88,7 +91,7 @@ fun PersonsListScreen(
                             mViewModel.onEvent(PersonEvent.OnSearchTextChange(text))
                             mTextSearch = text
                         }, onCloseClick = {
-                            mCoroutineScope.launch { delay(200.milliseconds) }
+                            mCoroutineScope.launch { delay(duration = 200.milliseconds) }
                             mShowSearch = false
                         })
                     } else {
@@ -108,13 +111,13 @@ fun PersonsListScreen(
                     }) { SortIcon() }
                     DropdownMenu(expanded = mShowDropdownMenu,
                         onDismissRequest = { mShowDropdownMenu = false }) {
-                        DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_name)) },
+                        DropdownMenuItem(text = { Text(text = stringResource(id = R.string.label_sort_by_name)) },
                             onClick = {
                                 mViewModel.onEvent(PersonEvent.OnSortBy(SortBy.NAME))
                                 mShowDropdownMenu = false
                             },
                             leadingIcon = { SortByNameIcon() })
-                        DropdownMenuItem(text = { Text(text = stringResource(R.string.label_sort_by_date_created)) },
+                        DropdownMenuItem(text = { Text(text = stringResource(id = R.string.label_sort_by_date_created)) },
                             onClick = {
                                 mViewModel.onEvent(PersonEvent.OnSortBy(SortBy.DATE))
                                 mShowDropdownMenu = false

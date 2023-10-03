@@ -36,7 +36,7 @@ fun TransList(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(start = 10.dp, end = 10.dp),
-                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                    verticalArrangement = Arrangement.spacedBy(space = 3.dp)
                 ) {
                     items(
                         items = transList,
@@ -44,7 +44,11 @@ fun TransList(
                         TransItem(
                             transEntity = transaction,
                             onEvent = onEvent,
-                            modifier = Modifier.animateItemPlacement(tween(durationMillis = Constants.ANIMATE_ITEM_DURATION))
+                            modifier = Modifier.animateItemPlacement(
+                                animationSpec = tween(
+                                    durationMillis = Constants.ANIMATE_ITEM_DURATION
+                                )
+                            )
                         )
                     }
                 }

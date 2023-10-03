@@ -34,7 +34,7 @@ fun DeleteAlertDialog(
     nameAccount: String,
     onConfirmClick: () -> Unit
 ) {
-    val mOpenDialog = remember { mutableStateOf(true) }
+    val mOpenDialog = remember { mutableStateOf(value = true) }
     val mAnnotatedMsg = buildAnnotatedString {
         append("Do you really want to delete this ")
         withStyle(style = SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
@@ -52,23 +52,23 @@ fun DeleteAlertDialog(
             onDismissRequest = { mOpenDialog.value = false },
         ) {
             ElevatedCard(
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier.padding(10.dp),
+                shape = RoundedCornerShape(size = 10.dp),
+                modifier = Modifier.padding(all = 10.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
             ) {
                 DeleteIcon(
                     modifier = Modifier
-                        .size(48.dp)
-                        .align(Alignment.CenterHorizontally)
+                        .size(size = 48.dp)
+                        .align(alignment = Alignment.CenterHorizontally)
                         .padding(top = 5.dp),
                     tint = AlertDialogDefaults.iconContentColor
                 )
 
                 Text(
-                    text = stringResource(R.string.label_confirm),
+                    text = stringResource(id = R.string.label_confirm),
                     modifier = Modifier
                         .padding(top = 5.dp, bottom = 5.dp)
-                        .align(Alignment.CenterHorizontally),
+                        .align(alignment = Alignment.CenterHorizontally),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge
                 )
@@ -77,18 +77,21 @@ fun DeleteAlertDialog(
                     text = mAnnotatedMsg,
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 8.dp)
-                        .align(Alignment.Start),
+                        .align(alignment = Alignment.Start),
                     style = MaterialTheme.typography.titleSmall
                 )
 
                 LazyRow(modifier = Modifier
-                    .align(Alignment.End)
+                    .align(alignment = Alignment.End)
                     .padding(end = 10.dp, bottom = 5.dp), content = {
                     item {
                         TextButton(
                             onClick = { mOpenDialog.value = false },
                         ) {
-                            Text(text = stringResource(R.string.label_cancel), fontSize = 14.sp)
+                            Text(
+                                text = stringResource(id = R.string.label_cancel),
+                                fontSize = 14.sp
+                            )
                         }
                         TextButton(
                             onClick = {
@@ -96,7 +99,10 @@ fun DeleteAlertDialog(
                                 onConfirmClick()
                             },
                         ) {
-                            Text(text = stringResource(R.string.label_delete), fontSize = 14.sp)
+                            Text(
+                                text = stringResource(id = R.string.label_delete),
+                                fontSize = 14.sp
+                            )
                         }
                     }
                 })

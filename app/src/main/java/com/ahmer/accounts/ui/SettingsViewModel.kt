@@ -21,7 +21,7 @@ class SettingsViewModel @Inject constructor(
 
     fun updateTheme(isChecked: Boolean) {
         viewModelScope.launch {
-            preferences.updateAppTheme(isChecked)
+            preferences.updateAppTheme(isChecked = isChecked)
         }
     }
 

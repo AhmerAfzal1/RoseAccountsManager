@@ -36,11 +36,11 @@ class PersonAddEditViewModel @Inject constructor(
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
-    private val _uiState = MutableStateFlow(PersonAddEditState())
+    private val _uiState = MutableStateFlow(value = PersonAddEditState())
     val uiState: StateFlow<PersonAddEditState> = _uiState.asStateFlow()
 
     private var mPersonId: Int? = 0
-    var titleBar by mutableStateOf("Add Person Data")
+    var titleBar by mutableStateOf(value = "Add Person Data")
 
     var currentPerson: PersonsEntity?
         get() {
@@ -60,14 +60,14 @@ class PersonAddEditViewModel @Inject constructor(
             mPersonId = personId
             if (personId != -1) {
                 titleBar = "Edit Person Data"
-                personRepository.getPersonById(personId).onEach { resultState ->
+                personRepository.getPersonById(personId = personId).onEach { resultState ->
                     _uiState.update { addEditState ->
                         if (resultState is ResultState.Success) {
                             currentPerson = resultState.data
                         }
                         addEditState.copy(getPersonDetails = resultState)
                     }
-                }.launchIn(viewModelScope)
+                }.launchIn(scope = viewModelScope)
             } else {
                 currentPerson = PersonsEntity()
             }
@@ -100,8 +100,8 @@ class PersonAddEditViewModel @Inject constructor(
             PersonAddEditEvent.OnSaveClick -> {
                 viewModelScope.launch {
                     try {
-                        var mPerson: PersonsEntity? by mutableStateOf(null)
-                        var mMessage by mutableStateOf("")
+                        var mPerson: PersonsEntity? by mutableStateOf(value = null)
+                        var mMessage by mutableStateOf(value = "")
                         if (currentPerson!!.name.isEmpty()) {
                             _eventFlow.emit(UiEvent.ShowToast("The name can't be empty"))
                             return@launch

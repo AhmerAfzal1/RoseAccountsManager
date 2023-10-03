@@ -38,10 +38,10 @@ class PersonViewModel @Inject constructor(
 
     private val _preferences: Flow<PreferencesFilter> = preferencesManager.preferencesFlow
 
-    private val _searchQuery: MutableStateFlow<String> = MutableStateFlow("")
+    private val _searchQuery: MutableStateFlow<String> = MutableStateFlow(value = "")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val _uiState = MutableStateFlow(PersonState())
+    private val _uiState = MutableStateFlow(value = PersonState())
     val uiState: StateFlow<PersonState> = _uiState.asStateFlow()
 
     private var mDeletedPerson: PersonsEntity? = null
@@ -111,12 +111,12 @@ class PersonViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getAllPersonsData() {
         combine(_searchQuery, _preferences) { query, preferences ->
-            Pair(query, preferences)
+            Pair(first = query, second = preferences)
         }.flatMapLatest { (search, preference) ->
-            personRepository.getAllPersonsByFilter(search, preference.sortBy)
+            personRepository.getAllPersonsByFilter(searchQuery = search, sortBy = preference.sortBy)
         }.onEach { resultState ->
             _uiState.update { personState -> personState.copy(getAllPersonsList = resultState) }
-        }.launchIn(viewModelScope)
+        }.launchIn(scope = viewModelScope)
     }
 
     init {

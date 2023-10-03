@@ -39,7 +39,7 @@ object AppModule {
     @Provides
     @Singleton
     fun providesDataStore(@ApplicationContext context: Context): PreferencesManager =
-        PreferencesManager(context)
+        PreferencesManager(context = context)
 
     @Provides
     @Singleton
@@ -55,10 +55,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesTransRepository(transDao: TransDao): TransRepository = TransRepositoryImp(transDao)
+    fun providesTransRepository(transDao: TransDao): TransRepository =
+        TransRepositoryImp(transDao = transDao)
 
     @Provides
     @Singleton
     fun providesPersonRepository(personDao: PersonDao): PersonRepository =
-        PersonRepositoryImp(personDao)
+        PersonRepositoryImp(personDao = personDao)
 }

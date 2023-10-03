@@ -29,7 +29,10 @@ fun TransAddEditScreen(onPopBackStack: () -> Unit, appBarState: (AppBarState) ->
         mViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 UiEvent.SaveSuccess -> onPopBackStack()
-                is UiEvent.ShowToast -> HelperUtils.toastLong(mContext, event.message)
+                is UiEvent.ShowToast -> HelperUtils.showToast(
+                    context = mContext, msg = event.message
+                )
+
                 else -> Unit
             }
         }

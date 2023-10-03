@@ -44,7 +44,7 @@ object PdfUtils {
                     type = mMimeType
                 }
             } else {
-                HelperUtils.toastLong(
+                HelperUtils.showToast(
                     context = context, msg = context.getString(R.string.toast_pdf_not_generated)
                 )
                 mIntent = null
@@ -68,7 +68,7 @@ object PdfUtils {
                 ?: throw NullPointerException("OutputStream for given input Uri is null")
 
             PdfWriter.getInstance(mDocument, mOutPutStream).apply {
-                pageEvent = HeaderFooterPageEvent(context)
+                pageEvent = HeaderFooterPageEvent(context = context)
             }
 
             val mAppName = context.getString(R.string.app_name)

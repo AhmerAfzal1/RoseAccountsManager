@@ -58,7 +58,7 @@ object HelperUtils {
 
     @JvmStatic
     fun getFileNameFromDatabase(context: Context, uri: Uri): String? = when (uri.scheme) {
-        ContentResolver.SCHEME_CONTENT -> getContentFileName(context, uri)
+        ContentResolver.SCHEME_CONTENT -> getContentFileName(context = context, uri = uri)
         else -> uri.path?.let(::File)?.name
     }
 
@@ -66,9 +66,7 @@ object HelperUtils {
     fun getDateTime(time: Long, pattern: String = ""): String = if (time == 0.toLong()) {
         ""
     } else {
-        val mPattern = pattern.ifEmpty {
-            Constants.DATE_TIME_PATTERN
-        }
+        val mPattern = pattern.ifEmpty { Constants.DATE_TIME_PATTERN }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofPattern(mPattern))
@@ -82,7 +80,7 @@ object HelperUtils {
         var mSize = 0.toLong()
         directory.listFiles()?.forEach { file ->
             if (file != null && file.isDirectory) {
-                mSize += getDirSize(file)
+                mSize += getDirSize(directory = file)
             } else if (file != null && file.isFile) {
                 mSize += file.length()
             }
@@ -116,9 +114,9 @@ object HelperUtils {
         var mResult = size.toDouble() / 1024
         if (mResult < 1024) return "${mResult.roundToInt()} KB"
         mResult /= 1024
-        if (mResult < 1024) return String.format("%.2f MB", mResult)
+        if (mResult < 1024) return String.format(format = "%.2f MB", mResult)
         mResult /= 1024
-        return String.format("%.2f GB", mResult)
+        return String.format(format = "%.2f GB", mResult)
     }
 
     fun isGrantedPermission(context: Context, permission: String): Boolean {
@@ -135,7 +133,7 @@ object HelperUtils {
     }
 
     @JvmStatic
-    fun toastLong(context: Context, msg: String) {
+    fun showToast(context: Context, msg: String) {
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
     }
 

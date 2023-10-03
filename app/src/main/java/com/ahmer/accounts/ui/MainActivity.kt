@@ -101,7 +101,7 @@ fun MainScreen(viewModel: MainViewModel) {
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mState: MainState by viewModel.uiState.collectAsState()
-    var mSelectedItems: Int by rememberSaveable { mutableIntStateOf(0) }
+    var mSelectedItems: Int by rememberSaveable { mutableIntStateOf(value = 0) }
     val mNavHostController: NavHostController = rememberNavController()
 
     val mBackupDatabaseLauncher = rememberLauncherForActivityResult(
@@ -109,7 +109,7 @@ fun MainScreen(viewModel: MainViewModel) {
     ) { result ->
         if (result.resultCode == ComponentActivity.RESULT_OK) {
             val mUri = result.data?.data ?: return@rememberLauncherForActivityResult
-            viewModel.backupDatabase(mContext, mUri)
+            viewModel.backupDatabase(context = mContext, uri = mUri)
         }
     }
 
@@ -118,15 +118,18 @@ fun MainScreen(viewModel: MainViewModel) {
     ) { result ->
         if (result.resultCode == ComponentActivity.RESULT_OK) {
             val mUri = result.data?.data ?: return@rememberLauncherForActivityResult
-            viewModel.restoreDatabase(mContext, mUri)
+            viewModel.restoreDatabase(context = mContext, uri = mUri)
         }
     }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is UiEvent.RelaunchApp -> HelperUtils.relaunchApp(mContext)
-                is UiEvent.ShowToast -> HelperUtils.toastLong(mContext, event.message)
+                is UiEvent.RelaunchApp -> HelperUtils.relaunchApp(context = mContext)
+                is UiEvent.ShowToast -> HelperUtils.showToast(
+                    context = mContext, msg = event.message
+                )
+
                 else -> Unit
             }
         }
@@ -185,7 +188,7 @@ fun MainScreen(viewModel: MainViewModel) {
             }
 
             NavRoutes.Exit -> {
-                viewModel.closeDatabase(mContext)
+                viewModel.closeDatabase(context = mContext)
                 MainActivity().finish()
                 exitProcess(0)
             }
@@ -218,13 +221,13 @@ fun MainScreen(viewModel: MainViewModel) {
                         badge = {
                             item.badgeCount?.let { Text(text = item.run { badgeCount.toString() }) }
                         },
-                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                        modifier = Modifier.padding(paddingValues = NavigationDrawerItemDefaults.ItemPadding)
                     )
                 }
             }
         }, drawerState = mDrawerState
     ) {
-        var mAppBarState by remember { mutableStateOf(AppBarState()) }
+        var mAppBarState by remember { mutableStateOf(value = AppBarState()) }
 
         Scaffold(modifier = Modifier,
             topBar = {
@@ -258,7 +261,7 @@ fun MainScreen(viewModel: MainViewModel) {
             MainNavigation(
                 navHostController = mNavHostController,
                 appBarState = { mAppBarState = it },
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(paddingValues = innerPadding)
             )
         }
     }

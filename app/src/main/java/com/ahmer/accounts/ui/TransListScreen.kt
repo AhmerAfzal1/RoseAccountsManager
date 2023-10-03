@@ -54,9 +54,9 @@ fun TransListScreen(
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mViewModel: TransViewModel = hiltViewModel()
     val mState by mViewModel.uiState.collectAsState()
-    var mShowDropdownMenu by remember { mutableStateOf(false) }
-    var mShowSearch by remember { mutableStateOf(false) }
-    var mTextSearch by remember { mutableStateOf(mViewModel.searchQuery.value) }
+    var mShowDropdownMenu by remember { mutableStateOf(value = false) }
+    var mShowSearch by remember { mutableStateOf(value = false) }
+    var mTextSearch by remember { mutableStateOf(value = mViewModel.searchQuery.value) }
 
     val mLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -82,7 +82,10 @@ fun TransListScreen(
                     }
                 }
 
-                is UiEvent.ShowToast -> HelperUtils.toastLong(mContext, event.message)
+                is UiEvent.ShowToast -> HelperUtils.showToast(
+                    context = mContext, msg = event.message
+                )
+
                 else -> Unit
             }
         }
@@ -97,7 +100,7 @@ fun TransListScreen(
                             mViewModel.onEvent(TransEvent.OnSearchTextChange(it))
                             mTextSearch = it
                         }, onCloseClick = {
-                            mCoroutineScope.launch { delay(200.milliseconds) }
+                            mCoroutineScope.launch { delay(duration = 200.milliseconds) }
                             mShowSearch = false
                         })
                     } else {
@@ -121,10 +124,11 @@ fun TransListScreen(
                     DropdownMenu(
                         expanded = mShowDropdownMenu,
                         onDismissRequest = { mShowDropdownMenu = false }) {
-                        DropdownMenuItem(text = { Text(text = stringResource(R.string.label_generate_pdf)) },
+                        DropdownMenuItem(text = { Text(text = stringResource(id = R.string.label_generate_pdf)) },
                             onClick = {
-                                val mIntent =
-                                    PdfUtils.exportToPdf(mContext, mState.getAllPersonsTransList)
+                                val mIntent = PdfUtils.exportToPdf(
+                                    context = mContext, transList = mState.getAllPersonsTransList
+                                )
                                 if (mIntent != null) {
                                     mLauncher.launch(mIntent)
                                 }

@@ -34,8 +34,8 @@ fun PersonsList(
             personsList?.let {
                 LazyColumn(
                     modifier = modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(all = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(space = 12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     items(

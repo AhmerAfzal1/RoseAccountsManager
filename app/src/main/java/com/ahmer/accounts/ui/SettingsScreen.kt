@@ -42,8 +42,8 @@ import com.ahmer.accounts.utils.VersionIcon
 fun SettingsScreen(appBarState: (AppBarState) -> Unit) {
     val mContext: Context = LocalContext.current.applicationContext
     val mViewModel: SettingsViewModel = hiltViewModel()
-    val mAppVersion: AppVersion = HelperUtils.getAppInfo(mContext)
-    val mTheme by remember { mutableStateOf(Theme.System) }
+    val mAppVersion: AppVersion = HelperUtils.getAppInfo(context = mContext)
+    val mTheme by remember { mutableStateOf(value = Theme.System) }
     mViewModel.updateAppTheme(theme = mTheme)
 
     LaunchedEffect(key1 = true) {
@@ -69,16 +69,16 @@ fun SettingsScreen(appBarState: (AppBarState) -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PreferenceCategory(title = stringResource(R.string.label_pref_category_theme)) {
-            TextPreference(title = { Text(text = stringResource(R.string.label_pref_text_title_theme)) },
-                summary = { Text(text = stringResource(R.string.label_pref_text_summery_theme)) },
+        PreferenceCategory(title = stringResource(id = R.string.label_pref_category_theme)) {
+            TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_theme)) },
+                summary = { Text(text = stringResource(id = R.string.label_pref_text_summery_theme)) },
                 icon = { ThemeIcon() },
                 onClick = {}
             )
         }
 
-        PreferenceCategory(title = stringResource(R.string.label_pref_category_general)) {
-            TextPreference(title = { Text(text = stringResource(R.string.label_pref_text_title_clear_caches)) },
+        PreferenceCategory(title = stringResource(id = R.string.label_pref_category_general)) {
+            TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_clear_caches)) },
                 summary = {
                     Text(
                         text = stringResource(
@@ -90,7 +90,7 @@ fun SettingsScreen(appBarState: (AppBarState) -> Unit) {
                 icon = { ClearCachesIcon() },
                 onClick = {}
             )
-            TextPreference(title = { Text(text = stringResource(R.string.label_pref_text_title_app_version)) },
+            TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_app_version)) },
                 summary = { Text(text = "${mAppVersion.versionName} (${mAppVersion.versionCode})") },
                 icon = { VersionIcon() },
                 onClick = {}

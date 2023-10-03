@@ -38,15 +38,15 @@ class TransAddEditViewModel @Inject constructor(
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
-    private val _uiState = MutableStateFlow(TransAddEditState())
+    private val _uiState = MutableStateFlow(value = TransAddEditState())
     val uiState: StateFlow<TransAddEditState> = _uiState.asStateFlow()
 
     private var mLoadTransJob: Job? = null
     private var mPersonId: Int? = 0
     private var mTransId: Int? = 0
 
-    var titleBar by mutableStateOf("Add Transaction")
-    var titleButton by mutableStateOf("Save")
+    var titleBar by mutableStateOf(value = "Add Transaction")
+    var titleButton by mutableStateOf(value = "Save")
 
     var currentTransaction: TransEntity?
         get() {
@@ -79,11 +79,11 @@ class TransAddEditViewModel @Inject constructor(
                         }
                         addEditState.copy(getTransDetails = resultState)
                     }
-                }.launchIn(viewModelScope)
+                }.launchIn(scope = viewModelScope)
             } else {
                 currentTransaction = TransEntity(
                     date = HelperUtils.getDateTime(
-                        System.currentTimeMillis(), Constants.DATE_PATTERN
+                        time = System.currentTimeMillis(), pattern = Constants.DATE_PATTERN
                     )
                 )
             }
@@ -117,7 +117,7 @@ class TransAddEditViewModel @Inject constructor(
     private fun save() {
         viewModelScope.launch {
             try {
-                var mTransaction: TransEntity? by mutableStateOf(TransEntity())
+                var mTransaction: TransEntity? by mutableStateOf(value = TransEntity())
                 if (currentTransaction!!.type.isEmpty()) {
                     _eventFlow.emit(UiEvent.ShowToast("Please select credit or debit type"))
                     return@launch

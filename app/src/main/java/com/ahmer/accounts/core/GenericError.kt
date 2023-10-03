@@ -26,18 +26,18 @@ fun GenericError(
     Column(
         Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(all = 16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ErrorIcon(
-            modifier = Modifier.size(96.dp),
+            modifier = Modifier.size(size = 96.dp),
             tint = MaterialTheme.colorScheme.error
         )
-        Spacer(modifier = Modifier.size(16.dp))
+        Spacer(modifier = Modifier.size(size = 16.dp))
         Text(text = error?.message ?: stringResource(id = R.string.label_generic_error))
         onDismissAction?.let {
-            Spacer(modifier = Modifier.size(16.dp))
+            Spacer(modifier = Modifier.size(size = 16.dp))
             Button(onClick = onDismissAction) {
                 Text(text = dismissText ?: stringResource(id = R.string.label_ok))
             }

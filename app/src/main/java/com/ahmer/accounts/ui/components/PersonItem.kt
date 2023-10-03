@@ -41,8 +41,8 @@ fun PersonItem(
     modifier: Modifier = Modifier
 ) {
     val mPadding: Dp = 5.dp
-    var mShowDeleteDialog by remember { mutableStateOf(false) }
-    var mShowInfoDialog by remember { mutableStateOf(false) }
+    var mShowDeleteDialog by remember { mutableStateOf(value = false) }
+    var mShowInfoDialog by remember { mutableStateOf(value = false) }
 
     if (mShowDeleteDialog) {
         DeleteAlertDialog(
@@ -57,7 +57,7 @@ fun PersonItem(
 
     ElevatedCard(
         modifier = modifier.clickable { onEvent(PersonEvent.OnAddTransactionClick(personsEntity)) },
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(size = 10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
@@ -79,15 +79,15 @@ fun PersonItem(
             ) {
                 IconButton(
                     onClick = { mShowInfoDialog = true },
-                    modifier = Modifier.then(Modifier.size(Constants.ICON_SIZE)),
+                    modifier = Modifier.then(Modifier.size(size = Constants.ICON_SIZE)),
                 ) { InfoIcon() }
                 IconButton(
                     onClick = { onEvent(PersonEvent.OnEditClick(personsEntity)) },
-                    modifier = Modifier.then(Modifier.size(Constants.ICON_SIZE)),
+                    modifier = Modifier.then(Modifier.size(size = Constants.ICON_SIZE)),
                 ) { EditIcon() }
                 IconButton(
                     onClick = { mShowDeleteDialog = true },
-                    modifier = Modifier.then(Modifier.size(Constants.ICON_SIZE)),
+                    modifier = Modifier.then(Modifier.size(size = Constants.ICON_SIZE)),
                 ) { DeleteIcon() }
             }
         }

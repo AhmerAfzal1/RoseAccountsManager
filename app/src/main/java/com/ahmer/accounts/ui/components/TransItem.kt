@@ -42,15 +42,15 @@ fun TransItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (transEntity.type == "Debit") {
-            DebitIcon(modifier = Modifier.size(Constants.ICON_SIZE), tint = colorRedDark)
+            DebitIcon(modifier = Modifier.size(size = Constants.ICON_SIZE), tint = colorRedDark)
         } else {
-            CreditIcon(modifier = Modifier.size(Constants.ICON_SIZE), tint = colorGreenDark)
+            CreditIcon(modifier = Modifier.size(size = Constants.ICON_SIZE), tint = colorGreenDark)
         }
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(modifier = Modifier.width(width = 10.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(weight = 1f)
         ) {
             val mDescription: String = transEntity.description
             Text(

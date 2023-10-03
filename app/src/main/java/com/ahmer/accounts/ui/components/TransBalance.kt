@@ -37,7 +37,7 @@ fun TransTotal(transSumModel: TransSumModel) {
     val mCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
     val mDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
     val mHorizontalSpace: Dp = 2.dp
-    val mRoundShape: Dp = 10.dp
+    val mRoundShapeSize: Dp = 10.dp
     val mTotalBalance: Double = mCredit.minus(mDebit)
 
     if (mTotalBalance >= 0) {
@@ -57,10 +57,10 @@ fun TransTotal(transSumModel: TransSumModel) {
             Box(
                 contentAlignment = Alignment.TopCenter,
                 modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(mRoundShape))
+                    .weight(weight = 1f)
+                    .clip(shape = RoundedCornerShape(size = mRoundShapeSize))
                     .padding(horizontal = mHorizontalSpace)
-                    .background(colorGreenLight)
+                    .background(color = colorGreenLight)
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -69,13 +69,13 @@ fun TransTotal(transSumModel: TransSumModel) {
                 ) {
                     CreditIcon(
                         modifier = Modifier
-                            .size(30.dp)
+                            .size(size = 30.dp)
                             .padding(top = 5.dp, end = 5.dp)
-                            .align(Alignment.End),
+                            .align(alignment = Alignment.End),
                         tint = colorGreenDark
                     )
                     Text(
-                        text = stringResource(R.string.label_total_credit),
+                        text = stringResource(id = R.string.label_total_credit),
                         color = colorGreenDark,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.bodySmall
@@ -93,10 +93,10 @@ fun TransTotal(transSumModel: TransSumModel) {
             Box(
                 contentAlignment = Alignment.TopCenter,
                 modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(mRoundShape))
+                    .weight(weight = 1f)
+                    .clip(shape = RoundedCornerShape(size = mRoundShapeSize))
                     .padding(horizontal = mHorizontalSpace)
-                    .background(colorRedLight)
+                    .background(color = colorRedLight)
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -105,13 +105,13 @@ fun TransTotal(transSumModel: TransSumModel) {
                 ) {
                     DebitIcon(
                         modifier = Modifier
-                            .size(30.dp)
+                            .size(size = 30.dp)
                             .padding(top = 5.dp, end = 5.dp)
-                            .align(Alignment.End),
+                            .align(alignment = Alignment.End),
                         tint = colorRedDark
                     )
                     Text(
-                        text = stringResource(R.string.label_total_debit),
+                        text = stringResource(id = R.string.label_total_debit),
                         color = colorRedDark,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.bodySmall
@@ -130,10 +130,10 @@ fun TransTotal(transSumModel: TransSumModel) {
             Box(
                 contentAlignment = Alignment.TopCenter,
                 modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(mRoundShape))
+                    .weight(weight = 1f)
+                    .clip(shape = RoundedCornerShape(size = mRoundShapeSize))
                     .padding(horizontal = mHorizontalSpace)
-                    .background(mColorBackground)
+                    .background(color = mColorBackground)
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -143,22 +143,22 @@ fun TransTotal(transSumModel: TransSumModel) {
                     if (mTotalBalance >= 0) {
                         CreditIcon(
                             modifier = Modifier
-                                .size(30.dp)
+                                .size(size = 30.dp)
                                 .padding(top = 5.dp, end = 5.dp)
-                                .align(Alignment.End),
+                                .align(alignment = Alignment.End),
                             tint = colorGreenDark
                         )
                     } else {
                         DebitIcon(
                             modifier = Modifier
-                                .size(30.dp)
+                                .size(size = 30.dp)
                                 .padding(top = 5.dp, end = 5.dp)
-                                .align(Alignment.End),
+                                .align(alignment = Alignment.End),
                             tint = colorRedDark
                         )
                     }
                     Text(
-                        text = stringResource(R.string.label_total_balance),
+                        text = stringResource(id = R.string.label_total_balance),
                         color = mColorText,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.bodySmall

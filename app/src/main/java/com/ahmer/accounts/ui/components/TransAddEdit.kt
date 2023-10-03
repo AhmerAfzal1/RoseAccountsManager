@@ -52,7 +52,7 @@ fun TransAddEditTextFields(
     onEvent: (TransAddEditEvent) -> Unit,
     titleButton: String
 ) {
-    val mDatePickerDialog = rememberSaveable { mutableStateOf(false) }
+    val mDatePickerDialog = rememberSaveable { mutableStateOf(value = false) }
     val mFocusManager: FocusManager = LocalFocusManager.current
     val mFocusRequester: FocusRequester = remember { FocusRequester() }
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
@@ -64,7 +64,7 @@ fun TransAddEditTextFields(
     }
 
     if (mDatePickerDialog.value) {
-        TransDatePickDialog(onEvent)
+        TransDatePickDialog(onEvent = onEvent)
     }
 
     fun clear() {
@@ -83,8 +83,8 @@ fun TransAddEditTextFields(
                 .fillMaxWidth()
                 .onFocusChanged { mDatePickerDialog.value = it.isFocused },
             readOnly = true,
-            label = { Text(stringResource(R.string.label_date)) },
-            placeholder = { Text(stringResource(R.string.label_date)) },
+            label = { Text(stringResource(id = R.string.label_date)) },
+            placeholder = { Text(stringResource(id = R.string.label_date)) },
             trailingIcon = {
                 DateIcon(modifier = Modifier.clickable {
                     mDatePickerDialog.value = true
@@ -130,14 +130,14 @@ fun TransAddEditTextFields(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 15.dp)
-                .focusRequester(mFocusRequester)
+                .focusRequester(focusRequester = mFocusRequester)
                 .onFocusChanged { focus ->
                     if (focus.isFocused) {
                         mKeyboardController?.show()
                     }
                 },
-            label = { Text(stringResource(R.string.label_amount)) },
-            placeholder = { Text(stringResource(R.string.label_amount)) },
+            label = { Text(stringResource(id = R.string.label_amount)) },
+            placeholder = { Text(stringResource(id = R.string.label_amount)) },
             trailingIcon = {
                 if (transEntity.amount.isNotEmpty()) {
                     CloseIcon(modifier = Modifier.clickable {
@@ -164,13 +164,13 @@ fun TransAddEditTextFields(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 15.dp),
-            label = { Text(stringResource(R.string.label_description)) },
-            placeholder = { Text(stringResource(R.string.label_description)) },
+            label = { Text(stringResource(id = R.string.label_description)) },
+            placeholder = { Text(stringResource(id = R.string.label_description)) },
             trailingIcon = {
                 if (transEntity.description.isNotEmpty()) {
                     CloseIcon(modifier = Modifier.clickable {
                         if (transEntity.description.isNotEmpty()) {
-                            onEvent(TransAddEditEvent.OnDescriptionChange(""))
+                            onEvent(TransAddEditEvent.OnDescriptionChange(description = ""))
                         }
                     })
                 }
@@ -191,7 +191,7 @@ fun TransAddEditTextFields(
 
         Row(
             modifier = Modifier
-                .align(Alignment.End)
+                .align(alignment = Alignment.End)
                 .padding(top = 20.dp)
         ) {
             Button(onClick = { onEvent(TransAddEditEvent.OnSaveClick) }) {

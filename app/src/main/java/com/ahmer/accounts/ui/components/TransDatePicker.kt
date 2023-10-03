@@ -19,7 +19,7 @@ import com.ahmer.accounts.utils.HelperUtils
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransDatePickDialog(onEvent: (TransAddEditEvent) -> Unit) {
-    val mOpenDialog = remember { mutableStateOf(true) }
+    val mOpenDialog = remember { mutableStateOf(value = true) }
 
     if (mOpenDialog.value) {
         val mDatePickerState = rememberDatePickerState()
@@ -32,7 +32,8 @@ fun TransDatePickDialog(onEvent: (TransAddEditEvent) -> Unit) {
                     onClick = {
                         mOpenDialog.value = false
                         mDatePickerState.selectedDateMillis?.let {
-                            val mDate = HelperUtils.getDateTime(it, Constants.DATE_PATTERN)
+                            val mDate =
+                                HelperUtils.getDateTime(time = it, pattern = Constants.DATE_PATTERN)
                             onEvent(TransAddEditEvent.OnDateChange(mDate))
                         }
                     }, enabled = confirmEnabled.value

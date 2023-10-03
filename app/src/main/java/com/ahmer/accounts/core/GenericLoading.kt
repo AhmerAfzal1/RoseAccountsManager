@@ -24,17 +24,17 @@ fun GenericLoading(
     Column(
         modifier = if (isDialog) Modifier
             .fillMaxWidth()
-            .padding(16.dp) else Modifier
+            .padding(all = 16.dp) else Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(all = 16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularProgressIndicator(
-            modifier = Modifier.then(Modifier.size(80.dp)),
+            modifier = Modifier.then(Modifier.size(size = 80.dp)),
             strokeWidth = 8.dp
         )
-        Spacer(modifier = Modifier.size(16.dp))
+        Spacer(modifier = Modifier.size(size = 16.dp))
         Text(text = message ?: stringResource(id = R.string.label_generic_loading))
     }
 }

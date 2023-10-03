@@ -40,16 +40,16 @@ fun RowScope.TableCell(text: String, weight: Float, isBold: Boolean = false) {
     if (!isBold) {
         Text(
             modifier = Modifier
-                .weight(weight)
-                .padding(2.dp),
+                .weight(weight = weight)
+                .padding(all = 2.dp),
             text = text,
             style = MaterialTheme.typography.titleSmall
         )
     } else {
         Text(
             modifier = Modifier
-                .weight(weight)
-                .padding(3.dp),
+                .weight(weight = weight)
+                .padding(all = 3.dp),
             text = text,
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold
@@ -63,7 +63,7 @@ fun NavShape(transSumModel: TransSumModel) {
     val mCornerDp = 100.dp
     val mTotalCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
     val mTotalDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
-    val mTotalBalance = HelperUtils.getRoundedValue((mTotalCredit.minus(mTotalDebit)))
+    val mTotalBalance = HelperUtils.getRoundedValue((mTotalCredit.minus(other = mTotalDebit)))
 
     Column(
         modifier = Modifier
@@ -73,10 +73,10 @@ fun NavShape(transSumModel: TransSumModel) {
     ) {
         Box(
             modifier = Modifier
-                .height(200.dp)
+                .height(height = 200.dp)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(bottomStart = mCornerDp, bottomEnd = mCornerDp))
-                .background(MaterialTheme.colorScheme.primary)
+                .clip(shape = RoundedCornerShape(bottomStart = mCornerDp, bottomEnd = mCornerDp))
+                .background(color = MaterialTheme.colorScheme.primary)
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -106,7 +106,7 @@ private fun Content(
             .padding(top = contentPadding)
             .size(size = 48.dp),
         painter = painterResource(id = R.drawable.ic_main),
-        contentDescription = stringResource(R.string.content_description_app_logo)
+        contentDescription = stringResource(id = R.string.content_description_app_logo)
     )
     Text(
         modifier = Modifier.padding(top = contentPadding),
@@ -132,21 +132,28 @@ private fun Content(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(Modifier.padding(start = contentPadding, end = contentPadding)) {
-                TableCell(stringResource(id = R.string.label_nav_credit), mFirstRowWeight)
-                TableCell(totalCredit.toString(), mSecondRowWeight)
+                TableCell(
+                    text = stringResource(id = R.string.label_nav_credit),
+                    weight = mFirstRowWeight, isBold = false
+                )
+                TableCell(text = totalCredit.toString(), weight = mSecondRowWeight, isBold = false)
             }
             Row(Modifier.padding(start = contentPadding, end = contentPadding)) {
-                TableCell(stringResource(id = R.string.label_nav_debit), mFirstRowWeight)
-                TableCell(totalDebit.toString(), mSecondRowWeight)
+                TableCell(
+                    text = stringResource(id = R.string.label_nav_debit),
+                    weight = mFirstRowWeight, isBold = false
+                )
+                TableCell(text = totalDebit.toString(), weight = mSecondRowWeight, isBold = false)
             }
             Row(Modifier.padding(start = contentPadding, end = contentPadding)) {
                 Divider(thickness = 2.dp, color = MaterialTheme.colorScheme.onSecondaryContainer)
             }
             Row(Modifier.padding(start = contentPadding, end = contentPadding)) {
                 TableCell(
-                    stringResource(id = R.string.label_balance), mFirstRowWeight, isBold = true
+                    text = stringResource(id = R.string.label_balance),
+                    weight = mFirstRowWeight, isBold = true
                 )
-                TableCell(totalBalance, mSecondRowWeight, isBold = true)
+                TableCell(text = totalBalance, weight = mSecondRowWeight, isBold = true)
             }
         }
     }

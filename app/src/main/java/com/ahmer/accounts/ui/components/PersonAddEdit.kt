@@ -80,19 +80,19 @@ fun PersonAddEditTextFields(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .focusRequester(mFocusRequester)
+                            .focusRequester(focusRequester = mFocusRequester)
                             .onFocusChanged { focus ->
                                 if (focus.isFocused) {
                                     mKeyboardController?.show()
                                 }
                             },
-                        label = { Text(stringResource(R.string.label_name)) },
-                        placeholder = { Text(stringResource(R.string.label_name)) },
+                        label = { Text(stringResource(id = R.string.label_name)) },
+                        placeholder = { Text(stringResource(id = R.string.label_name)) },
                         trailingIcon = {
                             if (personsEntity?.name!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
                                     if (personsEntity.name.isNotEmpty()) {
-                                        onEvent(PersonAddEditEvent.OnNameChange(""))
+                                        onEvent(PersonAddEditEvent.OnNameChange(name = ""))
                                     }
                                 })
                             }
@@ -123,13 +123,13 @@ fun PersonAddEditTextFields(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp),
-                        label = { Text(stringResource(R.string.label_address)) },
-                        placeholder = { Text(stringResource(R.string.label_address)) },
+                        label = { Text(stringResource(id = R.string.label_address)) },
+                        placeholder = { Text(stringResource(id = R.string.label_address)) },
                         trailingIcon = {
                             if (personsEntity?.address!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
                                     if (personsEntity.address.isNotEmpty()) {
-                                        onEvent(PersonAddEditEvent.OnAddressChange(""))
+                                        onEvent(PersonAddEditEvent.OnAddressChange(address = ""))
                                     }
                                 })
                             }
@@ -160,13 +160,13 @@ fun PersonAddEditTextFields(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp),
-                        label = { Text(stringResource(R.string.label_phone_number)) },
-                        placeholder = { Text(stringResource(R.string.label_phone_number)) },
+                        label = { Text(stringResource(id = R.string.label_phone_number)) },
+                        placeholder = { Text(stringResource(id = R.string.label_phone_number)) },
                         trailingIcon = {
                             if (personsEntity?.phone!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
                                     if (personsEntity.phone.isNotEmpty()) {
-                                        onEvent(PersonAddEditEvent.OnPhoneChange(""))
+                                        onEvent(PersonAddEditEvent.OnPhoneChange(phone = ""))
                                     }
                                 })
                             }
@@ -198,13 +198,13 @@ fun PersonAddEditTextFields(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp),
-                        label = { Text(stringResource(R.string.label_email)) },
-                        placeholder = { Text(stringResource(R.string.label_email)) },
+                        label = { Text(stringResource(id = R.string.label_email)) },
+                        placeholder = { Text(stringResource(id = R.string.label_email)) },
                         trailingIcon = {
                             if (personsEntity?.email!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
                                     if (personsEntity.email.isNotEmpty()) {
-                                        onEvent(PersonAddEditEvent.OnEmailChange(""))
+                                        onEvent(PersonAddEditEvent.OnEmailChange(email = ""))
                                     }
                                 })
                             }
@@ -236,13 +236,13 @@ fun PersonAddEditTextFields(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp),
-                        label = { Text(stringResource(R.string.label_notes)) },
-                        placeholder = { Text(stringResource(R.string.label_notes)) },
+                        label = { Text(stringResource(id = R.string.label_notes)) },
+                        placeholder = { Text(stringResource(id = R.string.label_notes)) },
                         trailingIcon = {
                             if (personsEntity?.notes!!.isNotEmpty()) {
                                 CloseIcon(modifier = Modifier.clickable {
                                     if (personsEntity.notes.isNotEmpty()) {
-                                        onEvent(PersonAddEditEvent.OnNotesChange(""))
+                                        onEvent(PersonAddEditEvent.OnNotesChange(notes = ""))
                                     }
                                 })
                             }

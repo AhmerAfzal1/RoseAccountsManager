@@ -37,23 +37,23 @@ class MainViewModel @Inject constructor(
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
-    private val _isLoadingSplash: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private val _isLoadingSplash: MutableStateFlow<Boolean> = MutableStateFlow(value = true)
     val isLoadingSplash: StateFlow<Boolean> = _isLoadingSplash.asStateFlow()
 
-    private val _uiState = MutableStateFlow(MainState())
+    private val _uiState = MutableStateFlow(value = MainState())
     val uiState: StateFlow<MainState> = _uiState.asStateFlow()
 
     fun backupDatabase(context: Context, uri: Uri?) {
         val mJob = CoroutineScope(Dispatchers.IO).launch {
-            val mDatabase = AppModule.providesDatabase(context)
-            val mQuery = SimpleSQLiteQuery("pragma wal_checkpoint(full)")
-            mDatabase.adminDao().checkPoint(mQuery)
+            val mDatabase = AppModule.providesDatabase(context = context)
+            val mQuery = SimpleSQLiteQuery(query = "pragma wal_checkpoint(full)")
+            mDatabase.adminDao().checkPoint(supportSQLiteQuery = mQuery)
             val mInputStream = context.getDatabasePath(Constants.DATABASE_NAME).inputStream()
             val mOutputStream = uri?.let { context.contentResolver.openOutputStream(it) }
             runCatching {
                 mInputStream.use { input ->
                     mOutputStream?.use { output ->
-                        input.copyTo(output)
+                        input.copyTo(out = output)
                     }
                 }
             }
@@ -65,7 +65,9 @@ class MainViewModel @Inject constructor(
                     UiEvent.ShowToast(
                         context.getString(
                             R.string.toast_msg_db_backup,
-                            uri?.let { HelperUtils.getFileNameFromDatabase(context, it) }, uri?.path
+                            uri?.let {
+                                HelperUtils.getFileNameFromDatabase(context = context, uri = it)
+                            }, uri?.path
                         )
                     )
                 )
@@ -79,16 +81,16 @@ class MainViewModel @Inject constructor(
 
     fun restoreDatabase(context: Context, uri: Uri?) {
         val mJob = CoroutineScope(Dispatchers.IO).launch {
-            val mDatabase = AppModule.providesDatabase(context)
-            val mQuery = SimpleSQLiteQuery("pragma wal_checkpoint(full)")
-            mDatabase.adminDao().checkPoint(mQuery)
+            val mDatabase = AppModule.providesDatabase(context = context)
+            val mQuery = SimpleSQLiteQuery(query = "pragma wal_checkpoint(full)")
+            mDatabase.adminDao().checkPoint(supportSQLiteQuery = mQuery)
             mDatabase.close()
             val mInputStream = uri?.let { context.contentResolver.openInputStream(it) }
             val mOutputStream = context.getDatabasePath(Constants.DATABASE_NAME).outputStream()
             runCatching {
                 mInputStream.use { input ->
                     mOutputStream.use { output ->
-                        input?.copyTo(output)
+                        input?.copyTo(out = output)
                     }
                 }
             }
@@ -99,11 +101,11 @@ class MainViewModel @Inject constructor(
                 _eventFlow.emit(
                     UiEvent.ShowToast(
                         context.getString(R.string.toast_msg_db_restored, uri?.let {
-                            HelperUtils.getFileNameFromDatabase(context, it)
+                            HelperUtils.getFileNameFromDatabase(context = context, uri = it)
                         })
                     )
                 )
-                delay(1.seconds)
+                delay(duration = 1.seconds)
                 _eventFlow.emit(UiEvent.RelaunchApp)
             }
         }
@@ -112,10 +114,10 @@ class MainViewModel @Inject constructor(
     private fun getAllPersonsBalance() {
         personRepository.getAllAccountsBalance().onEach { transSumModel ->
             _uiState.update { balState -> balState.copy(getAllPersonsBalance = transSumModel) }
-        }.launchIn(viewModelScope)
+        }.launchIn(scope = viewModelScope)
 
         viewModelScope.launch {
-            delay(1.seconds)
+            delay(duration = 1.seconds)
             _isLoadingSplash.value = false
         }
     }

@@ -26,7 +26,7 @@ fun MainNavigation(
         builder = {
             composable(route = ScreenRoutes.PersonListScreen) {
                 PersonsListScreen(appBarState = appBarState, onNavigation = {
-                    navHostController.navigate(it.route) /*{
+                    navHostController.navigate(route = it.route) /*{
                         when (it.route) {
                             ScreenRoutes.PersonListScreen -> {
                                 popUpTo(ScreenRoutes.PersonListScreen)

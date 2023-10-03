@@ -34,7 +34,7 @@ fun RowScope.InfoText(text: String, weight: Float, isTitle: Boolean = false) {
     if (isTitle) {
         Text(
             modifier = Modifier
-                .weight(weight)
+                .weight(weight = weight)
                 .padding(top = 3.dp),
             text = text,
             style = MaterialTheme.typography.titleSmall,
@@ -43,7 +43,7 @@ fun RowScope.InfoText(text: String, weight: Float, isTitle: Boolean = false) {
     } else {
         Text(
             modifier = Modifier
-                .weight(weight)
+                .weight(weight = weight)
                 .padding(start = 2.dp, top = 3.dp),
             text = text,
             style = MaterialTheme.typography.titleSmall
@@ -72,20 +72,20 @@ fun MoreInfoAlertDialog(personsEntity: PersonsEntity) {
         "Created:",
         "Updated:",
     )
-    val mOpenDialog = remember { mutableStateOf(true) }
+    val mOpenDialog = remember { mutableStateOf(value = true) }
 
     if (mOpenDialog.value) {
         AlertDialog(
             onDismissRequest = { mOpenDialog.value = false }) {
             ElevatedCard(
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier.padding(10.dp),
+                shape = RoundedCornerShape(size = 10.dp),
+                modifier = Modifier.padding(all = 10.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
             ) {
                 InfoIcon(
                     modifier = Modifier
-                        .size(48.dp)
-                        .align(Alignment.CenterHorizontally)
+                        .size(size = 48.dp)
+                        .align(alignment = Alignment.CenterHorizontally)
                         .padding(top = 5.dp),
                     tint = AlertDialogDefaults.iconContentColor
                 )
@@ -95,7 +95,7 @@ fun MoreInfoAlertDialog(personsEntity: PersonsEntity) {
                         start = 10.dp, end = 10.dp, top = 5.dp, bottom = 10.dp
                     )
                 ) {
-                    itemsIndexed(mTitleList) { index, title ->
+                    itemsIndexed(items = mTitleList) { index, title ->
                         Row {
                             InfoText(text = title, weight = 1f, isTitle = true)
                             InfoText(text = mDataList[index], weight = 3f, isTitle = false)
@@ -106,10 +106,10 @@ fun MoreInfoAlertDialog(personsEntity: PersonsEntity) {
                 TextButton(
                     onClick = { mOpenDialog.value = false },
                     modifier = Modifier
-                        .align(Alignment.End)
+                        .align(alignment = Alignment.End)
                         .padding(end = 10.dp, bottom = 5.dp),
                 ) {
-                    Text(text = stringResource(R.string.label_ok), fontSize = 14.sp)
+                    Text(text = stringResource(id = R.string.label_ok), fontSize = 14.sp)
                 }
             }
         }

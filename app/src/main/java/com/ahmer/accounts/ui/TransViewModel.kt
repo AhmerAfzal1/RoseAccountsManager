@@ -51,16 +51,16 @@ class TransViewModel @Inject constructor(
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
-    private val _searchQuery: MutableStateFlow<String> = MutableStateFlow("")
+    private val _searchQuery: MutableStateFlow<String> = MutableStateFlow(value = "")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val _uiState = MutableStateFlow(TransState())
+    private val _uiState = MutableStateFlow(value = TransState())
     val uiState: StateFlow<TransState> = _uiState.asStateFlow()
 
     private var getPersonsEntity: PersonsEntity = PersonsEntity()
     private var getTransSumModel: TransSumModel = TransSumModel()
     private var mDeletedTrans: TransEntity? = null
-    private var mPersonId: MutableState<Int> = mutableIntStateOf(0)
+    private var mPersonId: MutableState<Int> = mutableIntStateOf(value = 0)
 
     fun onEvent(event: TransEvent) {
         when (event) {
@@ -144,7 +144,7 @@ class TransViewModel @Inject constructor(
                 )
                 FirebaseCrashlytics.getInstance().recordException(e)
             }
-            .launchIn(viewModelScope)
+            .launchIn(scope = viewModelScope)
     }
 
     private fun getPersonByIdData() {
@@ -152,7 +152,7 @@ class TransViewModel @Inject constructor(
             if (resultState is ResultState.Success) {
                 getPersonsEntity = resultState.data!!
             }
-        }.launchIn(viewModelScope)
+        }.launchIn(scope = viewModelScope)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -161,14 +161,14 @@ class TransViewModel @Inject constructor(
             transRepository.getAllTransByPersonIdWithSearch(mPersonId.value, search)
         }.onEach { resultState ->
             _uiState.update { transState -> transState.copy(getAllPersonsTransList = resultState) }
-        }.launchIn(viewModelScope)
+        }.launchIn(scope = viewModelScope)
     }
 
     private fun getAccountBalance() {
         transRepository.getAccountBalanceByPerson(mPersonId.value).onEach { resultState ->
             _uiState.update { it.copy(getPersonTransBalance = resultState) }
             getTransSumModel = resultState
-        }.launchIn(viewModelScope)
+        }.launchIn(scope = viewModelScope)
     }
 
     init {
