@@ -68,8 +68,8 @@ fun NavShape(transSumModel: TransSumModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentWidth(Alignment.CenterHorizontally)
-            .wrapContentHeight(Alignment.CenterVertically)
+            .wrapContentWidth(align = Alignment.CenterHorizontally)
+            .wrapContentHeight(align = Alignment.CenterVertically)
     ) {
         Box(
             modifier = Modifier
