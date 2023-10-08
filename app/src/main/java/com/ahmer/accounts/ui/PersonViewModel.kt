@@ -8,12 +8,10 @@ import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.navigation.ScreenRoutes
-import com.ahmer.accounts.preferences.PreferencesFilter
 import com.ahmer.accounts.preferences.PreferencesManager
 import com.ahmer.accounts.state.PersonState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -35,8 +33,6 @@ class PersonViewModel @Inject constructor(
 ) : ViewModel(), LifecycleObserver {
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
-
-    private val _preferences: Flow<PreferencesFilter> = preferencesManager.preferencesFlow
 
     private val _searchQuery: MutableStateFlow<String> = MutableStateFlow(value = "")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -110,10 +106,10 @@ class PersonViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getAllPersonsData() {
-        combine(_searchQuery, _preferences) { query, preferences ->
+        combine(_searchQuery, preferencesManager.getSortOrder()) { query, preferences ->
             Pair(first = query, second = preferences)
-        }.flatMapLatest { (search, preference) ->
-            personRepository.getAllPersonsByFilter(searchQuery = search, sortBy = preference.sortBy)
+        }.flatMapLatest { (search, sortBy) ->
+            personRepository.getAllPersonsByFilter(searchQuery = search, sortBy = sortBy)
         }.onEach { resultState ->
             _uiState.update { personState -> personState.copy(getAllPersonsList = resultState) }
         }.launchIn(scope = viewModelScope)

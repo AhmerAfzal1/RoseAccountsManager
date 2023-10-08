@@ -68,7 +68,7 @@ dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
 
     //Jetpack Compose BOM
-    implementation(platform("androidx.compose:compose-bom:2023.09.02"))
+    implementation(platform("androidx.compose:compose-bom:2023.10.00"))
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -97,8 +97,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.3")
 
     //Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
-    ksp("com.google.dagger:hilt-compiler:2.48")
+    implementation("com.google.dagger:hilt-android:2.48.1")
+    ksp("com.google.dagger:hilt-compiler:2.48.1")
 
     //Room Database
     implementation("androidx.room:room-ktx:2.6.0-rc01")

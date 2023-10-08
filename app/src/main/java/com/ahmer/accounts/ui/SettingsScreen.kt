@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -30,51 +31,55 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
+import com.ahmer.accounts.dialogs.ThemeDialog
 import com.ahmer.accounts.state.AppBarState
 import com.ahmer.accounts.utils.AppVersion
 import com.ahmer.accounts.utils.ClearCachesIcon
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.ThemeIcon
+import com.ahmer.accounts.utils.ThemeMode
 import com.ahmer.accounts.utils.VersionIcon
 
 @Composable
 fun SettingsScreen(appBarState: (AppBarState) -> Unit) {
     val mContext: Context = LocalContext.current.applicationContext
-    val mViewModel: SettingsViewModel = hiltViewModel()
     val mAppVersion: AppVersion = HelperUtils.getAppInfo(context = mContext)
-    val mTheme by remember { mutableStateOf(value = Theme.System) }
-    mViewModel.updateAppTheme(theme = mTheme)
+    val mViewModel: SettingsViewModel = hiltViewModel()
+    val mCurrentTheme by mViewModel.currentTheme.collectAsStateWithLifecycle()
+    var mShowThemeDialog: Boolean by remember { mutableStateOf(value = false) }
+    val mSummary: String = ThemeMode.getThemeModesTitle(mCurrentTheme)
 
     LaunchedEffect(key1 = true) {
         appBarState(
-            AppBarState(
-                searchActions = {
-                    Text(
-                        text = stringResource(id = R.string.label_settings),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
+            AppBarState(searchActions = {
+                Text(
+                    text = stringResource(id = R.string.label_settings),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
                 actions = {},
                 floatingAction = {},
                 isMenuNavigationIcon = true,
                 isSnackBarRequired = false,
-                newSnackBarHost = {}
-            )
+                newSnackBarHost = {})
         )
     }
 
+    if (mShowThemeDialog) {
+        ThemeDialog(viewModel = mViewModel)
+    }
+
     Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PreferenceCategory(title = stringResource(id = R.string.label_pref_category_theme)) {
             TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_theme)) },
-                summary = { Text(text = stringResource(id = R.string.label_pref_text_summery_theme)) },
+                summary = { Text(text = mSummary) },
                 icon = { ThemeIcon() },
-                onClick = {}
-            )
+                onClick = { mShowThemeDialog = !mShowThemeDialog })
         }
 
         PreferenceCategory(title = stringResource(id = R.string.label_pref_category_general)) {
@@ -88,13 +93,11 @@ fun SettingsScreen(appBarState: (AppBarState) -> Unit) {
                     )
                 },
                 icon = { ClearCachesIcon() },
-                onClick = {}
-            )
+                onClick = {})
             TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_app_version)) },
                 summary = { Text(text = "${mAppVersion.versionName} (${mAppVersion.versionCode})") },
                 icon = { VersionIcon() },
-                onClick = {}
-            )
+                onClick = {})
         }
     }
 }
@@ -122,9 +125,7 @@ fun TextPreference(
                     .width(40.dp)
                     .padding(start = 4.dp),
                 contentAlignment = Alignment.CenterStart
-            ) {
-                icon()
-            }
+            ) { icon() }
         } else {
             Box(modifier = Modifier.size(0.dp))
         }
@@ -133,22 +134,14 @@ fun TextPreference(
                 .weight(1f)
                 .padding(vertical = 16.dp)
         ) {
-            ProvideTextStyle(value = MaterialTheme.typography.titleMedium) {
-                title()
-            }
+            ProvideTextStyle(value = MaterialTheme.typography.titleMedium) { title() }
             if (summary != null) {
                 Spacer(modifier = Modifier.height(2.dp))
-                ProvideTextStyle(value = MaterialTheme.typography.bodyMedium) {
-                    summary()
-                }
+                ProvideTextStyle(value = MaterialTheme.typography.bodyMedium) { summary() }
             }
         }
         if (controls != null) {
-            Box(
-                modifier = Modifier.padding(start = 24.dp)
-            ) {
-                controls()
-            }
+            Box(modifier = Modifier.padding(start = 24.dp)) { controls() }
         }
     }
 }
@@ -156,9 +149,7 @@ fun TextPreference(
 @Composable
 fun PreferenceCategory(title: String, content: @Composable ColumnScope.() -> Unit) {
     Column {
-        Row(
-            modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp)
-        ) {
+        Row(modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp)) {
             Text(
                 modifier = Modifier.padding(start = 32.dp),
                 text = title,
@@ -176,10 +167,4 @@ fun PreferenceCategory(title: String, content: @Composable ColumnScope.() -> Uni
                 .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
         )
     }
-}
-
-sealed class Theme {
-    data object Dark : Theme()
-    data object Light : Theme()
-    data object System : Theme()
 }

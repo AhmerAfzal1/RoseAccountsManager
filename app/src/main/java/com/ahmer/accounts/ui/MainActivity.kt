@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -47,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmer.accounts.R
@@ -62,6 +64,7 @@ import com.ahmer.accounts.ui.theme.RoseAccountsManagerTheme
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.MenuIcon
+import com.ahmer.accounts.utils.ThemeMode
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -71,20 +74,27 @@ import kotlin.system.exitProcess
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val mViewModel: MainViewModel by viewModels()
+    private val mMainViewModel: MainViewModel by viewModels()
+    private val mSettingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().apply {
-            setKeepOnScreenCondition { mViewModel.isLoadingSplash.value }
+            setKeepOnScreenCondition { mMainViewModel.isLoadingSplash.value }
         }
         setContent {
-            RoseAccountsManagerTheme(darkTheme = false) {
+            val mCurrentTheme by mSettingsViewModel.currentTheme.collectAsStateWithLifecycle()
+            val isDarkTheme: Boolean = when (mCurrentTheme) {
+                ThemeMode.Dark -> true
+                ThemeMode.Light -> false
+                ThemeMode.System -> isSystemInDarkTheme()
+            }
+            RoseAccountsManagerTheme(darkTheme = isDarkTheme) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(viewModel = mViewModel)
+                    MainScreen(viewModel = mMainViewModel)
                 }
             }
         }

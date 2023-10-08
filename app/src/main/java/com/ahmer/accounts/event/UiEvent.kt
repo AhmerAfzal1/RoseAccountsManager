@@ -6,5 +6,4 @@ sealed class UiEvent {
     data class ShowToast(val message: String) : UiEvent()
     data object RelaunchApp : UiEvent()
     data object SaveSuccess : UiEvent()
-    data object ThemeUpdated : UiEvent()
 }
