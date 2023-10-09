@@ -3,7 +3,7 @@ package com.ahmer.accounts.database.repository
 import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransSumModel
-import com.ahmer.accounts.utils.SortBy
+import com.ahmer.accounts.utils.SortOrder
 import kotlinx.coroutines.flow.Flow
 
 interface PersonRepository {
@@ -15,7 +15,7 @@ interface PersonRepository {
     fun getAllPersons(): Flow<List<PersonsEntity>>
 
     fun getAllPersonsByFilter(
-        searchQuery: String, sortBy: SortBy
+        searchQuery: String, sortOrder: SortOrder
     ): Flow<ResultState<List<PersonsEntity>>>
 
     fun getPersonById(personId: Int): Flow<ResultState<PersonsEntity?>>

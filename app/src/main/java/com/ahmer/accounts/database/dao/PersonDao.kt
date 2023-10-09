@@ -7,7 +7,7 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransSumModel
-import com.ahmer.accounts.utils.SortBy
+import com.ahmer.accounts.utils.SortOrder
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -28,11 +28,11 @@ interface PersonDao {
     @Query("SELECT * FROM Persons WHERE name LIKE '%' || :searchQuery || '%' ORDER BY name ASC")
     fun getAllPersonsSortedByName(searchQuery: String): Flow<List<PersonsEntity>>
 
-    fun getAllPersonsByFilter(searchQuery: String, sortBy: SortBy): Flow<List<PersonsEntity>> {
-        return when (sortBy) {
-            SortBy.DATE -> getAllPersonsSortedByDate(searchQuery)
-            SortBy.NAME -> getAllPersonsSortedByName(searchQuery)
-        }
+    fun getAllPersonsByFilter(
+        searchQuery: String, sortOrder: SortOrder
+    ): Flow<List<PersonsEntity>> = when (sortOrder) {
+        SortOrder.Date -> getAllPersonsSortedByDate(searchQuery)
+        SortOrder.Name -> getAllPersonsSortedByName(searchQuery)
     }
 
     @Query("SELECT * FROM Persons WHERE id = :personId")

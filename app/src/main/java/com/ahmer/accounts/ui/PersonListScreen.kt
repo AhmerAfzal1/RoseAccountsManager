@@ -32,10 +32,10 @@ import com.ahmer.accounts.ui.components.PersonsList
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.SearchIcon
-import com.ahmer.accounts.utils.SortBy
 import com.ahmer.accounts.utils.SortByDateIcon
 import com.ahmer.accounts.utils.SortByNameIcon
 import com.ahmer.accounts.utils.SortIcon
+import com.ahmer.accounts.utils.SortOrder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -113,13 +113,13 @@ fun PersonsListScreen(
                         onDismissRequest = { mShowDropdownMenu = false }) {
                         DropdownMenuItem(text = { Text(text = stringResource(id = R.string.label_sort_by_name)) },
                             onClick = {
-                                mViewModel.onEvent(PersonEvent.OnSortBy(SortBy.NAME))
+                                mViewModel.onEvent(PersonEvent.OnSortBy(SortOrder.Name))
                                 mShowDropdownMenu = false
                             },
                             leadingIcon = { SortByNameIcon() })
                         DropdownMenuItem(text = { Text(text = stringResource(id = R.string.label_sort_by_date_created)) },
                             onClick = {
-                                mViewModel.onEvent(PersonEvent.OnSortBy(SortBy.DATE))
+                                mViewModel.onEvent(PersonEvent.OnSortBy(SortOrder.Date))
                                 mShowDropdownMenu = false
                             },
                             leadingIcon = { SortByDateIcon() })

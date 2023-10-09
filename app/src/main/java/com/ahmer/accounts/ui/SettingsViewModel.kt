@@ -18,7 +18,7 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel(), LifecycleObserver {
     val currentTheme: StateFlow<ThemeMode> = preferencesManager.getTheme().stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
         initialValue = ThemeMode.System
     )
 

@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.ahmer.accounts.utils.Constants
-import com.ahmer.accounts.utils.SortBy
+import com.ahmer.accounts.utils.SortOrder
 import com.ahmer.accounts.utils.ThemeMode
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -35,22 +35,22 @@ class PreferencesManager @Inject constructor(@ApplicationContext private val con
         ThemeMode.valueOf(value = preference[PreferencesKeys.APP_THEME] ?: ThemeMode.System.name)
     }.distinctUntilChanged()
 
-    fun getSortOrder(): Flow<SortBy> = context.dataStore.data.catch { e ->
+    fun getSortOrder(): Flow<SortOrder> = context.dataStore.data.catch { e ->
         if (e is IOException) {
             Log.e(Constants.LOG_TAG, "PreferenceException: ${e.localizedMessage}", e)
             FirebaseCrashlytics.getInstance().recordException(e)
             emit(emptyPreferences())
         } else throw e
     }.map { preference ->
-        SortBy.valueOf(value = preference[PreferencesKeys.SORT_ORDER] ?: SortBy.DATE.name)
+        SortOrder.valueOf(value = preference[PreferencesKeys.SORT_ORDER] ?: SortOrder.Date.name)
     }.distinctUntilChanged()
 
     suspend fun updateTheme(themeMode: ThemeMode) = context.dataStore.edit { preferences ->
         preferences[PreferencesKeys.APP_THEME] = themeMode.name
     }
 
-    suspend fun updateSortOrder(sortBy: SortBy) = context.dataStore.edit { preferences ->
-        preferences[PreferencesKeys.SORT_ORDER] = sortBy.name
+    suspend fun updateSortOrder(sortOrder: SortOrder) = context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.SORT_ORDER] = sortOrder.name
     }
 
 }

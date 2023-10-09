@@ -16,41 +16,42 @@ import javax.inject.Inject
 class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : TransRepository {
 
     override suspend fun insertOrUpdate(transEntity: TransEntity) = withContext(Dispatchers.IO) {
-        transDao.insertOrUpdate(transEntity)
+        transDao.insertOrUpdate(transEntity = transEntity)
     }
 
     override suspend fun delete(transEntity: TransEntity) = withContext(Dispatchers.IO) {
-        transDao.delete(transEntity)
+        transDao.delete(transEntity = transEntity)
     }
 
     override fun getAllTransById(transId: Int): Flow<ResultState<TransEntity?>> {
         return flowMap {
-            transDao.getAllTransById(transId).map { transaction ->
+            transDao.getAllTransById(transId = transId).map { transaction ->
                 ResultState.Success(transaction)
             }
         }
     }
 
     override fun getAllTransByPersonId(personId: Int): Flow<List<TransEntity>> {
-        return transDao.getAllTransByPersonId(personId)
+        return transDao.getAllTransByPersonId(personId = personId)
     }
 
     override fun getAllTransByPersonIdForPdf(personId: Int): Flow<List<TransEntity>> {
-        return transDao.getAllTransByPersonIdForPdf(personId)
+        return transDao.getAllTransByPersonIdForPdf(personId = personId)
     }
 
     override fun getAllTransByPersonIdWithSearch(
         personId: Int, searchQuery: String
     ): Flow<ResultState<List<TransEntity>>> {
         return flowMap {
-            transDao.getAllTransByPersonIdWithSearch(personId, searchQuery).map { transList ->
-                ResultState.Success(transList)
-            }
+            transDao.getAllTransByPersonIdWithSearch(personId = personId, searchQuery = searchQuery)
+                .map { transList ->
+                    ResultState.Success(transList)
+                }
         }
     }
 
     override fun getAccountBalanceByPerson(personId: Int): Flow<TransSumModel> {
-        return transDao.getAccountBalanceByPerson(personId)
+        return transDao.getAccountBalanceByPerson(personId = personId)
     }
 
     override fun getAllAccountsBalance(): Flow<TransSumModel> = transDao.getAllAccountsBalance()

@@ -84,7 +84,7 @@ class PersonViewModel @Inject constructor(
 
             is PersonEvent.OnSortBy -> {
                 viewModelScope.launch {
-                    preferencesManager.updateSortOrder(event.sortBy)
+                    preferencesManager.updateSortOrder(event.sortOrder)
                 }
             }
 
@@ -108,8 +108,8 @@ class PersonViewModel @Inject constructor(
     fun getAllPersonsData() {
         combine(_searchQuery, preferencesManager.getSortOrder()) { query, preferences ->
             Pair(first = query, second = preferences)
-        }.flatMapLatest { (search, sortBy) ->
-            personRepository.getAllPersonsByFilter(searchQuery = search, sortBy = sortBy)
+        }.flatMapLatest { (search, sortOrder) ->
+            personRepository.getAllPersonsByFilter(searchQuery = search, sortOrder = sortOrder)
         }.onEach { resultState ->
             _uiState.update { personState -> personState.copy(getAllPersonsList = resultState) }
         }.launchIn(scope = viewModelScope)
