@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import com.ahmer.accounts.R
-import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -27,29 +26,28 @@ import com.itextpdf.text.pdf.PdfWriter
 object PdfUtils {
 
     @JvmStatic
-    fun exportToPdf(context: Context, transList: ResultState<List<TransEntity>>): Intent? {
-        var mIntent: Intent? = null
-        if (transList is ResultState.Success) {
-            if (transList.data.isNotEmpty()) {
-                val mFileName = HelperUtils.getDateTime(
-                    time = System.currentTimeMillis(),
-                    pattern = Constants.DATE_TIME_FILE_NAME_PATTERN
-                ) + ".pdf"
-                mIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                    val mMimeType = "application/pdf"
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    putExtra(Intent.EXTRA_MIME_TYPES, arrayOf(mMimeType))
-                    putExtra(Intent.EXTRA_TITLE, mFileName)
-                    type = mMimeType
-                }
-            } else {
-                HelperUtils.showToast(
-                    context = context, msg = context.getString(R.string.toast_pdf_not_generated)
-                )
-                mIntent = null
+    fun exportToPdf(context: Context, transList: List<TransEntity>?): Intent? {
+        val mIntent: Intent?
+        if (transList != null) {
+            val mFileName = HelperUtils.getDateTime(
+                time = System.currentTimeMillis(),
+                pattern = Constants.DATE_TIME_FILE_NAME_PATTERN
+            ) + ".pdf"
+            mIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                val mMimeType = "application/pdf"
+                addCategory(Intent.CATEGORY_OPENABLE)
+                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                putExtra(Intent.EXTRA_MIME_TYPES, arrayOf(mMimeType))
+                putExtra(Intent.EXTRA_TITLE, mFileName)
+                type = mMimeType
             }
+        } else {
+            HelperUtils.showToast(
+                context = context, msg = context.getString(R.string.toast_pdf_not_generated)
+            )
+            mIntent = null
         }
+
         return mIntent
     }
 

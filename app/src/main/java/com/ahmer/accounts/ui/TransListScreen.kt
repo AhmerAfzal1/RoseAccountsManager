@@ -4,6 +4,14 @@ import android.app.Activity
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
@@ -20,18 +28,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.R
 import com.ahmer.accounts.drawer.TopAppBarSearchBox
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.AppBarState
-import com.ahmer.accounts.ui.components.TransList
+import com.ahmer.accounts.ui.components.TransItem
+import com.ahmer.accounts.ui.components.TransTotal
 import com.ahmer.accounts.utils.AddCircleIcon
 import com.ahmer.accounts.utils.BackIcon
+import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.MoreIcon
 import com.ahmer.accounts.utils.PdfIcon
@@ -43,6 +56,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TransListScreen(
     onNavigation: (UiEvent.Navigate) -> Unit,
@@ -146,10 +160,29 @@ fun TransListScreen(
         )
     }
 
-    TransList(
-        transListState = mState.getAllPersonsTransList,
-        transSumModel = mState.getPersonTransBalance,
-        onEvent = mViewModel::onEvent,
-        reloadData = mViewModel::getAllPersonsTransactions
-    )
+    Box(contentAlignment = Alignment.BottomCenter) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(start = 10.dp, end = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(space = 3.dp)
+        ) {
+            items(
+                items = mState.getAllPersonsTransList,
+                key = { listTrans -> listTrans.id }) { transaction ->
+                TransItem(
+                    transEntity = transaction,
+                    onEvent = mViewModel::onEvent,
+                    modifier = Modifier.animateItemPlacement(
+                        animationSpec = tween(
+                            durationMillis = Constants.ANIMATE_ITEM_DURATION
+                        )
+                    )
+                )
+            }
+        }
+
+        LazyColumn {
+            item { TransTotal(transSumModel = mState.getPersonTransBalance) }
+        }
+    }
 }

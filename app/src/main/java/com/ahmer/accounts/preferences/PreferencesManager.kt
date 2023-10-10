@@ -29,7 +29,7 @@ class PreferencesManager @Inject constructor(@ApplicationContext private val con
         if (e is IOException) {
             Log.e(Constants.LOG_TAG, "PreferenceException: ${e.localizedMessage}", e)
             FirebaseCrashlytics.getInstance().recordException(e)
-            emit(emptyPreferences())
+            emit(value = emptyPreferences())
         } else throw e
     }.map { preference ->
         ThemeMode.valueOf(value = preference[PreferencesKeys.APP_THEME] ?: ThemeMode.System.name)
@@ -39,7 +39,7 @@ class PreferencesManager @Inject constructor(@ApplicationContext private val con
         if (e is IOException) {
             Log.e(Constants.LOG_TAG, "PreferenceException: ${e.localizedMessage}", e)
             FirebaseCrashlytics.getInstance().recordException(e)
-            emit(emptyPreferences())
+            emit(value = emptyPreferences())
         } else throw e
     }.map { preference ->
         SortOrder.valueOf(value = preference[PreferencesKeys.SORT_ORDER] ?: SortOrder.Date.name)

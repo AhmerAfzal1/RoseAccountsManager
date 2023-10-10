@@ -8,7 +8,6 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.event.PersonAddEditEvent
@@ -36,21 +35,20 @@ class PersonAddEditViewModel @Inject constructor(
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
-    private val _uiState = MutableStateFlow(value = PersonAddEditState())
+    private val _uiState: MutableStateFlow<PersonAddEditState> =
+        MutableStateFlow(value = PersonAddEditState())
     val uiState: StateFlow<PersonAddEditState> = _uiState.asStateFlow()
 
     private var mPersonId: Int? = 0
     var titleBar by mutableStateOf(value = "Add Person Data")
 
-    var currentPerson: PersonsEntity?
+    private var currentPerson: PersonsEntity?
         get() {
-            return _uiState.value.getPersonDetails.let {
-                if (it is ResultState.Success) it.data else null
-            }
+            return _uiState.value.getPersonDetails
         }
         private set(value) {
             _uiState.update { personAddEditState ->
-                personAddEditState.copy(getPersonDetails = ResultState.Success(value))
+                personAddEditState.copy(getPersonDetails = value)
             }
         }
 
@@ -60,12 +58,10 @@ class PersonAddEditViewModel @Inject constructor(
             mPersonId = personId
             if (personId != -1) {
                 titleBar = "Edit Person Data"
-                personRepository.getPersonById(personId = personId).onEach { resultState ->
+                personRepository.getPersonById(personId = personId).onEach { personsEntity ->
                     _uiState.update { addEditState ->
-                        if (resultState is ResultState.Success) {
-                            currentPerson = resultState.data
-                        }
-                        addEditState.copy(getPersonDetails = resultState)
+                        currentPerson = personsEntity
+                        addEditState.copy(getPersonDetails = personsEntity)
                     }
                 }.launchIn(scope = viewModelScope)
             } else {
@@ -103,7 +99,7 @@ class PersonAddEditViewModel @Inject constructor(
                         var mPerson: PersonsEntity? by mutableStateOf(value = null)
                         var mMessage by mutableStateOf(value = "")
                         if (currentPerson!!.name.isEmpty()) {
-                            _eventFlow.emit(UiEvent.ShowToast("The name can't be empty"))
+                            _eventFlow.emit(value = UiEvent.ShowToast("The name can't be empty"))
                             return@launch
                         }
                         if (mPersonId == -1) {
@@ -130,12 +126,12 @@ class PersonAddEditViewModel @Inject constructor(
                             )
                             mMessage = "${mPerson?.name} updated successfully!"
                         }
-                        personRepository.insertOrUpdate(mPerson!!)
-                        _eventFlow.emit(UiEvent.SaveSuccess)
-                        _eventFlow.emit(UiEvent.ShowToast(mMessage))
+                        personRepository.insertOrUpdate(personsEntity = mPerson!!)
+                        _eventFlow.emit(value = UiEvent.SaveSuccess)
+                        _eventFlow.emit(value = UiEvent.ShowToast(message = mMessage))
                     } catch (e: Exception) {
                         _eventFlow.emit(
-                            UiEvent.ShowToast(
+                            value = UiEvent.ShowToast(
                                 message = e.localizedMessage ?: "Person couldn't be added"
                             )
                         )

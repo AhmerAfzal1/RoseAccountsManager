@@ -37,7 +37,7 @@ class PersonViewModel @Inject constructor(
     private val _searchQuery: MutableStateFlow<String> = MutableStateFlow(value = "")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val _uiState = MutableStateFlow(value = PersonState())
+    private val _uiState: MutableStateFlow<PersonState> = MutableStateFlow(value = PersonState())
     val uiState: StateFlow<PersonState> = _uiState.asStateFlow()
 
     private var mDeletedPerson: PersonsEntity? = null
@@ -47,7 +47,7 @@ class PersonViewModel @Inject constructor(
             is PersonEvent.OnAddTransactionClick -> {
                 viewModelScope.launch {
                     _eventFlow.emit(
-                        UiEvent.Navigate(
+                        value = UiEvent.Navigate(
                             route = ScreenRoutes.TransListScreen + "?transPersonId=${event.personsEntity.id}"
                         )
                     )
@@ -59,7 +59,7 @@ class PersonViewModel @Inject constructor(
                     mDeletedPerson = event.personsEntity
                     personRepository.delete(event.personsEntity)
                     _eventFlow.emit(
-                        UiEvent.ShowSnackBar(
+                        value = UiEvent.ShowSnackBar(
                             message = "${event.personsEntity.name} deleted", action = "Undo"
                         )
                     )
@@ -69,7 +69,7 @@ class PersonViewModel @Inject constructor(
             is PersonEvent.OnEditClick -> {
                 viewModelScope.launch {
                     _eventFlow.emit(
-                        UiEvent.Navigate(
+                        value = UiEvent.Navigate(
                             route = ScreenRoutes.PersonAddEditScreen + "?personId=${event.personsEntity.id}"
                         )
                     )
@@ -90,7 +90,7 @@ class PersonViewModel @Inject constructor(
 
             PersonEvent.OnNewAddClick -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.Navigate(ScreenRoutes.PersonAddEditScreen))
+                    _eventFlow.emit(value = UiEvent.Navigate(ScreenRoutes.PersonAddEditScreen))
                 }
             }
 

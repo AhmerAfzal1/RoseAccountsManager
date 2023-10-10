@@ -2,6 +2,13 @@ package com.ahmer.accounts.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
@@ -19,17 +26,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.R
 import com.ahmer.accounts.drawer.TopAppBarSearchBox
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.AppBarState
-import com.ahmer.accounts.ui.components.PersonsList
+import com.ahmer.accounts.ui.components.PersonItem
 import com.ahmer.accounts.utils.AddIcon
+import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.SearchIcon
 import com.ahmer.accounts.utils.SortByDateIcon
@@ -42,6 +53,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
+@OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun PersonsListScreen(
@@ -136,9 +148,20 @@ fun PersonsListScreen(
         )
     }
 
-    PersonsList(
-        personsListState = mState.getAllPersonsList,
-        onEvent = mViewModel::onEvent,
-        reloadData = mViewModel::getAllPersonsData
-    )
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(all = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(space = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        items(
+            items = mState.getAllPersonsList,
+            key = { persons -> persons.id }) { person ->
+            PersonItem(
+                personsEntity = person,
+                onEvent = mViewModel::onEvent,
+                modifier = Modifier.animateItemPlacement(tween(durationMillis = Constants.ANIMATE_ITEM_DURATION))
+            )
+        }
+    }
 }

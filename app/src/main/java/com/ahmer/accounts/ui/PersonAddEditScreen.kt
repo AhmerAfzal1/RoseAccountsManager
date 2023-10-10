@@ -1,7 +1,7 @@
 package com.ahmer.accounts.ui
 
 import android.content.Context
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ahmer.accounts.core.AsyncData
 import com.ahmer.accounts.event.PersonAddEditEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.AppBarState
@@ -68,9 +67,9 @@ fun PersonAddEditScreen(
         )
     }
 
-    Box {
-        AsyncData(resultState = mState.getPersonDetails) {
-            mViewModel.currentPerson?.let { personEntity ->
+    LazyColumn {
+        item {
+            mState.getPersonDetails?.let { personEntity ->
                 PersonAddEditTextFields(
                     modifier = modifier, personsEntity = personEntity, onEvent = mViewModel::onEvent
                 )

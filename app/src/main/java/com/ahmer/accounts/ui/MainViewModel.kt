@@ -62,7 +62,7 @@ class MainViewModel @Inject constructor(
         mJob.invokeOnCompletion {
             viewModelScope.launch {
                 _eventFlow.emit(
-                    UiEvent.ShowToast(
+                    value = UiEvent.ShowToast(
                         context.getString(
                             R.string.toast_msg_db_backup,
                             uri?.let {
@@ -99,14 +99,14 @@ class MainViewModel @Inject constructor(
         mJob.invokeOnCompletion {
             viewModelScope.launch {
                 _eventFlow.emit(
-                    UiEvent.ShowToast(
+                    value = UiEvent.ShowToast(
                         context.getString(R.string.toast_msg_db_restored, uri?.let {
                             HelperUtils.getFileNameFromDatabase(context = context, uri = it)
                         })
                     )
                 )
                 delay(duration = 1.seconds)
-                _eventFlow.emit(UiEvent.RelaunchApp)
+                _eventFlow.emit(value = UiEvent.RelaunchApp)
             }
         }
     }

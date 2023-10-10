@@ -1,7 +1,7 @@
 package com.ahmer.accounts.ui
 
 import android.content.Context
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ahmer.accounts.core.AsyncData
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.AppBarState
 import com.ahmer.accounts.ui.components.TransAddEditTextFields
@@ -58,11 +57,11 @@ fun TransAddEditScreen(onPopBackStack: () -> Unit, appBarState: (AppBarState) ->
         )
     }
 
-    Box {
-        AsyncData(resultState = mState.getTransDetails) {
-            mViewModel.currentTransaction?.let { transaction ->
+    LazyColumn {
+        item {
+            mState.getTransDetails?.let { transEntity ->
                 TransAddEditTextFields(
-                    transEntity = transaction,
+                    transEntity = transEntity,
                     onEvent = mViewModel::onEvent,
                     titleButton = mViewModel.titleButton
                 )

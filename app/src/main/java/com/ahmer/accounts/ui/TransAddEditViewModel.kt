@@ -8,7 +8,6 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.repository.TransRepository
 import com.ahmer.accounts.event.TransAddEditEvent
@@ -17,7 +16,6 @@ import com.ahmer.accounts.state.TransAddEditState
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -41,22 +39,19 @@ class TransAddEditViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(value = TransAddEditState())
     val uiState: StateFlow<TransAddEditState> = _uiState.asStateFlow()
 
-    private var mLoadTransJob: Job? = null
     private var mPersonId: Int? = 0
     private var mTransId: Int? = 0
 
     var titleBar by mutableStateOf(value = "Add Transaction")
     var titleButton by mutableStateOf(value = "Save")
 
-    var currentTransaction: TransEntity?
+    private var currentTransaction: TransEntity?
         get() {
-            return _uiState.value.getTransDetails.let {
-                if (it is ResultState.Success) it.data else null
-            }
+            return _uiState.value.getTransDetails
         }
         private set(value) {
             _uiState.update { transAddEditState ->
-                transAddEditState.copy(getTransDetails = ResultState.Success(value))
+                transAddEditState.copy(getTransDetails = value)
             }
         }
 
@@ -71,13 +66,10 @@ class TransAddEditViewModel @Inject constructor(
             if (transId != -1) {
                 titleBar = "Edit Transaction"
                 titleButton = "Update"
-                mLoadTransJob?.cancel()
-                mLoadTransJob = transRepository.getAllTransById(transId).onEach { resultState ->
+                transRepository.getAllTransById(transId).onEach { transEntity ->
                     _uiState.update { addEditState ->
-                        if (resultState is ResultState.Success) {
-                            currentTransaction = resultState.data
-                        }
-                        addEditState.copy(getTransDetails = resultState)
+                        currentTransaction = transEntity
+                        addEditState.copy(getTransDetails = transEntity)
                     }
                 }.launchIn(scope = viewModelScope)
             } else {
@@ -108,9 +100,7 @@ class TransAddEditViewModel @Inject constructor(
                 currentTransaction = currentTransaction?.copy(type = event.type)
             }
 
-            TransAddEditEvent.OnSaveClick -> {
-                save()
-            }
+            TransAddEditEvent.OnSaveClick -> save()
         }
     }
 
@@ -119,11 +109,11 @@ class TransAddEditViewModel @Inject constructor(
             try {
                 var mTransaction: TransEntity? by mutableStateOf(value = TransEntity())
                 if (currentTransaction!!.type.isEmpty()) {
-                    _eventFlow.emit(UiEvent.ShowToast("Please select credit or debit type"))
+                    _eventFlow.emit(value = UiEvent.ShowToast("Please select credit or debit type"))
                     return@launch
                 }
                 if (currentTransaction!!.amount.isEmpty()) {
-                    _eventFlow.emit(UiEvent.ShowToast("Amount cannot be empty"))
+                    _eventFlow.emit(value = UiEvent.ShowToast("Amount cannot be empty"))
                     return@launch
                 }
 
@@ -148,11 +138,13 @@ class TransAddEditViewModel @Inject constructor(
                         amount = currentTransaction!!.amount
                     )
                 }
-                transRepository.insertOrUpdate(mTransaction!!)
-                _eventFlow.emit(UiEvent.SaveSuccess)
+                transRepository.insertOrUpdate(transEntity = mTransaction!!)
+                _eventFlow.emit(value = UiEvent.SaveSuccess)
             } catch (e: Exception) {
                 _eventFlow.emit(
-                    UiEvent.ShowToast(e.localizedMessage ?: "Transaction couldn't be added")
+                    value = UiEvent.ShowToast(
+                        message = e.localizedMessage ?: "Transaction couldn't be added"
+                    )
                 )
             }
         }

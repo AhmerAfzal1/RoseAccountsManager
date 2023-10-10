@@ -10,7 +10,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.R
-import com.ahmer.accounts.core.ResultState
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
@@ -54,7 +53,7 @@ class TransViewModel @Inject constructor(
     private val _searchQuery: MutableStateFlow<String> = MutableStateFlow(value = "")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val _uiState = MutableStateFlow(value = TransState())
+    private val _uiState: MutableStateFlow<TransState> = MutableStateFlow(value = TransState())
     val uiState: StateFlow<TransState> = _uiState.asStateFlow()
 
     private var getPersonsEntity: PersonsEntity = PersonsEntity()
@@ -69,7 +68,7 @@ class TransViewModel @Inject constructor(
                     mDeletedTrans = event.transEntity
                     transRepository.delete(event.transEntity)
                     _eventFlow.emit(
-                        UiEvent.ShowSnackBar(
+                        value = UiEvent.ShowSnackBar(
                             message = "Transaction id ${event.transEntity.id} deleted",
                             action = "Undo"
                         )
@@ -80,7 +79,7 @@ class TransViewModel @Inject constructor(
             is TransEvent.OnEditClick -> {
                 viewModelScope.launch {
                     _eventFlow.emit(
-                        UiEvent.Navigate(
+                        value = UiEvent.Navigate(
                             route = ScreenRoutes.TransAddEditScreen + "?transId=${event.transEntity.id}/transPersonId=-1"
                         )
                     )
@@ -96,7 +95,7 @@ class TransViewModel @Inject constructor(
             TransEvent.OnAddClick -> {
                 viewModelScope.launch {
                     _eventFlow.emit(
-                        UiEvent.Navigate(
+                        value = UiEvent.Navigate(
                             route = ScreenRoutes.TransAddEditScreen + "?transId=-1/transPersonId=${mPersonId.value}"
                         )
                     )
@@ -114,7 +113,7 @@ class TransViewModel @Inject constructor(
     }
 
     fun generatePdf(context: Context, uri: Uri) {
-        transRepository.getAllTransByPersonIdForPdf(getPersonsEntity.id)
+        transRepository.getAllTransByPersonIdForPdf(personId = getPersonsEntity.id)
             .filterNotNull()
             .onEach { transEntityList ->
                 var isSuccessfully = false
@@ -132,7 +131,7 @@ class TransViewModel @Inject constructor(
                     viewModelScope.launch {
                         if (isSuccessfully) {
                             val mMsg = context.getString(R.string.toast_pdf_generated)
-                            _eventFlow.emit(UiEvent.ShowToast(mMsg))
+                            _eventFlow.emit(value = UiEvent.ShowToast(mMsg))
                         }
                     }
                 }
@@ -148,19 +147,19 @@ class TransViewModel @Inject constructor(
     }
 
     private fun getPersonByIdData() {
-        personRepository.getPersonById(mPersonId.value).onEach { resultState ->
-            if (resultState is ResultState.Success) {
-                getPersonsEntity = resultState.data!!
-            }
+        personRepository.getPersonById(personId = mPersonId.value).onEach { personsEntity ->
+            getPersonsEntity = personsEntity!!
         }.launchIn(scope = viewModelScope)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getAllPersonsTransactions() {
         _searchQuery.flatMapLatest { search ->
-            transRepository.getAllTransByPersonIdWithSearch(mPersonId.value, search)
-        }.onEach { resultState ->
-            _uiState.update { transState -> transState.copy(getAllPersonsTransList = resultState) }
+            transRepository.getAllTransByPersonIdWithSearch(
+                personId = mPersonId.value, searchQuery = search
+            )
+        }.onEach { transEntityList ->
+            _uiState.update { transState -> transState.copy(getAllPersonsTransList = transEntityList) }
         }.launchIn(scope = viewModelScope)
     }
 
