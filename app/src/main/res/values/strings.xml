@@ -99,4 +99,6 @@
     <string name="toast_pdf_generated">PDF file generated successfully.</string>
     <string name="toast_pdf_not_generated">There is no transaction to create a PDF file.</string>
     <string name="label_choose_theme">Choose Theme</string>
+    <string name="label_error">Error</string>
+    <string name="label_empty">Empty</string>
 </resources>
