@@ -158,8 +158,8 @@ class DbCallback(
             ),
         )
         mScope.launch(Dispatchers.IO) {
-            mPersonsEntityLists.forEach { personDao.get().insertOrUpdate(it) }
-            mTransEntityLists.forEach { transDao.get().insertOrUpdate(it) }
+            mPersonsEntityLists.forEach { personDao.get().insertOrUpdate(personsEntity = it) }
+            mTransEntityLists.forEach { transDao.get().insertOrUpdate(transEntity = it) }
         }
     }
 }

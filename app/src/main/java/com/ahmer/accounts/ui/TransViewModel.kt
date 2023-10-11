@@ -105,7 +105,7 @@ class TransViewModel @Inject constructor(
             TransEvent.OnUndoDeleteClick -> {
                 mDeletedTrans?.let { transaction ->
                     viewModelScope.launch {
-                        transRepository.insertOrUpdate(transaction)
+                        transRepository.insertOrUpdate(transEntity = transaction)
                     }
                 }
             }

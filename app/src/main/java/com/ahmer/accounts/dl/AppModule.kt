@@ -1,6 +1,10 @@
 package com.ahmer.accounts.dl
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ahmer.accounts.database.AppDatabase
@@ -11,7 +15,6 @@ import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.database.repository.PersonRepositoryImp
 import com.ahmer.accounts.database.repository.TransRepository
 import com.ahmer.accounts.database.repository.TransRepositoryImp
-import com.ahmer.accounts.preferences.PreferencesManager
 import com.ahmer.accounts.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -38,8 +41,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesDataStore(@ApplicationContext context: Context): PreferencesManager =
-        PreferencesManager(context = context)
+    fun providesDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile(name = Constants.DATA_STORE_NAME)
+        }
 
     @Provides
     @Singleton

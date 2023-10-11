@@ -8,8 +8,8 @@ import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.navigation.ScreenRoutes
-import com.ahmer.accounts.preferences.PreferencesManager
 import com.ahmer.accounts.state.PersonState
+import com.ahmer.accounts.utils.DataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,7 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PersonViewModel @Inject constructor(
     private val personRepository: PersonRepository,
-    private val preferencesManager: PreferencesManager,
+    private val dataStore: DataStore,
 ) : ViewModel(), LifecycleObserver {
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
@@ -84,7 +84,7 @@ class PersonViewModel @Inject constructor(
 
             is PersonEvent.OnSortBy -> {
                 viewModelScope.launch {
-                    preferencesManager.updateSortOrder(event.sortOrder)
+                    dataStore.updateSortOrder(event.sortOrder)
                 }
             }
 
@@ -97,7 +97,7 @@ class PersonViewModel @Inject constructor(
             PersonEvent.OnUndoDeleteClick -> {
                 mDeletedPerson?.let { person ->
                     viewModelScope.launch {
-                        personRepository.insertOrUpdate(person)
+                        personRepository.insertOrUpdate(personsEntity = person)
                     }
                 }
             }
@@ -106,8 +106,8 @@ class PersonViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getAllPersonsData() {
-        combine(_searchQuery, preferencesManager.getSortOrder()) { query, preferences ->
-            Pair(first = query, second = preferences)
+        combine(_searchQuery, dataStore.getSortOrder) { query, dataStore ->
+            Pair(first = query, second = dataStore)
         }.flatMapLatest { (search, sortOrder) ->
             personRepository.getAllPersonsByFilter(searchQuery = search, sortOrder = sortOrder)
         }.onEach { resultState ->
