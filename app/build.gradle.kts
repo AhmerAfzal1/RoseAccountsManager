@@ -68,13 +68,13 @@ dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
 
     //Jetpack Compose BOM
-    implementation(platform("androidx.compose:compose-bom:2023.10.00"))
+    implementation(platform("androidx.compose:compose-bom:2023.10.01"))
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
 
     //Firebase BOM
-    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+    implementation(platform("com.google.firebase:firebase-bom:32.4.1"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
@@ -101,9 +101,9 @@ dependencies {
     ksp("com.google.dagger:hilt-compiler:2.48.1")
 
     //Room Database
-    implementation("androidx.room:room-ktx:2.6.0-rc01")
-    implementation("androidx.room:room-runtime:2.6.0-rc01")
-    ksp("androidx.room:room-compiler:2.6.0-rc01")
+    implementation("androidx.room:room-ktx:2.6.0")
+    implementation("androidx.room:room-runtime:2.6.0")
+    ksp("androidx.room:room-compiler:2.6.0")
 
     //Data Store Preferences
     implementation("androidx.datastore:datastore:1.0.0")
