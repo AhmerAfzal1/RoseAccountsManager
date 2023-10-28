@@ -1,22 +1,33 @@
 package com.ahmer.accounts.ui
 
 import android.content.Context
+import android.content.Intent
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,70 +45,156 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
 import com.ahmer.accounts.dialogs.ThemeDialog
-import com.ahmer.accounts.state.AppBarState
+import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.utils.AppVersion
+import com.ahmer.accounts.utils.BackIcon
+import com.ahmer.accounts.utils.BackupIcon
 import com.ahmer.accounts.utils.ClearCachesIcon
+import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
+import com.ahmer.accounts.utils.RestoreIcon
 import com.ahmer.accounts.utils.ThemeIcon
 import com.ahmer.accounts.utils.ThemeMode
 import com.ahmer.accounts.utils.VersionIcon
+import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(appBarState: (AppBarState) -> Unit) {
+fun SettingsScreen(onPopBackStack: () -> Unit) {
     val mContext: Context = LocalContext.current.applicationContext
     val mAppVersion: AppVersion = HelperUtils.getAppInfo(context = mContext)
     val mViewModel: SettingsViewModel = hiltViewModel()
     val mCurrentTheme by mViewModel.currentTheme.collectAsStateWithLifecycle()
+    val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     var mShowThemeDialog: Boolean by remember { mutableStateOf(value = false) }
-    val mSummary: String = ThemeMode.getThemeModesTitle(mCurrentTheme)
+    val mSummary: String = ThemeMode.getThemeModesTitle(themeMode = mCurrentTheme)
 
     LaunchedEffect(key1 = true) {
-        appBarState(
-            AppBarState(searchActions = {
-                Text(
-                    text = stringResource(id = R.string.label_settings),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+        mViewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvent.RelaunchApp -> HelperUtils.relaunchApp(context = mContext)
+                is UiEvent.ShowToast -> HelperUtils.showToast(
+                    context = mContext, msg = event.message
                 )
-            },
-                actions = {},
-                floatingAction = {},
-                isMenuNavigationIcon = true,
-                isSnackBarRequired = false,
-                newSnackBarHost = {})
-        )
+
+                else -> Unit
+            }
+        }
     }
 
     if (mShowThemeDialog) {
         ThemeDialog(viewModel = mViewModel)
     }
 
-    Column(
-        verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        PreferenceCategory(title = stringResource(id = R.string.label_pref_category_theme)) {
-            TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_theme)) },
-                summary = { Text(text = mSummary) },
-                icon = { ThemeIcon() },
-                onClick = { mShowThemeDialog = !mShowThemeDialog })
+    val mBackupDatabaseLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == ComponentActivity.RESULT_OK) {
+            val mUri = result.data?.data ?: return@rememberLauncherForActivityResult
+            mViewModel.backupDatabase(context = mContext, uri = mUri)
         }
+    }
 
-        PreferenceCategory(title = stringResource(id = R.string.label_pref_category_general)) {
-            TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_clear_caches)) },
-                summary = {
+    val mRestoreDatabaseBackupLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == ComponentActivity.RESULT_OK) {
+            val mUri = result.data?.data ?: return@rememberLauncherForActivityResult
+            mViewModel.restoreDatabase(context = mContext, uri = mUri)
+        }
+    }
+
+    fun backup() {
+        val mFileName = "backup_${
+            HelperUtils.getDateTime(
+                time = System.currentTimeMillis(),
+                pattern = Constants.DATE_TIME_FILE_NAME_PATTERN
+            )
+        }.db"
+        val mBackupIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            val mMimeType = "application/octet-stream"
+            addCategory(Intent.CATEGORY_OPENABLE)
+            flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf(mMimeType))
+            putExtra(Intent.EXTRA_TITLE, mFileName)
+            type = mMimeType
+        }
+        mBackupDatabaseLauncher.launch(mBackupIntent)
+    }
+
+    fun restore() {
+        val mRestoreIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            type = "*/*"
+            Intent.createChooser(this, mContext.getString(R.string.label_intent_chooser))
+        }
+        mRestoreDatabaseBackupLauncher.launch(mRestoreIntent)
+    }
+
+    Scaffold(
+        modifier = Modifier,
+        topBar = {
+            TopAppBar(
+                title = {
                     Text(
-                        text = stringResource(
-                            R.string.label_pref_text_summery_caches,
-                            HelperUtils.getCacheSize(mContext)
-                        )
+                        text = stringResource(id = R.string.label_settings),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
-                },
-                icon = { ClearCachesIcon() },
-                onClick = {})
-            TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_app_version)) },
-                summary = { Text(text = "${mAppVersion.versionName} (${mAppVersion.versionCode})") },
-                icon = { VersionIcon() },
-                onClick = {})
+                }, navigationIcon = { IconButton(onClick = { onPopBackStack() }) { BackIcon() } },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                scrollBehavior = mScrollBehavior
+            )
+        },
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = innerPadding,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item {
+                PreferenceCategory(title = stringResource(id = R.string.label_pref_category_theme)) {
+                    TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_theme)) },
+                        summary = { Text(text = mSummary) },
+                        icon = { ThemeIcon() },
+                        onClick = { mShowThemeDialog = !mShowThemeDialog })
+                }
+
+                PreferenceCategory(title = stringResource(id = R.string.label_pref_category_backup_restore)) {
+                    TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_backup)) },
+                        summary = { Text(text = "Backup your data manually") },
+                        icon = { BackupIcon() },
+                        onClick = { backup() })
+                    TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_restore)) },
+                        summary = { Text(text = "Restore the backup") },
+                        icon = { RestoreIcon() },
+                        onClick = { restore() })
+                }
+
+                PreferenceCategory(title = stringResource(id = R.string.label_pref_category_general)) {
+                    TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_clear_caches)) },
+                        summary = {
+                            Text(
+                                text = stringResource(
+                                    R.string.label_pref_text_summery_caches,
+                                    HelperUtils.getCacheSize(context = mContext)
+                                )
+                            )
+                        },
+                        icon = { ClearCachesIcon() },
+                        onClick = {})
+                    TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_app_version)) },
+                        summary = { Text(text = "${mAppVersion.versionName} (${mAppVersion.versionCode})") },
+                        icon = { VersionIcon() },
+                        onClick = {})
+                }
+            }
         }
     }
 }

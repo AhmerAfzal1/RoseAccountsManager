@@ -82,6 +82,12 @@ class PersonViewModel @Inject constructor(
                 }
             }
 
+            is PersonEvent.OnSettingsClick -> {
+                viewModelScope.launch {
+                    _eventFlow.emit(value = UiEvent.Navigate(route = ScreenRoutes.SettingsScreen))
+                }
+            }
+
             is PersonEvent.OnSortBy -> {
                 viewModelScope.launch {
                     dataStore.updateSortOrder(event.sortOrder)

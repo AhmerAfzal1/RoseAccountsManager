@@ -7,17 +7,24 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,12 +44,12 @@ import com.ahmer.accounts.R
 import com.ahmer.accounts.drawer.TopAppBarSearchBox
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
-import com.ahmer.accounts.state.AppBarState
 import com.ahmer.accounts.ui.components.PersonItem
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.SearchIcon
+import com.ahmer.accounts.utils.SettingsIcon
 import com.ahmer.accounts.utils.SortByDateIcon
 import com.ahmer.accounts.utils.SortByNameIcon
 import com.ahmer.accounts.utils.SortIcon
@@ -53,17 +60,15 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PersonsListScreen(
-    appBarState: (AppBarState) -> Unit,
-    onNavigation: (UiEvent.Navigate) -> Unit
-) {
+fun PersonsListScreen(onNavigation: (UiEvent.Navigate) -> Unit) {
     val mContext: Context = LocalContext.current.applicationContext
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mViewModel: PersonViewModel = hiltViewModel()
+    val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mState by mViewModel.uiState.collectAsState()
     var mShowDropdownMenu by remember { mutableStateOf(value = false) }
     var mShowSearch by remember { mutableStateOf(value = false) }
@@ -94,10 +99,11 @@ fun PersonsListScreen(
         }
     }
 
-    LaunchedEffect(key1 = true) {
-        appBarState(
-            AppBarState(
-                searchActions = {
+    Scaffold(
+        modifier = Modifier,
+        topBar = {
+            TopAppBar(
+                title = {
                     if (mShowSearch) {
                         TopAppBarSearchBox(text = mTextSearch, onTextChange = { text ->
                             mViewModel.onEvent(PersonEvent.OnSearchTextChange(text))
@@ -135,33 +141,47 @@ fun PersonsListScreen(
                                 mShowDropdownMenu = false
                             },
                             leadingIcon = { SortByDateIcon() })
+                        DropdownMenuItem(text = { Text(text = stringResource(id = R.string.label_settings)) },
+                            onClick = {
+                                mViewModel.onEvent(PersonEvent.OnSettingsClick)
+                                mShowDropdownMenu = false
+                            },
+                            leadingIcon = { SettingsIcon() })
                     }
                 },
-                floatingAction = {
-                    FloatingActionButton(onClick = { mViewModel.onEvent(PersonEvent.OnNewAddClick) }
-                    ) { AddIcon() }
-                },
-                isMenuNavigationIcon = true,
-                isSnackBarRequired = true,
-                newSnackBarHost = { SnackbarHost(hostState = mSnackBarHostState) }
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                scrollBehavior = mScrollBehavior
             )
-        )
-    }
-
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(all = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(space = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        items(
-            items = mState.getAllPersonsList,
-            key = { persons -> persons.id }) { person ->
-            PersonItem(
-                personsEntity = person,
-                onEvent = mViewModel::onEvent,
-                modifier = Modifier.animateItemPlacement(tween(durationMillis = Constants.ANIMATE_ITEM_DURATION))
-            )
+        },
+        snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
+        floatingActionButton = {
+            FloatingActionButton(onClick = { mViewModel.onEvent(PersonEvent.OnNewAddClick) }) {
+                AddIcon()
+            }
+        },
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues = innerPadding),
+            contentPadding = PaddingValues(all = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(space = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            items(
+                items = mState.getAllPersonsList,
+                key = { persons -> persons.id }) { person ->
+                PersonItem(
+                    personsEntity = person,
+                    onEvent = mViewModel::onEvent,
+                    modifier = Modifier.animateItemPlacement(tween(durationMillis = Constants.ANIMATE_ITEM_DURATION))
+                )
+            }
         }
     }
 }

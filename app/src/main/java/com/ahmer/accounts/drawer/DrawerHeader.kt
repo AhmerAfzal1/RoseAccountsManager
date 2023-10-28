@@ -122,8 +122,8 @@ private fun Content(
                 end = contentPadding
             )
             .size(width = 200.dp, height = 85.dp),
-        shape = RoundedCornerShape(size = 10.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+        shape = RoundedCornerShape(size = 5.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondaryContainer)
     ) {
         Column(
