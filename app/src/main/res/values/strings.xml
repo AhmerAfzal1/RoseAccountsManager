@@ -104,4 +104,14 @@
     <string name="label_choose_theme">Choose Theme</string>
     <string name="label_error">Error</string>
     <string name="label_empty">Empty</string>
+    <string name="label_report">Reports</string>
+    <string name="content_description_report">Reports icon</string>
+    <string name="label_accounts">Accounts</string>
+    <string name="content_description_accounts">Accounts icon</string>
+    <string name="label_person_add_edit">Persons Add Edit</string>
+    <string name="content_description_person_add_edit">Persons add edit icon</string>
+    <string name="label_trans">Transactions</string>
+    <string name="content_description_trans">Transactions icon</string>
+    <string name="label_trans_add_edit">Transactions Add Edit</string>
+    <string name="content_description_trans_add_edit">Transactions add edit icon</string>
 </resources>

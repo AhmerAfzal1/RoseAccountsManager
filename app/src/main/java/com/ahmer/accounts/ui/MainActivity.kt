@@ -6,13 +6,22 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.ahmer.accounts.navigation.NavItems
 import com.ahmer.accounts.navigation.MainNavigation
+import com.ahmer.accounts.navigation.BottomNav
 import com.ahmer.accounts.ui.theme.RoseAccountsManagerTheme
 import com.ahmer.accounts.utils.ThemeMode
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +49,23 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
-                    MainNavigation()
+                    val navController = rememberNavController()
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentRoute = navBackStackEntry?.destination?.route
+                    val bottomBarState = rememberSaveable { (mutableStateOf(value = false)) }
+                    Scaffold(modifier = Modifier.navigationBarsPadding(), bottomBar = {
+                        bottomBarState.value = currentRoute != NavItems.PersonAddEdit.fullRoute
+                                && currentRoute != NavItems.Transactions.fullRoute
+                                && currentRoute != NavItems.TransactionsAddEdit.fullRoute
+                        BottomNav(
+                            navController = navController, bottomBarState = bottomBarState.value
+                        )
+                    }) { contentPadding ->
+                        MainNavigation(
+                            modifier = Modifier.padding(contentPadding),
+                            navController = navController
+                        )
+                    }
                 }
             }
         }

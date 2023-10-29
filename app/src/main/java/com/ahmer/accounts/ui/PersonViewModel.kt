@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.repository.PersonRepository
+import com.ahmer.accounts.navigation.NavItems
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
-import com.ahmer.accounts.navigation.ScreenRoutes
 import com.ahmer.accounts.state.PersonState
 import com.ahmer.accounts.utils.DataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,7 +48,7 @@ class PersonViewModel @Inject constructor(
                 viewModelScope.launch {
                     _eventFlow.emit(
                         value = UiEvent.Navigate(
-                            route = ScreenRoutes.TransListScreen + "?transPersonId=${event.personsEntity.id}"
+                            route = NavItems.Transactions.route + "?transPersonId=${event.personsEntity.id}"
                         )
                     )
                 }
@@ -70,7 +70,7 @@ class PersonViewModel @Inject constructor(
                 viewModelScope.launch {
                     _eventFlow.emit(
                         value = UiEvent.Navigate(
-                            route = ScreenRoutes.PersonAddEditScreen + "?personId=${event.personsEntity.id}"
+                            route = NavItems.PersonAddEdit.route + "?personId=${event.personsEntity.id}"
                         )
                     )
                 }
@@ -84,7 +84,7 @@ class PersonViewModel @Inject constructor(
 
             is PersonEvent.OnSettingsClick -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(value = UiEvent.Navigate(route = ScreenRoutes.SettingsScreen))
+                    _eventFlow.emit(value = UiEvent.Navigate(route = NavItems.Settings.route))
                 }
             }
 
@@ -96,7 +96,7 @@ class PersonViewModel @Inject constructor(
 
             PersonEvent.OnNewAddClick -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(value = UiEvent.Navigate(ScreenRoutes.PersonAddEditScreen))
+                    _eventFlow.emit(value = UiEvent.Navigate(NavItems.PersonAddEdit.route))
                 }
             }
 

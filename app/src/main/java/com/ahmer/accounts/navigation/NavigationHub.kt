@@ -1,12 +1,15 @@
 package com.ahmer.accounts.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ahmer.accounts.ui.PersonAddEditScreen
 import com.ahmer.accounts.ui.PersonsListScreen
@@ -15,65 +18,64 @@ import com.ahmer.accounts.ui.TransAddEditScreen
 import com.ahmer.accounts.ui.TransListScreen
 
 @Composable
-fun MainNavigation(
-    modifier: Modifier = Modifier
-) {
-    val navHostController: NavHostController = rememberNavController()
-    NavHost(navController = navHostController,
-        startDestination = ScreenRoutes.PersonListScreen,
-        modifier = modifier,
-        builder = {
-            composable(route = ScreenRoutes.PersonListScreen) {
-                PersonsListScreen(onNavigation = {
-                    navHostController.navigate(route = it.route) {
-                        when (it.route) {
-                            ScreenRoutes.PersonListScreen -> {
-                                popUpTo(ScreenRoutes.PersonListScreen)
-                            }
-
-                            ScreenRoutes.SettingsScreen -> {
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
-                    }
-                })
-            }
-            composable(
-                route = ScreenRoutes.PersonAddEditScreen + "?personId={personId}",
-                arguments = listOf(navArgument(name = "personId") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                })
-            ) {
-                PersonAddEditScreen(onPopBackStack = { navHostController.popBackStack() })
-            }
-            composable(route = ScreenRoutes.SettingsScreen) {
-                SettingsScreen(onPopBackStack = { navHostController.popBackStack() })
-            }
-            composable(
-                route = ScreenRoutes.TransListScreen + "?transPersonId={transPersonId}",
-                arguments = listOf(navArgument(name = "transPersonId") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                })
-            ) {
-                TransListScreen(
-                    onNavigation = { navHostController.navigate(it.route) },
-                    onPopBackStack = { navHostController.popBackStack() },
-                )
-            }
-            composable(
-                route = ScreenRoutes.TransAddEditScreen + "?transId={transId}/transPersonId={transPersonId}",
-                arguments = listOf(navArgument(name = "transId") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                }, navArgument(name = "transPersonId") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                })
-            ) {
-                TransAddEditScreen(onPopBackStack = { navHostController.popBackStack() })
-            }
-        })
+fun MainNavigation(modifier: Modifier = Modifier, navController: NavHostController) {
+    NavHost(
+        navController = navController,
+        startDestination = NavItems.Accounts.fullRoute,
+        modifier = modifier
+    ) {
+        composable(
+            route = NavItems.Accounts.fullRoute,
+            enterTransition = { fadeIn() },
+            exitTransition = { fadeOut() },
+        ) {
+            PersonsListScreen(onNavigation = { navController.navigate(it.route) })
+        }
+        composable(
+            route = NavItems.Settings.route,
+            enterTransition = { fadeIn() },
+            exitTransition = { fadeOut() },
+        ) {
+            SettingsScreen()
+        }
+        composable(
+            route = NavItems.PersonAddEdit.fullRoute,
+            arguments = listOf(navArgument(name = "personId") {
+                type = NavType.IntType
+                defaultValue = -1
+            }),
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+        ) {
+            PersonAddEditScreen(onPopBackStack = { navController.popBackStack() })
+        }
+        composable(
+            route = NavItems.Transactions.fullRoute,
+            arguments = listOf(navArgument(name = "transPersonId") {
+                type = NavType.IntType
+                defaultValue = -1
+            }),
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+        ) {
+            TransListScreen(
+                onNavigation = { navController.navigate(it.route) },
+                onPopBackStack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = NavItems.TransactionsAddEdit.fullRoute,
+            arguments = listOf(navArgument(name = "transId") {
+                type = NavType.IntType
+                defaultValue = -1
+            }, navArgument(name = "transPersonId") {
+                type = NavType.IntType
+                defaultValue = -1
+            }),
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+        ) {
+            TransAddEditScreen(onPopBackStack = { navController.popBackStack() })
+        }
+    }
 }

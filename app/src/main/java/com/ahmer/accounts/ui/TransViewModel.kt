@@ -15,9 +15,9 @@ import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.database.repository.TransRepository
+import com.ahmer.accounts.navigation.NavItems
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UiEvent
-import com.ahmer.accounts.navigation.ScreenRoutes
 import com.ahmer.accounts.state.TransState
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.PdfUtils
@@ -80,7 +80,7 @@ class TransViewModel @Inject constructor(
                 viewModelScope.launch {
                     _eventFlow.emit(
                         value = UiEvent.Navigate(
-                            route = ScreenRoutes.TransAddEditScreen + "?transId=${event.transEntity.id}/transPersonId=-1"
+                            route = NavItems.TransactionsAddEdit.route + "?transId=${event.transEntity.id}/transPersonId=-1"
                         )
                     )
                 }
@@ -96,7 +96,7 @@ class TransViewModel @Inject constructor(
                 viewModelScope.launch {
                     _eventFlow.emit(
                         value = UiEvent.Navigate(
-                            route = ScreenRoutes.TransAddEditScreen + "?transId=-1/transPersonId=${mPersonId.value}"
+                            route = NavItems.TransactionsAddEdit.route + "?transId=-1/transPersonId=${mPersonId.value}"
                         )
                     )
                 }
