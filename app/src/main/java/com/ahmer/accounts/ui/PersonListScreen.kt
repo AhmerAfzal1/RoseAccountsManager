@@ -49,7 +49,6 @@ import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.SearchIcon
-import com.ahmer.accounts.utils.SettingsIcon
 import com.ahmer.accounts.utils.SortByDateIcon
 import com.ahmer.accounts.utils.SortByNameIcon
 import com.ahmer.accounts.utils.SortIcon
@@ -141,12 +140,6 @@ fun PersonsListScreen(onNavigation: (UiEvent.Navigate) -> Unit) {
                                 mShowDropdownMenu = false
                             },
                             leadingIcon = { SortByDateIcon() })
-                        DropdownMenuItem(text = { Text(text = stringResource(id = R.string.label_settings)) },
-                            onClick = {
-                                mViewModel.onEvent(PersonEvent.OnSettingsClick)
-                                mShowDropdownMenu = false
-                            },
-                            leadingIcon = { SettingsIcon() })
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

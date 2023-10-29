@@ -19,9 +19,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.ahmer.accounts.navigation.NavItems
-import com.ahmer.accounts.navigation.MainNavigation
 import com.ahmer.accounts.navigation.BottomNav
+import com.ahmer.accounts.navigation.MainNavigation
+import com.ahmer.accounts.navigation.NavItems
 import com.ahmer.accounts.ui.theme.RoseAccountsManagerTheme
 import com.ahmer.accounts.utils.ThemeMode
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,9 +60,9 @@ class MainActivity : ComponentActivity() {
                         BottomNav(
                             navController = navController, bottomBarState = bottomBarState.value
                         )
-                    }) { contentPadding ->
+                    }) { innerPadding ->
                         MainNavigation(
-                            modifier = Modifier.padding(contentPadding),
+                            modifier = Modifier.padding(paddingValues = innerPadding),
                             navController = navController
                         )
                     }

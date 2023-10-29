@@ -8,6 +8,7 @@
     <string name="ad_rewarded_interstitial_id">ca-app-pub-0672688958454166/7831583164</string>
 
     //Content description
+    <string name="content_description_accounts">Accounts icon</string>
     <string name="content_description_add">Add icon</string>
     <string name="content_description_app_logo">App logo</string>
     <string name="content_description_back">Back icon</string>
@@ -27,9 +28,11 @@
     <string name="content_description_more">More icon</string>
     <string name="content_description_more_app">More apps icon</string>
     <string name="content_description_pdf">Pdf icon</string>
+    <string name="content_description_person_add_edit">Persons add edit icon</string>
     <string name="content_description_pin">Pin icon</string>
     <string name="content_description_play_store">Playstore icon</string>
     <string name="content_description_rate_app">Rate app icon</string>
+    <string name="content_description_report">Reports icon</string>
     <string name="content_description_restore_backup">Restore backup icon</string>
     <string name="content_description_save">Save icon</string>
     <string name="content_description_search">Search icon</string>
@@ -39,9 +42,12 @@
     <string name="content_description_sort_by_date">Sort by date icon</string>
     <string name="content_description_sort_by_name">Sort by name icon</string>
     <string name="content_description_theme">Theme icon</string>
+    <string name="content_description_trans">Transactions icon</string>
+    <string name="content_description_trans_add_edit">Transactions add edit icon</string>
     <string name="content_description_version">Version icon</string>
 
     //Labels
+    <string name="label_accounts">Accounts</string>
     <string name="label_add_user">Add User Data</string>
     <string name="label_address">Address</string>
     <string name="label_amount">Amount</string>
@@ -68,6 +74,7 @@
     <string name="label_nav_debit">Debit(-)</string>
     <string name="label_notes">Notes</string>
     <string name="label_ok">OK</string>
+    <string name="label_person_add_edit">Persons Add Edit</string>
     <string name="label_phone_number">Phone Number</string>
     <string name="label_pref_category_backup_restore"><![CDATA[Backup & Restore]]></string>
     <string name="label_pref_category_general">General</string>
@@ -80,6 +87,7 @@
     <string name="label_pref_text_title_restore">Restore Database</string>
     <string name="label_pref_text_title_theme">Change Theme</string>
     <string name="label_rate_the_app">Rate the app</string>
+    <string name="label_report">Reports</string>
     <string name="label_restore_backup">Restore Backup</string>
     <string name="label_save">Save</string>
     <string name="label_search">Search</string>
@@ -93,6 +101,8 @@
     <string name="label_total_balance">BALANCE</string>
     <string name="label_total_credit">TOTAL CREDIT</string>
     <string name="label_total_debit">TOTAL DEBIT</string>
+    <string name="label_trans">Transactions</string>
+    <string name="label_trans_add_edit">Transactions Add Edit</string>
     <string name="label_trans_id">Transaction Id</string>
 
     //Toast messages
@@ -104,14 +114,5 @@
     <string name="label_choose_theme">Choose Theme</string>
     <string name="label_error">Error</string>
     <string name="label_empty">Empty</string>
-    <string name="label_report">Reports</string>
-    <string name="content_description_report">Reports icon</string>
-    <string name="label_accounts">Accounts</string>
-    <string name="content_description_accounts">Accounts icon</string>
-    <string name="label_person_add_edit">Persons Add Edit</string>
-    <string name="content_description_person_add_edit">Persons add edit icon</string>
-    <string name="label_trans">Transactions</string>
-    <string name="content_description_trans">Transactions icon</string>
-    <string name="label_trans_add_edit">Transactions Add Edit</string>
-    <string name="content_description_trans_add_edit">Transactions add edit icon</string>
+
 </resources>

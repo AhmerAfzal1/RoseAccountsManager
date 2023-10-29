@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.repository.PersonRepository
-import com.ahmer.accounts.navigation.NavItems
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.navigation.NavItems
 import com.ahmer.accounts.state.PersonState
 import com.ahmer.accounts.utils.DataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
