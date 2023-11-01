@@ -11,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.ui.PersonAddEditScreen
 import com.ahmer.accounts.ui.PersonsListScreen
 import com.ahmer.accounts.ui.SettingsScreen
@@ -18,7 +19,11 @@ import com.ahmer.accounts.ui.TransAddEditScreen
 import com.ahmer.accounts.ui.TransListScreen
 
 @Composable
-fun MainNavigation(modifier: Modifier = Modifier, navController: NavHostController) {
+fun MainNavigation(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    transSumModel: TransSumModel
+) {
     NavHost(
         navController = navController,
         startDestination = NavItems.Accounts.fullRoute,
@@ -29,7 +34,10 @@ fun MainNavigation(modifier: Modifier = Modifier, navController: NavHostControll
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() },
         ) {
-            PersonsListScreen(onNavigation = { navController.navigate(it.route) })
+            PersonsListScreen(
+                onNavigation = { navController.navigate(it.route) },
+                transSumModel = transSumModel
+            )
         }
         composable(
             route = NavItems.Settings.route,

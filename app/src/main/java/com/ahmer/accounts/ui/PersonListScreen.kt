@@ -24,7 +24,6 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,10 +40,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.R
+import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.drawer.TopAppBarSearchBox
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.ui.components.PersonItem
+import com.ahmer.accounts.ui.components.PersonTotalBalance
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
@@ -62,12 +63,14 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PersonsListScreen(onNavigation: (UiEvent.Navigate) -> Unit) {
+fun PersonsListScreen(
+    onNavigation: (UiEvent.Navigate) -> Unit,
+    transSumModel: TransSumModel,
+) {
     val mContext: Context = LocalContext.current.applicationContext
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mViewModel: PersonViewModel = hiltViewModel()
-    val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mState by mViewModel.uiState.collectAsState()
     var mShowDropdownMenu by remember { mutableStateOf(value = false) }
     var mShowSearch by remember { mutableStateOf(value = false) }
@@ -148,7 +151,7 @@ fun PersonsListScreen(onNavigation: (UiEvent.Navigate) -> Unit) {
                     navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
                     actionIconContentColor = MaterialTheme.colorScheme.onPrimary
                 ),
-                scrollBehavior = mScrollBehavior
+                scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
             )
         },
         snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
@@ -166,13 +169,18 @@ fun PersonsListScreen(onNavigation: (UiEvent.Navigate) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(space = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            item {
+                PersonTotalBalance(transSumModel = transSumModel)
+            }
             items(
                 items = mState.getAllPersonsList,
                 key = { persons -> persons.id }) { person ->
                 PersonItem(
                     personsEntity = person,
                     onEvent = mViewModel::onEvent,
-                    modifier = Modifier.animateItemPlacement(tween(durationMillis = Constants.ANIMATE_ITEM_DURATION))
+                    modifier = Modifier.animateItemPlacement(
+                        animationSpec = tween(durationMillis = Constants.ANIMATE_ITEM_DURATION)
+                    )
                 )
             }
         }

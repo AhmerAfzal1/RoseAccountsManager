@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -22,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ahmer.accounts.navigation.BottomNav
 import com.ahmer.accounts.navigation.MainNavigation
 import com.ahmer.accounts.navigation.NavItems
+import com.ahmer.accounts.state.MainState
 import com.ahmer.accounts.ui.theme.RoseAccountsManagerTheme
 import com.ahmer.accounts.utils.ThemeMode
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,6 +55,7 @@ class MainActivity : ComponentActivity() {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = navBackStackEntry?.destination?.route
                     val bottomBarState = rememberSaveable { (mutableStateOf(value = false)) }
+                    val mState: MainState by mViewModel.uiState.collectAsState()
                     Scaffold(modifier = Modifier.navigationBarsPadding(), bottomBar = {
                         bottomBarState.value = currentRoute != NavItems.PersonAddEdit.fullRoute
                                 && currentRoute != NavItems.Transactions.fullRoute
@@ -63,7 +66,8 @@ class MainActivity : ComponentActivity() {
                     }) { innerPadding ->
                         MainNavigation(
                             modifier = Modifier.padding(paddingValues = innerPadding),
-                            navController = navController
+                            navController = navController,
+                            transSumModel = mState.getAllPersonsBalance
                         )
                     }
                 }
