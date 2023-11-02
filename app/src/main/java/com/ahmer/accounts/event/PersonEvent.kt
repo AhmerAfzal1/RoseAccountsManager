@@ -10,5 +10,6 @@ sealed class PersonEvent {
     data class OnSearchTextChange(val searchQuery: String) : PersonEvent()
     data class OnSortBy(val sortOrder: SortOrder) : PersonEvent()
     data object OnNewAddClick : PersonEvent()
+    data object OnSettingsClick : PersonEvent()
     data object OnUndoDeleteClick : PersonEvent()
 }

@@ -5,19 +5,24 @@ import android.content.Context
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,11 +39,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.R
+import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.drawer.TopAppBarSearchBox
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
-import com.ahmer.accounts.state.AppBarState
 import com.ahmer.accounts.ui.components.PersonItem
+import com.ahmer.accounts.ui.components.PersonTotalBalance
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
@@ -53,12 +59,12 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun PersonsListScreen(
-    appBarState: (AppBarState) -> Unit,
-    onNavigation: (UiEvent.Navigate) -> Unit
+    onNavigation: (UiEvent.Navigate) -> Unit,
+    transSumModel: TransSumModel,
 ) {
     val mContext: Context = LocalContext.current.applicationContext
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
@@ -94,10 +100,11 @@ fun PersonsListScreen(
         }
     }
 
-    LaunchedEffect(key1 = true) {
-        appBarState(
-            AppBarState(
-                searchActions = {
+    Scaffold(
+        modifier = Modifier,
+        topBar = {
+            TopAppBar(
+                title = {
                     if (mShowSearch) {
                         TopAppBarSearchBox(text = mTextSearch, onTextChange = { text ->
                             mViewModel.onEvent(PersonEvent.OnSearchTextChange(text))
@@ -137,31 +144,50 @@ fun PersonsListScreen(
                             leadingIcon = { SortByDateIcon() })
                     }
                 },
-                floatingAction = {
-                    FloatingActionButton(onClick = { mViewModel.onEvent(PersonEvent.OnNewAddClick) }
-                    ) { AddIcon() }
-                },
-                isMenuNavigationIcon = true,
-                isSnackBarRequired = true,
-                newSnackBarHost = { SnackbarHost(hostState = mSnackBarHostState) }
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
             )
-        )
-    }
-
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(all = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(space = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        items(
-            items = mState.getAllPersonsList,
-            key = { persons -> persons.id }) { person ->
-            PersonItem(
-                personsEntity = person,
-                onEvent = mViewModel::onEvent,
-                modifier = Modifier.animateItemPlacement(tween(durationMillis = Constants.ANIMATE_ITEM_DURATION))
-            )
+        },
+        snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
+        floatingActionButton = {
+            FloatingActionButton(onClick = { mViewModel.onEvent(PersonEvent.OnNewAddClick) }) {
+                AddIcon()
+            }
+        },
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues = innerPadding),
+            verticalArrangement = Arrangement.spacedBy(space = 10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item {
+                PersonTotalBalance(
+                    transSumModel = transSumModel,
+                    modifier = Modifier
+                        .padding(all = 5.dp)
+                )
+            }
+            items(
+                items = mState.getAllPersonsList,
+                key = { persons -> persons.id },
+            ) { person ->
+                PersonItem(
+                    personsEntity = person,
+                    onEvent = mViewModel::onEvent,
+                    modifier = Modifier
+                        .padding(start = 10.dp, end = 10.dp)
+                        .animateItemPlacement(
+                            animationSpec = tween(durationMillis = Constants.ANIMATE_ITEM_DURATION)
+                        )
+                )
+            }
         }
     }
 }

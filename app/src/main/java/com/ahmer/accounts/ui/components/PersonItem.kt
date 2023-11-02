@@ -57,8 +57,8 @@ fun PersonItem(
 
     ElevatedCard(
         modifier = modifier.clickable { onEvent(PersonEvent.OnAddTransactionClick(personsEntity)) },
-        shape = RoundedCornerShape(size = 10.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        shape = RoundedCornerShape(size = 5.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

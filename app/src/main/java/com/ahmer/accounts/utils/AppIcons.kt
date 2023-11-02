@@ -6,9 +6,9 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -43,6 +43,16 @@ fun BackIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
     Icon(
         imageVector = Icons.Filled.ArrowBack,
         contentDescription = stringResource(id = R.string.content_description_back),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun BackupIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_filled_backup),
+        contentDescription = stringResource(id = R.string.content_description_backup),
         modifier = modifier,
         tint = tint
     )
@@ -129,30 +139,10 @@ fun EditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 }
 
 @Composable
-fun ErrorIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
-    Icon(
-        painter = painterResource(id = R.drawable.ic_error),
-        contentDescription = stringResource(id = R.string.content_description_error),
-        modifier = modifier,
-        tint = tint
-    )
-}
-
-@Composable
 fun InfoIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Filled.Info,
         contentDescription = stringResource(id = R.string.content_description_info),
-        modifier = modifier,
-        tint = tint
-    )
-}
-
-@Composable
-fun MenuIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
-    Icon(
-        imageVector = Icons.Filled.Menu,
-        contentDescription = stringResource(id = R.string.content_description_menu),
         modifier = modifier,
         tint = tint
     )
@@ -179,10 +169,30 @@ fun PdfIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curre
 }
 
 @Composable
+fun RestoreIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_filled_outlined_restore),
+        contentDescription = stringResource(id = R.string.content_description_restore_backup),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
 fun SearchIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Filled.Search,
         contentDescription = stringResource(id = R.string.content_description_search),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun SettingsIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        imageVector = Icons.Filled.Settings,
+        contentDescription = stringResource(id = R.string.content_description_settings),
         modifier = modifier,
         tint = tint
     )

@@ -52,9 +52,9 @@ fun DeleteAlertDialog(
             onDismissRequest = { mOpenDialog.value = false },
         ) {
             ElevatedCard(
-                shape = RoundedCornerShape(size = 10.dp),
                 modifier = Modifier.padding(all = 10.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+                shape = RoundedCornerShape(size = 5.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             ) {
                 DeleteIcon(
                     modifier = Modifier
