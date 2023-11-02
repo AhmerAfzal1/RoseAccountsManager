@@ -30,8 +30,8 @@ import com.ahmer.accounts.utils.HelperUtils
 
 @Composable
 fun PersonTotalBalance(
-    modifier: Modifier = Modifier,
     transSumModel: TransSumModel,
+    modifier: Modifier = Modifier,
 ) {
     val mCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
     val mDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
@@ -53,10 +53,17 @@ fun PersonTotalBalance(
     ElevatedCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(size = 5.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Green),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
-        Row(modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)) {
+        Row(
+            modifier = Modifier.padding(
+                start = 3.dp,
+                end = 3.dp,
+                top = 5.dp,
+                bottom = 5.dp
+            )
+        ) {
             Box(
                 contentAlignment = Alignment.TopCenter,
                 modifier = Modifier
@@ -71,17 +78,18 @@ fun PersonTotalBalance(
                 ) {
                     Text(
                         text = HelperUtils.getRoundedValue(mCredit),
+                        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
                         color = colorGreenDark,
-                        modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
                     )
 
                     Text(
                         text = stringResource(id = R.string.label_total_credit),
+                        modifier = Modifier.padding(bottom = 5.dp),
                         color = colorGreenDark,
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.labelSmall
                     )
                 }
             }
@@ -100,17 +108,18 @@ fun PersonTotalBalance(
                 ) {
                     Text(
                         text = HelperUtils.getRoundedValue(mDebit),
+                        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
                         color = colorRedDark,
-                        modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
                     )
 
                     Text(
                         text = stringResource(id = R.string.label_total_debit),
+                        modifier = Modifier.padding(bottom = 5.dp),
                         color = colorRedDark,
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.labelSmall
                     )
                 }
             }
@@ -129,17 +138,18 @@ fun PersonTotalBalance(
                 ) {
                     Text(
                         text = HelperUtils.getRoundedValue(mTotalBalance),
+                        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
                         color = mColorText,
-                        modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
                     )
 
                     Text(
                         text = stringResource(id = R.string.label_total_balance),
+                        modifier = Modifier.padding(bottom = 5.dp),
                         color = mColorText,
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.labelSmall
                     )
                 }
             }

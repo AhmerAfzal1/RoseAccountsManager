@@ -5,7 +5,6 @@ import android.content.Context
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -165,22 +164,28 @@ fun PersonsListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues = innerPadding),
-            contentPadding = PaddingValues(all = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(space = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(space = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                PersonTotalBalance(transSumModel = transSumModel)
+                PersonTotalBalance(
+                    transSumModel = transSumModel,
+                    modifier = Modifier
+                        .padding(all = 5.dp)
+                )
             }
             items(
                 items = mState.getAllPersonsList,
-                key = { persons -> persons.id }) { person ->
+                key = { persons -> persons.id },
+            ) { person ->
                 PersonItem(
                     personsEntity = person,
                     onEvent = mViewModel::onEvent,
-                    modifier = Modifier.animateItemPlacement(
-                        animationSpec = tween(durationMillis = Constants.ANIMATE_ITEM_DURATION)
-                    )
+                    modifier = Modifier
+                        .padding(start = 10.dp, end = 10.dp)
+                        .animateItemPlacement(
+                            animationSpec = tween(durationMillis = Constants.ANIMATE_ITEM_DURATION)
+                        )
                 )
             }
         }
