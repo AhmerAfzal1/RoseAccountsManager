@@ -33,11 +33,12 @@ fun PersonTotalBalance(
     transSumModel: TransSumModel,
     modifier: Modifier = Modifier,
 ) {
+    val mColorBackground: Color
+    val mColorText: Color
     val mCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
     val mDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
     val mTotalBalance: Double = mCredit.minus(mDebit)
-    val mColorBackground: Color
-    val mColorText: Color
+    val mHorizontalSpace: Dp = 2.dp
 
     if (mTotalBalance >= 0) {
         mColorBackground = colorGreenLight
@@ -47,23 +48,13 @@ fun PersonTotalBalance(
         mColorText = colorRedDark
     }
 
-    val mHorizontalSpace: Dp = 2.dp
-    val mRoundShapeSize: Dp = 10.dp
-
     ElevatedCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(size = 5.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
-        Row(
-            modifier = Modifier.padding(
-                start = 3.dp,
-                end = 3.dp,
-                top = 5.dp,
-                bottom = 5.dp
-            )
-        ) {
+        Row(modifier = Modifier.padding(all = 5.dp)) {
             Box(
                 contentAlignment = Alignment.TopCenter,
                 modifier = Modifier

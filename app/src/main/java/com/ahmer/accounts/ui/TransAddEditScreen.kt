@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.ui.components.TransAddEditTextFields
 import com.ahmer.accounts.utils.BackIcon
@@ -30,14 +29,16 @@ import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransAddEditScreen(onPopBackStack: () -> Unit) {
+fun TransAddEditScreen(
+    viewModel: TransAddEditViewModel,
+    onPopBackStack: () -> Unit
+) {
     val mContext: Context = LocalContext.current
-    val mViewModel: TransAddEditViewModel = hiltViewModel()
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val mState by mViewModel.uiState.collectAsState()
+    val mState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(key1 = true) {
-        mViewModel.eventFlow.collectLatest { event ->
+        viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 UiEvent.SaveSuccess -> onPopBackStack()
                 is UiEvent.ShowToast -> HelperUtils.showToast(
@@ -55,7 +56,7 @@ fun TransAddEditScreen(onPopBackStack: () -> Unit) {
             TopAppBar(
                 title = {
                     Text(
-                        text = mViewModel.titleBar,
+                        text = viewModel.titleBar,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -80,8 +81,8 @@ fun TransAddEditScreen(onPopBackStack: () -> Unit) {
                 mState.getTransDetails?.let { transEntity ->
                     TransAddEditTextFields(
                         transEntity = transEntity,
-                        onEvent = mViewModel::onEvent,
-                        titleButton = mViewModel.titleButton
+                        onEvent = viewModel::onEvent,
+                        titleButton = viewModel.titleButton
                     )
                 }
             }

@@ -41,7 +41,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.R
 import com.ahmer.accounts.drawer.TopAppBarSearchBox
 import com.ahmer.accounts.event.TransEvent
@@ -65,30 +64,30 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TransListScreen(
+    viewModel: TransViewModel,
     onNavigation: (UiEvent.Navigate) -> Unit,
     onPopBackStack: () -> Unit,
 ) {
     val mContext: Context = LocalContext.current
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
-    val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val mViewModel: TransViewModel = hiltViewModel()
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val mState by mViewModel.uiState.collectAsState()
+    val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    val mState by viewModel.uiState.collectAsState()
     var mShowDropdownMenu by remember { mutableStateOf(value = false) }
     var mShowSearch by remember { mutableStateOf(value = false) }
-    var mTextSearch by remember { mutableStateOf(value = mViewModel.searchQuery.value) }
+    var mTextSearch by remember { mutableStateOf(value = viewModel.searchQuery.value) }
 
     val mLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {
         if (it.resultCode == Activity.RESULT_OK) {
             val mUri = it.data?.data ?: return@rememberLauncherForActivityResult
-            mViewModel.generatePdf(mContext, mUri)
+            viewModel.generatePdf(mContext, mUri)
         }
     }
 
     LaunchedEffect(key1 = true) {
-        mViewModel.eventFlow.collectLatest { event ->
+        viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.Navigate -> onNavigation(event)
                 is UiEvent.ShowSnackBar -> {
@@ -98,7 +97,7 @@ fun TransListScreen(
                         duration = SnackbarDuration.Short
                     )
                     if (mResult == SnackbarResult.ActionPerformed) {
-                        mViewModel.onEvent(TransEvent.OnUndoDeleteClick)
+                        viewModel.onEvent(TransEvent.OnUndoDeleteClick)
                     }
                 }
 
@@ -118,7 +117,7 @@ fun TransListScreen(
                 title = {
                     if (mShowSearch) {
                         TopAppBarSearchBox(text = mTextSearch, onTextChange = {
-                            mViewModel.onEvent(TransEvent.OnSearchTextChange(it))
+                            viewModel.onEvent(TransEvent.OnSearchTextChange(it))
                             mTextSearch = it
                         }, onCloseClick = {
                             mCoroutineScope.launch { delay(duration = 200.milliseconds) }
@@ -137,7 +136,7 @@ fun TransListScreen(
                     if (!mShowSearch) {
                         IconButton(onClick = { mShowSearch = true }) { SearchIcon() }
                     }
-                    IconButton(onClick = { mViewModel.onEvent(TransEvent.OnAddClick) }) { AddCircleIcon() }
+                    IconButton(onClick = { viewModel.onEvent(TransEvent.OnAddClick) }) { AddCircleIcon() }
                     if (!mShowSearch) {
                         IconButton(onClick = {
                             mShowDropdownMenu = !mShowDropdownMenu
@@ -183,7 +182,7 @@ fun TransListScreen(
                     key = { listTrans -> listTrans.id }) { transaction ->
                     TransItem(
                         transEntity = transaction,
-                        onEvent = mViewModel::onEvent,
+                        onEvent = viewModel::onEvent,
                         modifier = Modifier.animateItemPlacement(
                             animationSpec = tween(
                                 durationMillis = Constants.ANIMATE_ITEM_DURATION

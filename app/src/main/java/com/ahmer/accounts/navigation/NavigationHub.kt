@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -36,7 +37,8 @@ fun MainNavigation(
         ) {
             PersonsListScreen(
                 onNavigation = { navController.navigate(it.route) },
-                transSumModel = transSumModel
+                viewModel = hiltViewModel(),
+                transSumModel = transSumModel,
             )
         }
         composable(
@@ -44,7 +46,7 @@ fun MainNavigation(
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() },
         ) {
-            SettingsScreen()
+            SettingsScreen(viewModel = hiltViewModel())
         }
         composable(
             route = NavItems.PersonAddEdit.fullRoute,
@@ -55,7 +57,10 @@ fun MainNavigation(
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
         ) {
-            PersonAddEditScreen(onPopBackStack = { navController.popBackStack() })
+            PersonAddEditScreen(
+                viewModel = hiltViewModel(),
+                onPopBackStack = { navController.popBackStack() }
+            )
         }
         composable(
             route = NavItems.Transactions.fullRoute,
@@ -67,6 +72,7 @@ fun MainNavigation(
             exitTransition = { ExitTransition.None },
         ) {
             TransListScreen(
+                viewModel = hiltViewModel(),
                 onNavigation = { navController.navigate(it.route) },
                 onPopBackStack = { navController.popBackStack() },
             )
@@ -83,7 +89,10 @@ fun MainNavigation(
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
         ) {
-            TransAddEditScreen(onPopBackStack = { navController.popBackStack() })
+            TransAddEditScreen(
+                viewModel = hiltViewModel(),
+                onPopBackStack = { navController.popBackStack() }
+            )
         }
     }
 }

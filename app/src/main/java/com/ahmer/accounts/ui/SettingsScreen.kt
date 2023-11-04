@@ -35,7 +35,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
 import com.ahmer.accounts.dialogs.ThemeDialog
@@ -52,16 +51,15 @@ import com.ahmer.accounts.utils.VersionIcon
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(viewModel: SettingsViewModel) {
     val mContext: Context = LocalContext.current.applicationContext
     val mAppVersion: AppVersion = HelperUtils.getAppInfo(context = mContext)
-    val mViewModel: SettingsViewModel = hiltViewModel()
-    val mCurrentTheme by mViewModel.currentTheme.collectAsStateWithLifecycle()
-    var mShowThemeDialog: Boolean by remember { mutableStateOf(value = false) }
+    val mCurrentTheme by viewModel.currentTheme.collectAsStateWithLifecycle()
     val mSummary: String = ThemeMode.getThemeModesTitle(themeMode = mCurrentTheme)
+    var mShowThemeDialog: Boolean by remember { mutableStateOf(value = false) }
 
     LaunchedEffect(key1 = true) {
-        mViewModel.eventFlow.collectLatest { event ->
+        viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.RelaunchApp -> HelperUtils.relaunchApp(context = mContext)
                 is UiEvent.ShowToast -> HelperUtils.showToast(
@@ -74,7 +72,7 @@ fun SettingsScreen() {
     }
 
     if (mShowThemeDialog) {
-        ThemeDialog(viewModel = mViewModel)
+        ThemeDialog(viewModel = viewModel)
     }
 
     val mBackupDatabaseLauncher = rememberLauncherForActivityResult(
@@ -82,7 +80,7 @@ fun SettingsScreen() {
     ) { result ->
         if (result.resultCode == ComponentActivity.RESULT_OK) {
             val mUri = result.data?.data ?: return@rememberLauncherForActivityResult
-            mViewModel.backupDatabase(context = mContext, uri = mUri)
+            viewModel.backupDatabase(context = mContext, uri = mUri)
         }
     }
 
@@ -91,7 +89,7 @@ fun SettingsScreen() {
     ) { result ->
         if (result.resultCode == ComponentActivity.RESULT_OK) {
             val mUri = result.data?.data ?: return@rememberLauncherForActivityResult
-            mViewModel.restoreDatabase(context = mContext, uri = mUri)
+            viewModel.restoreDatabase(context = mContext, uri = mUri)
         }
     }
 

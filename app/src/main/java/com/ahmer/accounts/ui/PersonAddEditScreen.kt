@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahmer.accounts.event.PersonAddEditEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.ui.components.PersonAddEditTextFields
@@ -29,13 +28,12 @@ import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonAddEditScreen(onPopBackStack: () -> Unit) {
+fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () -> Unit) {
     val mContext: Context = LocalContext.current
-    val mViewModel: PersonAddEditViewModel = hiltViewModel()
-    val mState by mViewModel.uiState.collectAsState()
+    val mState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(key1 = true) {
-        mViewModel.eventFlow.collectLatest { event ->
+        viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 UiEvent.SaveSuccess -> onPopBackStack()
                 is UiEvent.ShowToast -> HelperUtils.showToast(
@@ -53,7 +51,7 @@ fun PersonAddEditScreen(onPopBackStack: () -> Unit) {
             TopAppBar(
                 title = {
                     Text(
-                        text = mViewModel.titleBar,
+                        text = viewModel.titleBar,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -68,14 +66,14 @@ fun PersonAddEditScreen(onPopBackStack: () -> Unit) {
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { mViewModel.onEvent(PersonAddEditEvent.OnSaveClick) }) {
+            FloatingActionButton(onClick = { viewModel.onEvent(PersonAddEditEvent.OnSaveClick) }) {
                 SaveIcon()
             }
         },
     ) { innerPadding ->
         Box(modifier = Modifier.padding(paddingValues = innerPadding)) {
             mState.getPersonDetails?.let { personEntity ->
-                PersonAddEditTextFields(personsEntity = personEntity, onEvent = mViewModel::onEvent)
+                PersonAddEditTextFields(personsEntity = personEntity, onEvent = viewModel::onEvent)
             }
         }
     }
