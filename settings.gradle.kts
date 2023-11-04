@@ -3,6 +3,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url = uri(path = "https://androidx.dev/storage/compose-compiler/repository/") }
     }
 }
 dependencyResolutionManagement {
@@ -10,6 +11,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri(path = "https://androidx.dev/storage/compose-compiler/repository/") }
     }
 }
 

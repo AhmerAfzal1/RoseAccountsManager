@@ -51,7 +51,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = "1.2.0-dev-k1.6.20-RC2-727605f905e"
     }
 
     packaging {
@@ -74,7 +74,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
 
     //Firebase BOM
-    implementation(platform("com.google.firebase:firebase-bom:32.4.1"))
+    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
@@ -82,7 +82,7 @@ dependencies {
     implementation("com.google.firebase:firebase-perf-ktx")
 
     //Ads
-    implementation("com.google.android.gms:play-services-ads:22.4.0")
+    implementation("com.google.android.gms:play-services-ads:22.5.0")
 
     //Jetpack Compose View Model
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
@@ -93,8 +93,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2")
 
     //Jetpack Compose Navigation
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-    implementation("androidx.navigation:navigation-compose:2.7.4")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("androidx.navigation:navigation-compose:2.7.5")
 
     //Dagger - Hilt
     implementation("com.google.dagger:hilt-android:2.48.1")
