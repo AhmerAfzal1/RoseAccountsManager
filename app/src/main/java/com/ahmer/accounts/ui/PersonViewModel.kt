@@ -9,12 +9,15 @@ import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.navigation.NavItems
 import com.ahmer.accounts.state.PersonState
+import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.DataStore
+import com.ahmer.accounts.utils.SortOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +25,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,6 +45,18 @@ class PersonViewModel @Inject constructor(
     val uiState: StateFlow<PersonState> = _uiState.asStateFlow()
 
     private var mDeletedPerson: PersonsEntity? = null
+
+    val currentSortOrder: StateFlow<SortOrder> = dataStore.getSortOrder.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = Constants.STATE_IN_STARTED_TIME),
+        initialValue = SortOrder.Date
+    )
+
+    fun updateSortOrder(sortOrder: SortOrder) {
+        viewModelScope.launch {
+            dataStore.updateSortOrder(sortOrder = sortOrder)
+        }
+    }
 
     fun onEvent(event: PersonEvent) {
         when (event) {
@@ -88,12 +104,6 @@ class PersonViewModel @Inject constructor(
                 }
             }
 
-            is PersonEvent.OnSortBy -> {
-                viewModelScope.launch {
-                    dataStore.updateSortOrder(event.sortOrder)
-                }
-            }
-
             PersonEvent.OnNewAddClick -> {
                 viewModelScope.launch {
                     _eventFlow.emit(value = UiEvent.Navigate(NavItems.PersonAddEdit.route))
@@ -112,7 +122,7 @@ class PersonViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getAllPersonsData() {
-        combine(_searchQuery, dataStore.getSortOrder) { query, dataStore ->
+        combine(_searchQuery, currentSortOrder) { query, dataStore ->
             Pair(first = query, second = dataStore)
         }.flatMapLatest { (search, sortOrder) ->
             personRepository.getAllPersonsByFilter(searchQuery = search, sortOrder = sortOrder)

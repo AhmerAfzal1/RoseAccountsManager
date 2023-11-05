@@ -26,91 +26,104 @@ class DbCallback(
                 address = "Street No. 1, House No. 548, Darbar Road",
                 phone = "03023339589",
                 email = "ahmerafzal@yahoo.com",
-                notes = ""
+                notes = "",
+                balance = "0",
             ),
             PersonsEntity(
                 name = "Rida Hasan",
                 address = "Street No. 2",
                 phone = "",
                 email = "",
-                notes = ""
+                notes = "",
+                balance = "0",
             ),
             PersonsEntity(
                 name = "Maham Hasan",
                 address = "Street No. 2",
                 phone = "",
                 email = "",
-                notes = ""
+                notes = "",
+                balance = "0",
             ),
             PersonsEntity(
                 name = "Arfa Hasan",
                 address = "Street No. 2",
                 phone = "",
                 email = "",
-                notes = ""
+                notes = "",
+                balance = "0",
             ),
             PersonsEntity(
                 name = "Umar Riaz",
                 address = "Dharanwala",
                 phone = "03005095665",
                 email = "umarriaz665@gmail.com",
-                notes = ""
+                notes = "",
+                balance = "0",
             ),
             PersonsEntity(
                 name = "Sajjad Hussain Bhutta",
                 address = "Street No. 2, House No. 547",
                 phone = "03024159211",
                 email = "sajjad.bhutta@live.com",
-                notes = ""
+                notes = "",
+                balance = "0",
             ),
             PersonsEntity(
                 name = "Imtiaz Bhutta",
                 address = "",
                 phone = "03014652092",
                 email = "",
-                notes = ""
+                notes = "",
+                balance = "0",
             ),
             PersonsEntity(
                 name = "Ijaz Bhutta",
                 address = "",
                 phone = "03024585268",
                 email = "",
-                notes = ""
+                notes = "",
+                balance = "0",
             ),
             PersonsEntity(
                 name = "Abbas Bhutta",
                 address = "",
                 phone = "03002039589",
                 email = "",
-                notes = ""
+                notes = "",
+                balance = "0",
             ),
             PersonsEntity(
                 name = "Yasir Shahid",
                 address = "",
                 phone = "03057039270",
                 email = "",
-                notes = ""
+                notes = "",
+                balance = "0",
             ),
             PersonsEntity(
                 name = "Faisal Shahid",
                 address = "",
                 phone = "03117511575",
                 email = "",
-                notes = ""
+                notes = "",
+                balance = "0",
             ),
             PersonsEntity(
                 name = "Adil Shahid",
                 address = "",
                 phone = "03106900089",
                 email = "",
-                notes = ""
+                notes = "",
+                balance = "0",
             ),
             PersonsEntity(
                 name = "Umar Farooq",
                 address = "Chak No. 63f, Hasilpur",
                 phone = "03012882943",
                 email = "",
-                notes = "Computer Operator at Bajwa's Collection"
+                notes = "Computer Operator at Bajwa's Collection",
+                balance = "0",
             ),
         )
         val mTransEntityLists = listOf(
@@ -155,6 +168,34 @@ class DbCallback(
                 type = "Credit",
                 description = "",
                 amount = "413.5"
+            ),
+            TransEntity(
+                personId = 1,
+                date = "11 Oct 2023",
+                type = "Debit",
+                description = "",
+                amount = "784.56"
+            ),
+            TransEntity(
+                personId = 1,
+                date = "12 Oct 2023",
+                type = "Credit",
+                description = "",
+                amount = "147.16"
+            ),
+            TransEntity(
+                personId = 4,
+                date = "10 Oct 2023",
+                type = "Credit",
+                description = "",
+                amount = "523.51"
+            ),
+            TransEntity(
+                personId = 4,
+                date = "10 Oct 2023",
+                type = "Debit",
+                description = "",
+                amount = "213.15"
             ),
         )
         mScope.launch(Dispatchers.IO) {

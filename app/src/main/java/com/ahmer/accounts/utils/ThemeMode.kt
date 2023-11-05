@@ -6,19 +6,23 @@ sealed class ThemeMode(val name: String) {
     data object System : ThemeMode(name = "system")
 
     companion object {
+        private const val DARK: String = "Dark"
+        private const val LIGHT: String = "Light"
+        private const val SYSTEM: String = "System default"
+
         val listOfThemeModes: List<Pair<ThemeMode, String>> by lazy {
             listOf(
-                Dark to "Dark",
-                Light to "Light",
-                System to "System default"
+                Dark to DARK,
+                Light to LIGHT,
+                System to SYSTEM
             )
         }
 
         fun getThemeModesTitle(themeMode: ThemeMode): String {
             return when (themeMode) {
-                Dark -> "Dark"
-                Light -> "Light"
-                System -> "System default"
+                Dark -> DARK
+                Light -> LIGHT
+                System -> SYSTEM
             }
         }
 

@@ -16,21 +16,32 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -38,9 +49,9 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,8 +73,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.event.PersonEvent
@@ -75,8 +89,6 @@ import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.SearchIcon
-import com.ahmer.accounts.utils.SortByDateIcon
-import com.ahmer.accounts.utils.SortByNameIcon
 import com.ahmer.accounts.utils.SortIcon
 import com.ahmer.accounts.utils.SortOrder
 import kotlinx.coroutines.CoroutineScope
@@ -94,10 +106,9 @@ fun PersonsListScreen(
     transSumModel: TransSumModel,
 ) {
     val mContext: Context = LocalContext.current.applicationContext
-    val mShowDropdownMenu = remember { mutableStateOf(value = false) }
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mState by viewModel.uiState.collectAsState()
-    var isVisible by rememberSaveable { mutableStateOf(value = true) }
+    var isVisibleFab by rememberSaveable { mutableStateOf(value = true) }
     var mTextSearch by remember { mutableStateOf(value = viewModel.searchQuery.value) }
 
     LaunchedEffect(key1 = true) {
@@ -130,7 +141,7 @@ fun PersonsListScreen(
         snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = isVisible,
+                visible = isVisibleFab,
                 enter = slideInVertically(initialOffsetY = { it * 2 }),
                 exit = slideOutVertically(targetOffsetY = { it * 2 }),
             ) {
@@ -143,16 +154,8 @@ fun PersonsListScreen(
         val mNestedScrollConnection = remember {
             object : NestedScrollConnection {
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                    // Hide FAB
-                    if (available.y < -1) {
-                        isVisible = false
-                    }
-
-                    // Show FAB
-                    if (available.y > 1) {
-                        isVisible = true
-                    }
-
+                    if (available.y < -1) isVisibleFab = false // Hide FAB
+                    if (available.y > 1) isVisibleFab = true // Show FAB
                     return Offset.Zero
                 }
             }
@@ -176,7 +179,6 @@ fun PersonsListScreen(
                     mTextSearch = text
                 },
                 viewModel = viewModel,
-                showDropdownMenu = mShowDropdownMenu
             )
 
             LazyColumn(
@@ -195,7 +197,7 @@ fun PersonsListScreen(
                         personsEntity = person,
                         onEvent = viewModel::onEvent,
                         modifier = Modifier
-                            .padding(start = 10.dp, end = 10.dp)
+                            .padding(start = 12.dp, end = 12.dp)
                             .animateItemPlacement(
                                 animationSpec = tween(durationMillis = Constants.ANIMATE_ITEM_DURATION)
                             )
@@ -206,24 +208,20 @@ fun PersonsListScreen(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBars(
+private fun SearchBars(
     modifier: Modifier = Modifier,
     text: String,
     onTextChange: (String) -> Unit,
     viewModel: PersonViewModel,
-    showDropdownMenu: MutableState<Boolean>
 ) = Box(modifier = modifier) {
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mFocusManager: FocusManager = LocalFocusManager.current
     val mInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
     val isFocused: Boolean by mInteractionSource.collectIsFocusedAsState()
-
-    if (showDropdownMenu.value) {
-        ShowDropDown(viewModel = viewModel, showDropdownMenu = showDropdownMenu)
-    }
+    var mShowBottomSheet: Boolean by remember { mutableStateOf(value = false) }
 
     Row(
         modifier = Modifier,
@@ -275,27 +273,97 @@ fun SearchBars(
                 )
             )
         }
-        IconButton(onClick = {
-            showDropdownMenu.value = !showDropdownMenu.value
-        }, modifier = Modifier.weight(weight = 0.10f)) { SortIcon() }
-    }
-}
+        Box(
+            modifier = Modifier.weight(weight = 0.10f), contentAlignment = Alignment.TopEnd
+        ) {
+            IconButton(onClick = { mShowBottomSheet = !mShowBottomSheet }) { SortIcon() }
 
-@Composable
-fun ShowDropDown(viewModel: PersonViewModel, showDropdownMenu: MutableState<Boolean>) {
-    DropdownMenu(expanded = showDropdownMenu.value,
-        onDismissRequest = { showDropdownMenu.value = false }) {
-        DropdownMenuItem(text = { Text(text = stringResource(id = R.string.label_sort_by_name)) },
-            onClick = {
-                viewModel.onEvent(PersonEvent.OnSortBy(SortOrder.Name))
-                showDropdownMenu.value = false
-            },
-            leadingIcon = { SortByNameIcon() })
-        DropdownMenuItem(text = { Text(text = stringResource(id = R.string.label_sort_by_date_created)) },
-            onClick = {
-                viewModel.onEvent(PersonEvent.OnSortBy(SortOrder.Date))
-                showDropdownMenu.value = false
-            },
-            leadingIcon = { SortByDateIcon() })
+            val mCurrentSortOrder by viewModel.currentSortOrder.collectAsStateWithLifecycle()
+            val mListSortOrder: List<Pair<SortOrder, String>> = SortOrder.listOfSortOrder
+            val mSheetState: SheetState = rememberModalBottomSheetState()
+            val (sortOrder, setSortOrder) = remember { mutableStateOf(value = mCurrentSortOrder) }
+
+            if (mShowBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { mShowBottomSheet = false },
+                    modifier = Modifier
+                        .padding(all = 12.dp)
+                        .fillMaxHeight(fraction = 0.4f),
+                    sheetState = mSheetState,
+                    dragHandle = { BottomSheetDefaults.DragHandle() },
+                ) {
+                    Text(
+                        text = "Filter",
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp, horizontal = 8.dp),
+                        thickness = 0.5.dp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    )
+
+                    Text(
+                        text = stringResource(R.string.label_sort_by),
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(count = 2),
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                    ) {
+                        items(items = mListSortOrder) { (option, title) ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .selectable(
+                                        selected = sortOrder.name == option.name,
+                                        role = Role.RadioButton,
+                                        onClick = { setSortOrder(option) },
+                                    ),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = (sortOrder.name == option.name),
+                                    onClick = { setSortOrder(option) }
+                                )
+                                Text(text = title)
+                            }
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier,
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.End,
+                    ) {
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp, horizontal = 8.dp),
+                            thickness = 0.5.dp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                        )
+                        Button(
+                            onClick = {
+                                mCoroutineScope.launch { mSheetState.hide() }.invokeOnCompletion {
+                                    viewModel.updateSortOrder(sortOrder = sortOrder)
+                                    if (!mSheetState.isVisible) mShowBottomSheet = false
+                                }
+                            },
+                            modifier = Modifier.padding(end = 16.dp)
+                        ) { Text(text = stringResource(id = R.string.label_save)) }
+                    }
+                }
+            }
+        }
     }
 }

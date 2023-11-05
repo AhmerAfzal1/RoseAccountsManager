@@ -51,8 +51,8 @@ fun ThemeDialog(viewModel: SettingsViewModel) {
                                     .fillMaxWidth()
                                     .selectable(
                                         selected = themeMode.name == option.name,
-                                        onClick = { setThemeMode(option) },
                                         role = Role.RadioButton,
+                                        onClick = { setThemeMode(option) },
                                     ),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {

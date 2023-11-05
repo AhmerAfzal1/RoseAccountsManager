@@ -90,7 +90,7 @@
     <string name="label_report">Reports</string>
     <string name="label_restore_backup">Restore Backup</string>
     <string name="label_save">Save</string>
-    <string name="label_search">Search</string>
+    <string name="label_search">Search…</string>
     <string name="label_settings">Settings</string>
     <string name="label_share_the_app">Share the app</string>
     <string name="label_sort_by_date_created">Sort by date created</string>
@@ -114,5 +114,6 @@
     <string name="label_choose_theme">Choose Theme</string>
     <string name="label_error">Error</string>
     <string name="label_empty">Empty</string>
+    <string name="label_sort_by">SORT BY</string>
 
 </resources>

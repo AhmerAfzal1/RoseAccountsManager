@@ -226,7 +226,7 @@ fun PreferenceCategory(title: String, content: @Composable ColumnScope.() -> Uni
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(0.5.dp)
+                .height(height = 0.5.dp)
                 .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
         )
     }

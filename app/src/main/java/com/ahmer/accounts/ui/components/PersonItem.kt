@@ -31,7 +31,6 @@ import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.EditIcon
-import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.InfoIcon
 
 @Composable
@@ -94,14 +93,10 @@ fun PersonItem(
         Column(
             modifier = Modifier.padding(end = mPadding, bottom = mPadding)
         ) {
-            val mTotalCredit = 0.0
-            val mTotalDebit = 0.0
-            val mTotalBalance = HelperUtils.getRoundedValue((mTotalCredit.minus(mTotalDebit)))
-
             val mText: String = if (personsEntity.phone.isEmpty()) {
-                "Balance: $mTotalBalance"
+                "Balance: ${personsEntity.balance}"
             } else {
-                "Phone: ${personsEntity.phone}  |  Balance: $mTotalBalance"
+                "Phone: ${personsEntity.phone}  |  Balance: ${personsEntity.balance}"
             }
             Text(
                 modifier = Modifier.padding(start = mPadding),
