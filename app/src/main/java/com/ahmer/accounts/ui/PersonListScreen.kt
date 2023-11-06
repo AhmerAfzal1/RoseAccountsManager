@@ -191,10 +191,10 @@ fun PersonsListScreen(
             ) {
                 items(
                     items = mState.getAllPersonsList,
-                    key = { persons -> persons.id },
+                    key = { persons -> persons.personsEntity.id },
                 ) { person ->
                     PersonItem(
-                        personsEntity = person,
+                        personsBalanceModel = person,
                         onEvent = viewModel::onEvent,
                         modifier = Modifier
                             .padding(start = 12.dp, end = 12.dp)

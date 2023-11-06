@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
+import com.ahmer.accounts.database.model.PersonsBalanceModel
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.utils.SortOrder
@@ -24,23 +25,37 @@ interface PersonDao {
 
     @Query(
         """SELECT p.*, 
-        COALESCE(SUM(CASE WHEN t.type = 'Credit' THEN t.amount ELSE -t.amount END), 0) AS balance 
-        FROM Persons p 
-        JOIN Transactions t ON p.id = t.personId
-        WHERE p.name LIKE '%' || :searchQuery || '%'
-        GROUP BY p.name ORDER BY balance DESC"""
+            COALESCE(SUM(CASE WHEN t.type = 'Credit' THEN t.amount ELSE -t.amount END), 0) AS balance
+            FROM Persons p
+            LEFT JOIN Transactions t ON p.id = t.personId
+            WHERE p.name LIKE '%' || :searchQuery || '%'
+            GROUP BY p.name ORDER BY balance DESC"""
     )
-    fun getAllPersonsSortedByAmount(searchQuery: String): Flow<List<PersonsEntity>>
+    fun getAllPersonsSortedByAmount(searchQuery: String): Flow<List<PersonsBalanceModel>>
 
-    @Query("SELECT * FROM Persons WHERE name LIKE '%' || :searchQuery || '%' ORDER BY created ASC")
-    fun getAllPersonsSortedByDate(searchQuery: String): Flow<List<PersonsEntity>>
+    @Query(
+        """SELECT p.*, 
+            COALESCE(SUM(CASE WHEN t.type = 'Credit' THEN t.amount ELSE -t.amount END), 0) AS balance
+            FROM Persons p
+            LEFT JOIN Transactions t ON p.id = t.personId
+            WHERE p.name LIKE '%' || :searchQuery || '%'
+            GROUP BY p.name ORDER BY created ASC"""
+    )
+    fun getAllPersonsSortedByDate(searchQuery: String): Flow<List<PersonsBalanceModel>>
 
-    @Query("SELECT * FROM Persons WHERE name LIKE '%' || :searchQuery || '%' ORDER BY name ASC")
-    fun getAllPersonsSortedByName(searchQuery: String): Flow<List<PersonsEntity>>
+    @Query(
+        """SELECT p.*, 
+            COALESCE(SUM(CASE WHEN t.type = 'Credit' THEN t.amount ELSE -t.amount END), 0) AS balance
+            FROM Persons p
+            LEFT JOIN Transactions t ON p.id = t.personId
+            WHERE p.name LIKE '%' || :searchQuery || '%'
+            GROUP BY p.name ORDER BY name ASC"""
+    )
+    fun getAllPersonsSortedByName(searchQuery: String): Flow<List<PersonsBalanceModel>>
 
     fun getAllPersonsByFilter(
         searchQuery: String, sortOrder: SortOrder
-    ): Flow<List<PersonsEntity>> = when (sortOrder) {
+    ): Flow<List<PersonsBalanceModel>> = when (sortOrder) {
         SortOrder.Amount -> getAllPersonsSortedByAmount(searchQuery = searchQuery)
         SortOrder.Date -> getAllPersonsSortedByDate(searchQuery = searchQuery)
         SortOrder.Name -> getAllPersonsSortedByName(searchQuery = searchQuery)

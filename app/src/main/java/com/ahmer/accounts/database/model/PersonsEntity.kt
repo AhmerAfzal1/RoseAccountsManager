@@ -22,7 +22,6 @@ data class PersonsEntity(
     val phone: String = "",
     val email: String = "",
     val notes: String = "",
-    val balance: String = "",
     val created: Long = System.currentTimeMillis(),
     val updated: Long = 0.toLong()
 ) : Parcelable

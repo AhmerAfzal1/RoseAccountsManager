@@ -1,6 +1,7 @@
 package com.ahmer.accounts.database.repository
 
 import com.ahmer.accounts.database.dao.PersonDao
+import com.ahmer.accounts.database.model.PersonsBalanceModel
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.utils.SortOrder
@@ -28,7 +29,7 @@ class PersonRepositoryImp @Inject constructor(private val personDao: PersonDao) 
 
     override fun getAllPersonsByFilter(
         searchQuery: String, sortOrder: SortOrder
-    ): Flow<List<PersonsEntity>> {
+    ): Flow<List<PersonsBalanceModel>> {
         return personDao.getAllPersonsByFilter(searchQuery = searchQuery, sortOrder = sortOrder)
     }
 

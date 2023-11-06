@@ -27,7 +27,6 @@ class DbCallback(
                 phone = "03023339589",
                 email = "ahmerafzal@yahoo.com",
                 notes = "",
-                balance = "0",
             ),
             PersonsEntity(
                 name = "Rida Hasan",
@@ -35,7 +34,6 @@ class DbCallback(
                 phone = "",
                 email = "",
                 notes = "",
-                balance = "0",
             ),
             PersonsEntity(
                 name = "Maham Hasan",
@@ -43,7 +41,6 @@ class DbCallback(
                 phone = "",
                 email = "",
                 notes = "",
-                balance = "0",
             ),
             PersonsEntity(
                 name = "Arfa Hasan",
@@ -51,7 +48,6 @@ class DbCallback(
                 phone = "",
                 email = "",
                 notes = "",
-                balance = "0",
             ),
             PersonsEntity(
                 name = "Umar Riaz",
@@ -59,7 +55,6 @@ class DbCallback(
                 phone = "03005095665",
                 email = "umarriaz665@gmail.com",
                 notes = "",
-                balance = "0",
             ),
             PersonsEntity(
                 name = "Sajjad Hussain Bhutta",
@@ -67,7 +62,6 @@ class DbCallback(
                 phone = "03024159211",
                 email = "sajjad.bhutta@live.com",
                 notes = "",
-                balance = "0",
             ),
             PersonsEntity(
                 name = "Imtiaz Bhutta",
@@ -75,7 +69,6 @@ class DbCallback(
                 phone = "03014652092",
                 email = "",
                 notes = "",
-                balance = "0",
             ),
             PersonsEntity(
                 name = "Ijaz Bhutta",
@@ -83,7 +76,6 @@ class DbCallback(
                 phone = "03024585268",
                 email = "",
                 notes = "",
-                balance = "0",
             ),
             PersonsEntity(
                 name = "Abbas Bhutta",
@@ -91,7 +83,6 @@ class DbCallback(
                 phone = "03002039589",
                 email = "",
                 notes = "",
-                balance = "0",
             ),
             PersonsEntity(
                 name = "Yasir Shahid",
@@ -99,7 +90,6 @@ class DbCallback(
                 phone = "03057039270",
                 email = "",
                 notes = "",
-                balance = "0",
             ),
             PersonsEntity(
                 name = "Faisal Shahid",
@@ -107,7 +97,6 @@ class DbCallback(
                 phone = "03117511575",
                 email = "",
                 notes = "",
-                balance = "0",
             ),
             PersonsEntity(
                 name = "Adil Shahid",
@@ -115,7 +104,6 @@ class DbCallback(
                 phone = "03106900089",
                 email = "",
                 notes = "",
-                balance = "0",
             ),
             PersonsEntity(
                 name = "Umar Farooq",
@@ -123,7 +111,6 @@ class DbCallback(
                 phone = "03012882943",
                 email = "",
                 notes = "Computer Operator at Bajwa's Collection",
-                balance = "0",
             ),
         )
         val mTransEntityLists = listOf(

@@ -33,10 +33,12 @@ object AppModule {
         @ApplicationContext context: Context,
         //personsProvider: Provider<PersonDao>, transProvider: Provider<TransDao>
     ): AppDatabase = Room.databaseBuilder(
-        context.applicationContext, AppDatabase::class.java, Constants.DATABASE_NAME
-    ).setJournalMode(RoomDatabase.JournalMode.TRUNCATE) //For backup in single file
+        context = context.applicationContext,
+        klass = AppDatabase::class.java,
+        name = Constants.DATABASE_NAME
+    ).setJournalMode(journalMode = RoomDatabase.JournalMode.TRUNCATE) //For backup in single file
         .fallbackToDestructiveMigration()
-        //.addCallback(DbCallback(personsProvider, transProvider))
+        //.addCallback(callback = DbCallback(personDao = personsProvider, transDao = transProvider))
         .build()
 
     @Provides
