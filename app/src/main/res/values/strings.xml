@@ -53,6 +53,13 @@
     <string name="label_amount">Amount</string>
     <string name="label_backup">Backup</string>
     <string name="label_balance">Balance</string>
+    <string name="label_by_amount">Amount</string>
+    <string name="label_by_ascending">Ascending</string>
+    <string name="label_by_descending">Descending</string>
+    <string name="label_by_name">Name (A-Z)</string>
+    <string name="label_by_recent">Recent Added</string>
+    <string name="label_by_sort">SORT BY</string>
+    <string name="label_by_sort_order">ORDER BY</string>
     <string name="label_cancel">Cancel</string>
     <string name="label_confirm">Confirmation</string>
     <string name="label_credit">Credit</string>
@@ -114,6 +121,5 @@
     <string name="label_choose_theme">Choose Theme</string>
     <string name="label_error">Error</string>
     <string name="label_empty">Empty</string>
-    <string name="label_sort_by">SORT BY</string>
 
 </resources>

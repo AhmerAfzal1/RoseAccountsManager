@@ -25,14 +25,12 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -40,6 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarDuration
@@ -89,6 +88,7 @@ import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.SearchIcon
+import com.ahmer.accounts.utils.SortBy
 import com.ahmer.accounts.utils.SortIcon
 import com.ahmer.accounts.utils.SortOrder
 import kotlinx.coroutines.CoroutineScope
@@ -126,7 +126,7 @@ fun PersonsListScreen(
                     }
                 }
 
-                is UiEvent.RelaunchApp -> HelperUtils.relaunchApp(mContext)
+                is UiEvent.RelaunchApp -> HelperUtils.relaunchApp(context = mContext)
                 is UiEvent.ShowToast -> HelperUtils.showToast(
                     context = mContext, msg = event.message
                 )
@@ -279,16 +279,12 @@ private fun SearchBars(
             IconButton(onClick = { mShowBottomSheet = !mShowBottomSheet }) { SortIcon() }
 
             val mCurrentSortOrder by viewModel.currentSortOrder.collectAsStateWithLifecycle()
-            val mListSortOrder: List<Pair<SortOrder, String>> = SortOrder.listOfSortOrder
             val mSheetState: SheetState = rememberModalBottomSheetState()
-            val (sortOrder, setSortOrder) = remember { mutableStateOf(value = mCurrentSortOrder) }
 
             if (mShowBottomSheet) {
                 ModalBottomSheet(
                     onDismissRequest = { mShowBottomSheet = false },
-                    modifier = Modifier
-                        .padding(all = 12.dp)
-                        .fillMaxHeight(fraction = 0.4f),
+                    modifier = Modifier.fillMaxHeight(fraction = 0.4f),
                     sheetState = mSheetState,
                     dragHandle = { BottomSheetDefaults.DragHandle() },
                 ) {
@@ -297,7 +293,7 @@ private fun SearchBars(
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleLarge
                     )
                     Divider(
                         modifier = Modifier
@@ -307,62 +303,97 @@ private fun SearchBars(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                     )
 
-                    Text(
-                        text = stringResource(R.string.label_sort_by),
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleSmall
-                    )
-
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(count = 2),
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
-                    ) {
-                        items(items = mListSortOrder) { (option, title) ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .selectable(
-                                        selected = sortOrder.name == option.name,
-                                        role = Role.RadioButton,
-                                        onClick = { setSortOrder(option) },
-                                    ),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                RadioButton(
-                                    selected = (sortOrder.name == option.name),
-                                    onClick = { setSortOrder(option) }
-                                )
-                                Text(text = title)
-                            }
-                        }
-                    }
-
-                    Column(
-                        modifier = Modifier,
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.End,
-                    ) {
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp, horizontal = 8.dp),
-                            thickness = 0.5.dp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-                        )
-                        Button(
-                            onClick = {
-                                mCoroutineScope.launch { mSheetState.hide() }.invokeOnCompletion {
-                                    viewModel.updateSortOrder(sortOrder = sortOrder)
-                                    if (!mSheetState.isVisible) mShowBottomSheet = false
-                                }
-                            },
-                            modifier = Modifier.padding(end = 16.dp)
-                        ) { Text(text = stringResource(id = R.string.label_save)) }
-                    }
+                    OrderSection(modifier = Modifier,
+                        sortOrder = mCurrentSortOrder,
+                        onOrderChange = { viewModel.updateSortOrder(sortOrder = it) })
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MyRadioButton(
+    title: String, selected: Boolean, onSelect: () -> Unit, modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .selectable(
+                selected = selected,
+                role = Role.RadioButton,
+                onClick = onSelect,
+            ), verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(
+            selected = selected, onClick = onSelect, colors = RadioButtonDefaults.colors(
+                selectedColor = MaterialTheme.colorScheme.primary,
+                unselectedColor = MaterialTheme.colorScheme.onBackground
+            )
+        )
+        Text(text = title)
+    }
+}
+
+@Composable
+private fun OrderSection(
+    modifier: Modifier = Modifier,
+    sortOrder: SortOrder = SortOrder.Date(SortBy.Descending),
+    onOrderChange: (SortOrder) -> Unit
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(R.string.label_by_sort),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.titleSmall
+        )
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(count = 2),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+        ) {
+            item {
+                MyRadioButton(title = stringResource(R.string.label_by_recent),
+                    selected = sortOrder is SortOrder.Date,
+                    onSelect = { onOrderChange(SortOrder.Date(sortOrder.sortBy)) })
+            }
+            item {
+                MyRadioButton(title = stringResource(R.string.label_by_name),
+                    selected = sortOrder is SortOrder.Name,
+                    onSelect = { onOrderChange(SortOrder.Name(sortOrder.sortBy)) })
+            }
+            item {
+                MyRadioButton(title = stringResource(R.string.label_by_amount),
+                    selected = sortOrder is SortOrder.Amount,
+                    onSelect = { onOrderChange(SortOrder.Amount(sortOrder.sortBy)) })
+            }
+        }
+
+        Text(
+            text = stringResource(R.string.label_by_sort_order),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.titleSmall
+        )
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(count = 2),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+        ) {
+            item {
+                MyRadioButton(title = stringResource(R.string.label_by_ascending),
+                    selected = sortOrder.sortBy is SortBy.Ascending,
+                    onSelect = { onOrderChange(sortOrder.copy(SortBy.Ascending)) })
+            }
+            item {
+                MyRadioButton(title = stringResource(R.string.label_by_descending),
+                    selected = sortOrder.sortBy is SortBy.Descending,
+                    onSelect = { onOrderChange(sortOrder.copy(SortBy.Descending)) })
             }
         }
     }

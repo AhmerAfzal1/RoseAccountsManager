@@ -8,6 +8,7 @@ class Constants {
     companion object {
         const val ADS_WAIT_TIME: Long = 250L
         const val ANIMATE_ITEM_DURATION: Int = 500
+        const val DATA_STORE_KEY_SORT_BY: String = "SortBy"
         const val DATA_STORE_KEY_SORT_ORDER: String = "SortOrder"
         const val DATA_STORE_KEY_THEME: String = "Theme"
         const val DATA_STORE_NAME: String = "RoseDataStore"

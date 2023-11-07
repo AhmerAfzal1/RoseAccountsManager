@@ -8,7 +8,6 @@ import androidx.room.Upsert
 import com.ahmer.accounts.database.model.PersonsBalanceModel
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransSumModel
-import com.ahmer.accounts.utils.SortOrder
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -28,38 +27,16 @@ interface PersonDao {
             COALESCE(SUM(CASE WHEN t.type = 'Credit' THEN t.amount ELSE -t.amount END), 0) AS balance
             FROM Persons p
             LEFT JOIN Transactions t ON p.id = t.personId
-            WHERE p.name LIKE '%' || :searchQuery || '%'
-            GROUP BY p.name ORDER BY balance DESC"""
+            WHERE p.name LIKE '%' || :query || '%'
+            GROUP BY p.name ORDER BY
+            CASE :sort WHEN 0 THEN balance END ASC, 
+            CASE :sort WHEN 1 THEN balance END DESC,
+            CASE :sort WHEN 2 THEN p.created END ASC, 
+            CASE :sort WHEN 3 THEN p.created END DESC,
+            CASE :sort WHEN 4 THEN p.name END ASC, 
+            CASE :sort WHEN 5 THEN p.name END DESC"""
     )
-    fun getAllPersonsSortedByAmount(searchQuery: String): Flow<List<PersonsBalanceModel>>
-
-    @Query(
-        """SELECT p.*, 
-            COALESCE(SUM(CASE WHEN t.type = 'Credit' THEN t.amount ELSE -t.amount END), 0) AS balance
-            FROM Persons p
-            LEFT JOIN Transactions t ON p.id = t.personId
-            WHERE p.name LIKE '%' || :searchQuery || '%'
-            GROUP BY p.name ORDER BY created ASC"""
-    )
-    fun getAllPersonsSortedByDate(searchQuery: String): Flow<List<PersonsBalanceModel>>
-
-    @Query(
-        """SELECT p.*, 
-            COALESCE(SUM(CASE WHEN t.type = 'Credit' THEN t.amount ELSE -t.amount END), 0) AS balance
-            FROM Persons p
-            LEFT JOIN Transactions t ON p.id = t.personId
-            WHERE p.name LIKE '%' || :searchQuery || '%'
-            GROUP BY p.name ORDER BY name ASC"""
-    )
-    fun getAllPersonsSortedByName(searchQuery: String): Flow<List<PersonsBalanceModel>>
-
-    fun getAllPersonsByFilter(
-        searchQuery: String, sortOrder: SortOrder
-    ): Flow<List<PersonsBalanceModel>> = when (sortOrder) {
-        SortOrder.Amount -> getAllPersonsSortedByAmount(searchQuery = searchQuery)
-        SortOrder.Date -> getAllPersonsSortedByDate(searchQuery = searchQuery)
-        SortOrder.Name -> getAllPersonsSortedByName(searchQuery = searchQuery)
-    }
+    fun getAllPersonsSorted(query: String, sort: Int): Flow<List<PersonsBalanceModel>>
 
     @Query("SELECT * FROM Persons WHERE id = :personId")
     fun getPersonById(personId: Int): Flow<PersonsEntity?>

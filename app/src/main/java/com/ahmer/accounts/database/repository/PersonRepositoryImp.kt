@@ -4,6 +4,7 @@ import com.ahmer.accounts.database.dao.PersonDao
 import com.ahmer.accounts.database.model.PersonsBalanceModel
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransSumModel
+import com.ahmer.accounts.utils.SortBy
 import com.ahmer.accounts.utils.SortOrder
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.Dispatchers
@@ -27,10 +28,26 @@ class PersonRepositoryImp @Inject constructor(private val personDao: PersonDao) 
 
     override fun getAllPersons(): Flow<List<PersonsEntity>> = personDao.getAllPersons()
 
-    override fun getAllPersonsByFilter(
-        searchQuery: String, sortOrder: SortOrder
+    override fun getAllPersonsSorted(
+        query: String, sortOrder: SortOrder
     ): Flow<List<PersonsBalanceModel>> {
-        return personDao.getAllPersonsByFilter(searchQuery = searchQuery, sortOrder = sortOrder)
+        return when (sortOrder.sortBy) {
+            SortBy.Ascending -> {
+                when (sortOrder) {
+                    is SortOrder.Amount -> personDao.getAllPersonsSorted(query = query, sort = 0)
+                    is SortOrder.Date -> personDao.getAllPersonsSorted(query = query, sort = 2)
+                    is SortOrder.Name -> personDao.getAllPersonsSorted(query = query, sort = 4)
+                }
+            }
+
+            SortBy.Descending -> {
+                when (sortOrder) {
+                    is SortOrder.Amount -> personDao.getAllPersonsSorted(query = query, sort = 1)
+                    is SortOrder.Date -> personDao.getAllPersonsSorted(query = query, sort = 3)
+                    is SortOrder.Name -> personDao.getAllPersonsSorted(query = query, sort = 5)
+                }
+            }
+        }
     }
 
     override fun getPersonById(personId: Int): Flow<PersonsEntity?> {

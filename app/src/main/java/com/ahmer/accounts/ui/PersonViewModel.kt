@@ -11,6 +11,7 @@ import com.ahmer.accounts.navigation.NavItems
 import com.ahmer.accounts.state.PersonState
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.DataStore
+import com.ahmer.accounts.utils.SortBy
 import com.ahmer.accounts.utils.SortOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -49,7 +50,7 @@ class PersonViewModel @Inject constructor(
     val currentSortOrder: StateFlow<SortOrder> = dataStore.getSortOrder.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = Constants.STATE_IN_STARTED_TIME),
-        initialValue = SortOrder.Date
+        initialValue = SortOrder.Date(sortBy = SortBy.Descending)
     )
 
     fun updateSortOrder(sortOrder: SortOrder) {
@@ -125,7 +126,7 @@ class PersonViewModel @Inject constructor(
         combine(_searchQuery, currentSortOrder) { query, dataStore ->
             Pair(first = query, second = dataStore)
         }.flatMapLatest { (search, sortOrder) ->
-            personRepository.getAllPersonsByFilter(searchQuery = search, sortOrder = sortOrder)
+            personRepository.getAllPersonsSorted(query = search, sortOrder = sortOrder)
         }.onEach { resultState ->
             _uiState.update { personState -> personState.copy(getAllPersonsList = resultState) }
         }.launchIn(scope = viewModelScope)

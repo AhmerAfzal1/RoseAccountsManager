@@ -11,12 +11,14 @@ import javax.inject.Inject
 class DataStore @Inject constructor(private val dataStore: DataStore<Preferences>) {
 
     private object DataStoreKeys {
+        val sortByKey = stringPreferencesKey(name = Constants.DATA_STORE_KEY_SORT_BY)
         val sortOrderKey = stringPreferencesKey(name = Constants.DATA_STORE_KEY_SORT_ORDER)
         val themeKey = stringPreferencesKey(name = Constants.DATA_STORE_KEY_THEME)
     }
 
     suspend fun updateSortOrder(sortOrder: SortOrder) = dataStore.edit { preference ->
-        preference[DataStoreKeys.sortOrderKey] = sortOrder.name
+        preference[DataStoreKeys.sortOrderKey] = sortOrder::class.java.name
+        preference[DataStoreKeys.sortByKey] = sortOrder.sortBy.name
     }
 
     suspend fun updateTheme(themeMode: ThemeMode) = dataStore.edit { preference ->
@@ -24,7 +26,14 @@ class DataStore @Inject constructor(private val dataStore: DataStore<Preferences
     }
 
     val getSortOrder: Flow<SortOrder> = dataStore.data.map { preference ->
-        SortOrder.valueOf(value = preference[DataStoreKeys.sortOrderKey] ?: SortOrder.Date.name)
+        val sortBy = SortBy.valueOf(
+            value = preference[DataStoreKeys.sortByKey] ?: SortBy.Descending.name
+        )
+        when (preference[DataStoreKeys.sortOrderKey]) {
+            SortOrder.Amount::class.java.name -> SortOrder.Amount(sortBy)
+            SortOrder.Name::class.java.name -> SortOrder.Name(sortBy)
+            else -> SortOrder.Date(sortBy)
+        }
     }
 
     val getTheme: Flow<ThemeMode> = dataStore.data.map { preference ->
