@@ -68,7 +68,7 @@ fun PersonTotalBalance(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = HelperUtils.getRoundedValue(mCredit),
+                        text = "Rs. ${HelperUtils.getRoundedValue(mCredit)}",
                         modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
                         color = colorGreenDark,
                         fontWeight = FontWeight.Bold,
@@ -98,7 +98,7 @@ fun PersonTotalBalance(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = HelperUtils.getRoundedValue(mDebit),
+                        text = "Rs. ${HelperUtils.getRoundedValue(mDebit)}",
                         modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
                         color = colorRedDark,
                         fontWeight = FontWeight.Bold,
@@ -128,7 +128,7 @@ fun PersonTotalBalance(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = HelperUtils.getRoundedValue(mTotalBalance),
+                        text = "Rs. ${HelperUtils.getRoundedValue(mTotalBalance)}",
                         modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
                         color = mColorText,
                         fontWeight = FontWeight.Bold,

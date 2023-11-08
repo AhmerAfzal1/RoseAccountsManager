@@ -186,7 +186,7 @@ fun PersonsListScreen(
                     .fillMaxSize()
                     .padding(paddingValues = innerPadding)
                     .nestedScroll(connection = mNestedScrollConnection),
-                verticalArrangement = Arrangement.spacedBy(space = 10.dp),
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(
@@ -197,7 +197,7 @@ fun PersonsListScreen(
                         personsBalanceModel = person,
                         onEvent = viewModel::onEvent,
                         modifier = Modifier
-                            .padding(start = 12.dp, end = 12.dp)
+                            .padding(start = 5.dp, end = 5.dp)
                             .animateItemPlacement(
                                 animationSpec = tween(durationMillis = Constants.ANIMATE_ITEM_DURATION)
                             )
