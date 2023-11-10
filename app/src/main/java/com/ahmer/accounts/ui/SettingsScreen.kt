@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,11 +20,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,8 +40,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,8 +53,11 @@ import com.ahmer.accounts.dialogs.ThemeDialog
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.utils.AppVersion
 import com.ahmer.accounts.utils.BackupIcon
+import com.ahmer.accounts.utils.CheckIcon
 import com.ahmer.accounts.utils.ClearCachesIcon
 import com.ahmer.accounts.utils.Constants
+import com.ahmer.accounts.utils.Currency
+import com.ahmer.accounts.utils.CurrencyIcon
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.RestoreIcon
 import com.ahmer.accounts.utils.ThemeIcon
@@ -54,9 +69,11 @@ import kotlinx.coroutines.flow.collectLatest
 fun SettingsScreen(viewModel: SettingsViewModel) {
     val mContext: Context = LocalContext.current.applicationContext
     val mAppVersion: AppVersion = HelperUtils.getAppInfo(context = mContext)
-    val mCurrentTheme by viewModel.currentTheme.collectAsStateWithLifecycle()
+    val mCurrentTheme: ThemeMode by viewModel.currentTheme.collectAsStateWithLifecycle()
+    val mShowBottomSheet: MutableState<Boolean> = remember { mutableStateOf(value = false) }
     val mSummary: String = ThemeMode.getThemeModesTitle(themeMode = mCurrentTheme)
     var mShowThemeDialog: Boolean by remember { mutableStateOf(value = false) }
+    val mCurrentCurrency: Currency by viewModel.currentCurrency.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -73,6 +90,12 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
 
     if (mShowThemeDialog) {
         ThemeDialog(viewModel = viewModel)
+    }
+
+    if (mShowBottomSheet.value) {
+        CurrencySelectionModal(
+            viewModel = viewModel, showBottomSheet = mShowBottomSheet, currency = mCurrentCurrency
+        )
     }
 
     val mBackupDatabaseLauncher = rememberLauncherForActivityResult(
@@ -96,8 +119,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     fun backup() {
         val mFileName = "backup_${
             HelperUtils.getDateTime(
-                time = System.currentTimeMillis(),
-                pattern = Constants.DATE_TIME_FILE_NAME_PATTERN
+                time = System.currentTimeMillis(), pattern = Constants.DATE_TIME_FILE_NAME_PATTERN
             )
         }.db"
         val mBackupIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
@@ -122,8 +144,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
             PreferenceCategory(title = stringResource(id = R.string.label_pref_category_theme)) {
@@ -145,6 +166,10 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             }
 
             PreferenceCategory(title = stringResource(id = R.string.label_pref_category_general)) {
+                TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_currency)) },
+                    summary = { Text(text = mCurrentCurrency.code) },
+                    icon = { CurrencyIcon() },
+                    onClick = { mShowBottomSheet.value = !mShowBottomSheet.value })
                 TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_clear_caches)) },
                     summary = {
                         Text(
@@ -159,7 +184,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                 TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_app_version)) },
                     summary = { Text(text = "${mAppVersion.versionName} (${mAppVersion.versionCode})") },
                     icon = { VersionIcon() },
-                    onClick = {})
+                    onClick = { })
             }
         }
     }
@@ -229,5 +254,83 @@ fun PreferenceCategory(title: String, content: @Composable ColumnScope.() -> Uni
                 .height(height = 0.5.dp)
                 .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CurrencySelectionModal(
+    viewModel: SettingsViewModel, showBottomSheet: MutableState<Boolean>, currency: Currency
+) {
+    val mCurrencyList: List<Currency> = Currency.listOfCurrencies
+    val mSheetState: SheetState = rememberModalBottomSheetState()
+    var mSelectedCurrency: Currency by remember { mutableStateOf(value = currency) }
+    var isSelected: Boolean by remember { mutableStateOf(value = false) }
+
+    if (showBottomSheet.value) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet.value = false },
+            modifier = Modifier.fillMaxHeight(fraction = 0.5f),
+            sheetState = mSheetState,
+            dragHandle = { BottomSheetDefaults.DragHandle() }) {
+            Text(
+                text = stringResource(R.string.label_bottom_sheet_select_currency),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+            )
+            LazyColumn {
+                items(mCurrencyList) { currency ->
+                    isSelected = currency == mSelectedCurrency
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            mSelectedCurrency = currency
+                            viewModel.updateCurrency(currency = currency)
+                        }
+                        .padding(all = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = currency.flag,
+                            modifier = Modifier
+                                .weight(weight = 0.45f)
+                                .padding(start = 5.dp),
+                            textAlign = TextAlign.Start,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Text(
+                            text = currency.code,
+                            modifier = Modifier.weight(weight = 0.45f),
+                            fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Normal,
+                            textAlign = TextAlign.Start,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                        Spacer(modifier = Modifier.weight(weight = 0.1f))
+                        if (isSelected) {
+                            CheckIcon(modifier = Modifier, tint = Color.Blue)
+                        } else {
+                            Spacer(modifier = Modifier.size(size = 24.dp))
+                        }
+                    }
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 5.dp),
+                        thickness = 0.5.dp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    )
+                }
+            }
+        }
     }
 }

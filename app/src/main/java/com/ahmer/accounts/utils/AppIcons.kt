@@ -3,6 +3,7 @@ package com.ahmer.accounts.utils
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
@@ -53,6 +54,26 @@ fun BackupIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
     Icon(
         painter = painterResource(id = R.drawable.ic_filled_backup),
         contentDescription = stringResource(id = R.string.content_description_backup),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun CurrencyIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_dollar),
+        contentDescription = stringResource(id = R.string.content_description_dollar),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun CheckIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        imageVector = Icons.Filled.Check,
+        contentDescription = stringResource(id = R.string.content_description_check),
         modifier = modifier,
         tint = tint
     )

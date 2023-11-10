@@ -10,6 +10,7 @@ import com.ahmer.accounts.R
 import com.ahmer.accounts.dl.AppModule
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.utils.Constants
+import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.DataStore
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.ThemeMode
@@ -34,11 +35,23 @@ class SettingsViewModel @Inject constructor(
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
+    val currentCurrency: StateFlow<Currency> = dataStore.getCurrency.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = Currency.PKR
+    )
+
     val currentTheme: StateFlow<ThemeMode> = dataStore.getTheme.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = Constants.STATE_IN_STARTED_TIME),
         initialValue = ThemeMode.System
     )
+
+    fun updateCurrency(currency: Currency) {
+        viewModelScope.launch {
+            dataStore.updateCurrency(currency = currency)
+        }
+    }
 
     fun updateTheme(themeMode: ThemeMode) {
         viewModelScope.launch {

@@ -40,6 +40,8 @@
     <string name="label_accounts">Accounts</string>
     <string name="label_address">Address</string>
     <string name="label_amount">Amount</string>
+    <string name="label_bottom_sheet_select_currency">SELECT CURRENCY</string>
+    <string name="label_bottom_sheet_sort_filter">SORT AND FILTER</string>
     <string name="label_by_amount">Amount</string>
     <string name="label_by_ascending">Ascending</string>
     <string name="label_by_descending">Descending</string>
@@ -85,5 +87,8 @@
     <string name="toast_pdf_generated">PDF file generated successfully.</string>
     <string name="toast_pdf_not_generated">There is no transaction to create a PDF file.</string>
     <string name="label_choose_theme">Choose Theme</string>
+    <string name="content_description_check">Check icon</string>
+    <string name="label_pref_text_title_currency">Change Currency</string>
+    <string name="content_description_dollar">Dollar icon</string>
 
 </resources>

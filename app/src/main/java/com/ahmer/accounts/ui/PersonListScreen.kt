@@ -73,7 +73,9 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -289,11 +291,15 @@ private fun SearchBars(
                     dragHandle = { BottomSheetDefaults.DragHandle() },
                 ) {
                     Text(
-                        text = "Filter",
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                        text = stringResource(R.string.label_bottom_sheet_sort_filter),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                        fontWeight = FontWeight.Bold,
                         maxLines = 1,
+                        textAlign = TextAlign.Center,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleMedium
                     )
                     Divider(
                         modifier = Modifier
