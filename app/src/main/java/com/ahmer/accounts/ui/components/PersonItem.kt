@@ -29,16 +29,19 @@ import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorRedDark
+import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.HelperUtils
 
 @Composable
 fun PersonItem(
     personsBalanceModel: PersonsBalanceModel,
+    currency: Currency,
     onEvent: (PersonEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val mBalance: String = personsBalanceModel.balanceModel.balance ?: "0.0"
+    val mBalance: Double = personsBalanceModel.balanceModel.balance
     val mPersonsEntity: PersonsEntity = personsBalanceModel.personsEntity
+
     /*var mShowDeleteDialog: Boolean by remember { mutableStateOf(value = false) }
     var mShowInfoDialog: Boolean by remember { mutableStateOf(value = false) }
     val mPadding: Dp = 5.dp
@@ -57,9 +60,9 @@ fun PersonItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 5.dp, vertical = 10.dp)
+            .padding(start = 10.dp, top = 5.dp, bottom = 5.dp)
             .clickable { onEvent(PersonEvent.OnAddTransactionClick(mPersonsEntity)) },
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -69,44 +72,43 @@ fun PersonItem(
                     border = BorderStroke(width = 2.dp, color = Color.LightGray),
                     shape = CircleShape
                 )
-                .background(color = Color.White),
-            contentAlignment = Alignment.Center
+                .background(color = Color.White), contentAlignment = Alignment.Center
         ) {
             Text(
                 text = mPersonsEntity.name.first().toString(),
+                modifier = Modifier.align(alignment = Alignment.Center),
                 color = Color.DarkGray,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium
             )
         }
         Spacer(modifier = Modifier.width(width = 8.dp))
-        Column {
-            Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(modifier = Modifier.weight(weight = 0.7f)) {
                 Text(
                     text = mPersonsEntity.name,
-                    modifier = Modifier.weight(weight = 0.65f),
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyMedium
                 )
-
-                Text(
-                    text = "Rs. ${HelperUtils.getRoundedValue(value = mBalance.toDouble())}",
-                    modifier = Modifier.weight(weight = 0.35f),
-                    color = if (mBalance.toDouble() >= 0) colorGreenDark else colorRedDark,
-                    maxLines = 1,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                if (mPersonsEntity.phone.isNotEmpty()) {
+                    Text(
+                        text = mPersonsEntity.phone,
+                        color = Color.Gray,
+                        maxLines = 1,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
             }
-            if (mPersonsEntity.phone.isNotEmpty()) {
-                Text(
-                    text = mPersonsEntity.phone,
-                    color = Color.Gray,
-                    maxLines = 1,
-                    style = MaterialTheme.typography.labelSmall
-                )
-            }
+            HelperUtils.AmountWithSymbolText(
+                modifier = Modifier.weight(weight = 0.3f),
+                currency = currency,
+                amount = mBalance,
+                color = if (mBalance >= 0) colorGreenDark else colorRedDark,
+                style = MaterialTheme.typography.bodySmall,
+                isBold = false
+            )
         }
     }
 

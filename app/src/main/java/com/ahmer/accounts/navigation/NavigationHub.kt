@@ -37,7 +37,8 @@ fun MainNavigation(
         ) {
             PersonsListScreen(
                 onNavigation = { navController.navigate(it.route) },
-                viewModel = hiltViewModel(),
+                personViewModel = hiltViewModel(),
+                settingsViewModel = hiltViewModel(),
                 transSumModel = transSumModel,
             )
         }
@@ -72,7 +73,8 @@ fun MainNavigation(
             exitTransition = { ExitTransition.None },
         ) {
             TransListScreen(
-                viewModel = hiltViewModel(),
+                transViewModel = hiltViewModel(),
+                settingsViewModel = hiltViewModel(),
                 onNavigation = { navController.navigate(it.route) },
                 onPopBackStack = { navController.popBackStack() },
             )

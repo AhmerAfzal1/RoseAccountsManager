@@ -51,7 +51,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -83,11 +82,13 @@ import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.state.PersonState
 import com.ahmer.accounts.ui.components.PersonItem
 import com.ahmer.accounts.ui.components.PersonTotalBalance
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.Constants
+import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.SearchIcon
 import com.ahmer.accounts.utils.SortBy
@@ -104,17 +105,19 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun PersonsListScreen(
     onNavigation: (UiEvent.Navigate) -> Unit,
-    viewModel: PersonViewModel,
+    personViewModel: PersonViewModel,
+    settingsViewModel: SettingsViewModel,
     transSumModel: TransSumModel,
 ) {
     val mContext: Context = LocalContext.current.applicationContext
+    val mCurrentCurrency: Currency by settingsViewModel.currentCurrency.collectAsStateWithLifecycle()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val mState by viewModel.uiState.collectAsState()
-    var isVisibleFab by rememberSaveable { mutableStateOf(value = true) }
-    var mTextSearch by remember { mutableStateOf(value = viewModel.searchQuery.value) }
+    val mState: PersonState by personViewModel.uiState.collectAsStateWithLifecycle()
+    var isVisibleFab: Boolean by rememberSaveable { mutableStateOf(value = true) }
+    var mTextSearch: String by remember { mutableStateOf(value = personViewModel.searchQuery.value) }
 
     LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
+        personViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.Navigate -> onNavigation(event)
                 is UiEvent.ShowSnackBar -> {
@@ -124,7 +127,7 @@ fun PersonsListScreen(
                         duration = SnackbarDuration.Short
                     )
                     if (mResult == SnackbarResult.ActionPerformed) {
-                        viewModel.onEvent(PersonEvent.OnUndoDeleteClick)
+                        personViewModel.onEvent(PersonEvent.OnUndoDeleteClick)
                     }
                 }
 
@@ -147,7 +150,7 @@ fun PersonsListScreen(
                 enter = slideInVertically(initialOffsetY = { it * 2 }),
                 exit = slideOutVertically(targetOffsetY = { it * 2 }),
             ) {
-                FloatingActionButton(onClick = { viewModel.onEvent(PersonEvent.OnNewAddClick) }) {
+                FloatingActionButton(onClick = { personViewModel.onEvent(PersonEvent.OnNewAddClick) }) {
                     AddIcon()
                 }
             }
@@ -169,6 +172,7 @@ fun PersonsListScreen(
         ) {
             PersonTotalBalance(
                 transSumModel = transSumModel,
+                currency = mCurrentCurrency,
                 modifier = Modifier.padding(all = 5.dp),
             )
             SearchBars(
@@ -177,10 +181,10 @@ fun PersonsListScreen(
                     .padding(all = 5.dp),
                 text = mTextSearch,
                 onTextChange = { text ->
-                    viewModel.onEvent(PersonEvent.OnSearchTextChange(text))
+                    personViewModel.onEvent(PersonEvent.OnSearchTextChange(text))
                     mTextSearch = text
                 },
-                viewModel = viewModel,
+                viewModel = personViewModel,
             )
 
             LazyColumn(
@@ -197,9 +201,9 @@ fun PersonsListScreen(
                 ) { person ->
                     PersonItem(
                         personsBalanceModel = person,
-                        onEvent = viewModel::onEvent,
+                        currency = mCurrentCurrency,
+                        onEvent = personViewModel::onEvent,
                         modifier = Modifier
-                            .padding(start = 5.dp, end = 5.dp)
                             .animateItemPlacement(
                                 animationSpec = tween(durationMillis = Constants.ANIMATE_ITEM_DURATION)
                             )

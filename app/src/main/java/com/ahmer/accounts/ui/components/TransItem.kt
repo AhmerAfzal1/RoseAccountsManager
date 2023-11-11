@@ -24,12 +24,14 @@ import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorRedDark
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.CreditIcon
+import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.DebitIcon
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.HelperUtils
 
 @Composable
 fun TransItem(
+    currency: Currency,
     transEntity: TransEntity,
     onEvent: (TransEvent) -> Unit,
     modifier: Modifier = Modifier

@@ -20,7 +20,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,6 +38,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,17 +66,19 @@ import com.ahmer.accounts.utils.RestoreIcon
 import com.ahmer.accounts.utils.ThemeIcon
 import com.ahmer.accounts.utils.ThemeMode
 import com.ahmer.accounts.utils.VersionIcon
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel) {
     val mContext: Context = LocalContext.current.applicationContext
     val mAppVersion: AppVersion = HelperUtils.getAppInfo(context = mContext)
+    val mCurrentCurrency: Currency by viewModel.currentCurrency.collectAsStateWithLifecycle()
     val mCurrentTheme: ThemeMode by viewModel.currentTheme.collectAsStateWithLifecycle()
     val mShowBottomSheet: MutableState<Boolean> = remember { mutableStateOf(value = false) }
     val mSummary: String = ThemeMode.getThemeModesTitle(themeMode = mCurrentTheme)
     var mShowThemeDialog: Boolean by remember { mutableStateOf(value = false) }
-    val mCurrentCurrency: Currency by viewModel.currentCurrency.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -262,13 +267,26 @@ fun PreferenceCategory(title: String, content: @Composable ColumnScope.() -> Uni
 fun CurrencySelectionModal(
     viewModel: SettingsViewModel, showBottomSheet: MutableState<Boolean>, currency: Currency
 ) {
+    val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     val mCurrencyList: List<Currency> = Currency.listOfCurrencies
+    val mLazyListState: LazyListState = rememberLazyListState()
     val mSheetState: SheetState = rememberModalBottomSheetState()
-    var mSelectedCurrency: Currency by remember { mutableStateOf(value = currency) }
     var isSelected: Boolean by remember { mutableStateOf(value = false) }
+    var mSelectedCurrency: Currency by remember { mutableStateOf(value = currency) }
+
+    LaunchedEffect(key1 = mSelectedCurrency) {
+        val mIndex: Int = mCurrencyList.indexOf(mSelectedCurrency)
+        val mOffset: Int = -mLazyListState.layoutInfo.viewportEndOffset / 2
+        if (mIndex != -1) {
+            mCoroutineScope.launch {
+                mLazyListState.animateScrollToItem(index = mIndex, scrollOffset = mOffset)
+            }
+        }
+    }
 
     if (showBottomSheet.value) {
-        ModalBottomSheet(onDismissRequest = { showBottomSheet.value = false },
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet.value = false },
             modifier = Modifier.fillMaxHeight(fraction = 0.5f),
             sheetState = mSheetState,
             dragHandle = { BottomSheetDefaults.DragHandle() }) {
@@ -290,7 +308,10 @@ fun CurrencySelectionModal(
                 thickness = 0.5.dp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
             )
-            LazyColumn {
+            LazyColumn(
+                modifier = Modifier,
+                state = mLazyListState
+            ) {
                 items(mCurrencyList) { currency ->
                     isSelected = currency == mSelectedCurrency
                     Row(modifier = Modifier

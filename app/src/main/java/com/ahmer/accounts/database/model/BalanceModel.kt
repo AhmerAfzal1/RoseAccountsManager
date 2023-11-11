@@ -5,5 +5,5 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class BalanceModel(
-    var balance: String? = "0.0",
+    var balance: Double = 0.0,
 ) : Parcelable

@@ -29,7 +29,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,15 +40,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
 import com.ahmer.accounts.drawer.TopAppBarSearchBox
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UiEvent
+import com.ahmer.accounts.state.TransState
 import com.ahmer.accounts.ui.components.TransItem
 import com.ahmer.accounts.ui.components.TransTotal
 import com.ahmer.accounts.utils.AddCircleIcon
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.Constants
+import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.MoreIcon
 import com.ahmer.accounts.utils.PdfIcon
@@ -64,30 +66,32 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TransListScreen(
-    viewModel: TransViewModel,
+    transViewModel: TransViewModel,
+    settingsViewModel: SettingsViewModel,
     onNavigation: (UiEvent.Navigate) -> Unit,
     onPopBackStack: () -> Unit,
 ) {
     val mContext: Context = LocalContext.current
     val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
+    val mCurrency: Currency by settingsViewModel.currentCurrency.collectAsStateWithLifecycle()
     val mScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val mState by viewModel.uiState.collectAsState()
-    var mShowDropdownMenu by remember { mutableStateOf(value = false) }
-    var mShowSearch by remember { mutableStateOf(value = false) }
-    var mTextSearch by remember { mutableStateOf(value = viewModel.searchQuery.value) }
+    val mState: TransState by transViewModel.uiState.collectAsStateWithLifecycle()
+    var mShowDropdownMenu: Boolean by remember { mutableStateOf(value = false) }
+    var mShowSearch: Boolean by remember { mutableStateOf(value = false) }
+    var mTextSearch: String by remember { mutableStateOf(value = transViewModel.searchQuery.value) }
 
     val mLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {
         if (it.resultCode == Activity.RESULT_OK) {
             val mUri = it.data?.data ?: return@rememberLauncherForActivityResult
-            viewModel.generatePdf(mContext, mUri)
+            transViewModel.generatePdf(mContext, mUri)
         }
     }
 
     LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
+        transViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.Navigate -> onNavigation(event)
                 is UiEvent.ShowSnackBar -> {
@@ -97,7 +101,7 @@ fun TransListScreen(
                         duration = SnackbarDuration.Short
                     )
                     if (mResult == SnackbarResult.ActionPerformed) {
-                        viewModel.onEvent(TransEvent.OnUndoDeleteClick)
+                        transViewModel.onEvent(TransEvent.OnUndoDeleteClick)
                     }
                 }
 
@@ -117,7 +121,7 @@ fun TransListScreen(
                 title = {
                     if (mShowSearch) {
                         TopAppBarSearchBox(text = mTextSearch, onTextChange = {
-                            viewModel.onEvent(TransEvent.OnSearchTextChange(it))
+                            transViewModel.onEvent(TransEvent.OnSearchTextChange(it))
                             mTextSearch = it
                         }, onCloseClick = {
                             mCoroutineScope.launch { delay(duration = 200.milliseconds) }
@@ -136,7 +140,7 @@ fun TransListScreen(
                     if (!mShowSearch) {
                         IconButton(onClick = { mShowSearch = true }) { SearchIcon() }
                     }
-                    IconButton(onClick = { viewModel.onEvent(TransEvent.OnAddClick) }) { AddCircleIcon() }
+                    IconButton(onClick = { transViewModel.onEvent(TransEvent.OnAddClick) }) { AddCircleIcon() }
                     if (!mShowSearch) {
                         IconButton(onClick = {
                             mShowDropdownMenu = !mShowDropdownMenu
@@ -181,8 +185,9 @@ fun TransListScreen(
                     items = mState.getAllPersonsTransList,
                     key = { listTrans -> listTrans.id }) { transaction ->
                     TransItem(
+                        currency = mCurrency,
                         transEntity = transaction,
-                        onEvent = viewModel::onEvent,
+                        onEvent = transViewModel::onEvent,
                         modifier = Modifier.animateItemPlacement(
                             animationSpec = tween(
                                 durationMillis = Constants.ANIMATE_ITEM_DURATION

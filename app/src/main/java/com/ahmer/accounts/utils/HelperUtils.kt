@@ -11,6 +11,14 @@ import android.os.Build
 import android.provider.OpenableColumns
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.core.content.ContextCompat
 import com.ahmer.accounts.R
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -27,6 +35,39 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 object HelperUtils {
+    @Composable
+    fun AmountWithSymbolText(
+        modifier: Modifier = Modifier,
+        modifierTextSymbol: Modifier = Modifier,
+        modifierTextAmount: Modifier = Modifier,
+        currency: Currency,
+        amount: Double,
+        color: Color,
+        style: TextStyle,
+        isBold: Boolean = true
+    ) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "${currency.symbol} ",
+                modifier = modifierTextSymbol,
+                color = color,
+                fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal,
+                maxLines = 1,
+                style = style,
+            )
+            Text(
+                text = getRoundedValue(value = amount),
+                modifier = modifierTextAmount,
+                color = color,
+                fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal,
+                maxLines = 1,
+                style = style,
+            )
+        }
+    }
 
     @JvmStatic
     fun getAppInfo(context: Context): AppVersion {

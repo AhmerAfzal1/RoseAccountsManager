@@ -5,6 +5,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class TransSumModel(
-    var creditSum: String? = "0.0",
-    var debitSum: String? = "0.0"
-) : Parcelable
+    var creditSum: Double = 0.0,
+    var debitSum: Double = 0.0,
+) : Parcelable {
+    val balance: Double
+        get() = creditSum.minus(debitSum)
+}

@@ -34,13 +34,10 @@ import com.ahmer.accounts.utils.HelperUtils
 fun TransTotal(transSumModel: TransSumModel) {
     val mColorBackground: Color
     val mColorText: Color
-    val mCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
-    val mDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
     val mHorizontalSpace: Dp = 2.dp
     val mRoundShapeSize: Dp = 10.dp
-    val mTotalBalance: Double = mCredit.minus(mDebit)
 
-    if (mTotalBalance >= 0) {
+    if (transSumModel.balance >= 0) {
         mColorBackground = colorGreenLight
         mColorText = colorGreenDark
     } else {
@@ -81,7 +78,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = HelperUtils.getRoundedValue(mCredit),
+                        text = HelperUtils.getRoundedValue(value = transSumModel.creditSum),
                         color = colorGreenDark,
                         modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
@@ -118,7 +115,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                     )
 
                     Text(
-                        text = HelperUtils.getRoundedValue(mDebit),
+                        text = HelperUtils.getRoundedValue(value = transSumModel.debitSum),
                         color = colorRedDark,
                         modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
@@ -140,7 +137,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (mTotalBalance >= 0) {
+                    if (transSumModel.balance >= 0) {
                         CreditIcon(
                             modifier = Modifier
                                 .size(size = 30.dp)
@@ -165,7 +162,7 @@ fun TransTotal(transSumModel: TransSumModel) {
                     )
 
                     Text(
-                        text = HelperUtils.getRoundedValue(mTotalBalance),
+                        text = HelperUtils.getRoundedValue(value = transSumModel.balance),
                         color = mColorText,
                         modifier = Modifier.padding(bottom = 5.dp),
                         fontWeight = FontWeight.Bold,
