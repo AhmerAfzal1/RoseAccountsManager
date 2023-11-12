@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.Flow
 interface PersonRepository {
     suspend fun insertOrUpdate(personsEntity: PersonsEntity)
     suspend fun delete(personsEntity: PersonsEntity)
-    fun getAllPersons(): Flow<List<PersonsEntity>>
-    fun getAllPersonsSorted(query: String, sortOrder: SortOrder): Flow<List<PersonsBalanceModel>>
-    fun getPersonById(personId: Int): Flow<PersonsEntity?>
-    fun getAccountBalanceByPerson(personId: Int): Flow<TransSumModel>
-    fun getAllAccountsBalance(): Flow<TransSumModel>
+    fun allPersons(): Flow<List<PersonsEntity>>
+    fun allPersonsSearch(query: String, sortOrder: SortOrder): Flow<List<PersonsBalanceModel>>
+    fun personById(personId: Int): Flow<PersonsEntity>
+    fun balanceByPerson(personId: Int): Flow<TransSumModel>
+    fun accountsBalance(): Flow<TransSumModel>
 }

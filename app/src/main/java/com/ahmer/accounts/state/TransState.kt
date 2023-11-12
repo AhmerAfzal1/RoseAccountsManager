@@ -4,6 +4,6 @@ import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 
 data class TransState(
-    val getAllPersonsTransList: List<TransEntity> = emptyList(),
-    val getPersonTransBalance: TransSumModel = TransSumModel(),
+    val allTransactions: List<TransEntity> = emptyList(),
+    val transSumModel: TransSumModel = TransSumModel(),
 )

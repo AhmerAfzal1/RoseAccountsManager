@@ -2,14 +2,15 @@ package com.ahmer.accounts.utils
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -42,7 +43,7 @@ fun AddCircleIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor
 @Composable
 fun BackIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.ArrowBack,
+        imageVector = Icons.Filled.KeyboardArrowLeft,
         contentDescription = stringResource(id = R.string.content_description_back),
         modifier = modifier,
         tint = tint
@@ -152,7 +153,7 @@ fun SaveIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 @Composable
 fun EditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        painter = painterResource(id = R.drawable.ic_edit_square),
+        imageVector = Icons.Outlined.Edit,
         contentDescription = stringResource(id = R.string.content_description_edit),
         modifier = modifier,
         tint = tint
@@ -162,7 +163,7 @@ fun EditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 @Composable
 fun InfoIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.Info,
+        imageVector = Icons.Outlined.Info,
         contentDescription = stringResource(id = R.string.content_description_info),
         modifier = modifier,
         tint = tint

@@ -26,37 +26,37 @@ class PersonRepositoryImp @Inject constructor(private val personDao: PersonDao) 
         }
     }
 
-    override fun getAllPersons(): Flow<List<PersonsEntity>> = personDao.getAllPersons()
+    override fun allPersons(): Flow<List<PersonsEntity>> = personDao.allPersons()
 
-    override fun getAllPersonsSorted(
+    override fun allPersonsSearch(
         query: String, sortOrder: SortOrder
     ): Flow<List<PersonsBalanceModel>> {
         return when (sortOrder.sortBy) {
             SortBy.Ascending -> {
                 when (sortOrder) {
-                    is SortOrder.Amount -> personDao.getAllPersonsSorted(query = query, sort = 0)
-                    is SortOrder.Date -> personDao.getAllPersonsSorted(query = query, sort = 2)
-                    is SortOrder.Name -> personDao.getAllPersonsSorted(query = query, sort = 4)
+                    is SortOrder.Amount -> personDao.allPersonsSearch(query = query, sort = 0)
+                    is SortOrder.Date -> personDao.allPersonsSearch(query = query, sort = 2)
+                    is SortOrder.Name -> personDao.allPersonsSearch(query = query, sort = 4)
                 }
             }
 
             SortBy.Descending -> {
                 when (sortOrder) {
-                    is SortOrder.Amount -> personDao.getAllPersonsSorted(query = query, sort = 1)
-                    is SortOrder.Date -> personDao.getAllPersonsSorted(query = query, sort = 3)
-                    is SortOrder.Name -> personDao.getAllPersonsSorted(query = query, sort = 5)
+                    is SortOrder.Amount -> personDao.allPersonsSearch(query = query, sort = 1)
+                    is SortOrder.Date -> personDao.allPersonsSearch(query = query, sort = 3)
+                    is SortOrder.Name -> personDao.allPersonsSearch(query = query, sort = 5)
                 }
             }
         }
     }
 
-    override fun getPersonById(personId: Int): Flow<PersonsEntity?> {
-        return personDao.getPersonById(personId = personId)
+    override fun personById(personId: Int): Flow<PersonsEntity> {
+        return personDao.personById(personId = personId)
     }
 
-    override fun getAccountBalanceByPerson(personId: Int): Flow<TransSumModel> {
-        return personDao.getAccountBalanceByPerson(personId = personId)
+    override fun balanceByPerson(personId: Int): Flow<TransSumModel> {
+        return personDao.balanceByPerson(personId = personId)
     }
 
-    override fun getAllAccountsBalance(): Flow<TransSumModel> = personDao.getAllAccountsBalance()
+    override fun accountsBalance(): Flow<TransSumModel> = personDao.accountsBalance()
 }

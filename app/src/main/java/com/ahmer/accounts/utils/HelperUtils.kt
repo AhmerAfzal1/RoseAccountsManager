@@ -12,12 +12,12 @@ import android.provider.OpenableColumns
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.content.ContextCompat
 import com.ahmer.accounts.R
@@ -36,6 +36,29 @@ import kotlin.math.roundToInt
 
 object HelperUtils {
     @Composable
+    fun AdjustableText(
+        modifier: Modifier = Modifier,
+        text: String,
+        color: Color,
+        length: Int = 0,
+        isBold: Boolean = true
+    ) {
+        Text(
+            text = text,
+            modifier = modifier,
+            color = color,
+            fontWeight = if (isBold && length <= 17) FontWeight.Bold else FontWeight.Normal,
+            maxLines = 1,
+            style = when (if (length == 0) text.length else length) {
+                in 0..10 -> MaterialTheme.typography.bodyLarge
+                in 11..13 -> MaterialTheme.typography.bodyMedium
+                in 14..16 -> MaterialTheme.typography.labelMedium
+                else -> MaterialTheme.typography.labelSmall
+            }
+        )
+    }
+
+    @Composable
     fun AmountWithSymbolText(
         modifier: Modifier = Modifier,
         modifierTextSymbol: Modifier = Modifier,
@@ -43,33 +66,35 @@ object HelperUtils {
         currency: Currency,
         amount: Double,
         color: Color,
-        style: TextStyle,
         isBold: Boolean = true
     ) {
         Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically
+            modifier = modifier, verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
+            val textLength: Int =
+                currency.symbol.length + getRoundedValue(value = amount).length - 1
+            /*Log.v(
+                Constants.LOG_TAG, "TextLen: Currency -> ${currency.symbol.length}, " +
+                        "Amount -> $amount: ${getRoundedValue(value = amount).length}, " +
+                        "TotalLen -> $textLength"
+            )*/
+            AdjustableText(
                 text = "${currency.symbol} ",
                 modifier = modifierTextSymbol,
                 color = color,
-                fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal,
-                maxLines = 1,
-                style = style,
+                length = textLength,
+                isBold = isBold,
             )
-            Text(
+            AdjustableText(
                 text = getRoundedValue(value = amount),
                 modifier = modifierTextAmount,
                 color = color,
-                fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal,
-                maxLines = 1,
-                style = style,
+                length = textLength,
+                isBold = isBold,
             )
         }
     }
 
-    @JvmStatic
     fun getAppInfo(context: Context): AppVersion {
         val mAppVersion: AppVersion by lazy {
             val mVersion = AppVersion()
@@ -97,13 +122,11 @@ object HelperUtils {
         }
     }.getOrNull()
 
-    @JvmStatic
     fun getFileNameFromDatabase(context: Context, uri: Uri): String? = when (uri.scheme) {
         ContentResolver.SCHEME_CONTENT -> getContentFileName(context = context, uri = uri)
         else -> uri.path?.let(::File)?.name
     }
 
-    @JvmStatic
     fun getDateTime(time: Long, pattern: String = ""): String = if (time == 0.toLong()) {
         ""
     } else {
@@ -116,7 +139,6 @@ object HelperUtils {
         }
     }
 
-    @JvmStatic
     fun getDirSize(directory: File): Long {
         var mSize = 0.toLong()
         directory.listFiles()?.forEach { file ->
@@ -129,7 +151,6 @@ object HelperUtils {
         return mSize
     }
 
-    @JvmStatic
     fun getCacheSize(context: Context): String {
         var mSize = 0.toLong()
         val mExternalCacheDir = context.externalCacheDir
@@ -143,14 +164,12 @@ object HelperUtils {
 
     fun getPlayStoreLink(context: Context): String = Constants.PLAY_STORE_LINK + context.packageName
 
-    @JvmStatic
     fun getRoundedValue(value: Double): String {
         val mRound = DecimalFormat("#,##0.##")
         mRound.roundingMode = RoundingMode.HALF_UP
         return mRound.format(value)
     }
 
-    @JvmStatic
     fun getSizeFormat(size: Long): String {
         var mResult = size.toDouble() / 1024
         if (mResult < 1024) return "${mResult.roundToInt()} KB"
@@ -173,12 +192,10 @@ object HelperUtils {
         }
     }
 
-    @JvmStatic
     fun showToast(context: Context, msg: String) {
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
     }
 
-    @JvmStatic
     fun relaunchApp(context: Context) {
         val mPackageManager: PackageManager = context.packageManager
         val mIntent: Intent = mPackageManager.getLaunchIntentForPackage(context.packageName)!!
@@ -188,30 +205,23 @@ object HelperUtils {
         Runtime.getRuntime().exit(0)
     }
 
-    @JvmStatic
     fun moreApps(context: Context, developerId: String = "Ahmer Afzal") {
         try {
             ContextCompat.startActivity(
-                context,
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("market://search?q=pub:$developerId&hl=en")
-                ),
-                null
+                context, Intent(
+                    Intent.ACTION_VIEW, Uri.parse("market://search?q=pub:$developerId&hl=en")
+                ), null
             )
         } catch (e: ActivityNotFoundException) {
             ContextCompat.startActivity(
-                context,
-                Intent(
+                context, Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse("https://play.google.com/store/apps/developer?id=$developerId&hl=en")
-                ),
-                null
+                ), null
             )
         }
     }
 
-    @JvmStatic
     fun runWeb(context: Context, packageName: String) {
         try {
             ContextCompat.startActivity(
@@ -221,17 +231,14 @@ object HelperUtils {
             )
         } catch (e: ActivityNotFoundException) {
             ContextCompat.startActivity(
-                context,
-                Intent(
+                context, Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
-                ),
-                null
+                ), null
             )
         }
     }
 
-    @JvmStatic
     fun shareApp(context: Context) {
         try {
             val mIntent = Intent(Intent.ACTION_SEND).apply {

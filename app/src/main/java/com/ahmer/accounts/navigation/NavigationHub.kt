@@ -71,13 +71,18 @@ fun MainNavigation(
             }),
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
-        ) {
-            TransListScreen(
-                transViewModel = hiltViewModel(),
-                settingsViewModel = hiltViewModel(),
-                onNavigation = { navController.navigate(it.route) },
-                onPopBackStack = { navController.popBackStack() },
-            )
+        ) { backStackEntry ->
+            val personId: Int? = backStackEntry.arguments?.getInt("transPersonId")
+            personId?.let { id ->
+                TransListScreen(
+                    onNavigation = { navController.navigate(it.route) },
+                    personId = id,
+                    onPopBackStack = { navController.popBackStack() },
+                    personViewModel = hiltViewModel(),
+                    transViewModel = hiltViewModel(),
+                    settingsViewModel = hiltViewModel()
+                )
+            }
         }
         composable(
             route = NavItems.TransactionsAddEdit.fullRoute,

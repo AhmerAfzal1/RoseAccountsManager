@@ -23,29 +23,23 @@ class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : T
         }
     }
 
-    override fun getAllTransById(transId: Int): Flow<TransEntity?> {
-        return transDao.getAllTransById(transId = transId)
+    override fun transactionById(transId: Int): Flow<TransEntity?> {
+        return transDao.transactionById(transId = transId)
     }
 
-    override fun getAllTransByPersonId(personId: Int): Flow<List<TransEntity>> {
-        return transDao.getAllTransByPersonId(personId = personId)
+    override fun allTransactionByPersonId(personId: Int, sort: Int): Flow<List<TransEntity>> {
+        return transDao.allTransactionsByPersonId(personId = personId, sort = sort)
     }
 
-    override fun getAllTransByPersonIdForPdf(personId: Int): Flow<List<TransEntity>> {
-        return transDao.getAllTransByPersonIdForPdf(personId = personId)
-    }
-
-    override fun getAllTransByPersonIdWithSearch(
+    override fun allTransactionsSearch(
         personId: Int, searchQuery: String
     ): Flow<List<TransEntity>> {
-        return transDao.getAllTransByPersonIdWithSearch(
-            personId = personId, searchQuery = searchQuery
-        )
+        return transDao.allTransactionsSearch(personId = personId, searchQuery = searchQuery)
     }
 
-    override fun getAccountBalanceByPerson(personId: Int): Flow<TransSumModel> {
-        return transDao.getAccountBalanceByPerson(personId = personId)
+    override fun balanceByPerson(personId: Int): Flow<TransSumModel> {
+        return transDao.balanceByPerson(personId = personId)
     }
 
-    override fun getAllAccountsBalance(): Flow<TransSumModel> = transDao.getAllAccountsBalance()
+    override fun accountsBalance(): Flow<TransSumModel> = transDao.accountsBalance()
 }

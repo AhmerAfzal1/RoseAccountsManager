@@ -44,11 +44,11 @@ class PersonAddEditViewModel @Inject constructor(
 
     private var currentPerson: PersonsEntity?
         get() {
-            return _uiState.value.getPersonDetails
+            return _uiState.value.person
         }
         private set(value) {
             _uiState.update { personAddEditState ->
-                personAddEditState.copy(getPersonDetails = value)
+                personAddEditState.copy(person = value)
             }
         }
 
@@ -58,10 +58,10 @@ class PersonAddEditViewModel @Inject constructor(
             mPersonId = personId
             if (personId != -1) {
                 titleBar = "Edit Person Data"
-                personRepository.getPersonById(personId = personId).onEach { personsEntity ->
+                personRepository.personById(personId = personId).onEach { person ->
                     _uiState.update { addEditState ->
-                        currentPerson = personsEntity
-                        addEditState.copy(getPersonDetails = personsEntity)
+                        currentPerson = person
+                        addEditState.copy(person = person)
                     }
                 }.launchIn(scope = viewModelScope)
             } else {
@@ -96,7 +96,7 @@ class PersonAddEditViewModel @Inject constructor(
             PersonAddEditEvent.OnSaveClick -> {
                 viewModelScope.launch {
                     try {
-                        var mPerson: PersonsEntity? by mutableStateOf(value = null)
+                        var mPerson: PersonsEntity? by mutableStateOf(value = PersonsEntity())
                         var mMessage by mutableStateOf(value = "")
                         if (currentPerson!!.name.isEmpty()) {
                             _eventFlow.emit(value = UiEvent.ShowToast("The name can't be empty"))
@@ -127,13 +127,12 @@ class PersonAddEditViewModel @Inject constructor(
                             mMessage = "${mPerson?.name} updated successfully!"
                         }
                         personRepository.insertOrUpdate(personsEntity = mPerson!!)
-                        _eventFlow.emit(value = UiEvent.SaveSuccess)
+                        _eventFlow.emit(value = UiEvent.PopBackStack)
                         _eventFlow.emit(value = UiEvent.ShowToast(message = mMessage))
                     } catch (e: Exception) {
+                        val mError = "This person could not be added due to an unknown error"
                         _eventFlow.emit(
-                            value = UiEvent.ShowToast(
-                                message = e.localizedMessage ?: "Person couldn't be added"
-                            )
+                            value = UiEvent.ShowToast(message = e.localizedMessage ?: mError)
                         )
                     }
                 }

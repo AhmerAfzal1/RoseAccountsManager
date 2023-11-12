@@ -7,10 +7,14 @@ import kotlinx.coroutines.flow.Flow
 interface TransRepository {
     suspend fun insertOrUpdate(transEntity: TransEntity)
     suspend fun delete(transEntity: TransEntity)
-    fun getAllTransById(transId: Int): Flow<TransEntity?>
-    fun getAllTransByPersonId(personId: Int): Flow<List<TransEntity>>
-    fun getAllTransByPersonIdForPdf(personId: Int): Flow<List<TransEntity>>
-    fun getAllTransByPersonIdWithSearch(personId: Int, searchQuery: String): Flow<List<TransEntity>>
-    fun getAccountBalanceByPerson(personId: Int): Flow<TransSumModel>
-    fun getAllAccountsBalance(): Flow<TransSumModel>
+    fun transactionById(transId: Int): Flow<TransEntity?>
+
+    /**
+     * @param personId id of person
+     * @param sort sort order 0 for created and 1 for date
+     */
+    fun allTransactionByPersonId(personId: Int, sort: Int): Flow<List<TransEntity>>
+    fun allTransactionsSearch(personId: Int, searchQuery: String): Flow<List<TransEntity>>
+    fun balanceByPerson(personId: Int): Flow<TransSumModel>
+    fun accountsBalance(): Flow<TransSumModel>
 }

@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                         MainNavigation(
                             modifier = Modifier.padding(paddingValues = innerPadding),
                             navController = navController,
-                            transSumModel = mState.getAllPersonsBalance
+                            transSumModel = mState.accountsBalance
                         )
                     }
                 }

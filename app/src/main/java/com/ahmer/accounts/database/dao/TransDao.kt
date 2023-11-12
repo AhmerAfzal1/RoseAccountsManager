@@ -19,13 +19,16 @@ interface TransDao {
     suspend fun delete(transEntity: TransEntity)
 
     @Query("SELECT * FROM Transactions WHERE id =:transId")
-    fun getAllTransById(transId: Int): Flow<TransEntity>
+    fun transactionById(transId: Int): Flow<TransEntity>
 
-    @Query("SELECT * FROM Transactions WHERE personId =:personId ORDER BY created ASC")
-    fun getAllTransByPersonId(personId: Int): Flow<List<TransEntity>>
-
-    @Query("SELECT * FROM Transactions WHERE personId =:personId ORDER BY date ASC")
-    fun getAllTransByPersonIdForPdf(personId: Int): Flow<List<TransEntity>>
+    @Query(
+        """SELECT * FROM Transactions
+            WHERE personId =:personId 
+            ORDER BY 
+            CASE :sort WHEN 0 THEN created END ASC,
+            CASE :sort WHEN 1 THEN date END ASC"""
+    )
+    fun allTransactionsByPersonId(personId: Int, sort: Int): Flow<List<TransEntity>>
 
     @Query(
         """SELECT * FROM Transactions WHERE personId = :personId 
@@ -34,7 +37,7 @@ interface TransDao {
             OR amount LIKE '%' || :searchQuery || '%') 
             ORDER BY created ASC"""
     )
-    fun getAllTransByPersonIdWithSearch(personId: Int, searchQuery: String): Flow<List<TransEntity>>
+    fun allTransactionsSearch(personId: Int, searchQuery: String): Flow<List<TransEntity>>
 
     @Transaction
     @Query(
@@ -43,7 +46,7 @@ interface TransDao {
             SUM(CASE WHEN type = 'Debit' THEN amount ELSE 0 END) AS debitSum 
             FROM Transactions WHERE personId = :personId"""
     )
-    fun getAccountBalanceByPerson(personId: Int): Flow<TransSumModel>
+    fun balanceByPerson(personId: Int): Flow<TransSumModel>
 
     @Transaction
     @Query(
@@ -52,5 +55,5 @@ interface TransDao {
             SUM(CASE WHEN type = 'Debit' THEN amount ELSE 0 END) AS debitSum
             FROM Transactions"""
     )
-    fun getAllAccountsBalance(): Flow<TransSumModel>
+    fun accountsBalance(): Flow<TransSumModel>
 }

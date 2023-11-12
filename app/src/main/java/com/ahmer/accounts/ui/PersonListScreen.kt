@@ -41,10 +41,8 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -121,14 +119,14 @@ fun PersonsListScreen(
             when (event) {
                 is UiEvent.Navigate -> onNavigation(event)
                 is UiEvent.ShowSnackBar -> {
+                    /*
                     val mResult = mSnackBarHostState.showSnackbar(
                         message = event.message,
                         actionLabel = event.action,
                         duration = SnackbarDuration.Short
                     )
-                    if (mResult == SnackbarResult.ActionPerformed) {
-                        personViewModel.onEvent(PersonEvent.OnUndoDeleteClick)
-                    }
+                    if (mResult == SnackbarResult.ActionPerformed) { }
+                    */
                 }
 
                 is UiEvent.RelaunchApp -> HelperUtils.relaunchApp(context = mContext)
@@ -175,7 +173,7 @@ fun PersonsListScreen(
                 currency = mCurrentCurrency,
                 modifier = Modifier.padding(all = 5.dp),
             )
-            SearchBars(
+            SearchBarPerson(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(all = 5.dp),
@@ -196,7 +194,7 @@ fun PersonsListScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(
-                    items = mState.getAllPersonsList,
+                    items = mState.allPersons,
                     key = { persons -> persons.personsEntity.id },
                 ) { person ->
                     PersonItem(
@@ -216,7 +214,7 @@ fun PersonsListScreen(
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-private fun SearchBars(
+private fun SearchBarPerson(
     modifier: Modifier = Modifier,
     text: String,
     onTextChange: (String) -> Unit,

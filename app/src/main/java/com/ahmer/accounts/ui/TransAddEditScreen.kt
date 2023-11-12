@@ -40,7 +40,7 @@ fun TransAddEditScreen(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                UiEvent.SaveSuccess -> onPopBackStack()
+                UiEvent.PopBackStack -> onPopBackStack()
                 is UiEvent.ShowToast -> HelperUtils.showToast(
                     context = mContext, msg = event.message
                 )
@@ -78,7 +78,7 @@ fun TransAddEditScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                mState.getTransDetails?.let { transEntity ->
+                mState.transaction?.let { transEntity ->
                     TransAddEditTextFields(
                         transEntity = transEntity,
                         onEvent = viewModel::onEvent,

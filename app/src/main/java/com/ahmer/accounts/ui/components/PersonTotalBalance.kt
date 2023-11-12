@@ -30,9 +30,9 @@ import com.ahmer.accounts.utils.HelperUtils
 
 @Composable
 fun PersonTotalBalance(
+    modifier: Modifier = Modifier,
     transSumModel: TransSumModel,
     currency: Currency,
-    modifier: Modifier = Modifier,
 ) {
     val mColorBackground: Color
     val mColorText: Color
@@ -70,7 +70,6 @@ fun PersonTotalBalance(
                         currency = currency,
                         amount = transSumModel.creditSum,
                         color = colorGreenDark,
-                        style = MaterialTheme.typography.bodyMedium,
                     )
 
                     Text(
@@ -99,7 +98,6 @@ fun PersonTotalBalance(
                         currency = currency,
                         amount = transSumModel.debitSum,
                         color = colorRedDark,
-                        style = MaterialTheme.typography.bodyMedium,
                     )
 
                     Text(
@@ -128,7 +126,6 @@ fun PersonTotalBalance(
                         currency = currency,
                         amount = transSumModel.balance,
                         color = mColorText,
-                        style = MaterialTheme.typography.bodyMedium,
                     )
 
                     Text(

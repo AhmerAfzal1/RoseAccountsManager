@@ -28,8 +28,8 @@ class MainViewModel @Inject constructor(
     val uiState: StateFlow<MainState> = _uiState.asStateFlow()
 
     private fun getAllPersonsBalance() {
-        personRepository.getAllAccountsBalance().onEach { transSumModel ->
-            _uiState.update { balState -> balState.copy(getAllPersonsBalance = transSumModel) }
+        personRepository.accountsBalance().onEach { transSumModel ->
+            _uiState.update { balState -> balState.copy(accountsBalance = transSumModel) }
         }.launchIn(scope = viewModelScope)
 
         viewModelScope.launch {

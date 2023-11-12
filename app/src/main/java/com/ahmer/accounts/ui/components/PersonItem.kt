@@ -84,7 +84,7 @@ fun PersonItem(
         }
         Spacer(modifier = Modifier.width(width = 8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(modifier = Modifier.weight(weight = 0.7f)) {
+            Column(modifier = Modifier.weight(weight = 0.6f)) {
                 Text(
                     text = mPersonsEntity.name,
                     fontWeight = FontWeight.Bold,
@@ -102,11 +102,10 @@ fun PersonItem(
                 }
             }
             HelperUtils.AmountWithSymbolText(
-                modifier = Modifier.weight(weight = 0.3f),
+                modifier = Modifier.weight(weight = 0.4f),
                 currency = currency,
                 amount = mBalance,
                 color = if (mBalance >= 0) colorGreenDark else colorRedDark,
-                style = MaterialTheme.typography.bodySmall,
                 isBold = false
             )
         }

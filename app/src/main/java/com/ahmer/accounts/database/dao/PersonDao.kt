@@ -20,7 +20,7 @@ interface PersonDao {
     suspend fun delete(personsEntity: PersonsEntity)
 
     @Query("SELECT * FROM Persons")
-    fun getAllPersons(): Flow<List<PersonsEntity>>
+    fun allPersons(): Flow<List<PersonsEntity>>
 
     @Query(
         """SELECT p.*, 
@@ -36,10 +36,10 @@ interface PersonDao {
             CASE :sort WHEN 4 THEN p.name END ASC, 
             CASE :sort WHEN 5 THEN p.name END DESC"""
     )
-    fun getAllPersonsSorted(query: String, sort: Int): Flow<List<PersonsBalanceModel>>
+    fun allPersonsSearch(query: String, sort: Int): Flow<List<PersonsBalanceModel>>
 
     @Query("SELECT * FROM Persons WHERE id = :personId")
-    fun getPersonById(personId: Int): Flow<PersonsEntity?>
+    fun personById(personId: Int): Flow<PersonsEntity>
 
     @Transaction
     @Query(
@@ -48,7 +48,7 @@ interface PersonDao {
             SUM(CASE WHEN type = 'Debit' THEN amount ELSE 0 END) AS debitSum 
             FROM Transactions WHERE personId = :personId"""
     )
-    fun getAccountBalanceByPerson(personId: Int): Flow<TransSumModel>
+    fun balanceByPerson(personId: Int): Flow<TransSumModel>
 
     @Transaction
     @Query(
@@ -57,5 +57,5 @@ interface PersonDao {
         SUM(CASE WHEN type = 'Debit' THEN amount ELSE 0 END) AS debitSum
         FROM Transactions"""
     )
-    fun getAllAccountsBalance(): Flow<TransSumModel>
+    fun accountsBalance(): Flow<TransSumModel>
 }

@@ -47,11 +47,11 @@ class TransAddEditViewModel @Inject constructor(
 
     private var currentTransaction: TransEntity?
         get() {
-            return _uiState.value.getTransDetails
+            return _uiState.value.transaction
         }
         private set(value) {
             _uiState.update { transAddEditState ->
-                transAddEditState.copy(getTransDetails = value)
+                transAddEditState.copy(transaction = value)
             }
         }
 
@@ -66,10 +66,10 @@ class TransAddEditViewModel @Inject constructor(
             if (transId != -1) {
                 titleBar = "Edit Transaction"
                 titleButton = "Update"
-                transRepository.getAllTransById(transId).onEach { transEntity ->
+                transRepository.transactionById(transId).onEach { transEntity ->
                     _uiState.update { addEditState ->
                         currentTransaction = transEntity
-                        addEditState.copy(getTransDetails = transEntity)
+                        addEditState.copy(transaction = transEntity)
                     }
                 }.launchIn(scope = viewModelScope)
             } else {
@@ -139,13 +139,10 @@ class TransAddEditViewModel @Inject constructor(
                     )
                 }
                 transRepository.insertOrUpdate(transEntity = mTransaction!!)
-                _eventFlow.emit(value = UiEvent.SaveSuccess)
+                _eventFlow.emit(value = UiEvent.PopBackStack)
             } catch (e: Exception) {
-                _eventFlow.emit(
-                    value = UiEvent.ShowToast(
-                        message = e.localizedMessage ?: "Transaction couldn't be added"
-                    )
-                )
+                val mError = "The transaction could not be added due to an unknown error"
+                _eventFlow.emit(value = UiEvent.ShowToast(message = e.localizedMessage ?: mError))
             }
         }
     }

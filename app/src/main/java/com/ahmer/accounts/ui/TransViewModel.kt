@@ -3,8 +3,9 @@ package com.ahmer.accounts.ui
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -12,8 +13,6 @@ import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransEntity
-import com.ahmer.accounts.database.model.TransSumModel
-import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.database.repository.TransRepository
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UiEvent
@@ -43,7 +42,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransViewModel @Inject constructor(
-    private val personRepository: PersonRepository,
     private val transRepository: TransRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), LifecycleObserver {
@@ -56,13 +54,21 @@ class TransViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<TransState> = MutableStateFlow(value = TransState())
     val uiState: StateFlow<TransState> = _uiState.asStateFlow()
 
-    private var getPersonsEntity: PersonsEntity = PersonsEntity()
-    private var getTransSumModel: TransSumModel = TransSumModel()
     private var mDeletedTrans: TransEntity? = null
-    private var mPersonId: MutableState<Int> = mutableIntStateOf(value = 0)
+    private var mPersonId: Int by mutableIntStateOf(value = 0)
 
     fun onEvent(event: TransEvent) {
         when (event) {
+            TransEvent.OnAddClick -> {
+                viewModelScope.launch {
+                    _eventFlow.emit(
+                        value = UiEvent.Navigate(
+                            route = NavItems.TransactionsAddEdit.route + "?transId=-1/transPersonId=${mPersonId}"
+                        )
+                    )
+                }
+            }
+
             is TransEvent.OnDeleteClick -> {
                 viewModelScope.launch {
                     mDeletedTrans = event.transEntity
@@ -92,16 +98,6 @@ class TransViewModel @Inject constructor(
                 }
             }
 
-            TransEvent.OnAddClick -> {
-                viewModelScope.launch {
-                    _eventFlow.emit(
-                        value = UiEvent.Navigate(
-                            route = NavItems.TransactionsAddEdit.route + "?transId=-1/transPersonId=${mPersonId.value}"
-                        )
-                    )
-                }
-            }
-
             TransEvent.OnUndoDeleteClick -> {
                 mDeletedTrans?.let { transaction ->
                     viewModelScope.launch {
@@ -112,8 +108,8 @@ class TransViewModel @Inject constructor(
         }
     }
 
-    fun generatePdf(context: Context, uri: Uri) {
-        transRepository.getAllTransByPersonIdForPdf(personId = getPersonsEntity.id)
+    fun generatePdf(context: Context, uri: Uri, personsEntity: PersonsEntity) {
+        transRepository.allTransactionByPersonId(personId = personsEntity.id, sort = 1)
             .filterNotNull()
             .onEach { transEntityList ->
                 var isSuccessfully = false
@@ -122,8 +118,8 @@ class TransViewModel @Inject constructor(
                         context = context,
                         uri = uri,
                         transEntity = transEntityList,
-                        transSumModel = getTransSumModel,
-                        personName = getPersonsEntity.name
+                        transSumModel = _uiState.value.transSumModel,
+                        personName = personsEntity.name
                     )
                 }
 
@@ -146,37 +142,27 @@ class TransViewModel @Inject constructor(
             .launchIn(scope = viewModelScope)
     }
 
-    private fun getPersonByIdData() {
-        personRepository.getPersonById(personId = mPersonId.value).onEach { personsEntity ->
-            getPersonsEntity = personsEntity!!
-        }.launchIn(scope = viewModelScope)
-    }
-
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getAllPersonsTransactions() {
         _searchQuery.flatMapLatest { search ->
-            transRepository.getAllTransByPersonIdWithSearch(
-                personId = mPersonId.value, searchQuery = search
-            )
-        }.onEach { transEntityList ->
-            _uiState.update { transState -> transState.copy(getAllPersonsTransList = transEntityList) }
+            transRepository.allTransactionsSearch(personId = mPersonId, searchQuery = search)
+        }.onEach { transactions ->
+            _uiState.update { transState -> transState.copy(allTransactions = transactions) }
         }.launchIn(scope = viewModelScope)
     }
 
     private fun getAccountBalance() {
-        transRepository.getAccountBalanceByPerson(mPersonId.value).onEach { resultState ->
-            _uiState.update { it.copy(getPersonTransBalance = resultState) }
-            getTransSumModel = resultState
+        transRepository.balanceByPerson(personId = mPersonId).onEach { result ->
+            _uiState.update { it.copy(transSumModel = result) }
         }.launchIn(scope = viewModelScope)
     }
 
     init {
         savedStateHandle.get<Int>("transPersonId")?.let { id ->
             Log.v(Constants.LOG_TAG, "Clicked on person id: $id for add transaction")
-            mPersonId.value = id
+            mPersonId = id
             getAllPersonsTransactions()
             getAccountBalance()
-            getPersonByIdData()
         }
     }
 }

@@ -72,8 +72,8 @@ object PdfUtils {
             val mAppName = context.getString(R.string.app_name)
             val mKeywords = "$personName, Statement, Balance, Sheet"
             val mTitle = "$personName Account Statement"
-            val mTotalCredit: Double = transSumModel.creditSum?.toDouble() ?: 0.0
-            val mTotalDebit: Double = transSumModel.debitSum?.toDouble() ?: 0.0
+            val mTotalCredit: Double = transSumModel.creditSum
+            val mTotalDebit: Double = transSumModel.debitSum
             val mTotalBalance: Double = mTotalCredit.minus(mTotalDebit)
 
             val mFont: Font = Font(Font.FontFamily.HELVETICA).apply {

@@ -35,7 +35,7 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                UiEvent.SaveSuccess -> onPopBackStack()
+                UiEvent.PopBackStack -> onPopBackStack()
                 is UiEvent.ShowToast -> HelperUtils.showToast(
                     context = mContext, msg = event.message
                 )
@@ -72,7 +72,7 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
         },
     ) { innerPadding ->
         Box(modifier = Modifier.padding(paddingValues = innerPadding)) {
-            mState.getPersonDetails?.let { personEntity ->
+            mState.person?.let { personEntity ->
                 PersonAddEditTextFields(personsEntity = personEntity, onEvent = viewModel::onEvent)
             }
         }

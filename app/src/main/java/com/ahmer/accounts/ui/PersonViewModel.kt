@@ -1,8 +1,12 @@
 package com.ahmer.accounts.ui
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ahmer.accounts.database.model.PersonsBalanceModel
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.event.PersonEvent
@@ -46,6 +50,9 @@ class PersonViewModel @Inject constructor(
     val uiState: StateFlow<PersonState> = _uiState.asStateFlow()
 
     private var mDeletedPerson: PersonsEntity? = null
+
+    var persons: List<PersonsBalanceModel> by mutableStateOf(value = emptyList())
+        private set
 
     val currentSortOrder: StateFlow<SortOrder> = dataStore.getSortOrder.stateIn(
         scope = viewModelScope,
@@ -121,18 +128,25 @@ class PersonViewModel @Inject constructor(
         }
     }
 
+    fun deletePerson(person: PersonsEntity) {
+        viewModelScope.launch {
+            onEvent(PersonEvent.OnDeleteClick(personsEntity = person))
+        }
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getAllPersonsData() {
+    private fun loadPersons() {
         combine(_searchQuery, currentSortOrder) { query, dataStore ->
             Pair(first = query, second = dataStore)
         }.flatMapLatest { (search, sortOrder) ->
-            personRepository.getAllPersonsSorted(query = search, sortOrder = sortOrder)
-        }.onEach { resultState ->
-            _uiState.update { personState -> personState.copy(getAllPersonsList = resultState) }
+            personRepository.allPersonsSearch(query = search, sortOrder = sortOrder)
+        }.onEach { result ->
+            persons = result
+            _uiState.update { personState -> personState.copy(allPersons = result) }
         }.launchIn(scope = viewModelScope)
     }
 
     init {
-        getAllPersonsData()
+        loadPersons()
     }
 }

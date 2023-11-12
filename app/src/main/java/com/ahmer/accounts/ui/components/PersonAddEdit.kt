@@ -45,8 +45,8 @@ fun PersonAddEditTextFields(
 
     val mLenAddress = 128
     val mLenEmail = 64
-    val mLenName = 64
-    val mLenNotes = 512
+    val mLenName = 24
+    val mLenNotes = 256
     val mLenPhone = 15
 
     LaunchedEffect(Unit) {
