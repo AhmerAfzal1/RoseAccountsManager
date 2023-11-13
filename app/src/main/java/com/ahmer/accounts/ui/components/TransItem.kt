@@ -1,33 +1,32 @@
 package com.ahmer.accounts.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Divider
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorRedDark
 import com.ahmer.accounts.utils.Constants
-import com.ahmer.accounts.utils.CreditIcon
 import com.ahmer.accounts.utils.Currency
-import com.ahmer.accounts.utils.DebitIcon
-import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.HelperUtils
+import com.ahmer.accounts.utils.HelperUtils.AmountWithSymbolText
 
 @Composable
 fun TransItem(
@@ -38,44 +37,76 @@ fun TransItem(
 ) {
     Row(
         modifier = modifier
-            .padding(bottom = 3.dp)
             .fillMaxWidth()
+            .padding(top = 5.dp, bottom = 5.dp)
             .clickable { onEvent(TransEvent.OnEditClick(transEntity)) },
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (transEntity.type == "Debit") {
-            DebitIcon(modifier = Modifier.size(size = Constants.ICON_SIZE), tint = colorRedDark)
-        } else {
-            CreditIcon(modifier = Modifier.size(size = Constants.ICON_SIZE), tint = colorGreenDark)
-        }
-        Spacer(modifier = Modifier.width(width = 10.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(weight = 1f)
+                .weight(weight = 0.5f),
         ) {
-            val mDescription: String = transEntity.description
+            val mDesc = transEntity.description
             Text(
-                text = "Rs. ${HelperUtils.getRoundedValue(transEntity.amount.toDouble())}",
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                style = MaterialTheme.typography.titleMedium
+                text = mDesc.ifEmpty { stringResource(R.string.label_no_description) },
+                color = if (mDesc.isEmpty()) Color.LightGray else Color.Black,
+                fontStyle = if (mDesc.isEmpty()) FontStyle.Italic else FontStyle.Normal,
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
+                style = if (mDesc.isEmpty()) {
+                    MaterialTheme.typography.labelSmall
+                } else {
+                    MaterialTheme.typography.labelMedium
+                }
             )
-            if (mDescription.isNotEmpty()) {
-                Text(
-                    text = mDescription,
-                    color = Color.DarkGray,
-                    maxLines = 3,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
             Text(
-                text = transEntity.date,
+                text = HelperUtils.getDateTime(
+                    time = transEntity.created, pattern = Constants.DATE_TIME_NEW_PATTERN
+                ),
                 color = Color.Gray,
-                style = MaterialTheme.typography.bodySmall
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.labelSmall
             )
         }
-        IconButton(onClick = { onEvent(TransEvent.OnDeleteClick(transEntity)) }) { DeleteIcon() }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(all = 2.dp)
+                .weight(weight = 0.5f),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (transEntity.type == "Credit") {
+                AmountWithSymbolText(
+                    modifier = Modifier.weight(weight = 0.25f),
+                    currency = currency,
+                    amount = transEntity.amount.toDouble(),
+                    color = colorGreenDark,
+                    isBold = false,
+                )
+                Text(text = "", modifier = Modifier.weight(weight = 0.25f))
+            } else {
+                Text(text = "", modifier = Modifier.weight(weight = 0.25f))
+                AmountWithSymbolText(
+                    modifier = Modifier.weight(weight = 0.25f),
+                    currency = currency,
+                    amount = transEntity.amount.toDouble(),
+                    color = colorRedDark,
+                    isBold = false,
+                )
+            }
+        }
+
     }
-    Divider(thickness = 1.dp)
+
+    Divider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        thickness = 2.dp,
+        color = Color.LightGray.copy(alpha = 0.2f)
+    )
 }
