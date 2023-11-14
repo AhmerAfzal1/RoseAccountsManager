@@ -50,9 +50,8 @@ object HelperUtils {
             fontWeight = if (isBold && length <= 17) FontWeight.Bold else FontWeight.Normal,
             maxLines = 1,
             style = when (if (length == 0) text.length else length) {
-                in 0..10 -> MaterialTheme.typography.bodyLarge
-                in 11..13 -> MaterialTheme.typography.bodyMedium
-                in 14..16 -> MaterialTheme.typography.labelMedium
+                in 0..10 -> MaterialTheme.typography.bodyMedium
+                in 11..13 -> MaterialTheme.typography.bodySmall
                 else -> MaterialTheme.typography.labelSmall
             }
         )
@@ -61,8 +60,8 @@ object HelperUtils {
     @Composable
     fun AmountWithSymbolText(
         modifier: Modifier = Modifier,
-        modifierTextSymbol: Modifier = Modifier,
-        modifierTextAmount: Modifier = Modifier,
+        modifierSymbol: Modifier = Modifier,
+        modifierAmount: Modifier = Modifier,
         currency: Currency,
         amount: Double,
         color: Color,
@@ -80,14 +79,14 @@ object HelperUtils {
             )*/
             AdjustableText(
                 text = "${currency.symbol} ",
-                modifier = modifierTextSymbol,
+                modifier = modifierSymbol,
                 color = color,
                 length = textLength,
                 isBold = isBold,
             )
             AdjustableText(
                 text = getRoundedValue(value = amount),
-                modifier = modifierTextAmount,
+                modifier = modifierAmount,
                 color = color,
                 length = textLength,
                 isBold = isBold,

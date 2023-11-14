@@ -2,7 +2,10 @@ package com.ahmer.accounts.ui
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -26,9 +29,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -60,6 +66,7 @@ import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -114,6 +121,17 @@ fun TransListScreen(
     var mShowDeleteDialog: Boolean by remember { mutableStateOf(value = false) }
     var mTextSearch: String by remember { mutableStateOf(value = transViewModel.searchQuery.value) }
 
+    val mLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == Activity.RESULT_OK) {
+            val mUri = it.data?.data ?: return@rememberLauncherForActivityResult
+            transViewModel.generatePdf(
+                context = mContext, uri = mUri, person = mPerson, transSum = mState.transSumModel
+            )
+        }
+    }
+
     LaunchedEffect(key1 = true) {
         transViewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -145,13 +163,10 @@ fun TransListScreen(
     }
 
     if (mShowDeleteDialog) {
-        DeleteAlertDialog(
-            nameAccount = mPerson.name,
-            onConfirmClick = {
-                personViewModel.deletePerson(mPerson)
-                onPopBackStack()
-            }
-        )
+        DeleteAlertDialog(nameAccount = mPerson.name, onConfirmClick = {
+            personViewModel.deletePerson(mPerson)
+            onPopBackStack()
+        })
     }
 
     Scaffold(
@@ -224,9 +239,8 @@ fun TransListScreen(
                             if (mShowDropdownMenu.value) {
                                 ShowDropDown(
                                     context = mContext,
-                                    viewModel = transViewModel,
                                     state = mState,
-                                    personsEntity = mPerson,
+                                    launcher = mLauncher,
                                     showInfoDialog = mShowInfoDialog,
                                     expandMenu = mShowDropdownMenu,
                                 )
@@ -236,9 +250,46 @@ fun TransListScreen(
                 }
             }
 
-            PersonTotalBalance(
-                transSumModel = mState.transSumModel, currency = mCurrency
-            )
+            PersonTotalBalance(transSumModel = mState.transSumModel, currency = mCurrency)
+
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 5.dp),
+                shape = RoundedCornerShape(size = 4.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(all = 2.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.label_description).uppercase(),
+                        modifier = Modifier.weight(weight = 0.5f),
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = stringResource(id = R.string.label_credit).uppercase(),
+                        modifier = Modifier.weight(weight = 0.25f),
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = stringResource(id = R.string.label_debit).uppercase(),
+                        modifier = Modifier.weight(weight = 0.25f),
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
 
             LazyColumn(
                 modifier = Modifier
@@ -347,21 +398,11 @@ private fun SearchBarTransactions(
 @Composable
 fun ShowDropDown(
     context: Context,
-    viewModel: TransViewModel,
     state: TransState,
-    personsEntity: PersonsEntity,
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>,
     showInfoDialog: MutableState<Boolean>,
     expandMenu: MutableState<Boolean>,
 ) {
-    val mLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            val mUri = it.data?.data ?: return@rememberLauncherForActivityResult
-            viewModel.generatePdf(context = context, uri = mUri, personsEntity = personsEntity)
-        }
-    }
-
     DropdownMenu(expanded = expandMenu.value, onDismissRequest = { expandMenu.value = false }) {
         DropdownMenuItem(text = { Text(text = stringResource(id = R.string.label_generate_pdf)) },
             onClick = {
@@ -369,7 +410,7 @@ fun ShowDropDown(
                     context = context, transList = state.allTransactions
                 )
                 if (mIntent != null) {
-                    mLauncher.launch(mIntent)
+                    launcher.launch(mIntent)
                 }
                 expandMenu.value = false
             },

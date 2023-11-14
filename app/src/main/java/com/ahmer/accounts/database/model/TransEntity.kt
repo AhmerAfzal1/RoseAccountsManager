@@ -30,7 +30,7 @@ data class TransEntity(
     val amount: String = "",
     val created: Long = System.currentTimeMillis(),
 ) : Parcelable {
-    val newCurrentShortDate: String
+    val shortDate: String
         get() = SimpleDateFormat(Constants.DATE_SHORT_PATTERN, Locale.getDefault()).format(
             SimpleDateFormat(Constants.DATE_PATTERN, Locale.getDefault()).parse(date)!!
         )

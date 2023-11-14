@@ -91,5 +91,8 @@
     <string name="label_pref_text_title_currency">Change Currency</string>
     <string name="content_description_dollar">Dollar icon</string>
     <string name="label_info">Info Account</string>
+    <string name="label_credit">Credit</string>
+    <string name="label_debit">Debit</string>
+    <string name="label_no_description">No description</string>
 
 </resources>

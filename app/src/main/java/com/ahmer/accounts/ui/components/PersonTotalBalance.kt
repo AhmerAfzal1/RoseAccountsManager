@@ -2,7 +2,6 @@ package com.ahmer.accounts.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.TransSumModel
@@ -26,7 +26,6 @@ import com.ahmer.accounts.ui.theme.colorGreenLight
 import com.ahmer.accounts.ui.theme.colorRedDark
 import com.ahmer.accounts.ui.theme.colorRedLight
 import com.ahmer.accounts.utils.Currency
-import com.ahmer.accounts.utils.HelperUtils
 
 @Composable
 fun PersonTotalBalance(
@@ -36,7 +35,6 @@ fun PersonTotalBalance(
 ) {
     val mColorBackground: Color
     val mColorText: Color
-    val mHorizontalSpace: Dp = 2.dp
 
     if (transSumModel.balance >= 0) {
         mColorBackground = colorGreenLight
@@ -47,92 +45,123 @@ fun PersonTotalBalance(
     }
 
     ElevatedCard(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(size = 5.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = 4.dp),
+        shape = RoundedCornerShape(size = 4.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
-        Row(modifier = Modifier.padding(all = 5.dp)) {
-            Box(
-                contentAlignment = Alignment.TopCenter,
-                modifier = Modifier
-                    .weight(weight = 1f)
-                    .padding(horizontal = mHorizontalSpace)
-                    .background(color = colorGreenLight)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 5.dp, end = 5.dp, top = 5.dp)
+                .background(color = colorGreenLight, shape = RoundedCornerShape(size = 4.dp))
+        ) {
+            Row(
+                modifier = Modifier.padding(start = 4.dp, end = 4.dp, top = 1.dp, bottom = 1.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    HelperUtils.AmountWithSymbolText(
-                        modifierTextAmount = Modifier.padding(top = 5.dp, bottom = 5.dp),
-                        currency = currency,
-                        amount = transSumModel.creditSum,
-                        color = colorGreenDark,
-                    )
+                Text(
+                    text = stringResource(id = R.string.label_total_credit),
+                    color = colorGreenDark,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.bodySmall,
+                )
 
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
                     Text(
-                        text = stringResource(id = R.string.label_total_credit),
-                        modifier = Modifier.padding(bottom = 5.dp),
+                        text = currency.symbol,
                         color = colorGreenDark,
-                        style = MaterialTheme.typography.labelSmall
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = " ${transSumModel.creditSum}",
+                        color = colorGreenDark,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
             }
+        }
 
-            Box(
-                contentAlignment = Alignment.TopCenter,
-                modifier = Modifier
-                    .weight(weight = 1f)
-                    .padding(horizontal = mHorizontalSpace)
-                    .background(color = colorRedLight)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 5.dp, end = 5.dp, top = 5.dp)
+                .background(color = colorRedLight, shape = RoundedCornerShape(size = 4.dp))
+        ) {
+            Row(
+                modifier = Modifier.padding(start = 4.dp, end = 4.dp, top = 1.dp, bottom = 1.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    HelperUtils.AmountWithSymbolText(
-                        modifierTextAmount = Modifier.padding(top = 5.dp, bottom = 5.dp),
-                        currency = currency,
-                        amount = transSumModel.debitSum,
-                        color = colorRedDark,
-                    )
+                Text(
+                    text = stringResource(id = R.string.label_total_debit),
+                    color = colorRedDark,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.bodySmall,
+                )
 
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    val mDebit: Double = transSumModel.debitSum
                     Text(
-                        text = stringResource(id = R.string.label_total_debit),
-                        modifier = Modifier.padding(bottom = 5.dp),
+                        text = currency.symbol,
                         color = colorRedDark,
-                        style = MaterialTheme.typography.labelSmall
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = if (mDebit.toInt() == 0) " $mDebit" else " -$mDebit",
+                        color = colorRedDark,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
             }
+        }
 
-            Box(
-                contentAlignment = Alignment.TopCenter,
-                modifier = Modifier
-                    .weight(weight = 1f)
-                    .padding(horizontal = mHorizontalSpace)
-                    .background(color = mColorBackground)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(all = 5.dp)
+                .background(color = mColorBackground, shape = RoundedCornerShape(size = 4.dp))
+        ) {
+            Row(
+                modifier = Modifier.padding(start = 4.dp, end = 4.dp, top = 1.dp, bottom = 1.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    HelperUtils.AmountWithSymbolText(
-                        modifierTextAmount = Modifier.padding(top = 5.dp, bottom = 5.dp),
-                        currency = currency,
-                        amount = transSumModel.balance,
-                        color = mColorText,
-                    )
+                Text(
+                    text = stringResource(id = R.string.label_total_balance),
+                    color = mColorText,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.bodySmall,
+                )
 
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
                     Text(
-                        text = stringResource(id = R.string.label_total_balance),
-                        modifier = Modifier.padding(bottom = 5.dp),
+                        text = currency.symbol,
                         color = mColorText,
-                        style = MaterialTheme.typography.labelSmall
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = " ${transSumModel.balance}",
+                        color = mColorText,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
             }

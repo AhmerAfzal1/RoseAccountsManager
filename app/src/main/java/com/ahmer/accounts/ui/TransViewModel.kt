@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.database.repository.TransRepository
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UiEvent
@@ -108,18 +109,21 @@ class TransViewModel @Inject constructor(
         }
     }
 
-    fun generatePdf(context: Context, uri: Uri, personsEntity: PersonsEntity) {
-        transRepository.allTransactionByPersonId(personId = personsEntity.id, sort = 1)
+    fun generatePdf(context: Context, uri: Uri, person: PersonsEntity, transSum: TransSumModel) {
+        Log.v(Constants.LOG_TAG, "Credit: ${transSum.creditSum}")
+        Log.v(Constants.LOG_TAG, "Debit: ${transSum.debitSum}")
+        transRepository.allTransactionByPersonId(personId = person.id, sort = 1)
             .filterNotNull()
             .onEach { transEntityList ->
+                Log.v(Constants.LOG_TAG, "List: ${transEntityList.first()}")
                 var isSuccessfully = false
-                val mJob = CoroutineScope(Dispatchers.IO).launch {
+                val mJob = CoroutineScope(context = Dispatchers.IO).launch {
                     isSuccessfully = PdfUtils.generatePdf(
                         context = context,
                         uri = uri,
                         transEntity = transEntityList,
                         transSumModel = _uiState.value.transSumModel,
-                        personName = personsEntity.name
+                        personName = person.name
                     )
                 }
 

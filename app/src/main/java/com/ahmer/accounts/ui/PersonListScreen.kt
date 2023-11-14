@@ -176,7 +176,7 @@ fun PersonsListScreen(
             SearchBarPerson(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(all = 5.dp),
+                    .padding(start = 4.dp, end = 4.dp),
                 text = mTextSearch,
                 onTextChange = { text ->
                     personViewModel.onEvent(PersonEvent.OnSearchTextChange(text))
@@ -234,7 +234,7 @@ private fun SearchBarPerson(
     ) {
         Box(
             modifier = Modifier
-                .height(40.dp)
+                .height(height = 40.dp)
                 .padding(start = 8.dp, end = 8.dp)
                 .weight(weight = 0.90f)
                 .border(
@@ -247,7 +247,7 @@ private fun SearchBarPerson(
                 onValueChange = onTextChange,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .requiredHeight(56.dp),
+                    .requiredHeight(height = 56.dp),
                 placeholder = { Text(stringResource(id = R.string.label_search)) },
                 leadingIcon = { SearchIcon() },
                 trailingIcon = {
