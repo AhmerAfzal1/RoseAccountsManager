@@ -14,7 +14,6 @@ import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.TransAddEditState
 import com.ahmer.accounts.utils.Constants
-import com.ahmer.accounts.utils.HelperUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,28 +55,24 @@ class TransAddEditViewModel @Inject constructor(
         }
 
     init {
-        savedStateHandle.get<Int>("transPersonId")?.let { personId ->
+        savedStateHandle.get<Int>(key = "transPersonId")?.let { personId ->
             Log.v(Constants.LOG_TAG, "Get person id for add in transaction, id: $personId")
             mPersonId = personId
         }
-        savedStateHandle.get<Int>("transId")?.let { transId ->
+        savedStateHandle.get<Int>(key = "transId")?.let { transId ->
             Log.v(Constants.LOG_TAG, "Get transaction id: $transId")
             mTransId = transId
             if (transId != -1) {
                 titleBar = "Edit Transaction"
                 titleButton = "Update"
-                transRepository.transactionById(transId).onEach { transEntity ->
+                transRepository.transactionById(transId = transId).onEach { transEntity ->
                     _uiState.update { addEditState ->
                         currentTransaction = transEntity
                         addEditState.copy(transaction = transEntity)
                     }
                 }.launchIn(scope = viewModelScope)
             } else {
-                currentTransaction = TransEntity(
-                    date = HelperUtils.getDateTime(
-                        time = System.currentTimeMillis(), pattern = Constants.DATE_PATTERN
-                    )
-                )
+                currentTransaction = TransEntity(date = System.currentTimeMillis())
             }
         }
     }
@@ -116,7 +111,6 @@ class TransAddEditViewModel @Inject constructor(
                     _eventFlow.emit(value = UiEvent.ShowToast("Amount cannot be empty"))
                     return@launch
                 }
-
                 if (mTransId == -1) {
                     mTransaction = currentTransaction?.let { transaction ->
                         TransEntity(

@@ -53,7 +53,7 @@ fun TransItem(
                 text = mDesc.ifEmpty { stringResource(R.string.label_no_description) },
                 color = if (mDesc.isEmpty()) Color.LightGray else Color.Black,
                 fontStyle = if (mDesc.isEmpty()) FontStyle.Italic else FontStyle.Normal,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2,
                 style = if (mDesc.isEmpty()) {
@@ -64,10 +64,10 @@ fun TransItem(
             )
             Text(
                 text = HelperUtils.getDateTime(
-                    time = transEntity.created, pattern = Constants.DATE_TIME_NEW_PATTERN
+                    time = transEntity.date, pattern = Constants.DATE_TIME_NEW_PATTERN
                 ),
                 color = Color.Gray,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 style = MaterialTheme.typography.labelSmall
             )
         }
@@ -79,12 +79,12 @@ fun TransItem(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (transEntity.type == "Credit") {
+            if (transEntity.type == "Debit") {
                 AmountWithSymbolText(
                     modifier = Modifier.weight(weight = 0.25f),
                     currency = currency,
                     amount = transEntity.amount.toDouble(),
-                    color = colorGreenDark,
+                    color = colorRedDark,
                     isBold = false,
                 )
                 Text(text = "", modifier = Modifier.weight(weight = 0.25f))
@@ -94,12 +94,11 @@ fun TransItem(
                     modifier = Modifier.weight(weight = 0.25f),
                     currency = currency,
                     amount = transEntity.amount.toDouble(),
-                    color = colorRedDark,
+                    color = colorGreenDark,
                     isBold = false,
                 )
             }
         }
-
     }
 
     Divider(

@@ -6,9 +6,8 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.ahmer.accounts.utils.Constants
+import com.ahmer.accounts.utils.HelperUtils
 import kotlinx.parcelize.Parcelize
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @Entity(
     tableName = Constants.DATABASE_TRANSACTION_TABLE, foreignKeys = [ForeignKey(
@@ -24,14 +23,12 @@ data class TransEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val personId: Int = 0,
-    val date: String = "",
+    val date: Long = 0,
     val type: String = "",
     val description: String = "",
     val amount: String = "",
     val created: Long = System.currentTimeMillis(),
 ) : Parcelable {
     val shortDate: String
-        get() = SimpleDateFormat(Constants.DATE_SHORT_PATTERN, Locale.getDefault()).format(
-            SimpleDateFormat(Constants.DATE_PATTERN, Locale.getDefault()).parse(date)!!
-        )
+        get() = HelperUtils.getDateTime(time = date, pattern = Constants.DATE_SHORT_PATTERN)
 }

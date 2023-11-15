@@ -275,14 +275,14 @@ fun TransListScreen(
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = stringResource(id = R.string.label_credit).uppercase(),
+                        text = stringResource(id = R.string.label_debit).uppercase(),
                         modifier = Modifier.weight(weight = 0.25f),
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = stringResource(id = R.string.label_debit).uppercase(),
+                        text = stringResource(id = R.string.label_credit).uppercase(),
                         modifier = Modifier.weight(weight = 0.25f),
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,

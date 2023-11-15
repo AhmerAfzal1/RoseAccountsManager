@@ -41,9 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.dialogs.DateTimePickDialog
 import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.utils.CloseIcon
+import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.DateIcon
+import com.ahmer.accounts.utils.HelperUtils
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -64,7 +67,9 @@ fun TransAddEditTextFields(
     }
 
     if (mDatePickerDialog.value) {
-        TransDatePickDialog(onEvent = onEvent)
+        DateTimePickDialog {
+            onEvent(TransAddEditEvent.OnDateChange(it))
+        }
     }
 
     fun clear() {
@@ -77,7 +82,9 @@ fun TransAddEditTextFields(
             .fillMaxWidth()
             .padding(all = 15.dp)
     ) {
-        OutlinedTextField(value = transEntity.date,
+        OutlinedTextField(value = HelperUtils.getDateTime(
+            time = transEntity.date, pattern = Constants.DATE_TIME_NEW_PATTERN
+        ),
             onValueChange = {},
             modifier = Modifier
                 .fillMaxWidth()
@@ -86,9 +93,7 @@ fun TransAddEditTextFields(
             label = { Text(stringResource(id = R.string.label_date)) },
             placeholder = { Text(stringResource(id = R.string.label_date)) },
             trailingIcon = {
-                DateIcon(modifier = Modifier.clickable {
-                    mDatePickerDialog.value = true
-                })
+                DateIcon(modifier = Modifier.clickable { mDatePickerDialog.value = true })
             })
         Row(
             modifier = Modifier

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import com.ahmer.accounts.R
+import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -55,10 +56,10 @@ object PdfUtils {
         uri: Uri,
         transEntity: List<TransEntity>,
         transSumModel: TransSumModel,
-        personName: String
+        personsEntity: PersonsEntity
     ): Boolean {
-        //One inch size equal to 70F; margin using 0.75% of a inch
-        val mDocument = Document(PageSize.A4, 52.5F, 52.5F, 52.5F, 52.5F)
+        //A4 page size is h: 842.0F, w: 595.0F, one inch size equal to 72F; margin using 75% of a inch
+        val mDocument = Document(PageSize.A4, 54F, 54F, 54F, 54F)
         try {
             val mOutPutStream: OutputStream = context.contentResolver.openOutputStream(uri)
                 ?: throw NullPointerException("OutputStream for given input Uri is null")
@@ -68,17 +69,39 @@ object PdfUtils {
             }
 
             val mAppName = context.getString(R.string.app_name)
-            val mKeywords = "$personName, Statement, Balance, Sheet"
-            val mTitle = "$personName Account Statement"
+            val mKeywords = "${personsEntity.name}, Statement, Balance, Sheet"
+            val mStatement = "Statement of Account".uppercase()
 
             val mFont: Font = Font(Font.FontFamily.HELVETICA).apply {
                 color = BaseColor.BLACK
-                size = 12F
+                size = 8F
                 style = Font.NORMAL
             }
 
-            val mParagraph: Paragraph = Paragraph(mTitle, mFont).apply {
-                spacingAfter = 20F
+            val mFontName: Font = Font(Font.FontFamily.HELVETICA).apply {
+                color = BaseColor.BLACK
+                size = 10F
+                style = Font.BOLD
+            }
+
+            val mFontStatement: Font = Font(Font.FontFamily.HELVETICA).apply {
+                color = BaseColor.BLACK
+                size = 12F
+                style = Font.BOLD
+            }
+
+            val mParagraphName: Paragraph = Paragraph(personsEntity.name, mFontName).apply {
+                spacingBefore = 10F
+                alignment = Element.ALIGN_LEFT
+            }
+
+            val mParagraphAddress: Paragraph = Paragraph(personsEntity.address, mFont).apply {
+                spacingAfter = 10F
+                alignment = Element.ALIGN_LEFT
+            }
+
+            val mParagraphStatement: Paragraph = Paragraph(mStatement, mFontStatement).apply {
+                spacingAfter = 10F
                 alignment = Element.ALIGN_CENTER
             }
 
@@ -89,13 +112,15 @@ object PdfUtils {
                 addCreator(mAppName)
                 addKeywords(mKeywords)
                 addSubject(mAppName)
-                addTitle(mTitle)
-                add(mParagraph)
+                addTitle(personsEntity.name)
+                add(mParagraphName)
+                add(mParagraphAddress)
+                add(mParagraphStatement)
             }
 
             val mTableMain: PdfPTable = PdfPTable(5).apply {
                 widthPercentage = 100F
-                setTotalWidth(floatArrayOf(72F, 148F, 90F, 90F, 90F))
+                setTotalWidth(floatArrayOf(72F, 145F, 90F, 90F, 90F)) // 487 + 54 + 54 = 595
                 isLockedWidth = true
                 addCell(
                     cellFormat(
@@ -172,7 +197,7 @@ object PdfUtils {
             }
             val mTableTotal: PdfPTable = PdfPTable(4).apply {
                 widthPercentage = 100F
-                setTotalWidth(floatArrayOf(220F, 90F, 90F, 90F))
+                setTotalWidth(floatArrayOf(217F, 90F, 90F, 90F)) // 487 + 54 + 54 = 595
                 isLockedWidth = true
                 addCell(
                     cellFormat(
@@ -206,18 +231,13 @@ object PdfUtils {
 
             val mSummaryCredit = "Total Credit Transactions: $mCreditTransactions"
             val mSummaryDebit = "Total Debit Transactions: $mDebitTransactions"
-            val mFontSummary: Font = Font(Font.FontFamily.HELVETICA).apply {
-                color = BaseColor.BLACK
-                size = 8F
-                style = Font.NORMAL
-            }
 
-            val mParagraphCredit: Paragraph = Paragraph(mSummaryCredit, mFontSummary).apply {
+            val mParagraphCredit: Paragraph = Paragraph(mSummaryCredit, mFont).apply {
                 spacingBefore = 10F
                 alignment = Element.ALIGN_LEFT
             }
 
-            val mParagraphDebit: Paragraph = Paragraph(mSummaryDebit, mFontSummary).apply {
+            val mParagraphDebit: Paragraph = Paragraph(mSummaryDebit, mFont).apply {
                 alignment = Element.ALIGN_LEFT
             }
 
@@ -322,8 +342,8 @@ object PdfUtils {
                 writer.directContent,
                 Element.ALIGN_CENTER,
                 Phrase(context.getString(R.string.app_name), mFont),
-                80F,
-                800F,
+                72F,   //Start page margin 1 inch 72 (0+72)
+                806F,  //Top margin 50% of a inch (842-36)
                 0F
             )
             ColumnText.showTextAligned(
@@ -334,8 +354,8 @@ object PdfUtils {
                         time = System.currentTimeMillis(), pattern = Constants.DATE_TIME_PDF_PATTERN
                     ), mFont
                 ),
-                477F,
-                800F,
+                487F, //End page margin 1 inch 72 + adding more 50% inch 36 because date string long (595-108)
+                806F, //Top margin 50% of a inch (842-36)
                 0F
             )
         }
@@ -347,7 +367,7 @@ object PdfUtils {
                 style = Font.NORMAL
             }
             val mPlayStoreLink: String = HelperUtils.getPlayStoreLink(context = context)
-            val mChunk = Chunk(mPlayStoreLink).apply {
+            val mChunk: Chunk = Chunk(mPlayStoreLink).apply {
                 setAnchor(mPlayStoreLink)
             }
             val mPhrase: Phrase = Phrase("", mFont).apply {
@@ -357,16 +377,16 @@ object PdfUtils {
                 writer.directContent,
                 Element.ALIGN_CENTER,
                 Phrase(mPhrase),
-                170F,
-                35F,
+                144F, //Start page margin 1 inch 72 + adding more 1 inch 72 because link string long (72+72)
+                36F, //Bottom margin 50% of a inch (0+36)
                 0F
             )
             ColumnText.showTextAligned(
                 writer.directContent,
                 Element.ALIGN_CENTER,
                 Phrase("Page " + document.pageNumber, mFont),
-                530F,
-                35F,
+                559F, //End page margin 50% inch 36 (595-36)
+                36F, //Bottom margin 50% of a inch (0+36)
                 0F
             )
         }

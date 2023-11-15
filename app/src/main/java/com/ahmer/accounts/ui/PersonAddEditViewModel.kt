@@ -53,7 +53,7 @@ class PersonAddEditViewModel @Inject constructor(
         }
 
     init {
-        savedStateHandle.get<Int>("personId")?.let { personId ->
+        savedStateHandle.get<Int>(key = "personId")?.let { personId ->
             Log.v(Constants.LOG_TAG, "Person id: $personId")
             mPersonId = personId
             if (personId != -1) {

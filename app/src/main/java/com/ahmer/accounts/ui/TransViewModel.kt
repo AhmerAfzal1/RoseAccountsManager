@@ -123,7 +123,7 @@ class TransViewModel @Inject constructor(
                         uri = uri,
                         transEntity = transEntityList,
                         transSumModel = _uiState.value.transSumModel,
-                        personName = person.name
+                        personsEntity = person
                     )
                 }
 
@@ -162,7 +162,7 @@ class TransViewModel @Inject constructor(
     }
 
     init {
-        savedStateHandle.get<Int>("transPersonId")?.let { id ->
+        savedStateHandle.get<Int>(key = "transPersonId")?.let { id ->
             Log.v(Constants.LOG_TAG, "Clicked on person id: $id for add transaction")
             mPersonId = id
             getAllPersonsTransactions()
