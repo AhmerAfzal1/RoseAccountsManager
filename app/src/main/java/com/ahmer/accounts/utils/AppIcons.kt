@@ -10,7 +10,11 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -19,6 +23,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.ahmer.accounts.R
+
+@Composable
+fun AddCircleIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_add_circle_outline),
+        contentDescription = stringResource(id = R.string.content_description_add),
+        modifier = modifier,
+        tint = tint
+    )
+}
 
 @Composable
 fun AddIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
@@ -31,10 +45,10 @@ fun AddIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curre
 }
 
 @Composable
-fun AddCircleIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+fun AddressIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        painter = painterResource(id = R.drawable.ic_add_circle_outline),
-        contentDescription = stringResource(id = R.string.content_description_add),
+        imageVector = Icons.Outlined.LocationOn,
+        contentDescription = stringResource(id = R.string.content_description_address),
         modifier = modifier,
         tint = tint
     )
@@ -55,16 +69,6 @@ fun BackupIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
     Icon(
         painter = painterResource(id = R.drawable.ic_filled_backup),
         contentDescription = stringResource(id = R.string.content_description_backup),
-        modifier = modifier,
-        tint = tint
-    )
-}
-
-@Composable
-fun CurrencyIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
-    Icon(
-        painter = painterResource(id = R.drawable.ic_dollar),
-        contentDescription = stringResource(id = R.string.content_description_dollar),
         modifier = modifier,
         tint = tint
     )
@@ -111,6 +115,16 @@ fun CreditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 }
 
 @Composable
+fun CurrencyIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_dollar),
+        contentDescription = stringResource(id = R.string.content_description_dollar),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
 fun DateIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Filled.DateRange,
@@ -141,20 +155,20 @@ fun DeleteIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 }
 
 @Composable
-fun SaveIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+fun EditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        painter = painterResource(id = R.drawable.ic_save),
-        contentDescription = stringResource(id = R.string.content_description_save),
+        imageVector = Icons.Outlined.Edit,
+        contentDescription = stringResource(id = R.string.content_description_edit),
         modifier = modifier,
         tint = tint
     )
 }
 
 @Composable
-fun EditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+fun EmailIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Outlined.Edit,
-        contentDescription = stringResource(id = R.string.content_description_edit),
+        imageVector = Icons.Outlined.Email,
+        contentDescription = stringResource(id = R.string.content_description_email),
         modifier = modifier,
         tint = tint
     )
@@ -181,6 +195,16 @@ fun MoreIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 }
 
 @Composable
+fun NotesIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_notes),
+        contentDescription = stringResource(id = R.string.content_description_notes),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
 fun PdfIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_pdf),
@@ -191,10 +215,40 @@ fun PdfIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curre
 }
 
 @Composable
+fun PersonIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        imageVector = Icons.Outlined.Person,
+        contentDescription = stringResource(id = R.string.content_description_person),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun PhoneIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        imageVector = Icons.Outlined.Phone,
+        contentDescription = stringResource(id = R.string.content_description_phone),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
 fun RestoreIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_filled_outlined_restore),
         contentDescription = stringResource(id = R.string.content_description_restore_backup),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun SaveIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_save),
+        contentDescription = stringResource(id = R.string.content_description_save),
         modifier = modifier,
         tint = tint
     )

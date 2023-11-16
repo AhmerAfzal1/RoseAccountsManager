@@ -11,13 +11,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ahmer.accounts.navigation.BottomNav
@@ -40,7 +44,7 @@ class MainActivity : ComponentActivity() {
             setKeepOnScreenCondition { mViewModel.isLoadingSplash.value }
         }
         setContent {
-            val mCurrentTheme by mSettingsViewModel.currentTheme.collectAsStateWithLifecycle()
+            val mCurrentTheme: ThemeMode by mSettingsViewModel.currentTheme.collectAsStateWithLifecycle()
             val isDarkTheme: Boolean = when (mCurrentTheme) {
                 ThemeMode.Dark -> true
                 ThemeMode.Light -> false
@@ -51,27 +55,33 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController()
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentRoute = navBackStackEntry?.destination?.route
-                    val bottomBarState = rememberSaveable { (mutableStateOf(value = false)) }
-                    val mState: MainState by mViewModel.uiState.collectAsState()
-                    Scaffold(modifier = Modifier.navigationBarsPadding(), bottomBar = {
-                        bottomBarState.value = currentRoute != NavItems.PersonAddEdit.fullRoute
-                                && currentRoute != NavItems.Transactions.fullRoute
-                                && currentRoute != NavItems.TransactionsAddEdit.fullRoute
-                        BottomNav(
-                            navController = navController, bottomBarState = bottomBarState.value
-                        )
-                    }) { innerPadding ->
-                        MainNavigation(
-                            modifier = Modifier.padding(paddingValues = innerPadding),
-                            navController = navController,
-                            transSumModel = mState.accountsBalance
-                        )
-                    }
+                    MainFunction(viewModel = mViewModel)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun MainFunction(viewModel: MainViewModel) {
+    val mNavController: NavHostController = rememberNavController()
+    val mNavBackStackEntry: NavBackStackEntry? by mNavController.currentBackStackEntryAsState()
+    val mCurrentRoute: String? = mNavBackStackEntry?.destination?.route
+    val mState: MainState by viewModel.uiState.collectAsState()
+    var mBottomBarState: Boolean by rememberSaveable { (mutableStateOf(value = false)) }
+
+    Scaffold(modifier = Modifier.navigationBarsPadding(), bottomBar = {
+        mBottomBarState = mCurrentRoute != NavItems.PersonAddEdit.fullRoute
+                && mCurrentRoute != NavItems.Transactions.fullRoute
+                && mCurrentRoute != NavItems.TransactionsAddEdit.fullRoute
+        BottomNav(
+            navController = mNavController, bottomBarState = mBottomBarState
+        )
+    }) { innerPadding ->
+        MainNavigation(
+            modifier = Modifier.padding(paddingValues = innerPadding),
+            navController = mNavController,
+            transSumModel = mState.accountsBalance
+        )
     }
 }

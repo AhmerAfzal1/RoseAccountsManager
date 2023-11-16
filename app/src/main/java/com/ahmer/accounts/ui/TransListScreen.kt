@@ -68,7 +68,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
@@ -173,7 +172,6 @@ fun TransListScreen(
         modifier = Modifier,
         snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
     ) { innerPadding ->
-        val mIconSize: Dp = 36.dp
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -183,7 +181,7 @@ fun TransListScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(height = 64.dp)
+                    .height(height = Constants.TOP_APP_BAR_HEIGHT)
                     .border(BorderStroke(width = 2.dp, color = Color.LightGray.copy(alpha = 0.2f))),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
@@ -199,7 +197,8 @@ fun TransListScreen(
 
                 if (!mShowSearch.value) {
                     IconButton(
-                        onClick = { onPopBackStack() }, modifier = Modifier.size(size = mIconSize)
+                        onClick = { onPopBackStack() },
+                        modifier = Modifier.size(size = Constants.ICON_SIZE)
                     ) { BackIcon() }
                     Text(
                         text = mPerson.name,
@@ -225,16 +224,16 @@ fun TransListScreen(
                     ) {
                         IconButton(
                             onClick = { mShowSearch.value = !mShowSearch.value },
-                            modifier = Modifier.size(size = mIconSize)
+                            modifier = Modifier.size(size = Constants.ICON_SIZE)
                         ) { SearchIcon() }
                         IconButton(
                             onClick = { transViewModel.onEvent(TransEvent.OnAddClick) },
-                            modifier = Modifier.size(size = mIconSize)
+                            modifier = Modifier.size(size = Constants.ICON_SIZE)
                         ) { AddCircleIcon() }
                         Box {
                             IconButton(
                                 onClick = { mShowDropdownMenu.value = !mShowDropdownMenu.value },
-                                modifier = Modifier.size(size = mIconSize)
+                                modifier = Modifier.size(size = Constants.ICON_SIZE)
                             ) { MoreIcon() }
                             if (mShowDropdownMenu.value) {
                                 ShowDropDown(
@@ -342,7 +341,7 @@ private fun SearchBarTransactions(
     ) {
         Box(
             modifier = Modifier
-                .height(40.dp)
+                .height(height = 40.dp)
                 .padding(start = 8.dp, end = 8.dp)
                 .border(
                     border = BorderStroke(width = 2.dp, color = Color.LightGray),
@@ -354,7 +353,7 @@ private fun SearchBarTransactions(
                 onValueChange = onTextChange,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .requiredHeight(56.dp)
+                    .requiredHeight(height = 56.dp)
                     .focusRequester(focusRequester = mFocusRequester)
                     .onFocusChanged { focus ->
                         if (focus.isFocused) {

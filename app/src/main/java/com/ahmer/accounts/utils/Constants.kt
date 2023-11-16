@@ -25,7 +25,8 @@ class Constants {
         const val LOG_TAG: String = "RoseAccounts"
         const val PLAY_STORE_LINK: String = "https://play.google.com/store/apps/details?id="
         const val STATE_IN_STARTED_TIME: Long = 5000L
-        val ICON_SIZE: Dp = 30.dp
+        val TOP_APP_BAR_HEIGHT: Dp = 64.dp
+        val ICON_SIZE: Dp = 36.dp
         val PERMISSIONS: Array<String> = arrayOf(
             Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
         )

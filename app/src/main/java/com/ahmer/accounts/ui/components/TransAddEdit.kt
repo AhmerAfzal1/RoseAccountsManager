@@ -15,9 +15,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -41,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.TransEntity
-import com.ahmer.accounts.dialogs.DateTimePickDialog
+import com.ahmer.accounts.dialogs.DateTimePickerDialog
 import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.Constants
@@ -55,7 +57,7 @@ fun TransAddEditTextFields(
     onEvent: (TransAddEditEvent) -> Unit,
     titleButton: String
 ) {
-    val mDatePickerDialog = rememberSaveable { mutableStateOf(value = false) }
+    var mDatePickerDialog by rememberSaveable { mutableStateOf(value = false) }
     val mFocusManager: FocusManager = LocalFocusManager.current
     val mFocusRequester: FocusRequester = remember { FocusRequester() }
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
@@ -66,8 +68,8 @@ fun TransAddEditTextFields(
         mFocusRequester.requestFocus()
     }
 
-    if (mDatePickerDialog.value) {
-        DateTimePickDialog {
+    if (mDatePickerDialog) {
+        DateTimePickerDialog(selectedDate = transEntity.date) {
             onEvent(TransAddEditEvent.OnDateChange(it))
         }
     }
@@ -88,12 +90,12 @@ fun TransAddEditTextFields(
             onValueChange = {},
             modifier = Modifier
                 .fillMaxWidth()
-                .onFocusChanged { mDatePickerDialog.value = it.isFocused },
+                .onFocusChanged { mDatePickerDialog = it.isFocused },
             readOnly = true,
             label = { Text(stringResource(id = R.string.label_date)) },
             placeholder = { Text(stringResource(id = R.string.label_date)) },
             trailingIcon = {
-                DateIcon(modifier = Modifier.clickable { mDatePickerDialog.value = true })
+                DateIcon(modifier = Modifier.clickable { mDatePickerDialog = true })
             })
         Row(
             modifier = Modifier

@@ -94,5 +94,11 @@
     <string name="label_credit">Credit</string>
     <string name="label_debit">Debit</string>
     <string name="label_no_description">No description</string>
+    <string name="content_description_person">Person icon</string>
+    <string name="content_description_phone">Phone icon</string>
+    <string name="content_description_address">Address icon</string>
+    <string name="content_description_email">Email icon</string>
+    <string name="content_description_notes">Notes icon</string>
+    <string name="label_save">Save</string>
 
 </resources>
