@@ -182,7 +182,7 @@ fun TransListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(height = Constants.TOP_APP_BAR_HEIGHT)
-                    .border(BorderStroke(width = 2.dp, color = Color.LightGray.copy(alpha = 0.2f))),
+                    .bottomBorder(strokeWidth = 2.dp, color = Color.LightGray.copy(alpha = 0.2f)),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {

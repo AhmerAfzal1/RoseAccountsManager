@@ -89,7 +89,7 @@ private fun Basic(
         onValueChange = onValueChange,
         modifier = modifier,
         enabled = enabled,
-        textStyle = MaterialTheme.typography.bodySmall,
+        textStyle = MaterialTheme.typography.bodyLarge,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         singleLine = singleLine,

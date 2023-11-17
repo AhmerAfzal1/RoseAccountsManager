@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat
 import com.ahmer.accounts.R
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.io.File
+import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -164,9 +165,9 @@ object HelperUtils {
     fun getPlayStoreLink(context: Context): String = Constants.PLAY_STORE_LINK + context.packageName
 
     fun getRoundedValue(value: Double): String {
-        val mRound = DecimalFormat("#,##0.##")
-        mRound.roundingMode = RoundingMode.HALF_UP
-        return mRound.format(value)
+        val mFormat = DecimalFormat("#,##0.##")
+        val mRound: BigDecimal = BigDecimal(value).setScale(2, RoundingMode.HALF_UP)
+        return mFormat.format(mRound)
     }
 
     fun getSizeFormat(size: Long): String {
