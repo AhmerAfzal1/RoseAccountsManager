@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,21 +41,6 @@ fun PersonItem(
 ) {
     val mBalance: Double = personsBalanceModel.balanceModel.balance
     val mPersonsEntity: PersonsEntity = personsBalanceModel.personsEntity
-
-    /*var mShowDeleteDialog: Boolean by remember { mutableStateOf(value = false) }
-    var mShowInfoDialog: Boolean by remember { mutableStateOf(value = false) }
-    val mPadding: Dp = 5.dp
-
-    if (mShowDeleteDialog) {
-        DeleteAlertDialog(
-            nameAccount = mPersonsEntity.name,
-            onConfirmClick = { onEvent(PersonEvent.OnDeleteClick(mPersonsEntity)) }
-        )
-    }
-
-    if (mShowInfoDialog) {
-        MoreInfoAlertDialog(mPersonsEntity)
-    }*/
 
     Row(
         modifier = modifier
@@ -111,63 +96,11 @@ fun PersonItem(
         }
     }
 
-    Divider(
+    HorizontalDivider(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         thickness = 0.5.dp,
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
     )
-
-    /*ElevatedCard(
-        modifier = modifier.clickable { onEvent(PersonEvent.OnAddTransactionClick(mPersonsEntity)) },
-        shape = RoundedCornerShape(size = 5.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = mPersonsEntity.name,
-                modifier = Modifier.padding(start = mPadding),
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleLarge
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(
-                    onClick = { mShowInfoDialog = true },
-                    modifier = Modifier.then(Modifier.size(size = Constants.ICON_SIZE)),
-                ) { InfoIcon() }
-                IconButton(
-                    onClick = { onEvent(PersonEvent.OnEditClick(mPersonsEntity)) },
-                    modifier = Modifier.then(Modifier.size(size = Constants.ICON_SIZE)),
-                ) { EditIcon() }
-                IconButton(
-                    onClick = { mShowDeleteDialog = true },
-                    modifier = Modifier.then(Modifier.size(size = Constants.ICON_SIZE)),
-                ) { DeleteIcon() }
-            }
-        }
-        Column(
-            modifier = Modifier.padding(end = mPadding, bottom = mPadding)
-        ) {
-            val mText: String = if (mPersonsEntity.phone.isEmpty()) {
-                "Balance: ${mBalanceModel.balance}"
-            } else {
-                "Phone: ${mPersonsEntity.phone}  |  Balance: ${mBalanceModel.balance}"
-            }
-            Text(
-                modifier = Modifier.padding(start = mPadding),
-                text = mText,
-                maxLines = 1,
-                style = MaterialTheme.typography.titleSmall
-            )
-        }*/
 }

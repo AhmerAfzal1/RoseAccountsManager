@@ -26,9 +26,10 @@ import com.ahmer.accounts.ui.theme.colorGreenLight
 import com.ahmer.accounts.ui.theme.colorRedDark
 import com.ahmer.accounts.ui.theme.colorRedLight
 import com.ahmer.accounts.utils.Currency
+import com.ahmer.accounts.utils.HelperUtils
 
 @Composable
-fun PersonTotalBalance(
+fun TotalBalance(
     modifier: Modifier = Modifier,
     transSumModel: TransSumModel,
     currency: Currency,
@@ -81,7 +82,7 @@ fun PersonTotalBalance(
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
-                        text = " ${transSumModel.creditSum}",
+                        text = " ${HelperUtils.getRoundedValue(value = transSumModel.creditSum)}",
                         color = colorGreenDark,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium,
@@ -112,7 +113,7 @@ fun PersonTotalBalance(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    val mDebit: Double = transSumModel.debitSum
+                    val mDebit: String = HelperUtils.getRoundedValue(value = transSumModel.debitSum)
                     Text(
                         text = currency.symbol,
                         color = colorRedDark,
@@ -120,7 +121,7 @@ fun PersonTotalBalance(
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
-                        text = if (mDebit.toInt() == 0) " $mDebit" else " -$mDebit",
+                        text = if (transSumModel.debitSum.toInt() == 0) " $mDebit" else " -$mDebit",
                         color = colorRedDark,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium,
@@ -158,7 +159,7 @@ fun PersonTotalBalance(
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
-                        text = " ${transSumModel.balance}",
+                        text = " ${HelperUtils.getRoundedValue(value = transSumModel.balance)}",
                         color = mColorText,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium,

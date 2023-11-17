@@ -31,9 +31,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -56,7 +56,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.geometry.Offset
@@ -82,7 +81,7 @@ import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.PersonState
 import com.ahmer.accounts.ui.components.PersonItem
-import com.ahmer.accounts.ui.components.PersonTotalBalance
+import com.ahmer.accounts.ui.components.TotalBalance
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.Constants
@@ -168,7 +167,7 @@ fun PersonsListScreen(
                 .fillMaxSize()
                 .padding(paddingValues = innerPadding),
         ) {
-            PersonTotalBalance(
+            TotalBalance(
                 transSumModel = transSumModel,
                 currency = mCurrentCurrency,
                 modifier = Modifier.padding(all = 5.dp),
@@ -212,7 +211,7 @@ fun PersonsListScreen(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchBarPerson(
     modifier: Modifier = Modifier,
@@ -303,7 +302,7 @@ private fun SearchBarPerson(
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.titleMedium
                     )
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp, horizontal = 8.dp),

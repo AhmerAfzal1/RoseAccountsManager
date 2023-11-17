@@ -30,6 +30,8 @@ fun MyTextField(
     label: @Composable () -> Unit,
     leadingIcon: @Composable () -> Unit,
     trailingIcon: @Composable () -> Unit,
+    prefix: @Composable (() -> Unit)? = null,
+    suffix: @Composable (() -> Unit)? = null,
     supportingText: @Composable () -> Unit,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -41,7 +43,7 @@ fun MyTextField(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        leadingIcon()
+        leadingIcon.invoke()
         Spacer(modifier = Modifier.width(width = 16.dp))
         Basic(
             value = text,
@@ -49,6 +51,8 @@ fun MyTextField(
             modifier = modifier.fillMaxWidth(),
             label = label,
             trailingIcon = trailingIcon,
+            prefix = prefix,
+            suffix = suffix,
             supportingText = supportingText,
             singleLine = singleLine,
             keyboardOptions = keyboardOptions,
@@ -73,6 +77,8 @@ private fun Basic(
     enabled: Boolean = true,
     label: @Composable () -> Unit,
     trailingIcon: @Composable () -> Unit,
+    prefix: @Composable (() -> Unit)? = null,
+    suffix: @Composable (() -> Unit)? = null,
     supportingText: @Composable () -> Unit,
     isError: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -104,6 +110,8 @@ private fun Basic(
                 innerTextField = innerTextField,
                 label = label,
                 trailingIcon = trailingIcon,
+                prefix = prefix,
+                suffix = suffix,
                 supportingText = supportingText,
                 shape = shape,
                 singleLine = singleLine,

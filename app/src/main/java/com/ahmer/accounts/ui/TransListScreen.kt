@@ -52,7 +52,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
@@ -77,7 +76,7 @@ import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.TransState
-import com.ahmer.accounts.ui.components.PersonTotalBalance
+import com.ahmer.accounts.ui.components.TotalBalance
 import com.ahmer.accounts.ui.components.TransItem
 import com.ahmer.accounts.utils.AddCircleIcon
 import com.ahmer.accounts.utils.BackIcon
@@ -162,7 +161,7 @@ fun TransListScreen(
     }
 
     if (mShowDeleteDialog) {
-        DeleteAlertDialog(nameAccount = mPerson.name, onConfirmClick = {
+        DeleteAlertDialog(accountName = mPerson.name, onConfirmClick = {
             personViewModel.deletePerson(mPerson)
             onPopBackStack()
         })
@@ -249,7 +248,7 @@ fun TransListScreen(
                 }
             }
 
-            PersonTotalBalance(transSumModel = mState.transSumModel, currency = mCurrency)
+            TotalBalance(transSumModel = mState.transSumModel, currency = mCurrency)
 
             ElevatedCard(
                 modifier = Modifier
@@ -316,7 +315,6 @@ fun TransListScreen(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SearchBarTransactions(
     modifier: Modifier = Modifier,

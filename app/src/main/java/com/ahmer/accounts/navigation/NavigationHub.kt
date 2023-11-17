@@ -98,6 +98,7 @@ fun MainNavigation(
         ) {
             TransAddEditScreen(
                 viewModel = hiltViewModel(),
+                viewModelSettings = hiltViewModel(),
                 onPopBackStack = { navController.popBackStack() }
             )
         }

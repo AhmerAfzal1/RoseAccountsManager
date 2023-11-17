@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -26,7 +28,7 @@ import com.ahmer.accounts.navigation.NavItems.Companion.Icons
 
 @Composable
 fun BottomNav(navController: NavHostController, bottomBarState: Boolean) {
-    var selectedItem by rememberSaveable { mutableIntStateOf(value = 0) }
+    var mSelectedItem: Int by rememberSaveable { mutableIntStateOf(value = 0) }
 
     AnimatedVisibility(
         visible = bottomBarState,
@@ -38,13 +40,14 @@ fun BottomNav(navController: NavHostController, bottomBarState: Boolean) {
             tonalElevation = 5.dp,
             windowInsets = WindowInsets.navigationBars,
         ) {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
+            val mNavBackStackEntry: NavBackStackEntry? by navController.currentBackStackEntryAsState()
+            val mCurrentDestination: NavDestination? = mNavBackStackEntry?.destination
+
             NavItems.navBottomItems.forEachIndexed { index, item ->
                 NavigationBarItem(
-                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                    selected = mCurrentDestination?.hierarchy?.any { it.route == item.route } == true,
                     onClick = {
-                        selectedItem = index
+                        mSelectedItem = index
                         navController.navigate(item.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
@@ -53,7 +56,7 @@ fun BottomNav(navController: NavHostController, bottomBarState: Boolean) {
                             restoreState = true
                         }
                     },
-                    icon = { item.Icons(selected = selectedItem == index) },
+                    icon = { item.Icons(selected = mSelectedItem == index) },
                     label = {
                         Text(
                             text = stringResource(id = item.label),

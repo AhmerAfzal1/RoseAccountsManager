@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,14 +28,14 @@ import com.ahmer.accounts.utils.ThemeMode
 
 @Composable
 fun ThemeDialog(viewModel: SettingsViewModel) {
-    val mCurrentTheme by viewModel.currentTheme.collectAsStateWithLifecycle()
+    val mCurrentTheme: ThemeMode by viewModel.currentTheme.collectAsStateWithLifecycle()
     val mListThemeModes: List<Pair<ThemeMode, String>> = ThemeMode.listOfThemeModes
-    val mOpenDialog = remember { mutableStateOf(value = true) }
     val (themeMode, setThemeMode) = remember { mutableStateOf(value = mCurrentTheme) }
+    var mOpenDialog: Boolean by remember { mutableStateOf(value = true) }
 
-    if (mOpenDialog.value) {
+    if (mOpenDialog) {
         AlertDialog(
-            onDismissRequest = { mOpenDialog.value = false },
+            onDismissRequest = { mOpenDialog = false },
             title = {
                 Text(
                     text = stringResource(id = R.string.label_choose_theme),
@@ -67,13 +68,13 @@ fun ThemeDialog(viewModel: SettingsViewModel) {
                 )
             }, confirmButton = {
                 TextButton(onClick = {
-                    mOpenDialog.value = false
+                    mOpenDialog = false
                     viewModel.updateTheme(themeMode = themeMode)
                 }) {
                     Text(text = stringResource(id = R.string.label_ok), fontSize = 14.sp)
                 }
             }, dismissButton = {
-                TextButton(onClick = { mOpenDialog.value = false }) {
+                TextButton(onClick = { mOpenDialog = false }) {
                     Text(text = stringResource(id = R.string.label_cancel), fontSize = 14.sp)
                 }
             }
