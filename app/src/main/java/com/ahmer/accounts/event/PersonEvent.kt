@@ -5,7 +5,6 @@ import com.ahmer.accounts.database.model.PersonsEntity
 sealed class PersonEvent {
     data class OnAddTransactionClick(val personsEntity: PersonsEntity) : PersonEvent()
     data class OnDeleteClick(val personsEntity: PersonsEntity) : PersonEvent()
-    data class OnEditClick(val personsEntity: PersonsEntity) : PersonEvent()
     data class OnSearchTextChange(val searchQuery: String) : PersonEvent()
     data object OnNewAddClick : PersonEvent()
     data object OnSettingsClick : PersonEvent()

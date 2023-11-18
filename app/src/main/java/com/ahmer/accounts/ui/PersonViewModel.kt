@@ -90,16 +90,6 @@ class PersonViewModel @Inject constructor(
                 }
             }
 
-            is PersonEvent.OnEditClick -> {
-                viewModelScope.launch {
-                    _eventFlow.emit(
-                        value = UiEvent.Navigate(
-                            route = NavItems.PersonAddEdit.route + "?personId=${event.personsEntity.id}"
-                        )
-                    )
-                }
-            }
-
             is PersonEvent.OnSearchTextChange -> {
                 viewModelScope.launch {
                     _searchQuery.value = event.searchQuery

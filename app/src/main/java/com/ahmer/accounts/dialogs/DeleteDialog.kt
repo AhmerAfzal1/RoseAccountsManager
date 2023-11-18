@@ -22,11 +22,13 @@ import com.ahmer.accounts.utils.DeleteIcon
 @Composable
 fun DeleteAlertDialog(
     modifier: Modifier = Modifier,
-    accountName: String,
+    accountName: String = "",
+    isTransactionDelete: Boolean = false,
     onConfirmClick: () -> Unit
 ) {
-    val mAnnotatedMsg: AnnotatedString = buildAnnotatedString {
-        append(text = "Do you really want to delete this ")
+    val mHeading = "Do you want to delete this "
+    val mPerson: AnnotatedString = buildAnnotatedString {
+        append(text = mHeading)
         withStyle(style = SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
             append(text = accountName)
         }
@@ -36,6 +38,13 @@ fun DeleteAlertDialog(
                     "be unable to recover any data."
         )
     }
+
+    val mTransaction: AnnotatedString = buildAnnotatedString {
+        append(text = mHeading)
+        append(text = "Transaction")
+    }
+
+    val mString: AnnotatedString = if (isTransactionDelete) mTransaction else mPerson
     var mOpenDialog: Boolean by remember { mutableStateOf(value = true) }
 
     if (mOpenDialog) {
@@ -59,7 +68,7 @@ fun DeleteAlertDialog(
             },
             icon = { DeleteIcon() },
             title = { Text(text = stringResource(id = R.string.label_confirm)) },
-            text = { Text(text = mAnnotatedMsg) }
+            text = { Text(text = mString.text) }
         )
     }
 }

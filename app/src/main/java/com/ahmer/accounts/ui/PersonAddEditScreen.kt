@@ -35,9 +35,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -131,10 +133,13 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     MyTextField(
-                        text = personsEntity.name,
-                        onValueChange = { text ->
-                            if (text.length <= mLenName) {
-                                viewModel.onEvent(PersonAddEditEvent.OnNameChange(text))
+                        value = TextFieldValue(
+                            text = personsEntity.name,
+                            selection = TextRange(index = personsEntity.name.length)
+                        ),
+                        onValueChange = {
+                            if (it.text.length <= mLenName) {
+                                viewModel.onEvent(PersonAddEditEvent.OnNameChange(it.text))
                             }
                         },
                         modifier = Modifier
@@ -172,10 +177,13 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                     )
 
                     MyTextField(
-                        text = personsEntity.phone,
-                        onValueChange = { text ->
-                            if (text.length <= mLenPhone) {
-                                viewModel.onEvent(PersonAddEditEvent.OnPhoneChange(text))
+                        value = TextFieldValue(
+                            text = personsEntity.phone,
+                            selection = TextRange(index = personsEntity.phone.length)
+                        ),
+                        onValueChange = {
+                            if (it.text.length <= mLenPhone) {
+                                viewModel.onEvent(PersonAddEditEvent.OnPhoneChange(it.text))
                             }
                         },
                         label = { Text(stringResource(id = R.string.label_phone_number)) },
@@ -214,10 +222,13 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
 
                     if (isMoreData) {
                         MyTextField(
-                            text = personsEntity.email,
-                            onValueChange = { text ->
-                                if (text.length <= mLenEmail) {
-                                    viewModel.onEvent(PersonAddEditEvent.OnEmailChange(text))
+                            value = TextFieldValue(
+                                text = personsEntity.email,
+                                selection = TextRange(index = personsEntity.email.length)
+                            ),
+                            onValueChange = {
+                                if (it.text.length <= mLenEmail) {
+                                    viewModel.onEvent(PersonAddEditEvent.OnEmailChange(it.text))
                                 }
                             },
                             label = { Text(stringResource(id = R.string.label_email)) },
@@ -249,10 +260,13 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                         )
 
                         MyTextField(
-                            text = personsEntity.address,
-                            onValueChange = { text ->
-                                if (text.length <= mLenAddress) {
-                                    viewModel.onEvent(PersonAddEditEvent.OnAddressChange(text))
+                            value = TextFieldValue(
+                                text = personsEntity.address,
+                                selection = TextRange(index = personsEntity.address.length)
+                            ),
+                            onValueChange = {
+                                if (it.text.length <= mLenAddress) {
+                                    viewModel.onEvent(PersonAddEditEvent.OnAddressChange(it.text))
                                 }
                             },
                             label = { Text(stringResource(id = R.string.label_address)) },
@@ -287,10 +301,13 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                         )
 
                         MyTextField(
-                            text = personsEntity.notes,
-                            onValueChange = { text ->
-                                if (text.length <= mLenNotes) {
-                                    viewModel.onEvent(PersonAddEditEvent.OnNotesChange(text))
+                            value = TextFieldValue(
+                                text = personsEntity.notes,
+                                selection = TextRange(index = personsEntity.notes.length)
+                            ),
+                            onValueChange = {
+                                if (it.text.length <= mLenNotes) {
+                                    viewModel.onEvent(PersonAddEditEvent.OnNotesChange(it.text))
                                 }
                             },
                             label = { Text(stringResource(id = R.string.label_notes)) },

@@ -208,7 +208,7 @@ fun TransListScreen(
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .size(size = 18.dp)
-                            .clickable { })
+                            .clickable { transViewModel.onEvent(TransEvent.OnPersonEditClick(mPerson)) })
                     DeleteIcon(
                         modifier = Modifier
                             .padding(start = 8.dp)
@@ -270,21 +270,21 @@ fun TransListScreen(
                         modifier = Modifier.weight(weight = 0.5f),
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodySmall
                     )
                     Text(
                         text = stringResource(id = R.string.label_debit).uppercase(),
                         modifier = Modifier.weight(weight = 0.25f),
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodySmall
                     )
                     Text(
                         text = stringResource(id = R.string.label_credit).uppercase(),
                         modifier = Modifier.weight(weight = 0.25f),
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             }

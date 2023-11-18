@@ -41,8 +41,7 @@ class TransAddEditViewModel @Inject constructor(
     private var mPersonId: Int? = 0
     private var mTransId: Int? = 0
 
-    var titleBar by mutableStateOf(value = "Add Transaction")
-    var titleButton by mutableStateOf(value = "Save")
+    var isEditMode: Boolean by mutableStateOf(value = false)
 
     private var currentTransaction: TransEntity?
         get() {
@@ -55,6 +54,7 @@ class TransAddEditViewModel @Inject constructor(
         }
 
     init {
+        isEditMode = false
         savedStateHandle.get<Int>(key = "transPersonId")?.let { personId ->
             Log.v(Constants.LOG_TAG, "Get person id for add in transaction, id: $personId")
             mPersonId = personId
@@ -63,8 +63,7 @@ class TransAddEditViewModel @Inject constructor(
             Log.v(Constants.LOG_TAG, "Get transaction id: $transId")
             mTransId = transId
             if (transId != -1) {
-                titleBar = "Edit Transaction"
-                titleButton = "Update"
+                isEditMode = true
                 transRepository.transactionById(transId = transId).onEach { transEntity ->
                     _uiState.update { addEditState ->
                         currentTransaction = transEntity
@@ -85,6 +84,18 @@ class TransAddEditViewModel @Inject constructor(
 
             is TransAddEditEvent.OnDateChange -> {
                 currentTransaction = currentTransaction?.copy(date = event.date)
+            }
+
+            is TransAddEditEvent.OnDeleteClick -> {
+                viewModelScope.launch {
+                    transRepository.delete(event.transEntity)
+                    /*_eventFlow.emit(
+                        value = UiEvent.ShowSnackBar(
+                            message = "Transaction id ${event.transEntity.id} deleted",
+                            action = "Undo"
+                        )
+                    )*/
+                }
             }
 
             is TransAddEditEvent.OnDescriptionChange -> {

@@ -70,24 +70,21 @@ class TransViewModel @Inject constructor(
                 }
             }
 
-            is TransEvent.OnDeleteClick -> {
-                viewModelScope.launch {
-                    mDeletedTrans = event.transEntity
-                    transRepository.delete(event.transEntity)
-                    _eventFlow.emit(
-                        value = UiEvent.ShowSnackBar(
-                            message = "Transaction id ${event.transEntity.id} deleted",
-                            action = "Undo"
-                        )
-                    )
-                }
-            }
-
             is TransEvent.OnEditClick -> {
                 viewModelScope.launch {
                     _eventFlow.emit(
                         value = UiEvent.Navigate(
                             route = NavItems.TransactionsAddEdit.route + "?transId=${event.transEntity.id}/transPersonId=-1"
+                        )
+                    )
+                }
+            }
+
+            is TransEvent.OnPersonEditClick -> {
+                viewModelScope.launch {
+                    _eventFlow.emit(
+                        value = UiEvent.Navigate(
+                            route = NavItems.PersonAddEdit.route + "?personId=${event.personsEntity.id}"
                         )
                     )
                 }
