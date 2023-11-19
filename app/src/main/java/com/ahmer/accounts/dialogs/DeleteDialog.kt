@@ -17,34 +17,42 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import com.ahmer.accounts.R
+import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.utils.DeleteIcon
 
 @Composable
 fun DeleteAlertDialog(
     modifier: Modifier = Modifier,
     accountName: String = "",
-    isTransactionDelete: Boolean = false,
+    transactionsList: List<TransEntity> = emptyList(),
     onConfirmClick: () -> Unit
 ) {
-    val mHeading = "Do you want to delete this "
+    val mHeading = "Do you want to permanently delete "
     val mPerson: AnnotatedString = buildAnnotatedString {
-        append(text = mHeading)
+        append(text = "$mHeading this ")
         withStyle(style = SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
             append(text = accountName)
         }
         append(
-            text = " account? All transaction(s) associated with this account will also be " +
-                    "permanently deleted and this action cannot be undone and you will " +
-                    "be unable to recover any data."
+            text = " account? All transaction(s) associated with this account will also be deleted" +
+                    "and this action cannot be undone and you will be unable to recover any data."
         )
     }
 
-    val mTransaction: AnnotatedString = buildAnnotatedString {
-        append(text = mHeading)
-        append(text = "Transaction")
-    }
+    val mString: AnnotatedString = if (transactionsList.isNotEmpty()) {
+        if (transactionsList.size == 1) {
+            buildAnnotatedString {
+                append(text = mHeading)
+                append(text = "this transaction?")
+            }
+        } else {
+            buildAnnotatedString {
+                append(text = mHeading)
+                append(text = "the selected ${transactionsList.size} transactions?")
+            }
+        }
+    } else mPerson
 
-    val mString: AnnotatedString = if (isTransactionDelete) mTransaction else mPerson
     var mOpenDialog: Boolean by remember { mutableStateOf(value = true) }
 
     if (mOpenDialog) {

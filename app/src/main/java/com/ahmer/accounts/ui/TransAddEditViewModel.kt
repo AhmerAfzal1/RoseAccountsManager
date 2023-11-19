@@ -86,18 +86,6 @@ class TransAddEditViewModel @Inject constructor(
                 currentTransaction = currentTransaction?.copy(date = event.date)
             }
 
-            is TransAddEditEvent.OnDeleteClick -> {
-                viewModelScope.launch {
-                    transRepository.delete(event.transEntity)
-                    /*_eventFlow.emit(
-                        value = UiEvent.ShowSnackBar(
-                            message = "Transaction id ${event.transEntity.id} deleted",
-                            action = "Undo"
-                        )
-                    )*/
-                }
-            }
-
             is TransAddEditEvent.OnDescriptionChange -> {
                 currentTransaction = currentTransaction?.copy(description = event.description)
             }

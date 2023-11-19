@@ -90,6 +90,19 @@ class TransViewModel @Inject constructor(
                 }
             }
 
+            is TransEvent.OnDeleteClick -> {
+                viewModelScope.launch {
+                    mDeletedTrans = event.transEntity
+                    transRepository.delete(event.transEntity)
+                    _eventFlow.emit(
+                        value = UiEvent.ShowSnackBar(
+                            message = "Transaction id ${event.transEntity.id} deleted",
+                            action = "Undo"
+                        )
+                    )
+                }
+            }
+
             is TransEvent.OnSearchTextChange -> {
                 viewModelScope.launch {
                     _searchQuery.value = event.searchQuery
@@ -104,6 +117,10 @@ class TransViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun deleteTransaction(transaction: TransEntity) {
+        onEvent(TransEvent.OnDeleteClick(transEntity = transaction))
     }
 
     fun generatePdf(context: Context, uri: Uri, person: PersonsEntity, transSum: TransSumModel) {

@@ -34,6 +34,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -47,10 +48,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -71,6 +74,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.PersonsEntity
+import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.dialogs.DeleteAlertDialog
 import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
 import com.ahmer.accounts.event.TransEvent
@@ -117,7 +121,10 @@ fun TransListScreen(
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mState: TransState by transViewModel.uiState.collectAsStateWithLifecycle()
     var mShowDeleteDialog: Boolean by remember { mutableStateOf(value = false) }
+    var mShowDeleteDialogTrans: Boolean by remember { mutableStateOf(value = false) }
     var mTextSearch: String by remember { mutableStateOf(value = transViewModel.searchQuery.value) }
+    val mSelectedItems: SnapshotStateList<TransEntity> = remember { mutableStateListOf() }
+    var mLongClickState: Boolean by remember { mutableStateOf(value = false) }
 
     val mLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -167,6 +174,15 @@ fun TransListScreen(
         })
     }
 
+    if (mShowDeleteDialogTrans) {
+        DeleteAlertDialog(transactionsList = mSelectedItems.toList()) {
+            for (i in mSelectedItems.toList()) {
+                transViewModel.onEvent(TransEvent.OnDeleteClick(i))
+            }
+            onPopBackStack()
+        }
+    }
+
     Scaffold(
         modifier = Modifier,
         snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
@@ -193,56 +209,69 @@ fun TransListScreen(
                         }, isShowSearch = mShowSearch
                     )
                 }
-
+                val isSelection: Boolean = mSelectedItems.size <= 0
                 if (!mShowSearch.value) {
                     IconButton(
                         onClick = { onPopBackStack() },
                         modifier = Modifier.size(size = Constants.ICON_SIZE)
                     ) { BackIcon() }
                     Text(
-                        text = mPerson.name,
+                        text = if (isSelection) mPerson.name else "Selected: ${mSelectedItems.size}",
                         fontWeight = FontWeight.Bold,
                         overflow = TextOverflow.Ellipsis,
+                        style = if (isSelection) MaterialTheme.typography.labelMedium else LocalTextStyle.current
                     )
-                    EditIcon(
-                        modifier = Modifier
+                    if (isSelection) {
+                        EditIcon(modifier = Modifier
                             .padding(start = 8.dp)
                             .size(size = 18.dp)
-                            .clickable { transViewModel.onEvent(TransEvent.OnPersonEditClick(mPerson)) })
-                    DeleteIcon(
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .size(size = 18.dp)
-                            .clickable { mShowDeleteDialog = true }, tint = Color.Red
-                    )
+                            .clickable {
+                                transViewModel.onEvent(TransEvent.OnPersonEditClick(mPerson))
+                            })
+                        DeleteIcon(
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .size(size = 18.dp)
+                                .clickable { mShowDeleteDialog = true }, tint = Color.Red
+                        )
+                    }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(
-                            onClick = { mShowSearch.value = !mShowSearch.value },
-                            modifier = Modifier.size(size = Constants.ICON_SIZE)
-                        ) { SearchIcon() }
-                        IconButton(
-                            onClick = { transViewModel.onEvent(TransEvent.OnAddClick) },
-                            modifier = Modifier.size(size = Constants.ICON_SIZE)
-                        ) { AddCircleIcon() }
-                        Box {
+                        if (isSelection) {
                             IconButton(
-                                onClick = { mShowDropdownMenu.value = !mShowDropdownMenu.value },
+                                onClick = { mShowSearch.value = !mShowSearch.value },
                                 modifier = Modifier.size(size = Constants.ICON_SIZE)
-                            ) { MoreIcon() }
-                            if (mShowDropdownMenu.value) {
-                                ShowDropDown(
-                                    context = mContext,
-                                    state = mState,
-                                    launcher = mLauncher,
-                                    showInfoDialog = mShowInfoDialog,
-                                    expandMenu = mShowDropdownMenu,
-                                )
+                            ) { SearchIcon() }
+                            IconButton(
+                                onClick = { transViewModel.onEvent(TransEvent.OnAddClick) },
+                                modifier = Modifier.size(size = Constants.ICON_SIZE)
+                            ) { AddCircleIcon() }
+                            Box {
+                                IconButton(
+                                    onClick = {
+                                        mShowDropdownMenu.value = !mShowDropdownMenu.value
+                                    },
+                                    modifier = Modifier.size(size = Constants.ICON_SIZE)
+                                ) { MoreIcon() }
+                                if (mShowDropdownMenu.value) {
+                                    ShowDropDown(
+                                        context = mContext,
+                                        state = mState,
+                                        launcher = mLauncher,
+                                        showInfoDialog = mShowInfoDialog,
+                                        expandMenu = mShowDropdownMenu,
+                                    )
+                                }
                             }
+                        } else {
+                            IconButton(
+                                onClick = { mShowDeleteDialogTrans = true },
+                                modifier = Modifier.size(size = Constants.ICON_SIZE)
+                            ) { DeleteIcon(tint = Color.Red) }
                         }
                     }
                 }
@@ -293,21 +322,37 @@ fun TransListScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues = innerPadding),
-                contentPadding = PaddingValues(start = 10.dp, end = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(space = 3.dp)
+                contentPadding = PaddingValues(start = 4.dp, end = 4.dp),
+                verticalArrangement = Arrangement.Top
             ) {
-                items(
-                    items = mState.allTransactions,
+                items(items = mState.allTransactions,
                     key = { listTrans -> listTrans.id }) { transaction ->
+                    val isSelected = mSelectedItems.contains(transaction)
                     TransItem(
-                        currency = mCurrency,
                         transEntity = transaction,
-                        onEvent = transViewModel::onEvent,
-                        modifier = Modifier.animateItemPlacement(
-                            animationSpec = tween(
-                                durationMillis = Constants.ANIMATE_ITEM_DURATION
+                        currency = mCurrency,
+                        isSelected = isSelected,
+                        onClick = {
+                            if (!mLongClickState) {
+                                transViewModel.onEvent(TransEvent.OnEditClick(transaction))
+                            } else {
+                                if (isSelected) mSelectedItems.remove(transaction)
+                                else mSelectedItems.add(transaction)
+                                if (mSelectedItems.size == 0) mLongClickState = false
+                            }
+                        },
+                        onLongClick = {
+                            mLongClickState = true
+                            if (isSelected) mSelectedItems.remove(transaction)
+                            else mSelectedItems.add(transaction)
+                            if (mSelectedItems.size == 0) mLongClickState = false
+                        },
+                        modifier = Modifier
+                            .animateItemPlacement(
+                                animationSpec = tween(
+                                    durationMillis = Constants.ANIMATE_ITEM_DURATION
+                                )
                             )
-                        )
                     )
                 }
             }

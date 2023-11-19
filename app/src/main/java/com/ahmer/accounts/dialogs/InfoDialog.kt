@@ -75,7 +75,7 @@ fun MoreInfoAlertDialog(modifier: Modifier = Modifier, personsEntity: PersonsEnt
                     items(items = mDataList) { (title, value) ->
                         Row {
                             InfoText(text = title, weight = 1f, isTitle = true)
-                            InfoText(text = value, weight = 3f, isTitle = true)
+                            InfoText(text = value, weight = 3f, isTitle = false)
                         }
                     }
                 }

@@ -35,11 +35,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -133,13 +131,10 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     MyTextField(
-                        value = TextFieldValue(
-                            text = personsEntity.name,
-                            selection = TextRange(index = personsEntity.name.length)
-                        ),
+                        value = personsEntity.name,
                         onValueChange = {
-                            if (it.text.length <= mLenName) {
-                                viewModel.onEvent(PersonAddEditEvent.OnNameChange(it.text))
+                            if (it.length <= mLenName) {
+                                viewModel.onEvent(PersonAddEditEvent.OnNameChange(it))
                             }
                         },
                         modifier = Modifier
@@ -177,13 +172,10 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                     )
 
                     MyTextField(
-                        value = TextFieldValue(
-                            text = personsEntity.phone,
-                            selection = TextRange(index = personsEntity.phone.length)
-                        ),
+                        value = personsEntity.phone,
                         onValueChange = {
-                            if (it.text.length <= mLenPhone) {
-                                viewModel.onEvent(PersonAddEditEvent.OnPhoneChange(it.text))
+                            if (it.length <= mLenPhone) {
+                                viewModel.onEvent(PersonAddEditEvent.OnPhoneChange(it))
                             }
                         },
                         label = { Text(stringResource(id = R.string.label_phone_number)) },
@@ -222,13 +214,10 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
 
                     if (isMoreData) {
                         MyTextField(
-                            value = TextFieldValue(
-                                text = personsEntity.email,
-                                selection = TextRange(index = personsEntity.email.length)
-                            ),
+                            value = personsEntity.email,
                             onValueChange = {
-                                if (it.text.length <= mLenEmail) {
-                                    viewModel.onEvent(PersonAddEditEvent.OnEmailChange(it.text))
+                                if (it.length <= mLenEmail) {
+                                    viewModel.onEvent(PersonAddEditEvent.OnEmailChange(it))
                                 }
                             },
                             label = { Text(stringResource(id = R.string.label_email)) },
@@ -260,13 +249,10 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                         )
 
                         MyTextField(
-                            value = TextFieldValue(
-                                text = personsEntity.address,
-                                selection = TextRange(index = personsEntity.address.length)
-                            ),
+                            value = personsEntity.address,
                             onValueChange = {
-                                if (it.text.length <= mLenAddress) {
-                                    viewModel.onEvent(PersonAddEditEvent.OnAddressChange(it.text))
+                                if (it.length <= mLenAddress) {
+                                    viewModel.onEvent(PersonAddEditEvent.OnAddressChange(it))
                                 }
                             },
                             label = { Text(stringResource(id = R.string.label_address)) },
@@ -301,13 +287,10 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                         )
 
                         MyTextField(
-                            value = TextFieldValue(
-                                text = personsEntity.notes,
-                                selection = TextRange(index = personsEntity.notes.length)
-                            ),
+                            value = personsEntity.notes,
                             onValueChange = {
-                                if (it.text.length <= mLenNotes) {
-                                    viewModel.onEvent(PersonAddEditEvent.OnNotesChange(it.text))
+                                if (it.length <= mLenNotes) {
+                                    viewModel.onEvent(PersonAddEditEvent.OnNotesChange(it))
                                 }
                             },
                             label = { Text(stringResource(id = R.string.label_notes)) },
@@ -337,7 +320,10 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                     }
 
                     OutlinedButton(
-                        onClick = { viewModel.onEvent(PersonAddEditEvent.OnSaveClick) },
+                        onClick = {
+                            clear()
+                            viewModel.onEvent(PersonAddEditEvent.OnSaveClick)
+                        },
                         enabled = personsEntity.name.isNotEmpty()
                     ) {
                         Text(text = stringResource(id = R.string.label_save).uppercase())

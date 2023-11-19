@@ -1,6 +1,8 @@
 package com.ahmer.accounts.ui.components
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,25 +30,34 @@ import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.HelperUtils.AmountWithSymbolText
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TransItem(
-    currency: Currency,
     transEntity: TransEntity,
-    onEvent: (TransEvent) -> Unit,
-    modifier: Modifier = Modifier
+    currency: Currency,
+    modifier: Modifier = Modifier,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    onLongClick: (Boolean) -> Unit,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 5.dp, bottom = 5.dp)
-            .clickable { onEvent(TransEvent.OnEditClick(transEntity)) },
-        horizontalArrangement = Arrangement.Center,
+            .background(color = if (isSelected) Color.Blue else Color.Transparent)
+            .combinedClickable(
+                enabled = true,
+                onLongClick = { onLongClick(true) },
+                onClick = { onClick() },
+            ),
+        //.clickable { onEvent(TransEvent.OnEditClick(transEntity)) },
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(weight = 0.5f),
+                .weight(weight = 0.44f),
         ) {
             val mDesc: String = transEntity.description
             Text(
