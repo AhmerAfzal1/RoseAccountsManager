@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,16 +54,17 @@ fun PersonItem(
         Box(
             modifier = Modifier
                 .size(size = 48.dp)
+                .clip(shape = CircleShape)
+                .background(color = Color.Transparent)
                 .border(
                     border = BorderStroke(width = 2.dp, color = Color.LightGray),
                     shape = CircleShape
-                )
-                .background(color = Color.White), contentAlignment = Alignment.Center
+                ),
+            contentAlignment = Alignment.Center
         ) {
             Text(
                 text = mPersonsEntity.name.first().toString(),
                 modifier = Modifier.align(alignment = Alignment.Center),
-                color = Color.DarkGray,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium
             )

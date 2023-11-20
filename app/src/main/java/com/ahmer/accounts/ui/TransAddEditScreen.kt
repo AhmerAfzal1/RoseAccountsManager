@@ -190,7 +190,7 @@ fun TransAddEditScreen(
                 MyTextField(
                     value = mTransEntity.amount,
                     onValueChange = {
-                        viewModel.onEvent(TransAddEditEvent.OnAmountChange(it))
+                        viewModel.onEvent(TransAddEditEvent.OnAmountChange(it.trim()))
                     },
                     modifier = Modifier
                         .focusRequester(focusRequester = mFocusRequester)
@@ -224,7 +224,7 @@ fun TransAddEditScreen(
                     value = mTransEntity.description,
                     onValueChange = {
                         if (it.length <= mLenDes) {
-                            viewModel.onEvent(TransAddEditEvent.OnDescriptionChange(it))
+                            viewModel.onEvent(TransAddEditEvent.OnDescriptionChange(it.trim()))
                         }
                     },
                     label = { Text(stringResource(id = R.string.label_description)) },
