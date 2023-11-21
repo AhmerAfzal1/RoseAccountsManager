@@ -19,16 +19,15 @@ class Constants {
         const val DATE_PATTERN: String = "dd MMM yyyy"
         const val DATE_SHORT_PATTERN: String = "dd MMM yy"
         const val DATE_TIME_FILE_NAME_PATTERN: String = "ddMMyyHHmmss"
-        const val DATE_TIME_PATTERN: String = "dd MMM yyyy hh:mm:ss a"
         const val DATE_TIME_NEW_PATTERN: String = "dd MMM yyyy - h:mm a"
+        const val DATE_TIME_PATTERN: String = "dd MMM yyyy hh:mm:ss a"
         const val DATE_TIME_PDF_PATTERN: String = "EEEE, dd MMMM yyyy - hh:mm:ss a"
         const val LOG_TAG: String = "RoseAccounts"
         const val PLAY_STORE_LINK: String = "https://play.google.com/store/apps/details?id="
         const val STATE_IN_STARTED_TIME: Long = 5000L
-        val TOP_APP_BAR_HEIGHT: Dp = 64.dp
+        const val TYPE_CREDIT: String = "Credit"
+        const val TYPE_DEBIT: String = "Debit"
         val ICON_SIZE: Dp = 36.dp
-        val PERMISSIONS: Array<String> = arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        )
+        val TOP_APP_BAR_HEIGHT: Dp = 64.dp
     }
 }

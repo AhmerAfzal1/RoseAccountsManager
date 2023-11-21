@@ -22,8 +22,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.ui.isLight
 import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorRedDark
+import com.ahmer.accounts.ui.theme.colorSelectionDark
+import com.ahmer.accounts.ui.theme.colorSelectionLight
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.HelperUtils
@@ -39,17 +42,19 @@ fun TransItem(
     onClick: () -> Unit,
     onLongClick: (Boolean) -> Unit,
 ) {
+    val mSelectionColor: Color =
+        if (MaterialTheme.colorScheme.isLight()) colorSelectionLight else colorSelectionDark
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 5.dp, bottom = 5.dp)
-            .background(color = if (isSelected) Color.Blue else Color.Transparent)
+            .background(color = if (isSelected) mSelectionColor else Color.Transparent)
             .combinedClickable(
                 enabled = true,
                 onLongClick = { onLongClick(true) },
                 onClick = { onClick() },
             ),
-        //.clickable { onEvent(TransEvent.OnEditClick(transEntity)) },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -25,6 +25,7 @@ import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorGreenLight
 import com.ahmer.accounts.ui.theme.colorRedDark
 import com.ahmer.accounts.ui.theme.colorRedLight
+import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.HelperUtils
 
@@ -64,7 +65,7 @@ fun TotalBalance(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(id = R.string.label_total_credit),
+                    text = "Total ${Constants.TYPE_CREDIT}".uppercase(),
                     color = colorGreenDark,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Start,
@@ -102,7 +103,7 @@ fun TotalBalance(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(id = R.string.label_total_debit),
+                    text = "Total ${Constants.TYPE_DEBIT}".uppercase(),
                     color = colorRedDark,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Start,

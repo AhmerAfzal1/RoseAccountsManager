@@ -147,7 +147,7 @@ fun TransAddEditScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val mOptions: List<String> = listOf("Credit", "Debit")
+                val mOptions: List<String> = listOf(Constants.TYPE_CREDIT, Constants.TYPE_DEBIT)
                 var mSelectedIndex: Int by remember { mutableIntStateOf(value = 2) }
 
                 MyTextField(
@@ -170,7 +170,7 @@ fun TransAddEditScreen(
                     mOptions.forEachIndexed { index, label ->
                         val mType: AnnotatedString = buildAnnotatedString {
                             append(text = label)
-                            if (label == "Credit") append(text = " (+)") else append(text = " (-)")
+                            if (label == Constants.TYPE_CREDIT) append(" (+)") else append(" (-)")
                         }
                         SegmentedButton(
                             selected = mTransEntity.type == label,
@@ -199,7 +199,7 @@ fun TransAddEditScreen(
                                 mKeyboardController?.show()
                             }
                         },
-                    label = { Text(stringResource(id = R.string.label_amount)) },
+                    label = { Text(stringResource(id = R.string.label_by_amount)) },
                     leadingIcon = { CurrencyIcon() },
                     trailingIcon = {
                         if (mTransEntity.amount.isNotEmpty()) {

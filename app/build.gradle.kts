@@ -75,7 +75,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
 
     //Firebase BOM
-    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
     implementation("com.google.firebase:firebase-crashlytics-ktx")

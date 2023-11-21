@@ -6,6 +6,7 @@ import com.ahmer.accounts.database.dao.PersonDao
 import com.ahmer.accounts.database.dao.TransDao
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -120,70 +121,70 @@ class DbCallback(
                 TransEntity(
                     personId = 1,
                     date = 1695743394588,
-                    type = "Credit",
+                    type = Constants.TYPE_CREDIT,
                     description = "",
                     amount = "563.5"
                 ),
                 TransEntity(
                     personId = 1,
                     date = 1695743394588,
-                    type = "Credit",
+                    type = Constants.TYPE_CREDIT,
                     description = "Add",
                     amount = "1503.55"
                 ),
                 TransEntity(
                     personId = 1,
                     date = 1695743394593,
-                    type = "Debit",
+                    type = Constants.TYPE_DEBIT,
                     description = "",
                     amount = "203.5"
                 ),
                 TransEntity(
                     personId = 2,
                     date = 1695743394593,
-                    type = "Credit",
+                    type = Constants.TYPE_CREDIT,
                     description = "",
                     amount = "874.5"
                 ),
                 TransEntity(
                     personId = 2,
                     date = 1699906136326,
-                    type = "Debit",
+                    type = Constants.TYPE_DEBIT,
                     description = "Minus",
                     amount = "325.54"
                 ),
                 TransEntity(
                     personId = 3,
                     date = 1699906136326,
-                    type = "Credit",
+                    type = Constants.TYPE_CREDIT,
                     description = "",
                     amount = "413.5"
                 ),
                 TransEntity(
                     personId = 1,
                     date = 1699985784568,
-                    type = "Debit",
+                    type = Constants.TYPE_DEBIT,
                     description = "",
                     amount = "784.56"
                 ),
                 TransEntity(
                     personId = 1,
                     date = 1699985784568,
-                    type = "Credit",
+                    type = Constants.TYPE_CREDIT,
                     description = "",
                     amount = "147.16"
                 ),
                 TransEntity(
                     personId = 4,
                     date = 1699985784568,
-                    type = "Credit",
+                    type = Constants.TYPE_CREDIT,
                     description = "",
                     amount = "523.51"
                 ),
                 TransEntity(
                     personId = 4,
                     date = 1700070019611,
-                    type = "Debit",
+                    type = Constants.TYPE_DEBIT,
                     description = "",
                     amount = "213.15"
                 ),

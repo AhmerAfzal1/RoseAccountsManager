@@ -34,7 +34,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -209,19 +208,25 @@ fun TransListScreen(
                         }, isShowSearch = mShowSearch
                     )
                 }
-                val isSelection: Boolean = mSelectedItems.size <= 0
+                val isNotSelection: Boolean = mSelectedItems.size <= 0
+
                 if (!mShowSearch.value) {
                     IconButton(
-                        onClick = { onPopBackStack() },
+                        onClick = {
+                            if (isNotSelection) {
+                                mSelectedItems.clear()
+                                onPopBackStack()
+                            } else mSelectedItems.clear()
+                        },
                         modifier = Modifier.size(size = Constants.ICON_SIZE)
                     ) { BackIcon() }
                     Text(
-                        text = if (isSelection) mPerson.name else "Selected: ${mSelectedItems.size}",
+                        text = if (isNotSelection) mPerson.name else "Selected: ${mSelectedItems.size}",
                         fontWeight = FontWeight.Bold,
                         overflow = TextOverflow.Ellipsis,
-                        style = if (isSelection) MaterialTheme.typography.labelMedium else LocalTextStyle.current
+                        style = MaterialTheme.typography.labelLarge
                     )
-                    if (isSelection) {
+                    if (isNotSelection) {
                         EditIcon(modifier = Modifier
                             .padding(start = 8.dp)
                             .size(size = 18.dp)
@@ -241,7 +246,7 @@ fun TransListScreen(
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (isSelection) {
+                        if (isNotSelection) {
                             IconButton(
                                 onClick = { mShowSearch.value = !mShowSearch.value },
                                 modifier = Modifier.size(size = Constants.ICON_SIZE)
@@ -284,7 +289,7 @@ fun TransListScreen(
                     .fillMaxWidth()
                     .padding(top = 5.dp),
                 shape = RoundedCornerShape(size = 4.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             ) {
                 Row(
@@ -302,14 +307,14 @@ fun TransListScreen(
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = stringResource(id = R.string.label_debit).uppercase(),
+                        text = Constants.TYPE_DEBIT.uppercase(),
                         modifier = Modifier.weight(weight = 0.25f),
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = stringResource(id = R.string.label_credit).uppercase(),
+                        text = Constants.TYPE_CREDIT.uppercase(),
                         modifier = Modifier.weight(weight = 0.25f),
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,
@@ -339,6 +344,7 @@ fun TransListScreen(
                                 if (isSelected) mSelectedItems.remove(transaction)
                                 else mSelectedItems.add(transaction)
                                 if (mSelectedItems.size == 0) mLongClickState = false
+                                mShowSearch.value = false
                             }
                         },
                         onLongClick = {
@@ -346,6 +352,7 @@ fun TransListScreen(
                             if (isSelected) mSelectedItems.remove(transaction)
                             else mSelectedItems.add(transaction)
                             if (mSelectedItems.size == 0) mLongClickState = false
+                            mShowSearch.value = false
                         },
                         modifier = Modifier
                             .animateItemPlacement(

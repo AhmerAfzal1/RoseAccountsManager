@@ -145,7 +145,7 @@ object PdfUtils {
                 )
                 addCell(
                     cellFormat(
-                        text = "Credit".uppercase(),
+                        text = Constants.TYPE_CREDIT.uppercase(),
                         isHeading = true,
                         alignment = AlignmentCell.EMPTY
                     )
@@ -172,7 +172,7 @@ object PdfUtils {
                 )
                 var mCreditEntity = 0.0
                 var mDebitEntity = 0.0
-                if (entity.type == "Credit") {
+                if (entity.type == Constants.TYPE_CREDIT) {
                     mCreditTransactions += 1
                     mCreditEntity = entity.amount.toDouble()
                 } else {
