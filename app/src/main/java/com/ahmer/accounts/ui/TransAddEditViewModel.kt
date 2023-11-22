@@ -117,8 +117,8 @@ class TransAddEditViewModel @Inject constructor(
                             personId = mPersonId!!,
                             date = transaction.date,
                             type = transaction.type,
-                            description = transaction.description,
-                            amount = transaction.amount
+                            description = transaction.description.trim(),
+                            amount = transaction.amount.trim()
                         )
                     }
                 } else {
@@ -127,8 +127,8 @@ class TransAddEditViewModel @Inject constructor(
                         personId = currentTransaction!!.personId,
                         date = currentTransaction!!.date,
                         type = currentTransaction!!.type,
-                        description = currentTransaction!!.description,
-                        amount = currentTransaction!!.amount
+                        description = currentTransaction!!.description.trim(),
+                        amount = currentTransaction!!.amount.trim()
                     )
                 }
                 transRepository.insertOrUpdate(transEntity = mTransaction!!)

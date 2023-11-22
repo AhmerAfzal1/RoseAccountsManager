@@ -106,25 +106,25 @@ class PersonAddEditViewModel @Inject constructor(
                             mPerson = currentPerson?.let { person ->
                                 PersonsEntity(
                                     id = person.id,
-                                    name = person.name,
-                                    address = person.address,
-                                    phone = person.phone,
-                                    email = person.email,
-                                    notes = person.notes,
+                                    name = person.name.trim(),
+                                    address = person.address.trim(),
+                                    phone = person.phone.trim(),
+                                    email = person.email.trim(),
+                                    notes = person.notes.trim(),
                                 )
                             }
-                            mMessage = "${mPerson?.name} added successfully!"
+                            mMessage = "${mPerson?.name?.trim()} added successfully!"
                         } else {
                             mPerson = currentPerson?.copy(
                                 id = currentPerson!!.id,
-                                name = currentPerson!!.name,
-                                address = currentPerson!!.address,
-                                phone = currentPerson!!.phone,
-                                email = currentPerson!!.email,
-                                notes = currentPerson!!.notes,
+                                name = currentPerson!!.name.trim(),
+                                address = currentPerson!!.address.trim(),
+                                phone = currentPerson!!.phone.trim(),
+                                email = currentPerson!!.email.trim(),
+                                notes = currentPerson!!.notes.trim(),
                                 updated = System.currentTimeMillis()
                             )
-                            mMessage = "${mPerson?.name} updated successfully!"
+                            mMessage = "${mPerson?.name?.trim()} updated successfully!"
                         }
                         personRepository.insertOrUpdate(personsEntity = mPerson!!)
                         _eventFlow.emit(value = UiEvent.PopBackStack)

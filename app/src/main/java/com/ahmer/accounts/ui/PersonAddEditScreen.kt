@@ -134,7 +134,7 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                         value = personsEntity.name,
                         onValueChange = {
                             if (it.length <= mLenName) {
-                                viewModel.onEvent(PersonAddEditEvent.OnNameChange(it.trim()))
+                                viewModel.onEvent(PersonAddEditEvent.OnNameChange(it))
                             }
                         },
                         modifier = Modifier
@@ -175,7 +175,7 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                         value = personsEntity.phone,
                         onValueChange = {
                             if (it.length <= mLenPhone) {
-                                viewModel.onEvent(PersonAddEditEvent.OnPhoneChange(it.trim()))
+                                viewModel.onEvent(PersonAddEditEvent.OnPhoneChange(it))
                             }
                         },
                         label = { Text(stringResource(id = R.string.label_phone_number)) },
@@ -217,7 +217,7 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                             value = personsEntity.email,
                             onValueChange = {
                                 if (it.length <= mLenEmail) {
-                                    viewModel.onEvent(PersonAddEditEvent.OnEmailChange(it.trim()))
+                                    viewModel.onEvent(PersonAddEditEvent.OnEmailChange(it))
                                 }
                             },
                             label = { Text(stringResource(id = R.string.label_email)) },
@@ -252,7 +252,7 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                             value = personsEntity.address,
                             onValueChange = {
                                 if (it.length <= mLenAddress) {
-                                    viewModel.onEvent(PersonAddEditEvent.OnAddressChange(it.trim()))
+                                    viewModel.onEvent(PersonAddEditEvent.OnAddressChange(it))
                                 }
                             },
                             label = { Text(stringResource(id = R.string.label_address)) },
@@ -290,7 +290,7 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                             value = personsEntity.notes,
                             onValueChange = {
                                 if (it.length <= mLenNotes) {
-                                    viewModel.onEvent(PersonAddEditEvent.OnNotesChange(it.trim()))
+                                    viewModel.onEvent(PersonAddEditEvent.OnNotesChange(it))
                                 }
                             },
                             label = { Text(stringResource(id = R.string.label_notes)) },

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -26,7 +27,9 @@ import com.ahmer.accounts.ui.theme.colorGreenLight
 import com.ahmer.accounts.ui.theme.colorRedDark
 import com.ahmer.accounts.ui.theme.colorRedLight
 import com.ahmer.accounts.utils.Constants
+import com.ahmer.accounts.utils.CreditIcon
 import com.ahmer.accounts.utils.Currency
+import com.ahmer.accounts.utils.DebitIcon
 import com.ahmer.accounts.utils.HelperUtils
 
 @Composable
@@ -35,15 +38,35 @@ fun TotalBalance(
     transSumModel: TransSumModel,
     currency: Currency,
 ) {
+    val mCreditIcon: @Composable () -> Unit = {
+        CreditIcon(
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .size(size = 18.dp),
+            tint = colorGreenDark
+        )
+    }
+    val mDebtIcon: @Composable () -> Unit = {
+        DebitIcon(
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .size(size = 18.dp),
+            tint = colorRedDark
+        )
+    }
+
     val mColorBackground: Color
     val mColorText: Color
+    val mIcon: @Composable () -> Unit
 
     if (transSumModel.balance >= 0) {
         mColorBackground = colorGreenLight
         mColorText = colorGreenDark
+        mIcon = { mCreditIcon.invoke() }
     } else {
         mColorBackground = colorRedLight
         mColorText = colorRedDark
+        mIcon = { mDebtIcon.invoke() }
     }
 
     ElevatedCard(
@@ -71,6 +94,7 @@ fun TotalBalance(
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.bodySmall,
                 )
+                mCreditIcon.invoke()
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -109,6 +133,7 @@ fun TotalBalance(
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.bodySmall,
                 )
+                mDebtIcon.invoke()
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -148,6 +173,7 @@ fun TotalBalance(
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.bodySmall,
                 )
+                mIcon.invoke()
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
