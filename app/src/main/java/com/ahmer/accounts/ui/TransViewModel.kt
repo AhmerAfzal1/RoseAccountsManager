@@ -119,10 +119,6 @@ class TransViewModel @Inject constructor(
         }
     }
 
-    fun deleteTransaction(transaction: TransEntity) {
-        onEvent(TransEvent.OnDeleteClick(transEntity = transaction))
-    }
-
     fun generatePdf(context: Context, uri: Uri, person: PersonsEntity, transSum: TransSumModel) {
         Log.v(Constants.LOG_TAG, "Credit: ${transSum.creditSum}")
         Log.v(Constants.LOG_TAG, "Debit: ${transSum.debitSum}")

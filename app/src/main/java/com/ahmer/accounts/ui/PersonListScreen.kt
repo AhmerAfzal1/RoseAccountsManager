@@ -237,7 +237,10 @@ private fun SearchBarPerson(
                 .padding(start = 8.dp, end = 8.dp)
                 .weight(weight = 0.90f)
                 .border(
-                    border = BorderStroke(width = 2.dp, color = Color.LightGray),
+                    border = BorderStroke(
+                        width = 1.5.dp,
+                        color = MaterialTheme.colorScheme.primary
+                    ),
                     shape = RoundedCornerShape(percent = 50)
                 )
         ) {

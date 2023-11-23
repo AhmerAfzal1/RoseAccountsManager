@@ -1,7 +1,5 @@
 package com.ahmer.accounts.ui.components
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -53,11 +51,11 @@ fun PersonItem(
     ) {
         Box(
             modifier = Modifier
-                .size(size = 48.dp)
+                .size(size = 40.dp)
                 .clip(shape = CircleShape)
-                .background(color = Color.Transparent)
                 .border(
-                    border = BorderStroke(width = 2.dp, color = Color.LightGray),
+                    width = 1.5.dp,
+                    color = MaterialTheme.colorScheme.primary,
                     shape = CircleShape
                 ),
             contentAlignment = Alignment.Center
@@ -77,7 +75,7 @@ fun PersonItem(
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.titleSmall
                 )
                 if (mPersonsEntity.phone.isNotEmpty()) {
                     Text(
