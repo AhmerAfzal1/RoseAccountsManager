@@ -62,7 +62,7 @@
     <string name="label_delete">Delete</string>
     <string name="label_description">Description</string>
     <string name="label_email">Email Address</string>
-    <string name="label_generate_pdf">Generate PDF</string>
+    <string name="label_generate_pdf">Export PDF</string>
     <string name="label_info">Info Account</string>
     <string name="label_intent_chooser">Select the database backup file</string>
     <string name="label_name">Name</string>

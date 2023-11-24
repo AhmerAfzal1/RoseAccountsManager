@@ -2,8 +2,9 @@
 <resources>
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#FD6900</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_main</item>
+        <item name="windowSplashScreenBackground">#FF006493</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_icon</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
         <item name="postSplashScreenTheme">@style/Theme.RoseAccountsManager</item>
     </style>
 </resources>
