@@ -175,6 +175,16 @@ fun EmailIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
 }
 
 @Composable
+fun FilterIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_filter),
+        contentDescription = stringResource(id = R.string.content_description_filter),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
 fun InfoIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Outlined.Info,
@@ -265,40 +275,20 @@ fun SearchIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 }
 
 @Composable
+fun SelectAllIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_select_all),
+        contentDescription = stringResource(id = R.string.content_description_select_all),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
 fun SettingsIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Filled.Settings,
         contentDescription = stringResource(id = R.string.content_description_settings),
-        modifier = modifier,
-        tint = tint
-    )
-}
-
-@Composable
-fun SortByDateIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
-    Icon(
-        painter = painterResource(id = R.drawable.ic_access_time),
-        contentDescription = stringResource(id = R.string.content_description_sort_by_date),
-        modifier = modifier,
-        tint = tint
-    )
-}
-
-@Composable
-fun SortByNameIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
-    Icon(
-        painter = painterResource(id = R.drawable.ic_sort_by_alpha),
-        contentDescription = stringResource(id = R.string.content_description_sort_by_name),
-        modifier = modifier,
-        tint = tint
-    )
-}
-
-@Composable
-fun SortIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
-    Icon(
-        painter = painterResource(id = R.drawable.ic_sort),
-        contentDescription = stringResource(id = R.string.content_description_sort),
         modifier = modifier,
         tint = tint
     )

@@ -32,9 +32,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -94,6 +94,7 @@ import com.ahmer.accounts.utils.MoreIcon
 import com.ahmer.accounts.utils.PdfIcon
 import com.ahmer.accounts.utils.PdfUtils
 import com.ahmer.accounts.utils.SearchIcon
+import com.ahmer.accounts.utils.SelectAllIcon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -277,6 +278,17 @@ fun TransListScreen(
                                 onClick = { mShowDeleteDialogTrans = true },
                                 modifier = Modifier.size(size = Constants.ICON_SIZE)
                             ) { DeleteIcon(tint = Color.Red) }
+
+                            IconButton(
+                                onClick = {
+                                    mSelectedItems.clear()
+                                    val mSelect: List<TransEntity> = mState.allTransactions.filter {
+                                        it.personId == personId
+                                    }
+                                    mSelectedItems.addAll(mSelect)
+                                },
+                                modifier = Modifier.size(size = Constants.ICON_SIZE)
+                            ) { SelectAllIcon() }
                         }
                     }
                 }
@@ -284,13 +296,14 @@ fun TransListScreen(
 
             TotalBalance(transSumModel = mState.transSumModel, currency = mCurrency)
 
-            ElevatedCard(
+            OutlinedCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 5.dp),
-                shape = RoundedCornerShape(size = 4.dp),
-                colors = CardDefaults.cardColors(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    .padding(top = 4.dp),
+                shape = CardDefaults.outlinedShape,
+                colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.outlinedCardElevation(),
+                border = CardDefaults.outlinedCardBorder(enabled = false)
             ) {
                 Row(
                     modifier = Modifier

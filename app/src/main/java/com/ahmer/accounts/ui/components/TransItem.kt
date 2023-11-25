@@ -66,7 +66,7 @@ fun TransItem(
             val mDesc: String = transEntity.description
             Text(
                 text = mDesc.ifEmpty { stringResource(R.string.label_no_description) },
-                color = if (mDesc.isEmpty()) Color.LightGray else Color.Black,
+                color = if (mDesc.isEmpty()) Color.LightGray else Color.Unspecified,
                 fontStyle = if (mDesc.isEmpty()) FontStyle.Italic else FontStyle.Normal,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,

@@ -23,6 +23,7 @@
     <string name="content_description_dollar">Dollar icon</string>
     <string name="content_description_edit">Edit icon</string>
     <string name="content_description_email">Email icon</string>
+    <string name="content_description_filter">Filter icon</string>
     <string name="content_description_info">More info icon</string>
     <string name="content_description_more">More icon</string>
     <string name="content_description_notes">Notes icon</string>
@@ -34,10 +35,8 @@
     <string name="content_description_restore_backup">Restore backup icon</string>
     <string name="content_description_save">Save icon</string>
     <string name="content_description_search">Search icon</string>
+    <string name="content_description_select_all">Select all icon</string>
     <string name="content_description_settings">Settings icon</string>
-    <string name="content_description_sort">Sort icon</string>
-    <string name="content_description_sort_by_date">Sort by date icon</string>
-    <string name="content_description_sort_by_name">Sort by name icon</string>
     <string name="content_description_theme">Theme icon</string>
     <string name="content_description_trans">Transactions icon</string>
     <string name="content_description_trans_add_edit">Transactions add edit icon</string>

@@ -73,6 +73,7 @@ fun TransAddEditScreen(
     viewModelSettings: SettingsViewModel,
     onPopBackStack: () -> Unit
 ) {
+    val isEditMode: Boolean = viewModel.isEditMode
     val mContext: Context = LocalContext.current
     val mCurrency: Currency by viewModelSettings.currentCurrency.collectAsStateWithLifecycle()
     val mFocusManager: FocusManager = LocalFocusManager.current
@@ -81,7 +82,6 @@ fun TransAddEditScreen(
     val mLenDes = 64
     val mState: TransAddEditState by viewModel.uiState.collectAsStateWithLifecycle()
     val mTransEntity: TransEntity = mState.transaction ?: TransEntity()
-    val isEditMode: Boolean = viewModel.isEditMode
     var mDatePickerDialog: Boolean by rememberSaveable { mutableStateOf(value = false) }
 
     LaunchedEffect(key1 = true) {
@@ -150,17 +150,17 @@ fun TransAddEditScreen(
                 val mOptions: List<String> = listOf(Constants.TYPE_CREDIT, Constants.TYPE_DEBIT)
                 var mSelectedIndex: Int by remember { mutableIntStateOf(value = 2) }
 
-                MyTextField(
-                    value = HelperUtils.getDateTime(
-                        time = mTransEntity.date, pattern = Constants.DATE_TIME_NEW_PATTERN
-                    ),
+                MyTextField(value = HelperUtils.getDateTime(
+                    time = mTransEntity.date, pattern = Constants.DATE_TIME_NEW_PATTERN
+                ),
                     onValueChange = {},
                     modifier = Modifier.onFocusChanged { mDatePickerDialog = it.isFocused },
                     readOnly = true,
                     label = { Text(stringResource(id = R.string.label_date)) },
                     leadingIcon = { DateIcon() },
                     trailingIcon = {},
-                    supportingText = {})
+                    supportingText = {}
+                )
 
                 SingleChoiceSegmentedButtonRow(
                     modifier = Modifier
@@ -181,9 +181,7 @@ fun TransAddEditScreen(
                             shape = SegmentedButtonDefaults.itemShape(
                                 index = index, count = mOptions.size
                             ),
-                        ) {
-                            Text(text = mType.text.uppercase())
-                        }
+                        ) { Text(text = mType.text.uppercase()) }
                     }
                 }
 
@@ -260,8 +258,7 @@ fun TransAddEditScreen(
                     onClick = {
                         clear()
                         viewModel.onEvent(TransAddEditEvent.OnSaveClick)
-                    },
-                    enabled = mTransEntity.amount.isNotEmpty()
+                    }, enabled = mTransEntity.amount.isNotEmpty()
                 ) {
                     Text(text = if (!isEditMode) "Save".uppercase() else "Update".uppercase())
                 }

@@ -86,10 +86,10 @@ import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.Currency
+import com.ahmer.accounts.utils.FilterIcon
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.SearchIcon
 import com.ahmer.accounts.utils.SortBy
-import com.ahmer.accounts.utils.SortIcon
 import com.ahmer.accounts.utils.SortOrder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -282,7 +282,7 @@ private fun SearchBarPerson(
         Box(
             modifier = Modifier.weight(weight = 0.10f), contentAlignment = Alignment.TopEnd
         ) {
-            IconButton(onClick = { mShowBottomSheet = !mShowBottomSheet }) { SortIcon() }
+            IconButton(onClick = { mShowBottomSheet = !mShowBottomSheet }) { FilterIcon() }
 
             val mCurrentSortOrder by viewModel.currentSortOrder.collectAsStateWithLifecycle()
             val mSheetState: SheetState = rememberModalBottomSheetState()
