@@ -10,7 +10,7 @@ import com.ahmer.accounts.utils.HelperUtils
 import kotlinx.parcelize.Parcelize
 
 @Entity(
-    tableName = Constants.DATABASE_TRANSACTION_TABLE, foreignKeys = [ForeignKey(
+    tableName = Constants.DATABASE_TABLE_TRANSACTION, foreignKeys = [ForeignKey(
         entity = PersonsEntity::class,
         parentColumns = arrayOf("id"),
         childColumns = arrayOf("personId"),
@@ -30,5 +30,5 @@ data class TransEntity(
     val created: Long = System.currentTimeMillis(),
 ) : Parcelable {
     val shortDate: String
-        get() = HelperUtils.getDateTime(time = date, pattern = Constants.DATE_SHORT_PATTERN)
+        get() = HelperUtils.getDateTime(time = date, pattern = Constants.PATTERN_SHORT)
 }

@@ -48,7 +48,7 @@ fun TransItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 5.dp, bottom = 5.dp)
+            .padding(top = 4.dp, bottom = 4.dp)
             .background(color = if (isSelected) mSelectionColor else Color.Transparent)
             .combinedClickable(
                 enabled = true,
@@ -79,7 +79,7 @@ fun TransItem(
             )
             Text(
                 text = HelperUtils.getDateTime(
-                    time = transEntity.date, pattern = Constants.DATE_TIME_NEW_PATTERN
+                    time = transEntity.date, pattern = Constants.PATTERN_TRANSACTION_ITEM
                 ),
                 color = Color.Gray,
                 textAlign = TextAlign.Start,

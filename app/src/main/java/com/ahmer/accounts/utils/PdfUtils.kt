@@ -30,8 +30,7 @@ object PdfUtils {
         val mIntent: Intent?
         if (!transList.isNullOrEmpty()) {
             val mFileName: String = HelperUtils.getDateTime(
-                time = System.currentTimeMillis(),
-                pattern = Constants.DATE_TIME_FILE_NAME_PATTERN
+                time = System.currentTimeMillis(), pattern = Constants.PATTERN_FILE_NAME
             ) + ".pdf"
             mIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                 val mMimeType = "application/pdf"
@@ -351,7 +350,7 @@ object PdfUtils {
                 Element.ALIGN_CENTER,
                 Phrase(
                     HelperUtils.getDateTime(
-                        time = System.currentTimeMillis(), pattern = Constants.DATE_TIME_PDF_PATTERN
+                        time = System.currentTimeMillis(), pattern = Constants.PATTERN_PDF
                     ), mFont
                 ),
                 487F, //End page margin 1 inch 72 + adding more 50% inch 36 because date string long (595-108)

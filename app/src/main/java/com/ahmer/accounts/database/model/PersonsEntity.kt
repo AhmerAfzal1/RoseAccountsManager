@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Entity(
-    tableName = Constants.DATABASE_PERSONS_TABLE,
+    tableName = Constants.DATABASE_TABLE_PERSONS,
     indices = [Index(value = arrayOf("id"), unique = true)]
 )
 @Parcelize

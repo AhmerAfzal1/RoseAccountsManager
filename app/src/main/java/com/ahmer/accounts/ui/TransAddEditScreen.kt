@@ -151,7 +151,7 @@ fun TransAddEditScreen(
                 var mSelectedIndex: Int by remember { mutableIntStateOf(value = 2) }
 
                 MyTextField(value = HelperUtils.getDateTime(
-                    time = mTransEntity.date, pattern = Constants.DATE_TIME_NEW_PATTERN
+                    time = mTransEntity.date, pattern = Constants.PATTERN_TEXT_FIELD
                 ),
                     onValueChange = {},
                     modifier = Modifier.onFocusChanged { mDatePickerDialog = it.isFocused },

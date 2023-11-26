@@ -130,7 +130,7 @@ object HelperUtils {
     fun getDateTime(time: Long, pattern: String = ""): String = if (time == 0.toLong()) {
         ""
     } else {
-        val mPattern = pattern.ifEmpty { Constants.DATE_TIME_PATTERN }
+        val mPattern = pattern.ifEmpty { Constants.PATTERN_GENERAL }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofPattern(mPattern))

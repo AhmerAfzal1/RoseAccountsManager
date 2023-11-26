@@ -124,7 +124,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     fun backup() {
         val mFileName = "backup_${
             HelperUtils.getDateTime(
-                time = System.currentTimeMillis(), pattern = Constants.DATE_TIME_FILE_NAME_PATTERN
+                time = System.currentTimeMillis(), pattern = Constants.PATTERN_FILE_NAME
             )
         }.db"
         val mBackupIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {

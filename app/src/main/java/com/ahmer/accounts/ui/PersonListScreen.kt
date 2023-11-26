@@ -80,8 +80,8 @@ import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.PersonState
+import com.ahmer.accounts.ui.components.BalanceItem
 import com.ahmer.accounts.ui.components.PersonItem
-import com.ahmer.accounts.ui.components.TotalBalance
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.Constants
@@ -167,10 +167,10 @@ fun PersonsListScreen(
                 .fillMaxSize()
                 .padding(paddingValues = innerPadding),
         ) {
-            TotalBalance(
+            BalanceItem(
+                modifier = Modifier.padding(all = 4.dp),
                 transSumModel = transSumModel,
                 currency = mCurrentCurrency,
-                modifier = Modifier.padding(all = 5.dp),
             )
             SearchBarPerson(
                 modifier = Modifier
