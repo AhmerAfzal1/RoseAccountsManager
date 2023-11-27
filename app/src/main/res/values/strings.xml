@@ -94,5 +94,8 @@
     <string name="toast_pdf_generate_error">Error occurred while getting generate pdf: %1$s</string>
     <string name="toast_pdf_generated">PDF file generated successfully.</string>
     <string name="toast_pdf_not_generated">There is no transaction to create a PDF file.</string>
+    <string name="label_add_more_data">Add More Data</string>
+    <string name="label_add_transaction">Add Transaction</string>
+    <string name="label_edit_transaction">Edit Transaction</string>
 
 </resources>

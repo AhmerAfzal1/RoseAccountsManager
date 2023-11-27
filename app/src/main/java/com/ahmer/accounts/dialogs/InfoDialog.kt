@@ -50,8 +50,8 @@ fun MoreInfoAlertDialog(modifier: Modifier = Modifier, personsEntity: PersonsEnt
     val mDataList: List<Pair<String, String>> by lazy {
         listOf(
             "Name:" to personsEntity.name,
-            "Address:" to personsEntity.address,
             "Phone:" to personsEntity.phone,
+            "Address:" to personsEntity.address,
             "Email:" to personsEntity.email,
             "Notes:" to personsEntity.notes,
             "Created:" to HelperUtils.getDateTime(time = personsEntity.created),

@@ -51,7 +51,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -65,6 +67,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
@@ -112,8 +115,11 @@ fun TransListScreen(
     val mShowSearch: MutableState<Boolean> = remember { mutableStateOf(value = false) }
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mState: TransState by transViewModel.uiState.collectAsStateWithLifecycle()
+    val mSurfaceColor: Color =
+        if (MaterialTheme.colorScheme.isLight()) Color.Black else Color.Yellow
+    val mSurfaceElevation: Dp = 4.dp
     var mLongClickState: Boolean by remember { mutableStateOf(value = false) }
-    var mShowDeleteDialog: Boolean by remember { mutableStateOf(value = false) }
+    var mShowDeleteDialogAccount: Boolean by remember { mutableStateOf(value = false) }
     var mShowDeleteDialogTrans: Boolean by remember { mutableStateOf(value = false) }
     var mShowInfoDialog: Boolean by remember { mutableStateOf(value = false) }
     var mTextSearch: String by remember { mutableStateOf(value = transViewModel.searchQuery.value) }
@@ -159,11 +165,11 @@ fun TransListScreen(
         MoreInfoAlertDialog(personsEntity = mPerson)
     }
 
-    if (mShowDeleteDialog) {
-        DeleteAlertDialog(accountName = mPerson.name, onConfirmClick = {
-            personViewModel.deletePerson(mPerson)
+    if (mShowDeleteDialogAccount) {
+        DeleteAlertDialog(accountName = mPerson.name, transactionsList = emptyList()) {
+            personViewModel.deletePerson(person = mPerson)
             onPopBackStack()
-        })
+        }
     }
 
     if (mShowDeleteDialogTrans) {
@@ -179,8 +185,21 @@ fun TransListScreen(
         modifier = Modifier,
         topBar = {
             Surface(
-                modifier = if (mShowSearch.value) Modifier.height(height = 64.dp) else Modifier,
-                shadowElevation = 4.dp
+                modifier = if (mShowSearch.value) {
+                    Modifier
+                        .height(height = 64.dp)
+                        .shadow(
+                            elevation = mSurfaceElevation,
+                            ambientColor = mSurfaceColor,
+                            spotColor = mSurfaceColor,
+                        )
+                } else {
+                    Modifier.shadow(
+                        elevation = mSurfaceElevation,
+                        ambientColor = mSurfaceColor,
+                        spotColor = mSurfaceColor,
+                    )
+                },
             ) {
                 if (!mShowSearch.value) {
                     TopAppBar(
@@ -254,7 +273,7 @@ fun TransListScreen(
                 currency = mCurrency,
                 personsEntity = mPerson,
                 isUsedTrans = true,
-                onClickDelete = { mShowDeleteDialog = true },
+                onClickDelete = { mShowDeleteDialogAccount = true },
                 onClickInfo = { mShowInfoDialog = !mShowInfoDialog },
                 onClickPdf = {
                     val mIntent = PdfUtils.exportToPdf(
@@ -270,8 +289,11 @@ fun TransListScreen(
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp),
-                shadowElevation = 2.dp
+                    .shadow(
+                        elevation = mSurfaceElevation,
+                        ambientColor = mSurfaceColor,
+                        spotColor = mSurfaceColor,
+                    ),
             ) {
                 Row(
                     modifier = Modifier
@@ -346,6 +368,7 @@ fun TransListScreen(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SearchBarTransactions(
     modifier: Modifier = Modifier,

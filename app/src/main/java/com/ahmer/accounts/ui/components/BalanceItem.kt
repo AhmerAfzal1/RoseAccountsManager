@@ -57,7 +57,7 @@ fun BalanceItem(
     OutlinedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 4.dp),
+            .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
         shape = CardDefaults.outlinedShape,
         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.outlinedCardElevation(),
@@ -72,24 +72,35 @@ fun BalanceItem(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 4.dp, end = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = personsEntity.name,
-                        modifier = Modifier.padding(start = 4.dp),
-                        fontWeight = FontWeight.Normal,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleMedium
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(
+                        modifier = modifier.padding(start = 8.dp, top = 2.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = personsEntity.name,
+                            fontWeight = FontWeight.Normal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        if (personsEntity.phone.isNotEmpty()) {
+                            Text(
+                                text = personsEntity.phone,
+                                modifier = modifier.padding(bottom = 2.dp),
+                                color = Color.Gray,
+                                maxLines = 1,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                    }
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 4.dp, end = 8.dp),
+                        horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End
                     ) {
                         IconButton(
                             onClick = { onClickDelete() },
@@ -113,27 +124,14 @@ fun BalanceItem(
                         ) { EditIcon() }
                     }
                 }
-                if (personsEntity.phone.isNotEmpty()) {
-                    Text(
-                        modifier = Modifier.padding(start = 8.dp),
-                        text = personsEntity.phone,
-                        color = Color.Gray,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
                 BalanceItem(
-                    transSumModel = transSumModel,
-                    currency = currency,
-                    paddingValues = mPadding,
+                    transSumModel = transSumModel, currency = currency, paddingValues = mPadding,
                 )
             }
         } else {
             mPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 6.dp)
             BalanceItem(
-                transSumModel = transSumModel,
-                currency = currency,
-                paddingValues = mPadding
+                transSumModel = transSumModel, currency = currency, paddingValues = mPadding,
             )
         }
     }
@@ -141,9 +139,7 @@ fun BalanceItem(
 
 @Composable
 private fun BalanceItem(
-    transSumModel: TransSumModel,
-    currency: Currency,
-    paddingValues: PaddingValues
+    transSumModel: TransSumModel, currency: Currency, paddingValues: PaddingValues
 ) {
     val mCreditIcon: @Composable () -> Unit = {
         CreditIcon(modifier = Modifier.size(size = 24.dp), tint = colorGreenDark)

@@ -24,8 +24,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ProvideTextStyle
@@ -127,7 +127,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                 time = System.currentTimeMillis(), pattern = Constants.PATTERN_FILE_NAME
             )
         }.db"
-        val mBackupIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+        val mBackupIntent: Intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             val mMimeType = "application/octet-stream"
             addCategory(Intent.CATEGORY_OPENABLE)
             flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -139,7 +139,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     }
 
     fun restore() {
-        val mRestoreIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
+        val mRestoreIntent: Intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             type = "*/*"
@@ -301,7 +301,7 @@ fun CurrencySelectionModal(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium
             )
-            HorizontalDivider(
+            Divider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 8.dp),
@@ -343,7 +343,7 @@ fun CurrencySelectionModal(
                             Spacer(modifier = Modifier.size(size = 24.dp))
                         }
                     }
-                    HorizontalDivider(
+                    Divider(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 5.dp),

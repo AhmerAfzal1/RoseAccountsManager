@@ -27,7 +27,7 @@ fun DeleteAlertDialog(
     transactionsList: List<TransEntity> = emptyList(),
     onConfirmClick: () -> Unit
 ) {
-    val mHeading = "Do you want to permanently delete "
+    val mHeading = "Do you want to permanently delete"
     val mPerson: AnnotatedString = buildAnnotatedString {
         append(text = "$mHeading this ")
         withStyle(style = SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
@@ -42,13 +42,15 @@ fun DeleteAlertDialog(
     val mString: AnnotatedString = if (transactionsList.isNotEmpty()) {
         if (transactionsList.size == 1) {
             buildAnnotatedString {
-                append(text = mHeading)
-                append(text = "this transaction?")
+                append(text = "$mHeading this transaction?")
             }
         } else {
             buildAnnotatedString {
-                append(text = mHeading)
-                append(text = "the selected ${transactionsList.size} transactions?")
+                append(text = "$mHeading the all selected ")
+                withStyle(style = SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
+                    append(text = "${transactionsList.size}")
+                }
+                append(text = " transactions?")
             }
         }
     } else mPerson
@@ -76,7 +78,7 @@ fun DeleteAlertDialog(
             },
             icon = { DeleteIcon() },
             title = { Text(text = stringResource(id = R.string.label_confirm)) },
-            text = { Text(text = mString.text) }
+            text = { Text(text = mString) }
         )
     }
 }
