@@ -18,8 +18,8 @@ sealed class NavItems(
 ) {
     data object Accounts : NavItems(
         label = R.string.label_accounts,
-        selectedIcon = R.drawable.ic_filled_accounts,
-        unselectedIcon = R.drawable.ic_outlined_accounts,
+        selectedIcon = R.drawable.ic_filled_dataset,
+        unselectedIcon = R.drawable.ic_outlined_dataset,
         contentDescription = R.string.content_description_accounts,
         route = "mainScreen",
         argument = "",
