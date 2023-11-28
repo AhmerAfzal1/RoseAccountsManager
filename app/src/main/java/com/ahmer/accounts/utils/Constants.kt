@@ -24,7 +24,9 @@ object Constants {
     const val PLAY_STORE_LINK: String = "https://play.google.com/store/apps/details?id="
     const val STATE_IN_STARTED_TIME: Long = 5000L
     const val TYPE_CREDIT: String = "Credit"
+    const val TYPE_CREDIT_SUFFIX: String = "$TYPE_CREDIT (+)"
     const val TYPE_DEBIT: String = "Debit"
+    const val TYPE_DEBIT_SUFFIX: String = "$TYPE_DEBIT (-)"
     val ICON_SIZE: Dp = 36.dp
     val TOP_APP_BAR_HEIGHT: Dp = 64.dp
 }

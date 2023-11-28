@@ -17,6 +17,7 @@ import androidx.navigation.navArgument
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.ui.PersonAddEditScreen
 import com.ahmer.accounts.ui.PersonsListScreen
+import com.ahmer.accounts.ui.ReportScreen
 import com.ahmer.accounts.ui.SettingsScreen
 import com.ahmer.accounts.ui.TransAddEditScreen
 import com.ahmer.accounts.ui.TransListScreen
@@ -49,7 +50,7 @@ fun MainNavigation(
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() },
         ) {
-            Toast.makeText(LocalContext.current, "Under Progress", Toast.LENGTH_LONG).show()
+            ReportScreen(viewModel = hiltViewModel())
         }
         composable(
             route = NavItems.Settings.route,

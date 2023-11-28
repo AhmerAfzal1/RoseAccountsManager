@@ -118,4 +118,5 @@ dependencies {
     //Others
     implementation("com.guardanis:applock:3.0.2")
     implementation("com.itextpdf:itextpdf:5.5.13.3")
+    implementation("com.github.tehras:charts:0.2.4-alpha")
 }

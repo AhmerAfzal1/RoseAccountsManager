@@ -4,6 +4,7 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         maven { url = uri(path = "https://androidx.dev/storage/compose-compiler/repository/") }
+        maven { url = uri(path = "https://jitpack.io") }
     }
 }
 dependencyResolutionManagement {
@@ -12,6 +13,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url = uri(path = "https://androidx.dev/storage/compose-compiler/repository/") }
+        maven { url = uri(path = "https://jitpack.io") }
     }
 }
 

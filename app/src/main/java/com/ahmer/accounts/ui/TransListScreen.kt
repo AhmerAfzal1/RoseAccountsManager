@@ -310,14 +310,14 @@ fun TransListScreen(
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = "${Constants.TYPE_DEBIT.uppercase()} (-)",
+                        text = Constants.TYPE_DEBIT_SUFFIX.uppercase(),
                         modifier = Modifier.weight(weight = 0.25f),
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = "${Constants.TYPE_CREDIT.uppercase()} (+)",
+                        text = Constants.TYPE_CREDIT_SUFFIX.uppercase(),
                         modifier = Modifier.weight(weight = 0.25f),
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,

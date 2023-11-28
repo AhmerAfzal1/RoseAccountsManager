@@ -42,8 +42,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -176,11 +174,9 @@ fun TransAddEditScreen(
                         .padding(top = 15.dp),
                 ) {
                     mOptions.forEach { text ->
-                        val mType: AnnotatedString = buildAnnotatedString {
-                            append(text = text)
-                            if (text == Constants.TYPE_CREDIT) append(text = " (+)")
-                            else append(text = " (-)")
-                        }
+                        val mType = if (text == Constants.TYPE_CREDIT) {
+                            Constants.TYPE_CREDIT_SUFFIX
+                        } else Constants.TYPE_DEBIT_SUFFIX
                         Box(contentAlignment = Alignment.Center,
                             modifier = Modifier
                                 .weight(1f)
@@ -188,13 +184,11 @@ fun TransAddEditScreen(
                                 .background(
                                     color = if (text == mTransEntity.type) {
                                         MaterialTheme.colorScheme.primary
-                                    } else {
-                                        Color.LightGray
-                                    }
+                                    } else Color.LightGray
                                 )
                                 .clickable { viewModel.onEvent(TransAddEditEvent.OnTypeChange(text)) }) {
                             Text(
-                                text = mType.text.uppercase(),
+                                text = mType.uppercase(),
                                 modifier = Modifier.padding(vertical = 12.dp),
                                 color = Color.White,
                                 fontWeight = if (text == mTransEntity.type) FontWeight.Bold else FontWeight.Normal,
