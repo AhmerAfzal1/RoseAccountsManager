@@ -73,7 +73,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel) {
     val mContext: Context = LocalContext.current.applicationContext
-    val mAppVersion: AppVersion = HelperUtils.getAppInfo(context = mContext)
+    val mAppVersion: AppVersion = HelperUtils.appInfo(context = mContext)
     val mCurrentCurrency: Currency by viewModel.currentCurrency.collectAsStateWithLifecycle()
     val mCurrentTheme: ThemeMode by viewModel.currentTheme.collectAsStateWithLifecycle()
     val mShowBottomSheet: MutableState<Boolean> = remember { mutableStateOf(value = false) }
@@ -179,8 +179,8 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                     summary = {
                         Text(
                             text = stringResource(
-                                R.string.label_pref_text_summery_caches,
-                                HelperUtils.getCacheSize(context = mContext)
+                                id = R.string.label_pref_text_summery_caches,
+                                HelperUtils.cacheSize(context = mContext)
                             )
                         )
                     },

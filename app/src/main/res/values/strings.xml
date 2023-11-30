@@ -44,7 +44,10 @@
 
     //Labels
     <string name="label_accounts">Accounts</string>
+    <string name="label_add_more_data">Add More Data</string>
+    <string name="label_add_transaction">Add Transaction</string>
     <string name="label_address">Address</string>
+    <string name="label_balance">Balance</string>
     <string name="label_bottom_sheet_select_currency">SELECT CURRENCY</string>
     <string name="label_bottom_sheet_sort_filter">SORT AND FILTER</string>
     <string name="label_by_amount">Amount</string>
@@ -60,6 +63,7 @@
     <string name="label_date">Date</string>
     <string name="label_delete">Delete</string>
     <string name="label_description">Description</string>
+    <string name="label_edit_transaction">Edit Transaction</string>
     <string name="label_email">Email Address</string>
     <string name="label_generate_pdf">Export PDF</string>
     <string name="label_info">Info Account</string>
@@ -68,6 +72,8 @@
     <string name="label_no_description">No description</string>
     <string name="label_notes">Notes</string>
     <string name="label_ok">OK</string>
+    <string name="label_pdf_credit">Total Credit Transactions: %1$d</string>
+    <string name="label_pdf_debit">Total Debit Transactions: %1$d</string>
     <string name="label_person_add_edit">Persons Add Edit</string>
     <string name="label_phone_number">Phone Number</string>
     <string name="label_pref_category_backup_restore"><![CDATA[Backup & Restore]]></string>
@@ -84,6 +90,7 @@
     <string name="label_save">Save</string>
     <string name="label_search">Search…</string>
     <string name="label_settings">Settings</string>
+    <string name="label_total">Total</string>
     <string name="label_total_balance">NET BALANCE</string>
     <string name="label_trans">Transactions</string>
     <string name="label_trans_add_edit">Transactions Add Edit</string>
@@ -94,8 +101,6 @@
     <string name="toast_pdf_generate_error">Error occurred while getting generate pdf: %1$s</string>
     <string name="toast_pdf_generated">PDF file generated successfully.</string>
     <string name="toast_pdf_not_generated">There is no transaction to create a PDF file.</string>
-    <string name="label_add_more_data">Add More Data</string>
-    <string name="label_add_transaction">Add Transaction</string>
-    <string name="label_edit_transaction">Edit Transaction</string>
+    <string name="toast_tab_requested">Unexpected tab requested: %1$s</string>
 
 </resources>

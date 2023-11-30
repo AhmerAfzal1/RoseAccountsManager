@@ -63,6 +63,7 @@ object HelperUtils {
         modifier: Modifier = Modifier,
         modifierSymbol: Modifier = Modifier,
         modifierAmount: Modifier = Modifier,
+        context: Context,
         currency: Currency,
         amount: Double,
         color: Color,
@@ -72,7 +73,9 @@ object HelperUtils {
             modifier = modifier, verticalAlignment = Alignment.CenterVertically
         ) {
             val textLength: Int =
-                currency.symbol.length + getRoundedValue(value = amount).length - 1
+                currency.symbol.length + roundValue(
+                    context = context, value = amount
+                ).length - 1
             /*Log.v(
                 Constants.LOG_TAG, "TextLen: Currency -> ${currency.symbol.length}, " +
                         "Amount -> $amount: ${getRoundedValue(value = amount).length}, " +
@@ -86,7 +89,7 @@ object HelperUtils {
                 isBold = isBold,
             )
             AdjustableText(
-                text = getRoundedValue(value = amount),
+                text = roundValue(context = context, value = amount),
                 modifier = modifierAmount,
                 color = color,
                 length = textLength,
@@ -95,7 +98,7 @@ object HelperUtils {
         }
     }
 
-    fun getAppInfo(context: Context): AppVersion {
+    fun appInfo(context: Context): AppVersion {
         val mAppVersion: AppVersion by lazy {
             val mVersion = AppVersion()
             context.packageManager.getPackageInfo(
@@ -114,7 +117,7 @@ object HelperUtils {
         return mAppVersion
     }
 
-    private fun getContentFileName(context: Context, uri: Uri): String? = runCatching {
+    private fun contentFileName(context: Context, uri: Uri): String? = runCatching {
         context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
             cursor.moveToFirst()
             return@use cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
@@ -122,8 +125,8 @@ object HelperUtils {
         }
     }.getOrNull()
 
-    fun getFileNameFromDatabase(context: Context, uri: Uri): String? = when (uri.scheme) {
-        ContentResolver.SCHEME_CONTENT -> getContentFileName(context = context, uri = uri)
+    fun fileNameFromDatabase(context: Context, uri: Uri): String? = when (uri.scheme) {
+        ContentResolver.SCHEME_CONTENT -> contentFileName(context = context, uri = uri)
         else -> uri.path?.let(::File)?.name
     }
 
@@ -139,11 +142,11 @@ object HelperUtils {
         }
     }
 
-    fun getDirSize(directory: File): Long {
+    fun dirSize(directory: File): Long {
         var mSize = 0.toLong()
         directory.listFiles()?.forEach { file ->
             if (file != null && file.isDirectory) {
-                mSize += getDirSize(directory = file)
+                mSize += dirSize(directory = file)
             } else if (file != null && file.isFile) {
                 mSize += file.length()
             }
@@ -151,26 +154,35 @@ object HelperUtils {
         return mSize
     }
 
-    fun getCacheSize(context: Context): String {
+    fun cacheSize(context: Context): String {
         var mSize = 0.toLong()
         val mExternalCacheDir = context.externalCacheDir
-        mSize += getDirSize(directory = context.cacheDir)
+        mSize += dirSize(directory = context.cacheDir)
         if (mExternalCacheDir != null) {
-            mSize += getDirSize(directory = mExternalCacheDir)
+            mSize += dirSize(directory = mExternalCacheDir)
         }
-        mSize += getDirSize(directory = context.codeCacheDir)
-        return getSizeFormat(size = mSize)
+        mSize += dirSize(directory = context.codeCacheDir)
+        return sizeFormat(size = mSize)
     }
 
-    fun getPlayStoreLink(context: Context): String = Constants.PLAY_STORE_LINK + context.packageName
+    fun playStoreLink(context: Context): String = Constants.PLAY_STORE_LINK + context.packageName
 
-    fun getRoundedValue(value: Double): String {
+    fun roundValue(context: Context, value: Double): String {
         val mFormat = DecimalFormat("#,##0.##")
-        val mRound: BigDecimal = BigDecimal(value).setScale(2, RoundingMode.HALF_UP)
+        var mRound: BigDecimal? = null
+        try {
+            mRound = BigDecimal(value).setScale(2, RoundingMode.HALF_UP)
+        } catch (e: NumberFormatException) {
+            showToast(context = context, msg = e.localizedMessage ?: Constants.UNKNOWN_ERROR)
+        } catch (e: Exception) {
+            showToast(context = context, msg = e.localizedMessage ?: Constants.UNKNOWN_ERROR)
+        }
         return mFormat.format(mRound)
     }
 
-    fun getSizeFormat(size: Long): String {
+    fun roundValue(value: Double) = String.format(format = "%.2f", value)
+
+    fun sizeFormat(size: Long): String {
         var mResult = size.toDouble() / 1024
         if (mResult < 1024) return "${mResult.roundToInt()} KB"
         mResult /= 1024

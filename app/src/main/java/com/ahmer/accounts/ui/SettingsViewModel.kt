@@ -82,7 +82,7 @@ class SettingsViewModel @Inject constructor(
                         context.getString(
                             R.string.toast_msg_db_backup,
                             uri?.let {
-                                HelperUtils.getFileNameFromDatabase(context = context, uri = it)
+                                HelperUtils.fileNameFromDatabase(context = context, uri = it)
                             }, uri?.path
                         )
                     )
@@ -113,7 +113,7 @@ class SettingsViewModel @Inject constructor(
                 _eventFlow.emit(
                     value = UiEvent.ShowToast(
                         context.getString(R.string.toast_msg_db_restored, uri?.let {
-                            HelperUtils.getFileNameFromDatabase(context = context, uri = it)
+                            HelperUtils.fileNameFromDatabase(context = context, uri = it)
                         })
                     )
                 )

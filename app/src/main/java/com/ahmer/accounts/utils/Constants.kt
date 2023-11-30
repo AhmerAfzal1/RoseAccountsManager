@@ -27,6 +27,7 @@ object Constants {
     const val TYPE_CREDIT_SUFFIX: String = "$TYPE_CREDIT (+)"
     const val TYPE_DEBIT: String = "Debit"
     const val TYPE_DEBIT_SUFFIX: String = "$TYPE_DEBIT (-)"
+    const val UNKNOWN_ERROR: String = "Unknown error"
     val ICON_SIZE: Dp = 36.dp
     val TOP_APP_BAR_HEIGHT: Dp = 64.dp
 }

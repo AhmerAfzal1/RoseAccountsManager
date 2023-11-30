@@ -1,5 +1,6 @@
 package com.ahmer.accounts.ui.components
 
+import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -42,6 +44,7 @@ fun TransItem(
     onClick: () -> Unit,
     onLongClick: (Boolean) -> Unit,
 ) {
+    val mContext: Context = LocalContext.current
     val mSelectionColor: Color =
         if (MaterialTheme.colorScheme.isLight()) colorSelectionLight else colorSelectionDark
 
@@ -97,6 +100,7 @@ fun TransItem(
             if (transEntity.type == "Debit") {
                 AmountWithSymbolText(
                     modifier = Modifier.weight(weight = 0.25f),
+                    context = mContext,
                     currency = currency,
                     amount = transEntity.amount.toDouble(),
                     color = colorRedDark,
@@ -107,6 +111,7 @@ fun TransItem(
                 Text(text = "", modifier = Modifier.weight(weight = 0.25f))
                 AmountWithSymbolText(
                     modifier = Modifier.weight(weight = 0.25f),
+                    context = mContext,
                     currency = currency,
                     amount = transEntity.amount.toDouble(),
                     color = colorGreenDark,

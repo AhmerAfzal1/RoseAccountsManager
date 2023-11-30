@@ -1,5 +1,6 @@
 package com.ahmer.accounts.ui.components
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -210,6 +212,7 @@ private fun BalanceCard(
     amount: Double,
     type: String,
 ) {
+    val mContext: Context = LocalContext.current
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -230,7 +233,7 @@ private fun BalanceCard(
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                text = " ${HelperUtils.getRoundedValue(value = amount)}",
+                text = " ${HelperUtils.roundValue(context = mContext, value = amount)}",
                 color = colorText,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium,

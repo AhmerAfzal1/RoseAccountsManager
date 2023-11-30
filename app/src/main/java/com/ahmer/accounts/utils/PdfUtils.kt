@@ -8,6 +8,7 @@ import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.database.model.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
+import com.ahmer.accounts.utils.HelperUtils.roundValue
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.itextpdf.text.BaseColor
 import com.itextpdf.text.Chunk
@@ -123,21 +124,21 @@ object PdfUtils {
                 isLockedWidth = true
                 addCell(
                     cellFormat(
-                        text = "Date".uppercase(),
+                        text = context.getString(R.string.label_date).uppercase(),
                         isHeading = true,
                         alignment = AlignmentCell.EMPTY
                     )
                 )
                 addCell(
                     cellFormat(
-                        text = "Description".uppercase(),
+                        text = context.getString(R.string.label_description).uppercase(),
                         isHeading = true,
                         alignment = AlignmentCell.EMPTY
                     )
                 )
                 addCell(
                     cellFormat(
-                        text = "Debit".uppercase(),
+                        text = Constants.TYPE_DEBIT.uppercase(),
                         isHeading = true,
                         alignment = AlignmentCell.EMPTY
                     )
@@ -151,7 +152,7 @@ object PdfUtils {
                 )
                 addCell(
                     cellFormat(
-                        text = "Balance".uppercase(),
+                        text = context.getString(R.string.label_balance).uppercase(),
                         isHeading = true,
                         alignment = AlignmentCell.EMPTY
                     )
@@ -179,9 +180,9 @@ object PdfUtils {
                     mDebitEntity = entity.amount.toDouble()
                 }
                 mBalanceEntity += mCreditEntity - mDebitEntity
-                val mDebit: String = HelperUtils.getRoundedValue(value = mDebitEntity)
-                val mCredit: String = HelperUtils.getRoundedValue(value = mCreditEntity)
-                val mBalance: String = HelperUtils.getRoundedValue(value = mBalanceEntity)
+                val mDebit: String = roundValue(context = context, value = mDebitEntity)
+                val mCredit: String = roundValue(context = context, value = mCreditEntity)
+                val mBalance: String = roundValue(context = context, value = mBalanceEntity)
                 if (mDebit == "0") {
                     mTableMain.addCell("")
                 } else {
@@ -200,36 +201,36 @@ object PdfUtils {
                 isLockedWidth = true
                 addCell(
                     cellFormat(
-                        text = "Total".uppercase(),
+                        text = context.getString(R.string.label_total).uppercase(),
                         alignment = AlignmentCell.CENTER,
                         isTotal = true
                     )
                 )
                 addCell(
                     cellFormat(
-                        text = HelperUtils.getRoundedValue(value = transSumModel.debitSum),
+                        text = roundValue(context = context, value = transSumModel.debitSum),
                         alignment = AlignmentCell.RIGHT,
                         isTotal = true
                     )
                 )
                 addCell(
                     cellFormat(
-                        text = HelperUtils.getRoundedValue(value = transSumModel.creditSum),
+                        text = roundValue(context = context, value = transSumModel.creditSum),
                         alignment = AlignmentCell.RIGHT,
                         isTotal = true
                     )
                 )
                 addCell(
                     cellFormat(
-                        text = HelperUtils.getRoundedValue(value = transSumModel.balance),
+                        text = roundValue(context = context, value = transSumModel.balance),
                         alignment = AlignmentCell.RIGHT,
                         isTotal = true
                     )
                 )
             }
 
-            val mSummaryCredit = "Total Credit Transactions: $mCreditTransactions"
-            val mSummaryDebit = "Total Debit Transactions: $mDebitTransactions"
+            val mSummaryCredit = context.getString(R.string.label_pdf_credit, mCreditTransactions)
+            val mSummaryDebit = context.getString(R.string.label_pdf_debit, mDebitTransactions)
 
             val mParagraphCredit: Paragraph = Paragraph(mSummaryCredit, mFont).apply {
                 spacingBefore = 10F
@@ -365,7 +366,7 @@ object PdfUtils {
                 size = 8F
                 style = Font.NORMAL
             }
-            val mPlayStoreLink: String = HelperUtils.getPlayStoreLink(context = context)
+            val mPlayStoreLink: String = HelperUtils.playStoreLink(context = context)
             val mChunk: Chunk = Chunk(mPlayStoreLink).apply {
                 setAnchor(mPlayStoreLink)
             }
@@ -391,7 +392,7 @@ object PdfUtils {
         }
     }
 
-    sealed class AlignmentCell {
+    private sealed class AlignmentCell {
         data object CENTER : AlignmentCell()
         data object EMPTY : AlignmentCell()
         data object RIGHT : AlignmentCell()

@@ -1,5 +1,6 @@
 package com.ahmer.accounts.ui.components
 
+import android.content.Context
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -39,6 +41,7 @@ fun PersonItem(
     modifier: Modifier = Modifier
 ) {
     val mBalance: Double = personsBalanceModel.balanceModel.balance
+    val mContext: Context = LocalContext.current
     val mPersonsEntity: PersonsEntity = personsBalanceModel.personsEntity
 
     Row(
@@ -88,6 +91,7 @@ fun PersonItem(
             }
             HelperUtils.AmountWithSymbolText(
                 modifier = Modifier.weight(weight = 0.4f),
+                context = mContext,
                 currency = currency,
                 amount = mBalance,
                 color = if (mBalance >= 0) colorGreenDark else colorRedDark,
