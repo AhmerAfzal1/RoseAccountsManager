@@ -19,6 +19,7 @@ android {
     defaultConfig {
         applicationId = "com.ahmer.accounts"
         minSdk = 24
+        targetSdk = 34
         versionCode = 1
         versionName = "1.00"
         multiDexEnabled = true
@@ -51,7 +52,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
+        kotlinCompilerExtensionVersion = "1.5.5"
     }
 
     packaging {
@@ -101,9 +102,9 @@ dependencies {
     ksp("com.google.dagger:hilt-compiler:2.48.1")
 
     //Room Database
-    implementation("androidx.room:room-ktx:2.6.0")
-    implementation("androidx.room:room-runtime:2.6.0")
-    ksp("androidx.room:room-compiler:2.6.0")
+    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-runtime:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 
     //Data Store Preferences
     implementation("androidx.datastore:datastore:1.0.0")
