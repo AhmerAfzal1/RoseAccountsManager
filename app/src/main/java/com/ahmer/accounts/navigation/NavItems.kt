@@ -88,8 +88,8 @@ sealed class NavItems(
         @Composable
         fun NavItems.Icons(selected: Boolean) {
             Icon(
-                painter = painterResource(if (selected) selectedIcon else unselectedIcon),
-                contentDescription = stringResource(contentDescription)
+                painter = painterResource(id = if (selected) selectedIcon else unselectedIcon),
+                contentDescription = stringResource(id = contentDescription)
             )
         }
     }

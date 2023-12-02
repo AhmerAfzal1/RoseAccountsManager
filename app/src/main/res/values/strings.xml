@@ -13,6 +13,7 @@
     <string name="content_description_address">Address icon</string>
     <string name="content_description_back">Back icon</string>
     <string name="content_description_backup">Backup icon</string>
+    <string name="content_description_bar">Bar chart icon</string>
     <string name="content_description_check">Check icon</string>
     <string name="content_description_clear_cached">Clear caches icon</string>
     <string name="content_description_close">Close icon</string>
@@ -31,6 +32,7 @@
     <string name="content_description_person">Person icon</string>
     <string name="content_description_person_add_edit">Persons add edit icon</string>
     <string name="content_description_phone">Phone icon</string>
+    <string name="content_description_pie">Pie chart icon</string>
     <string name="content_description_report">Reports icon</string>
     <string name="content_description_restore_backup">Restore backup icon</string>
     <string name="content_description_save">Save icon</string>

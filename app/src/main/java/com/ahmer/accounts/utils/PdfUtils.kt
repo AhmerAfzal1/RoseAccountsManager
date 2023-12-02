@@ -120,7 +120,7 @@ object PdfUtils {
 
             val mTableMain: PdfPTable = PdfPTable(5).apply {
                 widthPercentage = 100F
-                setTotalWidth(floatArrayOf(72F, 145F, 90F, 90F, 90F)) // 487 + 54 + 54 = 595
+                setTotalWidth(floatArrayOf(54F, 163F, 90F, 90F, 90F)) // 487 + 54 + 54 = 595
                 isLockedWidth = true
                 addCell(
                     cellFormat(

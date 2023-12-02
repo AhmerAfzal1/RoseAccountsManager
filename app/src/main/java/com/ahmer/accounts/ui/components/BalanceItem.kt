@@ -35,9 +35,7 @@ import com.ahmer.accounts.ui.theme.colorGreenLight
 import com.ahmer.accounts.ui.theme.colorRedDark
 import com.ahmer.accounts.ui.theme.colorRedLight
 import com.ahmer.accounts.utils.Constants
-import com.ahmer.accounts.utils.CreditIcon
 import com.ahmer.accounts.utils.Currency
-import com.ahmer.accounts.utils.DebitIcon
 import com.ahmer.accounts.utils.DeleteIcon
 import com.ahmer.accounts.utils.EditIcon
 import com.ahmer.accounts.utils.HelperUtils
@@ -143,25 +141,15 @@ fun BalanceItem(
 private fun BalanceItem(
     transSumModel: TransSumModel, currency: Currency, paddingValues: PaddingValues
 ) {
-    val mCreditIcon: @Composable () -> Unit = {
-        CreditIcon(modifier = Modifier.size(size = 24.dp), tint = colorGreenDark)
-    }
-    val mDebtIcon: @Composable () -> Unit = {
-        DebitIcon(modifier = Modifier.size(size = 24.dp), tint = colorRedDark)
-    }
-
     val mColorBackground: Color
     val mColorText: Color
-    val mIcon: @Composable () -> Unit
 
     if (transSumModel.balance >= 0) {
         mColorBackground = colorGreenLight
         mColorText = colorGreenDark
-        mIcon = { mCreditIcon.invoke() }
     } else {
         mColorBackground = colorRedLight
         mColorText = colorRedDark
-        mIcon = { mDebtIcon.invoke() }
     }
     Row(
         modifier = Modifier
@@ -178,7 +166,7 @@ private fun BalanceItem(
             colorText = colorGreenDark,
             colorBg = colorGreenLight,
             amount = transSumModel.creditSum,
-            type = "Total ${Constants.TYPE_CREDIT}",
+            type = stringResource(id = R.string.label_total) + " ${Constants.TYPE_CREDIT}",
         )
 
         BalanceCard(
@@ -189,7 +177,7 @@ private fun BalanceItem(
             colorText = colorRedDark,
             colorBg = colorRedLight,
             amount = transSumModel.debitSum,
-            type = "Total ${Constants.TYPE_DEBIT}",
+            type = stringResource(id = R.string.label_total) + " ${Constants.TYPE_DEBIT}",
         )
     }
 

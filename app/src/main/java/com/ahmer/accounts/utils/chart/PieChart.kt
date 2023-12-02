@@ -169,13 +169,13 @@ fun PieChart(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
-                            .width(width = 30.dp)
-                            .height(height = 30.dp)
+                            .width(width = 24.dp)
+                            .height(height = 24.dp)
                             .background(color = pieChartInput.color)
                     )
                     Text(
                         text = pieChartInput.description.uppercase(),
-                        modifier = Modifier.padding(all = 8.dp),
+                        modifier = Modifier.padding(all = 4.dp),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }

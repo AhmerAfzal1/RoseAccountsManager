@@ -33,7 +33,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+                getDefaultProguardFile(name = "proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -119,5 +119,4 @@ dependencies {
     //Others
     implementation("com.guardanis:applock:3.0.2")
     implementation("com.itextpdf:itextpdf:5.5.13.3")
-    implementation("io.github.thechance101:chart:Beta-0.0.5")
 }
