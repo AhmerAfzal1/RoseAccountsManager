@@ -37,6 +37,14 @@ class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : T
         return transDao.allTransactionsSearch(personId = personId, searchQuery = searchQuery)
     }
 
+    override fun filterTransactionsByDate(date: Long): Flow<List<TransEntity>> {
+        return transDao.filterTransactionsByDate(date = date)
+    }
+
+    override fun filterTransactionsByRangeDates(dates: List<Long>): Flow<List<TransEntity>> {
+        return transDao.filterTransactionsByRangeDates(dates = dates)
+    }
+
     override fun balanceByPerson(personId: Int): Flow<TransSumModel> {
         return transDao.balanceByPerson(personId = personId)
     }

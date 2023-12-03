@@ -18,11 +18,11 @@ interface TransDao {
     @Delete
     suspend fun delete(transEntity: TransEntity)
 
-    @Query("SELECT * FROM Transactions WHERE id =:transId")
+    @Query(value = "SELECT * FROM Transactions WHERE id =:transId")
     fun transactionById(transId: Int): Flow<TransEntity>
 
     @Query(
-        """SELECT * FROM Transactions
+        value = """SELECT * FROM Transactions
             WHERE personId =:personId 
             ORDER BY 
             CASE :sort WHEN 0 THEN created END ASC,
@@ -31,7 +31,7 @@ interface TransDao {
     fun allTransactionsByPersonId(personId: Int, sort: Int): Flow<List<TransEntity>>
 
     @Query(
-        """SELECT * FROM Transactions WHERE personId = :personId 
+        value = """SELECT * FROM Transactions WHERE personId = :personId 
             AND (date LIKE '%' || :searchQuery || '%' 
             OR description LIKE '%' || :searchQuery || '%' 
             OR amount LIKE '%' || :searchQuery || '%') 
@@ -39,9 +39,15 @@ interface TransDao {
     )
     fun allTransactionsSearch(personId: Int, searchQuery: String): Flow<List<TransEntity>>
 
+    @Query(value = "SELECT * FROM Transactions WHERE created = :date")
+    fun filterTransactionsByDate(date: Long): Flow<List<TransEntity>>
+
+    @Query(value = "SELECT * FROM Transactions WHERE created IN (:dates)")
+    fun filterTransactionsByRangeDates(dates: List<Long>): Flow<List<TransEntity>>
+
     @Transaction
     @Query(
-        """SELECT 
+        value = """SELECT 
             SUM(CASE WHEN type = 'Credit' THEN amount ELSE 0 END) AS creditSum,
             SUM(CASE WHEN type = 'Debit' THEN amount ELSE 0 END) AS debitSum 
             FROM Transactions WHERE personId = :personId"""
@@ -50,7 +56,7 @@ interface TransDao {
 
     @Transaction
     @Query(
-        """SELECT
+        value = """SELECT
             SUM(CASE WHEN type = 'Credit' THEN amount ELSE 0 END) AS creditSum,
             SUM(CASE WHEN type = 'Debit' THEN amount ELSE 0 END) AS debitSum
             FROM Transactions"""

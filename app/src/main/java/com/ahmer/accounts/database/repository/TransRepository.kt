@@ -15,6 +15,8 @@ interface TransRepository {
      */
     fun allTransactionByPersonId(personId: Int, sort: Int): Flow<List<TransEntity>>
     fun allTransactionsSearch(personId: Int, searchQuery: String): Flow<List<TransEntity>>
+    fun filterTransactionsByDate(date: Long): Flow<List<TransEntity>>
+    fun filterTransactionsByRangeDates(dates: List<Long>): Flow<List<TransEntity>>
     fun balanceByPerson(personId: Int): Flow<TransSumModel>
     fun accountsBalance(): Flow<TransSumModel>
 }
