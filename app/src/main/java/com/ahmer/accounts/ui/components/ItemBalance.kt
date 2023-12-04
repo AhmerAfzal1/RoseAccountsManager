@@ -43,7 +43,7 @@ import com.ahmer.accounts.utils.InfoIcon
 import com.ahmer.accounts.utils.PdfIcon
 
 @Composable
-fun BalanceItem(
+fun ItemBalance(
     modifier: Modifier = Modifier,
     transSumModel: TransSumModel,
     currency: Currency,
@@ -124,13 +124,13 @@ fun BalanceItem(
                         ) { EditIcon() }
                     }
                 }
-                BalanceItem(
+                ItemBalance(
                     transSumModel = transSumModel, currency = currency, paddingValues = mPadding,
                 )
             }
         } else {
             mPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 6.dp)
-            BalanceItem(
+            ItemBalance(
                 transSumModel = transSumModel, currency = currency, paddingValues = mPadding,
             )
         }
@@ -138,7 +138,7 @@ fun BalanceItem(
 }
 
 @Composable
-private fun BalanceItem(
+private fun ItemBalance(
     transSumModel: TransSumModel, currency: Currency, paddingValues: PaddingValues
 ) {
     val mColorBackground: Color

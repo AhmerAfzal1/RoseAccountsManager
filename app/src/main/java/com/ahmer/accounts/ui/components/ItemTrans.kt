@@ -36,7 +36,7 @@ import com.ahmer.accounts.utils.HelperUtils.AmountWithSymbolText
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TransItem(
+fun ItemTrans(
     transEntity: TransEntity,
     currency: Currency,
     modifier: Modifier = Modifier,

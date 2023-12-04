@@ -34,7 +34,7 @@ import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.HelperUtils
 
 @Composable
-fun PersonItem(
+fun ItemPerson(
     personsBalanceModel: PersonsBalanceModel,
     currency: Currency,
     onEvent: (PersonEvent) -> Unit,
