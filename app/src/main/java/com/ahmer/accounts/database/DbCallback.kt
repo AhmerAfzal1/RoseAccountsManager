@@ -4,8 +4,8 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.ahmer.accounts.database.dao.PersonDao
 import com.ahmer.accounts.database.dao.TransDao
-import com.ahmer.accounts.database.model.PersonsEntity
-import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.database.entity.PersonsEntity
+import com.ahmer.accounts.database.entity.TransEntity
 import com.ahmer.accounts.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

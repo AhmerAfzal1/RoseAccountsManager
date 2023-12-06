@@ -9,8 +9,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ahmer.accounts.database.AppDatabase
 import com.ahmer.accounts.database.dao.AdminDao
+import com.ahmer.accounts.database.dao.CategoryDao
+import com.ahmer.accounts.database.dao.ExpenseDao
 import com.ahmer.accounts.database.dao.PersonDao
 import com.ahmer.accounts.database.dao.TransDao
+import com.ahmer.accounts.database.repository.CategoryRepository
+import com.ahmer.accounts.database.repository.CategoryRepositoryImp
+import com.ahmer.accounts.database.repository.ExpenseRepository
+import com.ahmer.accounts.database.repository.ExpenseRepositoryImp
 import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.database.repository.PersonRepositoryImp
 import com.ahmer.accounts.database.repository.TransRepository
@@ -35,7 +41,7 @@ object AppModule {
     ): AppDatabase = Room.databaseBuilder(
         context = context.applicationContext,
         klass = AppDatabase::class.java,
-        name = Constants.DATABASE_NAME
+        name = Constants.DB_NAME,
     ).setJournalMode(journalMode = RoomDatabase.JournalMode.TRUNCATE) //For backup in single file
         .fallbackToDestructiveMigration()
         //.addCallback(callback = DbCallback(personDao = personsProvider, transDao = transProvider))
@@ -54,7 +60,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesTransDao(database: AppDatabase): TransDao = database.transDao()
+    fun providesCategoryDao(database: AppDatabase): CategoryDao = database.categoryDao()
+
+    @Provides
+    @Singleton
+    fun providesExpenseDao(database: AppDatabase): ExpenseDao = database.expenseDao()
 
     @Provides
     @Singleton
@@ -62,11 +72,25 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesTransRepository(transDao: TransDao): TransRepository =
-        TransRepositoryImp(transDao = transDao)
+    fun providesTransDao(database: AppDatabase): TransDao = database.transDao()
+
+    @Provides
+    @Singleton
+    fun providesCategoryRepository(categoryDao: CategoryDao): CategoryRepository =
+        CategoryRepositoryImp(categoryDao = categoryDao)
+
+    @Provides
+    @Singleton
+    fun providesExpenseRepository(expenseDao: ExpenseDao): ExpenseRepository =
+        ExpenseRepositoryImp(expenseDao = expenseDao)
 
     @Provides
     @Singleton
     fun providesPersonRepository(personDao: PersonDao): PersonRepository =
         PersonRepositoryImp(personDao = personDao)
+
+    @Provides
+    @Singleton
+    fun providesTransRepository(transDao: TransDao): TransRepository =
+        TransRepositoryImp(transDao = transDao)
 }
