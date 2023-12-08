@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.database.entity.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import kotlinx.coroutines.flow.Flow
 
@@ -18,9 +18,6 @@ interface TransDao {
     @Delete
     suspend fun delete(transEntity: TransEntity)
 
-    @Query(value = "SELECT * FROM Transactions WHERE id =:transId")
-    fun transactionById(transId: Int): Flow<TransEntity>
-
     @Query(
         value = """SELECT * FROM Transactions
             WHERE personId =:personId 
@@ -29,6 +26,12 @@ interface TransDao {
             CASE :sort WHEN 1 THEN date END ASC"""
     )
     fun allTransactionsByPersonId(personId: Int, sort: Int): Flow<List<TransEntity>>
+
+    @Query(value = "SELECT * FROM Transactions WHERE created IN (:dates)")
+    fun allTransactionsByBetweenDates(dates: List<Long>): Flow<List<TransEntity>>
+
+    @Query(value = "SELECT * FROM Transactions WHERE created = :date")
+    fun allTransactionsByDate(date: Long): Flow<List<TransEntity>>
 
     @Query(
         value = """SELECT * FROM Transactions WHERE personId = :personId 
@@ -39,11 +42,11 @@ interface TransDao {
     )
     fun allTransactionsSearch(personId: Int, searchQuery: String): Flow<List<TransEntity>>
 
-    @Query(value = "SELECT * FROM Transactions WHERE created = :date")
-    fun filterTransactionsByDate(date: Long): Flow<List<TransEntity>>
+    @Query(value = "SELECT * FROM Transactions")
+    fun allTransactions(): Flow<List<TransEntity>>
 
-    @Query(value = "SELECT * FROM Transactions WHERE created IN (:dates)")
-    fun filterTransactionsByRangeDates(dates: List<Long>): Flow<List<TransEntity>>
+    @Query(value = "SELECT * FROM Transactions WHERE id =:transId")
+    fun transactionById(transId: Int): Flow<TransEntity>
 
     @Transaction
     @Query(
@@ -61,5 +64,5 @@ interface TransDao {
             SUM(CASE WHEN type = 'Debit' THEN amount ELSE 0 END) AS debitSum
             FROM Transactions"""
     )
-    fun accountsBalance(): Flow<TransSumModel>
+    fun balanceByAllAccounts(): Flow<TransSumModel>
 }

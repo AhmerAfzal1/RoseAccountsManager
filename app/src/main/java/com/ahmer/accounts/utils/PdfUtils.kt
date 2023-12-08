@@ -5,8 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.model.PersonsEntity
-import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.database.entity.PersonsEntity
+import com.ahmer.accounts.database.entity.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.utils.HelperUtils.roundValue
 import com.google.firebase.crashlytics.FirebaseCrashlytics

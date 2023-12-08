@@ -1,7 +1,7 @@
 package com.ahmer.accounts.event
 
-import com.ahmer.accounts.database.model.PersonsEntity
-import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.database.entity.PersonsEntity
+import com.ahmer.accounts.database.entity.TransEntity
 
 sealed class TransEvent {
     data class OnEditClick(val transEntity: TransEntity) : TransEvent()

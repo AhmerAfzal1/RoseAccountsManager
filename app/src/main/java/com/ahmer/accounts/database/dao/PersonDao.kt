@@ -6,7 +6,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import com.ahmer.accounts.database.model.PersonsBalanceModel
-import com.ahmer.accounts.database.model.PersonsEntity
+import com.ahmer.accounts.database.entity.PersonsEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import kotlinx.coroutines.flow.Flow
 

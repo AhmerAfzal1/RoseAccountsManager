@@ -22,9 +22,7 @@ import com.ahmer.accounts.ui.TransListScreen
 
 @Composable
 fun MainNavigation(
-    modifier: Modifier = Modifier,
-    navController: NavHostController,
-    transSumModel: TransSumModel
+    modifier: Modifier = Modifier, navController: NavHostController, transSumModel: TransSumModel
 ) {
     NavHost(
         navController = navController,
@@ -48,7 +46,9 @@ fun MainNavigation(
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() },
         ) {
-            ReportScreen(viewModel = hiltViewModel())
+            ReportScreen(
+                mainViewModel = hiltViewModel(), viewModel = hiltViewModel()
+            )
         }
         composable(
             route = NavItems.Settings.route,
@@ -66,10 +66,8 @@ fun MainNavigation(
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
         ) {
-            PersonAddEditScreen(
-                viewModel = hiltViewModel(),
-                onPopBackStack = { navController.popBackStack() }
-            )
+            PersonAddEditScreen(viewModel = hiltViewModel(),
+                onPopBackStack = { navController.popBackStack() })
         }
         composable(
             route = NavItems.Transactions.fullRoute,
@@ -104,11 +102,9 @@ fun MainNavigation(
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
         ) {
-            TransAddEditScreen(
-                viewModel = hiltViewModel(),
+            TransAddEditScreen(viewModel = hiltViewModel(),
                 viewModelSettings = hiltViewModel(),
-                onPopBackStack = { navController.popBackStack() }
-            )
+                onPopBackStack = { navController.popBackStack() })
         }
     }
 }

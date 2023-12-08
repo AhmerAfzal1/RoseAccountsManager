@@ -17,7 +17,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.database.entity.TransEntity
 import com.ahmer.accounts.utils.DeleteIcon
 
 @Composable

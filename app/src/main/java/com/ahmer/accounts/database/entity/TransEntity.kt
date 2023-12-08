@@ -1,4 +1,4 @@
-package com.ahmer.accounts.database.model
+package com.ahmer.accounts.database.entity
 
 import android.os.Parcelable
 import androidx.room.Entity
@@ -10,7 +10,7 @@ import com.ahmer.accounts.utils.HelperUtils
 import kotlinx.parcelize.Parcelize
 
 @Entity(
-    tableName = Constants.DATABASE_TABLE_TRANSACTION, foreignKeys = [ForeignKey(
+    tableName = Constants.DB_TABLE_TRANSACTION, foreignKeys = [ForeignKey(
         entity = PersonsEntity::class,
         parentColumns = arrayOf("id"),
         childColumns = arrayOf("personId"),
@@ -23,12 +23,26 @@ data class TransEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val personId: Int = 0,
-    val date: Long = 0,
+    val date: Long = 0L,
+    val dated: String = HelperUtils.getDateTime(time = date, pattern = Constants.PATTERN_CHART),
     val type: String = "",
     val description: String = "",
     val amount: String = "",
     val created: Long = System.currentTimeMillis(),
 ) : Parcelable {
+    fun toExternalModel(): TransEntity {
+        return TransEntity(
+            id = id,
+            personId = personId,
+            date = date,
+            dated = dated,
+            type = type,
+            description = description,
+            amount = amount,
+            created = created,
+        )
+    }
+
     val shortDate: String
         get() = HelperUtils.getDateTime(time = date, pattern = Constants.PATTERN_SHORT)
 }

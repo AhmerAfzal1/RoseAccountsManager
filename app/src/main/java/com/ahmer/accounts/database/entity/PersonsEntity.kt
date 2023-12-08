@@ -1,4 +1,4 @@
-package com.ahmer.accounts.database.model
+package com.ahmer.accounts.database.entity
 
 import android.os.Parcelable
 import androidx.annotation.Keep
@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Entity(
-    tableName = Constants.DATABASE_TABLE_PERSONS,
+    tableName = Constants.DB_TABLE_PERSONS,
     indices = [Index(value = arrayOf("id"), unique = true)]
 )
 @Parcelize

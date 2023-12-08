@@ -1,6 +1,6 @@
 package com.ahmer.accounts.event
 
-import com.ahmer.accounts.database.model.PersonsEntity
+import com.ahmer.accounts.database.entity.PersonsEntity
 
 sealed class PersonEvent {
     data class OnAddTransactionClick(val personsEntity: PersonsEntity) : PersonEvent()

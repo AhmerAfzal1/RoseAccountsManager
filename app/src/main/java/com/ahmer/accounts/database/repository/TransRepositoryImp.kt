@@ -1,7 +1,7 @@
 package com.ahmer.accounts.database.repository
 
 import com.ahmer.accounts.database.dao.TransDao
-import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.database.entity.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.Dispatchers
@@ -23,12 +23,16 @@ class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : T
         }
     }
 
-    override fun transactionById(transId: Int): Flow<TransEntity?> {
-        return transDao.transactionById(transId = transId)
+    override fun allTransactionsByPersonId(personId: Int, sort: Int): Flow<List<TransEntity>> {
+        return transDao.allTransactionsByPersonId(personId = personId, sort = sort)
     }
 
-    override fun allTransactionByPersonId(personId: Int, sort: Int): Flow<List<TransEntity>> {
-        return transDao.allTransactionsByPersonId(personId = personId, sort = sort)
+    override fun allTransactionsByBetweenDates(dates: List<Long>): Flow<List<TransEntity>> {
+        return transDao.allTransactionsByBetweenDates(dates = dates)
+    }
+
+    override fun allTransactionsByDate(date: Long): Flow<List<TransEntity>> {
+        return transDao.allTransactionsByDate(date = date)
     }
 
     override fun allTransactionsSearch(
@@ -37,17 +41,17 @@ class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : T
         return transDao.allTransactionsSearch(personId = personId, searchQuery = searchQuery)
     }
 
-    override fun filterTransactionsByDate(date: Long): Flow<List<TransEntity>> {
-        return transDao.filterTransactionsByDate(date = date)
+    override fun allTransactions(): Flow<List<TransEntity>> {
+        return transDao.allTransactions()
     }
 
-    override fun filterTransactionsByRangeDates(dates: List<Long>): Flow<List<TransEntity>> {
-        return transDao.filterTransactionsByRangeDates(dates = dates)
+    override fun transactionById(transId: Int): Flow<TransEntity?> {
+        return transDao.transactionById(transId = transId)
     }
 
     override fun balanceByPerson(personId: Int): Flow<TransSumModel> {
         return transDao.balanceByPerson(personId = personId)
     }
 
-    override fun accountsBalance(): Flow<TransSumModel> = transDao.accountsBalance()
+    override fun balanceByAllAccounts(): Flow<TransSumModel> = transDao.balanceByAllAccounts()
 }

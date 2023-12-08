@@ -2,6 +2,7 @@ package com.ahmer.accounts.database.model
 
 import android.os.Parcelable
 import androidx.room.Embedded
+import com.ahmer.accounts.database.entity.PersonsEntity
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
