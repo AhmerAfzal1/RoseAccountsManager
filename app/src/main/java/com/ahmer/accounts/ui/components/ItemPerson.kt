@@ -25,8 +25,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.ahmer.accounts.database.entity.PersonsEntity
 import com.ahmer.accounts.database.model.PersonsBalanceModel
-import com.ahmer.accounts.database.model.PersonsEntity
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorRedDark

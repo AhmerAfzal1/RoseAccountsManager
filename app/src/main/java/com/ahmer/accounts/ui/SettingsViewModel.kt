@@ -64,7 +64,7 @@ class SettingsViewModel @Inject constructor(
             val mDatabase = AppModule.providesDatabase(context = context)
             val mQuery = SimpleSQLiteQuery(query = "pragma wal_checkpoint(full)")
             mDatabase.adminDao().checkPoint(supportSQLiteQuery = mQuery)
-            val mInputStream = context.getDatabasePath(Constants.DATABASE_NAME).inputStream()
+            val mInputStream = context.getDatabasePath(Constants.DB_NAME).inputStream()
             val mOutputStream = uri?.let { context.contentResolver.openOutputStream(it) }
             runCatching {
                 mInputStream.use { input ->
@@ -98,7 +98,7 @@ class SettingsViewModel @Inject constructor(
             mDatabase.adminDao().checkPoint(supportSQLiteQuery = mQuery)
             mDatabase.close()
             val mInputStream = uri?.let { context.contentResolver.openInputStream(it) }
-            val mOutputStream = context.getDatabasePath(Constants.DATABASE_NAME).outputStream()
+            val mOutputStream = context.getDatabasePath(Constants.DB_NAME).outputStream()
             runCatching {
                 mInputStream.use { input ->
                     mOutputStream.use { output ->

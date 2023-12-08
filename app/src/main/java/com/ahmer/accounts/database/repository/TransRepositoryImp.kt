@@ -27,11 +27,11 @@ class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : T
         return transDao.allTransactionsByPersonId(personId = personId, sort = sort)
     }
 
-    override fun allTransactionsByBetweenDates(dates: List<Long>): Flow<List<TransEntity>> {
+    override fun allTransactionsByBetweenDates(dates: List<String>): Flow<List<TransEntity>> {
         return transDao.allTransactionsByBetweenDates(dates = dates)
     }
 
-    override fun allTransactionsByDate(date: Long): Flow<List<TransEntity>> {
+    override fun allTransactionsByDate(date: String): Flow<List<TransEntity>> {
         return transDao.allTransactionsByDate(date = date)
     }
 

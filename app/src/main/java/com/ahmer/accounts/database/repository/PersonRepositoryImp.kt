@@ -1,8 +1,8 @@
 package com.ahmer.accounts.database.repository
 
 import com.ahmer.accounts.database.dao.PersonDao
-import com.ahmer.accounts.database.model.PersonsBalanceModel
 import com.ahmer.accounts.database.entity.PersonsEntity
+import com.ahmer.accounts.database.model.PersonsBalanceModel
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.utils.SortBy
 import com.ahmer.accounts.utils.SortOrder

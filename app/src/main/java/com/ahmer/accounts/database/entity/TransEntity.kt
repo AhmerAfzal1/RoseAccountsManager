@@ -24,22 +24,24 @@ data class TransEntity(
     val id: Int = 0,
     val personId: Int = 0,
     val date: Long = 0L,
-    val dated: String = HelperUtils.getDateTime(time = date, pattern = Constants.PATTERN_CHART),
     val type: String = "",
     val description: String = "",
     val amount: String = "",
     val created: Long = System.currentTimeMillis(),
+    val createdOn: String = HelperUtils.getDateTime(
+        time = created, pattern = Constants.PATTERN_CHART
+    ),
 ) : Parcelable {
     fun toExternalModel(): TransEntity {
         return TransEntity(
             id = id,
             personId = personId,
             date = date,
-            dated = dated,
             type = type,
             description = description,
             amount = amount,
             created = created,
+            createdOn = createdOn,
         )
     }
 

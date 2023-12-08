@@ -25,9 +25,11 @@ data class ExpenseEntity(
     val category: Int = 0,
     val title: String = "",
     val date: Long = 0L,
-    val dated: String = HelperUtils.getDateTime(time = date, pattern = Constants.PATTERN_CHART),
     val type: String = "",
     val amount: String = "",
     val notes: String = "",
     val created: Long = System.currentTimeMillis(),
+    val createdOn: String = HelperUtils.getDateTime(
+        time = created, pattern = Constants.PATTERN_CHART
+    ),
 ) : Parcelable

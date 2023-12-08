@@ -8,7 +8,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmer.accounts.database.model.PersonsEntity
+import com.ahmer.accounts.database.entity.PersonsEntity
 import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.event.PersonAddEditEvent
 import com.ahmer.accounts.event.UiEvent

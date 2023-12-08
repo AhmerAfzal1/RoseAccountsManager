@@ -13,8 +13,8 @@ interface TransRepository {
      * @param sort sort order 0 for created and 1 for date
      */
     fun allTransactionsByPersonId(personId: Int, sort: Int): Flow<List<TransEntity>>
-    fun allTransactionsByBetweenDates(dates: List<Long>): Flow<List<TransEntity>>
-    fun allTransactionsByDate(date: Long): Flow<List<TransEntity>>
+    fun allTransactionsByBetweenDates(dates: List<String>): Flow<List<TransEntity>>
+    fun allTransactionsByDate(date: String): Flow<List<TransEntity>>
     fun allTransactionsSearch(personId: Int, searchQuery: String): Flow<List<TransEntity>>
     fun allTransactions(): Flow<List<TransEntity>>
     fun transactionById(transId: Int): Flow<TransEntity?>

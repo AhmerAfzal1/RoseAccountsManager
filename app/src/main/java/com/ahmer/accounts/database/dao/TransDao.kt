@@ -27,11 +27,11 @@ interface TransDao {
     )
     fun allTransactionsByPersonId(personId: Int, sort: Int): Flow<List<TransEntity>>
 
-    @Query(value = "SELECT * FROM Transactions WHERE created IN (:dates)")
-    fun allTransactionsByBetweenDates(dates: List<Long>): Flow<List<TransEntity>>
+    @Query(value = "SELECT * FROM Transactions WHERE createdOn IN(:dates)")
+    fun allTransactionsByBetweenDates(dates: List<String>): Flow<List<TransEntity>>
 
-    @Query(value = "SELECT * FROM Transactions WHERE created = :date")
-    fun allTransactionsByDate(date: Long): Flow<List<TransEntity>>
+    @Query(value = "SELECT * FROM Transactions WHERE createdOn = :date")
+    fun allTransactionsByDate(date: String): Flow<List<TransEntity>>
 
     @Query(
         value = """SELECT * FROM Transactions WHERE personId = :personId 

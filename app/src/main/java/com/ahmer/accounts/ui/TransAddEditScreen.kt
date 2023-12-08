@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.database.entity.TransEntity
 import com.ahmer.accounts.dialogs.DateTimePickerDialog
 import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.event.UiEvent

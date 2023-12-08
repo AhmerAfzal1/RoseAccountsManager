@@ -1,118 +1,14 @@
 package com.ahmer.accounts.utils
 
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Calendar
 import java.util.Locale
 
 object DateUtils {
 
-    /**
-     * Get date range between two dates
-     *
-     * @param startDate Start date - e.g week date
-     * @param endDate End date - e.g today date
-     * @return The list of dates
-     */
-    fun datesBetween(startDate: Long, endDate: Long): List<Long> {
-        val dates = mutableListOf<Long>()
-        var currentDate = startDate
-        while (currentDate <= endDate) {
-            dates.add(currentDate)
-            val calendar = Calendar.getInstance().apply {
-                timeInMillis = currentDate
-                add(Calendar.DATE, 1)
-            }
-            currentDate = calendar.timeInMillis
-        }
-        return dates
-    }
-
-    /**
-     * Get the first day of the current month
-     *
-     * @return Time in milliseconds as [Long] of the first day of the month
-     */
-    fun firstDayOfMonth(): Long {
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, 1)
-        }
-        return calendar.timeInMillis
-    }
-
-    /**
-     * Get list of dates current month
-     *
-     * @return A list of dates for the current month
-     */
-    fun monthDates(): List<Long> {
-        val oneDay: Long = 24 * 60 * 60 * 1000
-        val calendar = Calendar.getInstance()
-        val currentMonth = calendar.get(Calendar.MONTH)
-        calendar.set(Calendar.DAY_OF_MONTH, 1)
-        val firstDayOfMonthInMillis = calendar.timeInMillis
-        calendar.set(Calendar.MONTH, currentMonth + 1)
-        val lastDayOfMonthInMillis = calendar.timeInMillis - oneDay
-        return (firstDayOfMonthInMillis..lastDayOfMonthInMillis step oneDay).toList()
-    }
-
-    /**
-     * Get one week earlier date from the [startDate]
-     *
-     * @param startDate Start date in milliseconds
-     * @return The updated one week earlier calendar date as a Long value
-     */
-    fun oneWeekEarlierDate(startDate: Long): Long {
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = startDate
-            add(Calendar.DATE, -6)
-        }
-        return calendar.timeInMillis
-    }
-
-    /**
-     * Get start of the day based on the given time in milliseconds
-     *
-     * @param timeMillis Time in milliseconds
-     * @return Time in milliseconds representing the start of the day
-     */
-    fun startOfDay(timeMillis: Long): Long {
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = timeMillis
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        return calendar.timeInMillis
-    }
-
-    /**
-     * Get dates of the week starting from the given [startDate]
-     *
-     * @param startDate Start date
-     * @return List containing the dates of the week
-     */
-    fun weekDates(startDate: Long): List<Long> {
-        val weekDates = mutableListOf<Long>()
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = startDate
-
-        // Set the calendar to the start of the week
-        calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
-
-        // Add the start date to the list
-        weekDates.add(calendar.timeInMillis)
-
-        // Add the remaining dates of the week
-        for (i in 1 until 7) {
-            calendar.add(Calendar.DAY_OF_WEEK, 1)
-            weekDates.add(calendar.timeInMillis)
-        }
-        return weekDates
-    }
-
     fun actualDayOfWeek(dateString: String): String {
-        val format = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+        val format = SimpleDateFormat(Constants.PATTERN_CHART, Locale.ENGLISH)
         val date = format.parse(dateString)
         val calendar = Calendar.getInstance()
         if (date != null) {
@@ -128,5 +24,101 @@ object DateUtils {
             Calendar.SUNDAY -> "Sunday"
             else -> ""
         }
+    }
+
+    fun getWeekDates(dateString: String): List<String> {
+        val dateFormat = SimpleDateFormat(Constants.PATTERN_CHART, Locale.getDefault())
+        val date = dateFormat.parse(dateString)
+        val calendar = Calendar.getInstance()
+        if (date != null) {
+            calendar.time = date
+        }
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        calendar.add(Calendar.DATE, -dayOfWeek + 1)
+        val weekDates = mutableListOf<String>()
+        for (i in 1..7) {
+            weekDates.add(dateFormat.format(calendar.time))
+            calendar.add(Calendar.DATE, 1)
+        }
+        return weekDates
+    }
+
+
+    fun getMonthDates(dateString: String): List<String> {
+        val dateFormat = SimpleDateFormat(Constants.PATTERN_CHART, Locale.getDefault())
+        val date = dateFormat.parse(dateString)
+        val calendar = Calendar.getInstance()
+        if (date != null) {
+            calendar.time = date
+        }
+        val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        val monthDates = mutableListOf<String>()
+        for (i in 1..daysInMonth) {
+            monthDates.add(dateFormat.format(calendar.time))
+            calendar.add(Calendar.DATE, 1)
+        }
+        return monthDates
+    }
+
+    fun firstDayOfMonth(date: String): String {
+        val formatter = SimpleDateFormat(Constants.PATTERN_CHART, Locale.getDefault())
+        val parsedDate = formatter.parse(date)
+        val calendar = Calendar.getInstance()
+        if (parsedDate != null) {
+            calendar.time = parsedDate
+        }
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        return formatter.format(calendar.time)
+    }
+
+    fun datesBetween(startDate: String, endDate: String): List<String> {
+        val formatter = SimpleDateFormat(Constants.PATTERN_CHART, Locale.getDefault())
+        val start = formatter.parse(startDate)
+        val end = formatter.parse(endDate)
+        val dates = mutableListOf<String>()
+        var currentDate = start
+
+        while (currentDate!! <= end) {
+            dates.add(formatter.format(currentDate))
+            val calendar = Calendar.getInstance().apply {
+                time = currentDate!!
+                add(Calendar.DATE, 1)
+            }
+            currentDate = calendar.time
+        }
+
+        return dates
+    }
+
+    fun generate7daysPriorDate(date: String): String {
+        val formatter = SimpleDateFormat(Constants.PATTERN_CHART, Locale.getDefault())
+        val parsedDate = formatter.parse(date)
+        val calendar = Calendar.getInstance()
+        if (parsedDate != null) {
+            calendar.time = parsedDate
+        }
+        calendar.add(Calendar.DATE, -6)
+        return formatter.format(calendar.time)
+    }
+
+    fun previousDay(date: String): String {
+        val formatter = SimpleDateFormat(Constants.PATTERN_CHART, Locale.getDefault())
+        val parsedDate = formatter.parse(date)
+        val calendar = Calendar.getInstance()
+        if (parsedDate != null) {
+            calendar.time = parsedDate
+        }
+        calendar.add(Calendar.DATE, -1)
+        return formatter.format(calendar.time)
+    }
+
+
+    fun generateFormatDate(date: LocalDate): String {
+        val dateCount =
+            if (date.dayOfMonth < 10) "0${date.dayOfMonth}" else date.dayOfMonth.toString()
+        val monthCount =
+            if (date.monthValue < 10) "0${date.monthValue}" else date.monthValue.toString()
+        return "${dateCount}/${monthCount}/${date.year}"
     }
 }

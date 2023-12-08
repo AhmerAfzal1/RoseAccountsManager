@@ -81,8 +81,8 @@ import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.PersonState
-import com.ahmer.accounts.ui.components.BalanceItem
-import com.ahmer.accounts.ui.components.PersonItem
+import com.ahmer.accounts.ui.components.ItemBalance
+import com.ahmer.accounts.ui.components.ItemPerson
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.Constants
@@ -168,7 +168,7 @@ fun PersonsListScreen(
                 .fillMaxSize()
                 .padding(paddingValues = innerPadding),
         ) {
-            BalanceItem(transSumModel = transSumModel, currency = mCurrentCurrency)
+            ItemBalance(transSumModel = transSumModel, currency = mCurrentCurrency)
             SearchBarPerson(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -193,7 +193,7 @@ fun PersonsListScreen(
                     items = mState.allPersons,
                     key = { persons -> persons.personsEntity.id },
                 ) { person ->
-                    PersonItem(
+                    ItemPerson(
                         personsBalanceModel = person,
                         currency = mCurrentCurrency,
                         onEvent = personViewModel::onEvent,

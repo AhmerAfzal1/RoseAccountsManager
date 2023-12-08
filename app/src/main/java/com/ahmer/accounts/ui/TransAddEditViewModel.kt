@@ -8,7 +8,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.database.entity.TransEntity
 import com.ahmer.accounts.database.repository.TransRepository
 import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.event.UiEvent

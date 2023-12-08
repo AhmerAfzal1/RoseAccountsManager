@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ahmer.accounts"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.00"
@@ -98,8 +98,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.5")
 
     //Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.48.1")
-    ksp("com.google.dagger:hilt-compiler:2.48.1")
+    implementation("com.google.dagger:hilt-android:2.49")
+    ksp("com.google.dagger:hilt-compiler:2.49")
 
     //Room Database
     implementation("androidx.room:room-ktx:2.6.1")

@@ -71,15 +71,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.model.PersonsEntity
-import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.database.entity.PersonsEntity
+import com.ahmer.accounts.database.entity.TransEntity
 import com.ahmer.accounts.dialogs.DeleteAlertDialog
 import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.TransState
-import com.ahmer.accounts.ui.components.BalanceItem
-import com.ahmer.accounts.ui.components.TransItem
+import com.ahmer.accounts.ui.components.ItemBalance
+import com.ahmer.accounts.ui.components.ItemTrans
 import com.ahmer.accounts.utils.AddCircleIcon
 import com.ahmer.accounts.utils.BackIcon
 import com.ahmer.accounts.utils.CloseIcon
@@ -268,7 +268,7 @@ fun TransListScreen(
                 .padding(paddingValues = innerPadding),
             verticalArrangement = Arrangement.Top
         ) {
-            BalanceItem(
+            ItemBalance(
                 transSumModel = mState.transSumModel,
                 currency = mCurrency,
                 personsEntity = mPerson,
@@ -335,7 +335,7 @@ fun TransListScreen(
                     items = mState.allTransactions,
                     key = { listTrans -> listTrans.id }) { transaction ->
                     val isSelected = mSelectedItems.contains(transaction)
-                    TransItem(
+                    ItemTrans(
                         transEntity = transaction,
                         currency = mCurrency,
                         isSelected = isSelected,

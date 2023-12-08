@@ -11,8 +11,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.model.PersonsEntity
-import com.ahmer.accounts.database.model.TransEntity
+import com.ahmer.accounts.database.entity.PersonsEntity
+import com.ahmer.accounts.database.entity.TransEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.database.repository.TransRepository
 import com.ahmer.accounts.event.TransEvent
@@ -122,7 +122,7 @@ class TransViewModel @Inject constructor(
     fun generatePdf(context: Context, uri: Uri, person: PersonsEntity, transSum: TransSumModel) {
         Log.v(Constants.LOG_TAG, "Credit: ${transSum.creditSum}")
         Log.v(Constants.LOG_TAG, "Debit: ${transSum.debitSum}")
-        transRepository.allTransactionByPersonId(personId = person.id, sort = 1)
+        transRepository.allTransactionsByPersonId(personId = person.id, sort = 1)
             .filterNotNull()
             .onEach { transEntityList ->
                 Log.v(Constants.LOG_TAG, "List: ${transEntityList.first()}")

@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.model.PersonsEntity
+import com.ahmer.accounts.database.entity.PersonsEntity
 import com.ahmer.accounts.database.model.TransSumModel
 import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorGreenLight

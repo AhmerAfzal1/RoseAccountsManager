@@ -1,15 +1,14 @@
 package com.ahmer.accounts.ui
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -45,16 +44,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
 import com.ahmer.accounts.state.MainState
 import com.ahmer.accounts.ui.TabItem.Companion.Icons
-import com.ahmer.accounts.ui.theme.colorGreenDark
-import com.ahmer.accounts.ui.theme.colorRedDark
+import com.ahmer.accounts.ui.components.BalanceChartScreen
+import com.ahmer.accounts.ui.components.TransactionsChartScreen
 import com.ahmer.accounts.utils.Constants
+import com.ahmer.accounts.utils.DateUtils
 import com.ahmer.accounts.utils.HelperUtils
-import com.ahmer.accounts.utils.chart.PieChart
-import com.ahmer.accounts.utils.chart.PieChartData
+import com.github.tehras.charts.bar.BarChartData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReportScreen(viewModel: MainViewModel) {
+fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
     val mSurfaceColor: Color =
         if (MaterialTheme.colorScheme.isLight()) Color.Black else Color.Yellow
     val mSurfaceElevation: Dp = 4.dp
@@ -72,22 +71,60 @@ fun ReportScreen(viewModel: MainViewModel) {
             })
         }
     }) { innerPadding ->
+        val mMainState: MainState by mainViewModel.uiState.collectAsStateWithLifecycle()
+
+        val graphState by viewModel.graph.collectAsStateWithLifecycle()
+        val allTransactions = graphState.allTransactions
+        val mGraph = allTransactions.map { entity ->
+            val mTotal = entity.amount.toFloat()
+            Log.v(Constants.LOG_TAG, "mGraph: $mTotal, Size: ${allTransactions.size}")
+            if (allTransactions.isNotEmpty()) {
+                BarChartData.Bar(
+                    value = mTotal,
+                    color = MaterialTheme.colorScheme.primary,
+                    label = if (allTransactions.size == 7) {
+                        DateUtils.actualDayOfWeek(dateString = entity.createdOn).substring(0, 3)
+                    } else {
+                        (allTransactions.indexOf(entity) + 1).toString()
+                    }
+                )
+            } else {
+                BarChartData.Bar(
+                    value = mTotal,
+                    label = "",
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        LaunchedEffect(key1 = mGraph) {
+            viewModel.onChangeBarDataList(data = mGraph)
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues = innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val mState: MainState by viewModel.uiState.collectAsStateWithLifecycle()
-
-            Tabs(mainState = mState)
+            Tabs(
+                mainState = mMainState,
+                barChartList = mGraph,
+                activeFilter = viewModel.activeFilter.value,
+                onChangeActiveFilter = { viewModel.onChangeActiveFilter(filter = it) }
+            )
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun Tabs(mainState: MainState) {
+private fun Tabs(
+    mainState: MainState,
+    barChartList: List<BarChartData.Bar>,
+    activeFilter: String,
+    onChangeActiveFilter: (String) -> Unit,
+) {
     val mContext: Context = LocalContext.current
     val mList: List<TabItem> = TabItem.tabItems
     val mPagerState: PagerState = rememberPagerState(pageCount = { mList.size })
@@ -145,8 +182,14 @@ private fun Tabs(mainState: MainState) {
             key = { mList[it].title },
         ) { page ->
             when (page) {
-                TabsScreen.CHART_BAR -> {}
-                TabsScreen.CHART_PIE -> ChartScreen(mainState = mainState)
+                TabsScreen.CHART_TRANSACTIONS -> {
+                    TransactionsChartScreen(
+                        barChartList = barChartList, activeFilter = activeFilter,
+                        onChangeActiveFilter = onChangeActiveFilter
+                    )
+                }
+
+                TabsScreen.CHART_BALANCE -> BalanceChartScreen(mainState = mainState)
                 else -> HelperUtils.showToast(
                     context = mContext,
                     msg = stringResource(id = R.string.toast_tab_requested, page)
@@ -156,38 +199,9 @@ private fun Tabs(mainState: MainState) {
     }
 }
 
-@Composable
-private fun ChartScreen(mainState: MainState) {
-    val mData: List<PieChartData> by lazy {
-        listOf(
-            PieChartData(
-                color = colorGreenDark,
-                value = mainState.accountsBalance.creditSum,
-                description = Constants.TYPE_CREDIT,
-            ), PieChartData(
-                color = colorRedDark,
-                value = mainState.accountsBalance.debitSum,
-                description = Constants.TYPE_DEBIT
-            )
-        )
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        PieChart(
-            modifier = Modifier.size(size = 250.dp),
-            inputs = mData,
-            centerText = stringResource(id = R.string.label_balance).uppercase(),
-        )
-    }
-}
-
 private object TabsScreen {
-    const val CHART_BAR = 0
-    const val CHART_PIE = 1
+    const val CHART_TRANSACTIONS = 0
+    const val CHART_BALANCE = 1
     //const val CHART_ACCOUNTS = 2 //Later to implement, how many new accounts added daily, weekly and monthly
 }
 
