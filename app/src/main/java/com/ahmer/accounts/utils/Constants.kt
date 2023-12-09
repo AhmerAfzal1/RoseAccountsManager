@@ -3,6 +3,15 @@ package com.ahmer.accounts.utils
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+object ConstantsChart {
+    const val TODAY = "Today"
+    const val YESTERDAY = "Yesterday"
+    const val THIS_WEEK = "This week"
+    const val LAST_7_DAYS = "Last 7 days"
+    const val THIS_MONTH = "This month"
+    const val ALL = "All"
+}
+
 object Constants {
     const val ADS_WAIT_TIME: Long = 250L
     const val ANIMATE_ITEM_DURATION: Int = 500
@@ -33,13 +42,49 @@ object Constants {
     const val UNKNOWN_ERROR: String = "Unknown error"
     val ICON_SIZE: Dp = 36.dp
     val TOP_APP_BAR_HEIGHT: Dp = 64.dp
-}
 
-object ConstantsChart {
-    const val TODAY = "Today"
-    const val YESTERDAY = "Yesterday"
-    const val THIS_WEEK = "This week"
-    const val LAST_7_DAYS = "Last 7 days"
-    const val THIS_MONTH = "This month"
-    const val ALL = "All"
+    val categories: List<String> = listOf(
+        "Advertising",
+        "Anniversary",
+        "Birthday",
+        "Charity",
+        "Christmas",
+        "Cloths",
+        "Concert",
+        "Education",
+        "Electricity",
+        "Entertainment",
+        "Fees",
+        "Food",
+        "Furniture",
+        "Game",
+        "Garbage",
+        "Grocery",
+        "Healthcare",
+        "Housing",
+        "Insurance",
+        "Internet",
+        "Investing",
+        "Loans",
+        "Maintenance",
+        "Marketing",
+        "Movies",
+        "Office",
+        "Other",
+        "Phone",
+        "Rent",
+        "Restaurant",
+        "Salary",
+        "Saving",
+        "Shoes",
+        "Shopping",
+        "Subscriptions",
+        "Tax",
+        "Transportation",
+        "Travel",
+        "Utilities",
+        "Vacation",
+        "Water",
+        "Wedding"
+    )
 }

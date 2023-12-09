@@ -17,6 +17,12 @@ class CategoryRepositoryImp @Inject constructor(private val categoryDao: Categor
         }
     }
 
+    override suspend fun insertOrUpdate(listCategoryEntity: List<CategoryEntity>) {
+        return withContext(Dispatchers.IO) {
+            categoryDao.insertOrUpdate(listCategoryEntity = listCategoryEntity)
+        }
+    }
+
     override suspend fun delete(categoryEntity: CategoryEntity) {
         return withContext(Dispatchers.IO) {
             categoryDao.delete(categoryEntity = categoryEntity)

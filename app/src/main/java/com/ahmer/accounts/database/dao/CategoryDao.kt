@@ -13,6 +13,9 @@ interface CategoryDao {
     @Upsert
     suspend fun insertOrUpdate(categoryEntity: CategoryEntity)
 
+    @Upsert
+    suspend fun insertOrUpdate(listCategoryEntity: List<CategoryEntity>)
+
     @Delete
     suspend fun delete(categoryEntity: CategoryEntity)
 
