@@ -75,7 +75,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
 
     //Firebase BOM
-    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
@@ -83,7 +83,7 @@ dependencies {
     implementation("com.google.firebase:firebase-perf-ktx")
 
     //Ads
-    implementation("com.google.android.gms:play-services-ads:22.5.0")
+    implementation("com.google.android.gms:play-services-ads:22.6.0")
 
     //Jetpack Compose View Model
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
