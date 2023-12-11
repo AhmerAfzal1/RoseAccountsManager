@@ -27,6 +27,17 @@ sealed class NavItems(
         val fullRoute = route + argument
     }
 
+    data object Expense : NavItems(
+        label = R.string.label_expenses,
+        selectedIcon = R.drawable.ic_filled_expense,
+        unselectedIcon = R.drawable.ic_outlined_expense,
+        contentDescription = R.string.content_description_expenses,
+        route = "expenseScreen",
+        argument = "",
+    ) {
+        val fullRoute = route + argument
+    }
+
     data object Report : NavItems(
         label = R.string.label_report,
         selectedIcon = R.drawable.ic_filled_report,
