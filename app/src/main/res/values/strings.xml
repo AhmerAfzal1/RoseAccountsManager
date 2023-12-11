@@ -9,6 +9,7 @@
 
     //Content description
     <string name="content_description_accounts">Accounts icon</string>
+    <string name="content_description_expenses">Expenses icon</string>
     <string name="content_description_add">Add icon</string>
     <string name="content_description_address">Address icon</string>
     <string name="content_description_back">Back icon</string>
@@ -96,6 +97,7 @@
     <string name="label_total_balance">NET BALANCE</string>
     <string name="label_trans">Transactions</string>
     <string name="label_trans_add_edit">Transactions Add Edit</string>
+    <string name="label_expenses">Expenses</string>
 
     //Toast messages
     <string name="toast_msg_db_backup">%1$s successfully backed up to %2$s</string>
