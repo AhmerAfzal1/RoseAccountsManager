@@ -22,12 +22,11 @@ import kotlinx.parcelize.Parcelize
 data class ExpenseEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val category: Int = 0,
-    val title: String = "",
     val date: Long = 0L,
     val type: String = "",
+    val category: Int = 0,
     val amount: String = "",
-    val notes: String = "",
+    val description: String = "",
     val created: Long = System.currentTimeMillis(),
     val createdOn: String = HelperUtils.getDateTime(
         time = created, pattern = Constants.PATTERN_CHART

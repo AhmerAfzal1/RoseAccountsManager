@@ -25,4 +25,8 @@ class ExpenseRepositoryImp @Inject constructor(private val expenseDao: ExpenseDa
 
     override fun allExpenses(): Flow<List<ExpenseEntity>> = expenseDao.allExpenses()
 
+    override fun expenseById(expenseId: Int): Flow<ExpenseEntity> {
+        return expenseDao.expenseById(expenseId = expenseId)
+    }
+
 }

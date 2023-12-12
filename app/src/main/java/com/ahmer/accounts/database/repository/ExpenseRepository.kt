@@ -7,4 +7,5 @@ interface ExpenseRepository {
     suspend fun insertOrUpdate(expenseEntity: ExpenseEntity)
     suspend fun delete(expenseEntity: ExpenseEntity)
     fun allExpenses(): Flow<List<ExpenseEntity>>
+    fun expenseById(expenseId: Int): Flow<ExpenseEntity>
 }
