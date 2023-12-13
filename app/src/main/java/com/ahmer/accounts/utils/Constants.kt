@@ -21,7 +21,6 @@ object Constants {
     const val DATA_STORE_KEY_THEME: String = "Theme"
     const val DATA_STORE_NAME: String = "RoseDataStore"
     const val DB_NAME: String = "RoseDatabase.db"
-    const val DB_TABLE_CATEGORY: String = "Categories"
     const val DB_TABLE_EXPENSE: String = "Expenses"
     const val DB_TABLE_PERSON: String = "Persons"
     const val DB_TABLE_TRANSACTION: String = "Transactions"
@@ -42,49 +41,4 @@ object Constants {
     const val UNKNOWN_ERROR: String = "Unknown error"
     val ICON_SIZE: Dp = 36.dp
     val TOP_APP_BAR_HEIGHT: Dp = 64.dp
-
-    val categories: List<String> = listOf(
-        "Advertising",
-        "Anniversary",
-        "Birthday",
-        "Charity",
-        "Christmas",
-        "Cloths",
-        "Concert",
-        "Education",
-        "Electricity",
-        "Entertainment",
-        "Fees",
-        "Food",
-        "Furniture",
-        "Game",
-        "Garbage",
-        "Grocery",
-        "Healthcare",
-        "Housing",
-        "Insurance",
-        "Internet",
-        "Investing",
-        "Loans",
-        "Maintenance",
-        "Marketing",
-        "Movies",
-        "Office",
-        "Other",
-        "Phone",
-        "Rent",
-        "Restaurant",
-        "Salary",
-        "Saving",
-        "Shoes",
-        "Shopping",
-        "Subscriptions",
-        "Tax",
-        "Transportation",
-        "Travel",
-        "Utilities",
-        "Vacation",
-        "Water",
-        "Wedding"
-    )
 }

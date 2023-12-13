@@ -12,13 +12,13 @@ import javax.inject.Inject
 @ViewModelScoped
 class TransRepositoryImp @Inject constructor(private val transDao: TransDao) : TransRepository {
     override suspend fun insertOrUpdate(transEntity: TransEntity) {
-        return withContext(Dispatchers.IO) {
+        return withContext(context = Dispatchers.IO) {
             transDao.insertOrUpdate(transEntity = transEntity)
         }
     }
 
     override suspend fun delete(transEntity: TransEntity) {
-        return withContext(Dispatchers.IO) {
+        return withContext(context = Dispatchers.IO) {
             transDao.delete(transEntity = transEntity)
         }
     }

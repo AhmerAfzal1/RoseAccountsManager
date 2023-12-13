@@ -19,11 +19,11 @@ interface PersonDao {
     @Delete
     suspend fun delete(personsEntity: PersonsEntity)
 
-    @Query("SELECT * FROM Persons")
+    @Query(value = "SELECT * FROM Persons")
     fun allPersons(): Flow<List<PersonsEntity>>
 
     @Query(
-        """SELECT p.*, 
+        value = """SELECT p.*, 
             COALESCE(SUM(CASE WHEN t.type = 'Credit' THEN t.amount ELSE -t.amount END), 0) AS balance
             FROM Persons p
             LEFT JOIN Transactions t ON p.id = t.personId
@@ -38,12 +38,12 @@ interface PersonDao {
     )
     fun allPersonsSearch(query: String, sort: Int): Flow<List<PersonsBalanceModel>>
 
-    @Query("SELECT * FROM Persons WHERE id = :personId")
+    @Query(value = "SELECT * FROM Persons WHERE id = :personId")
     fun personById(personId: Int): Flow<PersonsEntity>
 
     @Transaction
     @Query(
-        """SELECT 
+        value = """SELECT 
             SUM(CASE WHEN type = 'Credit' THEN amount ELSE 0 END) AS creditSum,
             SUM(CASE WHEN type = 'Debit' THEN amount ELSE 0 END) AS debitSum 
             FROM Transactions WHERE personId = :personId"""
@@ -52,7 +52,7 @@ interface PersonDao {
 
     @Transaction
     @Query(
-        """SELECT
+        value = """SELECT
         SUM(CASE WHEN type = 'Credit' THEN amount ELSE 0 END) AS creditSum,
         SUM(CASE WHEN type = 'Debit' THEN amount ELSE 0 END) AS debitSum
         FROM Transactions"""
