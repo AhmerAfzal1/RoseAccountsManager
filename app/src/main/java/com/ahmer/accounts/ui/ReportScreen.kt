@@ -215,14 +215,14 @@ sealed class TabItem(
         title = R.string.label_trans,
         selectedIcon = R.drawable.ic_bar_chart,
         unselectedIcon = R.drawable.ic_bar_chart,
-        contentDescription = R.string.content_description_bar,
+        contentDescription = R.string.content_bar,
     )
 
     data object Balance : TabItem(
         title = R.string.label_balance,
         selectedIcon = R.drawable.ic_filled_pie_chart,
         unselectedIcon = R.drawable.ic_outlined_pie_chart,
-        contentDescription = R.string.content_description_pie,
+        contentDescription = R.string.content_pie,
     )
 
     companion object {

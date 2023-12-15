@@ -20,7 +20,7 @@ sealed class NavItems(
         label = R.string.label_accounts,
         selectedIcon = R.drawable.ic_filled_accounts,
         unselectedIcon = R.drawable.ic_outlined_accounts,
-        contentDescription = R.string.content_description_accounts,
+        contentDescription = R.string.content_accounts,
         route = "mainScreen",
         argument = "",
     ) {
@@ -31,9 +31,20 @@ sealed class NavItems(
         label = R.string.label_expenses,
         selectedIcon = R.drawable.ic_filled_expense,
         unselectedIcon = R.drawable.ic_outlined_expense,
-        contentDescription = R.string.content_description_expenses,
+        contentDescription = R.string.content_expenses,
         route = "expenseScreen",
         argument = "",
+    ) {
+        val fullRoute = route + argument
+    }
+
+    data object ExpenseAddEdit : NavItems(
+        label = R.string.label_expense_add_edit,
+        selectedIcon = R.drawable.ic_filled_settings,
+        unselectedIcon = R.drawable.ic_outlined_settings,
+        contentDescription = R.string.content_person_add_edit,
+        route = "expenseAddEditScreen",
+        argument = "?expenseID={expenseID}"
     ) {
         val fullRoute = route + argument
     }
@@ -42,7 +53,7 @@ sealed class NavItems(
         label = R.string.label_report,
         selectedIcon = R.drawable.ic_filled_report,
         unselectedIcon = R.drawable.ic_outlined_report,
-        contentDescription = R.string.content_description_report,
+        contentDescription = R.string.content_report,
         route = "reportScreen",
         argument = ""
     ) {
@@ -53,7 +64,7 @@ sealed class NavItems(
         label = R.string.label_settings,
         selectedIcon = R.drawable.ic_filled_settings,
         unselectedIcon = R.drawable.ic_outlined_settings,
-        contentDescription = R.string.content_description_settings,
+        contentDescription = R.string.content_settings,
         route = "settingsScreen",
         argument = ""
     ) {
@@ -64,7 +75,7 @@ sealed class NavItems(
         label = R.string.label_person_add_edit,
         selectedIcon = R.drawable.ic_filled_settings,
         unselectedIcon = R.drawable.ic_outlined_settings,
-        contentDescription = R.string.content_description_person_add_edit,
+        contentDescription = R.string.content_person_add_edit,
         route = "personAddEditScreen",
         argument = "?personId={personId}"
     ) {
@@ -75,7 +86,7 @@ sealed class NavItems(
         label = R.string.label_trans,
         selectedIcon = R.drawable.ic_filled_settings,
         unselectedIcon = R.drawable.ic_outlined_settings,
-        contentDescription = R.string.content_description_trans,
+        contentDescription = R.string.content_trans,
         route = "transScreen",
         argument = "?transPersonId={transPersonId}"
     ) {
@@ -86,7 +97,7 @@ sealed class NavItems(
         label = R.string.label_trans_add_edit,
         selectedIcon = R.drawable.ic_filled_settings,
         unselectedIcon = R.drawable.ic_outlined_settings,
-        contentDescription = R.string.content_description_trans_add_edit,
+        contentDescription = R.string.content_trans_add_edit,
         route = "transAddEditScreen",
         argument = "?transId={transId}/transPersonId={transPersonId}"
     ) {
@@ -94,7 +105,7 @@ sealed class NavItems(
     }
 
     companion object {
-        val navBottomItems: List<NavItems> = listOf(Accounts, Report, Settings)
+        val navBottomItems: List<NavItems> = listOf(Accounts, Expense, Report, Settings)
 
         @Composable
         fun NavItems.Icons(selected: Boolean) {

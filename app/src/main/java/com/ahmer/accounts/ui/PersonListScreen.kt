@@ -148,7 +148,7 @@ fun PersonsListScreen(
                 enter = slideInVertically(initialOffsetY = { it * 2 }),
                 exit = slideOutVertically(targetOffsetY = { it * 2 }),
             ) {
-                FloatingActionButton(onClick = { personViewModel.onEvent(PersonEvent.OnNewAddClick) }) {
+                FloatingActionButton(onClick = { personViewModel.onEvent(PersonEvent.OnAddEditPerson) }) {
                     AddIcon()
                 }
             }
@@ -184,8 +184,8 @@ fun PersonsListScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues = innerPadding)
                     .nestedScroll(connection = mNestedScrollConnection),
+                contentPadding = innerPadding,
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

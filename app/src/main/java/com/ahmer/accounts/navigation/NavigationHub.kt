@@ -13,7 +13,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ahmer.accounts.database.model.TransSumModel
-import com.ahmer.accounts.ui.ExpensesScreen
+import com.ahmer.accounts.ui.ExpenseAddEditScreen
+import com.ahmer.accounts.ui.ExpenseListScreen
 import com.ahmer.accounts.ui.PersonAddEditScreen
 import com.ahmer.accounts.ui.PersonsListScreen
 import com.ahmer.accounts.ui.ReportScreen
@@ -36,7 +37,7 @@ fun MainNavigation(
             exitTransition = { fadeOut() },
         ) {
             PersonsListScreen(
-                onNavigation = { navController.navigate(it.route) },
+                onNavigation = { navController.navigate(route = it.route) },
                 personViewModel = hiltViewModel(),
                 settingsViewModel = hiltViewModel(),
                 transSumModel = transSumModel,
@@ -47,7 +48,25 @@ fun MainNavigation(
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() },
         ) {
-            ExpensesScreen(viewModel = hiltViewModel())
+            ExpenseListScreen(
+                onNavigation = { navController.navigate(route = it.route) },
+                viewModel = hiltViewModel(),
+            )
+        }
+        composable(
+            route = NavItems.ExpenseAddEdit.fullRoute,
+            arguments = listOf(navArgument(name = "expenseID") {
+                type = NavType.IntType
+                defaultValue = -1
+            }),
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+        ) {
+            ExpenseAddEditScreen(
+                viewModel = hiltViewModel(),
+                viewModelSettings = hiltViewModel(),
+                onPopBackStack = { navController.popBackStack() }
+            )
         }
         composable(
             route = NavItems.Report.fullRoute,
@@ -55,11 +74,12 @@ fun MainNavigation(
             exitTransition = { fadeOut() },
         ) {
             ReportScreen(
-                mainViewModel = hiltViewModel(), viewModel = hiltViewModel()
+                mainViewModel = hiltViewModel(),
+                viewModel = hiltViewModel()
             )
         }
         composable(
-            route = NavItems.Settings.route,
+            route = NavItems.Settings.fullRoute,
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() },
         ) {
@@ -74,8 +94,10 @@ fun MainNavigation(
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
         ) {
-            PersonAddEditScreen(viewModel = hiltViewModel(),
-                onPopBackStack = { navController.popBackStack() })
+            PersonAddEditScreen(
+                viewModel = hiltViewModel(),
+                onPopBackStack = { navController.popBackStack() }
+            )
         }
         composable(
             route = NavItems.Transactions.fullRoute,
@@ -89,7 +111,7 @@ fun MainNavigation(
             val personId: Int? = backStackEntry.arguments?.getInt("transPersonId")
             personId?.let { id ->
                 TransListScreen(
-                    onNavigation = { navController.navigate(it.route) },
+                    onNavigation = { navController.navigate(route = it.route) },
                     personId = id,
                     onPopBackStack = { navController.popBackStack() },
                     personViewModel = hiltViewModel(),
@@ -110,9 +132,11 @@ fun MainNavigation(
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None },
         ) {
-            TransAddEditScreen(viewModel = hiltViewModel(),
+            TransAddEditScreen(
+                viewModel = hiltViewModel(),
                 viewModelSettings = hiltViewModel(),
-                onPopBackStack = { navController.popBackStack() })
+                onPopBackStack = { navController.popBackStack() }
+            )
         }
     }
 }

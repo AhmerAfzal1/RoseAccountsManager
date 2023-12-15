@@ -28,7 +28,7 @@ import com.ahmer.accounts.R
 fun AddCircleIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_add_circle_outline),
-        contentDescription = stringResource(id = R.string.content_description_add),
+        contentDescription = stringResource(id = R.string.content_add),
         modifier = modifier,
         tint = tint
     )
@@ -38,7 +38,7 @@ fun AddCircleIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor
 fun AddIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Filled.Add,
-        contentDescription = stringResource(id = R.string.content_description_add),
+        contentDescription = stringResource(id = R.string.content_add),
         modifier = modifier,
         tint = tint
     )
@@ -48,7 +48,7 @@ fun AddIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curre
 fun AddressIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Outlined.LocationOn,
-        contentDescription = stringResource(id = R.string.content_description_address),
+        contentDescription = stringResource(id = R.string.content_address),
         modifier = modifier,
         tint = tint
     )
@@ -58,7 +58,7 @@ fun AddressIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.c
 fun BackIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Filled.KeyboardArrowLeft,
-        contentDescription = stringResource(id = R.string.content_description_back),
+        contentDescription = stringResource(id = R.string.content_back),
         modifier = modifier,
         tint = tint
     )
@@ -68,7 +68,7 @@ fun BackIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 fun BackupIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_filled_backup),
-        contentDescription = stringResource(id = R.string.content_description_backup),
+        contentDescription = stringResource(id = R.string.content_backup),
         modifier = modifier,
         tint = tint
     )
@@ -78,7 +78,7 @@ fun BackupIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 fun CheckIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Filled.Check,
-        contentDescription = stringResource(id = R.string.content_description_check),
+        contentDescription = stringResource(id = R.string.content_check),
         modifier = modifier,
         tint = tint
     )
@@ -88,7 +88,7 @@ fun CheckIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
 fun ClearCachesIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_clear_cached),
-        contentDescription = stringResource(id = R.string.content_description_clear_cached),
+        contentDescription = stringResource(id = R.string.content_clear_cached),
         modifier = modifier,
         tint = tint
     )
@@ -98,7 +98,7 @@ fun ClearCachesIcon(modifier: Modifier = Modifier, tint: Color = LocalContentCol
 fun CloseIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Filled.Close,
-        contentDescription = stringResource(id = R.string.content_description_close),
+        contentDescription = stringResource(id = R.string.content_close),
         modifier = modifier,
         tint = tint
     )
@@ -108,7 +108,7 @@ fun CloseIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
 fun CreditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_credit),
-        contentDescription = stringResource(id = R.string.content_description_credit),
+        contentDescription = stringResource(id = R.string.content_credit),
         modifier = modifier,
         tint = tint
     )
@@ -118,7 +118,7 @@ fun CreditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 fun CurrencyIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_dollar),
-        contentDescription = stringResource(id = R.string.content_description_dollar),
+        contentDescription = stringResource(id = R.string.content_dollar),
         modifier = modifier,
         tint = tint
     )
@@ -128,7 +128,7 @@ fun CurrencyIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.
 fun DateIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Filled.DateRange,
-        contentDescription = stringResource(id = R.string.content_description_date),
+        contentDescription = stringResource(id = R.string.content_date),
         modifier = modifier,
         tint = tint
     )
@@ -138,7 +138,7 @@ fun DateIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 fun DebitIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_debit),
-        contentDescription = stringResource(id = R.string.content_description_debit),
+        contentDescription = stringResource(id = R.string.content_debit),
         modifier = modifier,
         tint = tint
     )
@@ -148,7 +148,7 @@ fun DebitIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
 fun DeleteIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_delete_forever),
-        contentDescription = stringResource(id = R.string.content_description_delete),
+        contentDescription = stringResource(id = R.string.content_delete),
         modifier = modifier,
         tint = tint
     )
@@ -158,7 +158,7 @@ fun DeleteIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 fun EditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Outlined.Edit,
-        contentDescription = stringResource(id = R.string.content_description_edit),
+        contentDescription = stringResource(id = R.string.content_edit),
         modifier = modifier,
         tint = tint
     )
@@ -168,7 +168,7 @@ fun EditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 fun EmailIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Outlined.Email,
-        contentDescription = stringResource(id = R.string.content_description_email),
+        contentDescription = stringResource(id = R.string.content_email),
         modifier = modifier,
         tint = tint
     )
@@ -178,7 +178,7 @@ fun EmailIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
 fun FilterIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_filter),
-        contentDescription = stringResource(id = R.string.content_description_filter),
+        contentDescription = stringResource(id = R.string.content_filter),
         modifier = modifier,
         tint = tint
     )
@@ -188,7 +188,7 @@ fun FilterIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 fun InfoIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Outlined.Info,
-        contentDescription = stringResource(id = R.string.content_description_info),
+        contentDescription = stringResource(id = R.string.content_info),
         modifier = modifier,
         tint = tint
     )
@@ -198,7 +198,7 @@ fun InfoIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 fun MoreIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Filled.MoreVert,
-        contentDescription = stringResource(id = R.string.content_description_more),
+        contentDescription = stringResource(id = R.string.content_more),
         modifier = modifier,
         tint = tint
     )
@@ -208,7 +208,7 @@ fun MoreIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 fun NotesIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_notes),
-        contentDescription = stringResource(id = R.string.content_description_notes),
+        contentDescription = stringResource(id = R.string.content_notes),
         modifier = modifier,
         tint = tint
     )
@@ -218,7 +218,7 @@ fun NotesIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
 fun PdfIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_pdf),
-        contentDescription = stringResource(id = R.string.content_description_pdf),
+        contentDescription = stringResource(id = R.string.content_pdf),
         modifier = modifier,
         tint = tint
     )
@@ -228,7 +228,7 @@ fun PdfIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curre
 fun PersonIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Outlined.Person,
-        contentDescription = stringResource(id = R.string.content_description_person),
+        contentDescription = stringResource(id = R.string.content_person),
         modifier = modifier,
         tint = tint
     )
@@ -238,7 +238,7 @@ fun PersonIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 fun PhoneIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Outlined.Phone,
-        contentDescription = stringResource(id = R.string.content_description_phone),
+        contentDescription = stringResource(id = R.string.content_phone),
         modifier = modifier,
         tint = tint
     )
@@ -248,7 +248,7 @@ fun PhoneIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
 fun RestoreIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_filled_outlined_restore),
-        contentDescription = stringResource(id = R.string.content_description_restore_backup),
+        contentDescription = stringResource(id = R.string.content_restore_backup),
         modifier = modifier,
         tint = tint
     )
@@ -258,7 +258,7 @@ fun RestoreIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.c
 fun SaveIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_save),
-        contentDescription = stringResource(id = R.string.content_description_save),
+        contentDescription = stringResource(id = R.string.content_save),
         modifier = modifier,
         tint = tint
     )
@@ -268,7 +268,7 @@ fun SaveIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 fun SearchIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Filled.Search,
-        contentDescription = stringResource(id = R.string.content_description_search),
+        contentDescription = stringResource(id = R.string.content_search),
         modifier = modifier,
         tint = tint
     )
@@ -278,7 +278,7 @@ fun SearchIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 fun SelectAllIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_select_all),
-        contentDescription = stringResource(id = R.string.content_description_select_all),
+        contentDescription = stringResource(id = R.string.content_select_all),
         modifier = modifier,
         tint = tint
     )
@@ -288,7 +288,7 @@ fun SelectAllIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor
 fun SettingsIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.Filled.Settings,
-        contentDescription = stringResource(id = R.string.content_description_settings),
+        contentDescription = stringResource(id = R.string.content_settings),
         modifier = modifier,
         tint = tint
     )
@@ -298,7 +298,7 @@ fun SettingsIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.
 fun ThemeIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_dark_mode),
-        contentDescription = stringResource(id = R.string.content_description_theme),
+        contentDescription = stringResource(id = R.string.content_theme),
         modifier = modifier,
         tint = tint
     )
@@ -308,7 +308,7 @@ fun ThemeIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
 fun VersionIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_version),
-        contentDescription = stringResource(id = R.string.content_description_version),
+        contentDescription = stringResource(id = R.string.content_version),
         modifier = modifier,
         tint = tint
     )

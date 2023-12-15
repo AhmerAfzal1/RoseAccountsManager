@@ -15,6 +15,8 @@ object ConstantsChart {
 object Constants {
     const val ADS_WAIT_TIME: Long = 250L
     const val ANIMATE_ITEM_DURATION: Int = 500
+    const val BUTTON_SAVE: String = "SAVE"
+    const val BUTTON_UPDATE: String = "UPDATE"
     const val DATA_STORE_KEY_CURRENCY: String = "Currency"
     const val DATA_STORE_KEY_SORT_BY: String = "SortBy"
     const val DATA_STORE_KEY_SORT_ORDER: String = "SortOrder"
@@ -24,12 +26,18 @@ object Constants {
     const val DB_TABLE_EXPENSE: String = "Expenses"
     const val DB_TABLE_PERSON: String = "Persons"
     const val DB_TABLE_TRANSACTION: String = "Transactions"
+    const val LEN_ADDRESS: Int = 64
+    const val LEN_DESCRIPTION: Int = 64
+    const val LEN_EMAIL: Int = 32
+    const val LEN_NAME: Int = 24
+    const val LEN_NOTES: Int = 128
+    const val LEN_PHONE: Int = 15
     const val LOG_TAG: String = "RoseAccounts"
+    const val PATTERN_CHART: String = "dd/MM/yyyy"
     const val PATTERN_FILE_NAME: String = "ddMMyyHHmmss"
     const val PATTERN_GENERAL: String = "dd MMM yyyy hh:mm:ss a"
     const val PATTERN_PDF: String = "EEEE, dd MMMM yyyy - hh:mm:ss a"
     const val PATTERN_SHORT: String = "dd MMM yy"
-    const val PATTERN_CHART: String = "dd/MM/yyyy"
     const val PATTERN_TEXT_FIELD: String = "EEE, dd MMM yyyy  h:mm a"
     const val PATTERN_TRANSACTION_ITEM: String = "dd MMM yyyy, h:mm a"
     const val PLAY_STORE_LINK: String = "https://play.google.com/store/apps/details?id="
@@ -38,6 +46,8 @@ object Constants {
     const val TYPE_CREDIT_SUFFIX: String = "$TYPE_CREDIT (+)"
     const val TYPE_DEBIT: String = "Debit"
     const val TYPE_DEBIT_SUFFIX: String = "$TYPE_DEBIT (-)"
+    const val TYPE_EXPENSE: String = "Expense"
+    const val TYPE_INCOME: String = "Income"
     const val UNKNOWN_ERROR: String = "Unknown error"
     val ICON_SIZE: Dp = 36.dp
     val TOP_APP_BAR_HEIGHT: Dp = 64.dp

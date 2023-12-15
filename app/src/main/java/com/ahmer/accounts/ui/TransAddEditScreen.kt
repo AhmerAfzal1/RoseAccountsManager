@@ -80,7 +80,6 @@ fun TransAddEditScreen(
     val mFocusManager: FocusManager = LocalFocusManager.current
     val mFocusRequester: FocusRequester = remember { FocusRequester() }
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
-    val mLenDes = 64
     val mState: TransAddEditState by viewModel.uiState.collectAsStateWithLifecycle()
     val mSurfaceColor: Color =
         if (MaterialTheme.colorScheme.isLight()) Color.Black else Color.Yellow
@@ -146,133 +145,127 @@ fun TransAddEditScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(paddingValues = innerPadding),
-            verticalArrangement = Arrangement.Top
+                .padding(paddingValues = innerPadding)
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
+            val mOptions: List<String> = listOf(Constants.TYPE_CREDIT, Constants.TYPE_DEBIT)
+            MyTextField(value = HelperUtils.getDateTime(
+                time = mTransEntity.date, pattern = Constants.PATTERN_TEXT_FIELD
+            ),
+                onValueChange = {},
+                modifier = Modifier.onFocusChanged { mDatePickerDialog = it.isFocused },
+                readOnly = true,
+                label = { Text(stringResource(id = R.string.label_date)) },
+                leadingIcon = { DateIcon() },
+                trailingIcon = {},
+                supportingText = {})
+
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 8.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(top = 15.dp),
             ) {
-                val mOptions: List<String> = listOf(Constants.TYPE_CREDIT, Constants.TYPE_DEBIT)
-                MyTextField(value = HelperUtils.getDateTime(
-                    time = mTransEntity.date, pattern = Constants.PATTERN_TEXT_FIELD
-                ),
-                    onValueChange = {},
-                    modifier = Modifier.onFocusChanged { mDatePickerDialog = it.isFocused },
-                    readOnly = true,
-                    label = { Text(stringResource(id = R.string.label_date)) },
-                    leadingIcon = { DateIcon() },
-                    trailingIcon = {},
-                    supportingText = {})
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 15.dp),
-                ) {
-                    mOptions.forEach { text ->
-                        val mType = if (text == Constants.TYPE_CREDIT) {
-                            Constants.TYPE_CREDIT_SUFFIX
-                        } else Constants.TYPE_DEBIT_SUFFIX
-                        Box(contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 5.dp)
-                                .background(
-                                    color = if (text == mTransEntity.type) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else Color.LightGray
-                                )
-                                .clickable { viewModel.onEvent(TransAddEditEvent.OnTypeChange(text)) }) {
-                            Text(
-                                text = mType.uppercase(),
-                                modifier = Modifier.padding(vertical = 12.dp),
-                                color = Color.White,
-                                fontWeight = if (text == mTransEntity.type) FontWeight.Bold else FontWeight.Normal,
-                                style = MaterialTheme.typography.bodyMedium
+                mOptions.forEach { text ->
+                    val mType = if (text == Constants.TYPE_CREDIT) {
+                        Constants.TYPE_CREDIT_SUFFIX
+                    } else Constants.TYPE_DEBIT_SUFFIX
+                    Box(contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 5.dp)
+                            .background(
+                                color = if (text == mTransEntity.type) {
+                                    MaterialTheme.colorScheme.primary
+                                } else Color.LightGray
                             )
-                        }
+                            .clickable { viewModel.onEvent(TransAddEditEvent.OnTypeChange(text)) }) {
+                        Text(
+                            text = mType.uppercase(),
+                            modifier = Modifier.padding(vertical = 12.dp),
+                            color = Color.White,
+                            fontWeight = if (text == mTransEntity.type) FontWeight.Bold else FontWeight.Normal,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 }
+            }
 
-                MyTextField(
-                    value = mTransEntity.amount,
-                    onValueChange = {
-                        viewModel.onEvent(TransAddEditEvent.OnAmountChange(it))
+            MyTextField(
+                value = mTransEntity.amount,
+                onValueChange = {
+                    viewModel.onEvent(TransAddEditEvent.OnAmountChange(it))
+                },
+                modifier = Modifier
+                    .focusRequester(focusRequester = mFocusRequester)
+                    .onFocusChanged { focus ->
+                        if (focus.isFocused) {
+                            mKeyboardController?.show()
+                        }
                     },
-                    modifier = Modifier
-                        .focusRequester(focusRequester = mFocusRequester)
-                        .onFocusChanged { focus ->
-                            if (focus.isFocused) {
-                                mKeyboardController?.show()
+                label = { Text(stringResource(id = R.string.label_by_amount)) },
+                leadingIcon = { CurrencyIcon() },
+                trailingIcon = {
+                    if (mTransEntity.amount.isNotEmpty()) {
+                        CloseIcon(modifier = Modifier.clickable {
+                            if (mTransEntity.amount.isNotEmpty()) {
+                                viewModel.onEvent(TransAddEditEvent.OnAmountChange(amount = ""))
                             }
-                        },
-                    label = { Text(stringResource(id = R.string.label_by_amount)) },
-                    leadingIcon = { CurrencyIcon() },
-                    trailingIcon = {
-                        if (mTransEntity.amount.isNotEmpty()) {
-                            CloseIcon(modifier = Modifier.clickable {
-                                if (mTransEntity.amount.isNotEmpty()) {
-                                    viewModel.onEvent(TransAddEditEvent.OnAmountChange(amount = ""))
-                                }
-                            })
-                        }
-                    },
-                    prefix = { Text(text = mCurrency.symbol) },
-                    supportingText = { },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(onNext = {
-                        mFocusManager.moveFocus(FocusDirection.Down)
-                    })
-                )
+                        })
+                    }
+                },
+                prefix = { Text(text = mCurrency.symbol) },
+                supportingText = { },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(onNext = {
+                    mFocusManager.moveFocus(FocusDirection.Down)
+                })
+            )
 
-                MyTextField(
-                    value = mTransEntity.description,
-                    onValueChange = {
-                        if (it.length <= mLenDes) {
-                            viewModel.onEvent(TransAddEditEvent.OnDescriptionChange(it))
-                        }
-                    },
-                    label = { Text(stringResource(id = R.string.label_description)) },
-                    leadingIcon = { NotesIcon() },
-                    trailingIcon = {
-                        if (mTransEntity.description.isNotEmpty()) {
-                            CloseIcon(modifier = Modifier.clickable {
-                                if (mTransEntity.description.isNotEmpty()) {
-                                    viewModel.onEvent(
-                                        TransAddEditEvent.OnDescriptionChange(description = "")
-                                    )
-                                }
-                            })
-                        }
-                    },
-                    supportingText = {
-                        Text(
-                            text = "${mTransEntity.description.length} / $mLenDes",
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End,
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(onDone = { clear() }),
-                    maxLines = 3
-                )
+            MyTextField(
+                value = mTransEntity.description,
+                onValueChange = {
+                    if (it.length <= Constants.LEN_DESCRIPTION) {
+                        viewModel.onEvent(TransAddEditEvent.OnDescriptionChange(it))
+                    }
+                },
+                label = { Text(stringResource(id = R.string.label_description)) },
+                leadingIcon = { NotesIcon() },
+                trailingIcon = {
+                    if (mTransEntity.description.isNotEmpty()) {
+                        CloseIcon(modifier = Modifier.clickable {
+                            if (mTransEntity.description.isNotEmpty()) {
+                                viewModel.onEvent(
+                                    TransAddEditEvent.OnDescriptionChange(description = "")
+                                )
+                            }
+                        })
+                    }
+                },
+                supportingText = {
+                    Text(
+                        text = "${mTransEntity.description.length} / ${Constants.LEN_DESCRIPTION}",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.End,
+                    )
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = { clear() }),
+                maxLines = 3
+            )
 
-                OutlinedButton(
-                    onClick = {
-                        clear()
-                        viewModel.onEvent(TransAddEditEvent.OnSaveClick)
-                    }, enabled = mTransEntity.amount.isNotEmpty()
-                ) {
-                    Text(text = if (!isEditMode) "Save".uppercase() else "Update".uppercase())
-                }
+            OutlinedButton(
+                onClick = {
+                    clear()
+                    viewModel.onEvent(TransAddEditEvent.OnSaveClick)
+                }, enabled = mTransEntity.amount.isNotEmpty()
+            ) {
+                Text(text = if (!isEditMode) Constants.BUTTON_SAVE else Constants.BUTTON_UPDATE)
             }
         }
     }

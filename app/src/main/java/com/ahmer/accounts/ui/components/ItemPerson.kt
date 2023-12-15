@@ -48,7 +48,7 @@ fun ItemPerson(
         modifier = modifier
             .fillMaxWidth()
             .padding(start = 8.dp, top = 6.dp, bottom = 6.dp)
-            .clickable { onEvent(PersonEvent.OnAddTransactionClick(mPersonsEntity)) },
+            .clickable { onEvent(PersonEvent.OnAddEditTransaction(mPersonsEntity)) },
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -74,6 +74,7 @@ fun MainFunction(viewModel: MainViewModel) {
 
     Scaffold(modifier = Modifier.navigationBarsPadding(), bottomBar = {
         mBottomBarState = mCurrentRoute != NavItems.PersonAddEdit.fullRoute
+                && mCurrentRoute != NavItems.ExpenseAddEdit.fullRoute
                 && mCurrentRoute != NavItems.Transactions.fullRoute
                 && mCurrentRoute != NavItems.TransactionsAddEdit.fullRoute
         BottomNav(

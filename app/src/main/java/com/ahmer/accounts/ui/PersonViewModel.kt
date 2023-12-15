@@ -68,7 +68,7 @@ class PersonViewModel @Inject constructor(
 
     fun onEvent(event: PersonEvent) {
         when (event) {
-            is PersonEvent.OnAddTransactionClick -> {
+            is PersonEvent.OnAddEditTransaction -> {
                 viewModelScope.launch {
                     _eventFlow.emit(
                         value = UiEvent.Navigate(
@@ -78,10 +78,10 @@ class PersonViewModel @Inject constructor(
                 }
             }
 
-            is PersonEvent.OnDeleteClick -> {
+            is PersonEvent.OnDelete -> {
                 viewModelScope.launch {
                     mDeletedPerson = event.personsEntity
-                    personRepository.delete(event.personsEntity)
+                    personRepository.delete(personsEntity = event.personsEntity)
                     _eventFlow.emit(
                         value = UiEvent.ShowSnackBar(
                             message = "${event.personsEntity.name} deleted", action = "Undo"
@@ -96,19 +96,19 @@ class PersonViewModel @Inject constructor(
                 }
             }
 
-            is PersonEvent.OnSettingsClick -> {
+            is PersonEvent.OnSettings -> {
                 viewModelScope.launch {
                     _eventFlow.emit(value = UiEvent.Navigate(route = NavItems.Settings.route))
                 }
             }
 
-            PersonEvent.OnNewAddClick -> {
+            PersonEvent.OnAddEditPerson -> {
                 viewModelScope.launch {
                     _eventFlow.emit(value = UiEvent.Navigate(NavItems.PersonAddEdit.route))
                 }
             }
 
-            PersonEvent.OnUndoDeleteClick -> {
+            PersonEvent.OnUndoDeletePerson -> {
                 mDeletedPerson?.let { person ->
                     viewModelScope.launch {
                         personRepository.insertOrUpdate(personsEntity = person)
@@ -120,7 +120,7 @@ class PersonViewModel @Inject constructor(
 
     fun deletePerson(person: PersonsEntity) {
         viewModelScope.launch {
-            onEvent(PersonEvent.OnDeleteClick(personsEntity = person))
+            onEvent(PersonEvent.OnDelete(personsEntity = person))
         }
     }
 

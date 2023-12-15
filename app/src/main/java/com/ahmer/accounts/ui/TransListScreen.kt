@@ -333,7 +333,8 @@ fun TransListScreen(
             ) {
                 items(
                     items = mState.allTransactions,
-                    key = { listTrans -> listTrans.id }) { transaction ->
+                    key = { listTrans -> listTrans.id }
+                ) { transaction ->
                     val isSelected = mSelectedItems.contains(transaction)
                     ItemTrans(
                         transEntity = transaction,

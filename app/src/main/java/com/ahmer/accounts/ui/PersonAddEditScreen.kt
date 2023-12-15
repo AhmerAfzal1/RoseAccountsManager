@@ -142,12 +142,6 @@ fun PersonAddEditMain(
     var isMoreData: Boolean by remember { mutableStateOf(value = false) }
     val mState by viewModel.uiState.collectAsState()
 
-    val mLenAddress = 64
-    val mLenEmail = 32
-    val mLenName = 24
-    val mLenNotes = 128
-    val mLenPhone = 15
-
     fun clear() {
         focusManager.clearFocus()
         keyboardController?.hide()
@@ -163,7 +157,7 @@ fun PersonAddEditMain(
             MyTextField(
                 value = personsEntity.name,
                 onValueChange = {
-                    if (it.length <= mLenName) {
+                    if (it.length <= Constants.LEN_NAME) {
                         viewModel.onEvent(PersonAddEditEvent.OnNameChange(it))
                     }
                 },
@@ -187,7 +181,7 @@ fun PersonAddEditMain(
                 },
                 supportingText = {
                     Text(
-                        text = "${personsEntity.name.length} / $mLenName",
+                        text = "${personsEntity.name.length} / ${Constants.LEN_NAME}",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.End,
                     )
@@ -204,7 +198,7 @@ fun PersonAddEditMain(
             MyTextField(
                 value = personsEntity.phone,
                 onValueChange = {
-                    if (it.length <= mLenPhone) {
+                    if (it.length <= Constants.LEN_PHONE) {
                         viewModel.onEvent(PersonAddEditEvent.OnPhoneChange(it))
                     }
                 },
@@ -221,7 +215,7 @@ fun PersonAddEditMain(
                 },
                 supportingText = {
                     Text(
-                        text = "${personsEntity.phone.length} / $mLenPhone",
+                        text = "${personsEntity.phone.length} / ${Constants.LEN_PHONE}",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.End,
                     )
@@ -246,7 +240,7 @@ fun PersonAddEditMain(
                 MyTextField(
                     value = personsEntity.email,
                     onValueChange = {
-                        if (it.length <= mLenEmail) {
+                        if (it.length <= Constants.LEN_EMAIL) {
                             viewModel.onEvent(PersonAddEditEvent.OnEmailChange(it))
                         }
                     },
@@ -263,7 +257,7 @@ fun PersonAddEditMain(
                     },
                     supportingText = {
                         Text(
-                            text = "${personsEntity.email.length} / $mLenEmail",
+                            text = "${personsEntity.email.length} / ${Constants.LEN_EMAIL}",
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.End,
                         )
@@ -281,7 +275,7 @@ fun PersonAddEditMain(
                 MyTextField(
                     value = personsEntity.address,
                     onValueChange = {
-                        if (it.length <= mLenAddress) {
+                        if (it.length <= Constants.LEN_ADDRESS) {
                             viewModel.onEvent(PersonAddEditEvent.OnAddressChange(it))
                         }
                     },
@@ -300,7 +294,7 @@ fun PersonAddEditMain(
                     },
                     supportingText = {
                         Text(
-                            text = "${personsEntity.address.length} / $mLenAddress",
+                            text = "${personsEntity.address.length} / ${Constants.LEN_ADDRESS}",
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.End,
                         )
@@ -317,7 +311,7 @@ fun PersonAddEditMain(
                 MyTextField(
                     value = personsEntity.notes,
                     onValueChange = {
-                        if (it.length <= mLenNotes) {
+                        if (it.length <= Constants.LEN_NOTES) {
                             viewModel.onEvent(PersonAddEditEvent.OnNotesChange(it))
                         }
                     },
@@ -334,7 +328,7 @@ fun PersonAddEditMain(
                     },
                     supportingText = {
                         Text(
-                            text = "${personsEntity.notes.length} / $mLenNotes",
+                            text = "${personsEntity.notes.length} / ${Constants.LEN_NOTES}",
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.End,
                         )

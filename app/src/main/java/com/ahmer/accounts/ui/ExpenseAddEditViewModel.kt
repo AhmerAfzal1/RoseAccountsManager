@@ -39,7 +39,7 @@ class ExpenseAddEditViewModel @Inject constructor(
     val uiState: StateFlow<ExpenseAddEditState> = _uiState.asStateFlow()
 
     private var mExpenseId: Int? = 0
-    var titleBar by mutableStateOf(value = "Add New Expense")
+    var isEditMode: Boolean by mutableStateOf(value = false)
 
     private var currentExpense: ExpenseEntity?
         get() {
@@ -73,7 +73,7 @@ class ExpenseAddEditViewModel @Inject constructor(
                 currentExpense = currentExpense?.copy(type = event.type)
             }
 
-            ExpenseAddEditEvent.OnSaveClick -> saveData()
+            ExpenseAddEditEvent.OnSave -> saveData()
         }
     }
 
@@ -110,6 +110,8 @@ class ExpenseAddEditViewModel @Inject constructor(
                         description = currentExpense!!.description.trim(),
                     )
                 }
+                expenseRepository.insertOrUpdate(expenseEntity = mExpense!!)
+                _eventFlow.emit(value = UiEvent.PopBackStack)
             } catch (e: Exception) {
                 val mError = "The expense could not be added due to an unknown error"
                 _eventFlow.emit(value = UiEvent.ShowToast(message = e.localizedMessage ?: mError))
@@ -118,11 +120,12 @@ class ExpenseAddEditViewModel @Inject constructor(
     }
 
     init {
+        isEditMode = false
         savedStateHandle.get<Int>(key = "expenseID")?.let { expenseId ->
             Log.v(Constants.LOG_TAG, "Get expense id: $expenseId")
             mExpenseId = expenseId
             if (mExpenseId != -1) {
-                titleBar = "Edit Expense"
+                isEditMode = true
                 expenseRepository.expenseById(expenseId = expenseId).onEach { expenseEntity ->
                     _uiState.update { addEditState ->
                         currentExpense = expenseEntity

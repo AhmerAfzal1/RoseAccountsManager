@@ -1,102 +1,191 @@
 package com.ahmer.accounts.database.model
 
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import com.ahmer.accounts.R
 
 data class CategoryModel(
-    @StringRes
-    val category: Int,
+    var title: String,
     @DrawableRes
     val icon: Int
 ) {
     companion object {
-
         val advertising: CategoryModel = CategoryModel(
-            category = R.string.category_advertising,
+            title = "Advertising",
             icon = R.drawable.ic_exp_advertising,
         )
-
         val anniversary: CategoryModel = CategoryModel(
-            category = R.string.category_anniversary,
+            title = "Anniversary",
             icon = R.drawable.ic_exp_anniversary,
         )
-
         val birthday: CategoryModel = CategoryModel(
-            category = R.string.category_birthday,
+            title = "Birthday",
             icon = R.drawable.ic_exp_birthday,
         )
-
-        val charity: CategoryModel =
-            CategoryModel(category = R.string.category_charity, icon = R.drawable.ic_exp_charity)
+        val charity: CategoryModel = CategoryModel(
+            title = "Charity",
+            icon = R.drawable.ic_exp_charity,
+        )
         val christmas: CategoryModel = CategoryModel(
-            category = R.string.category_christmas,
+            title = "Christmas",
             icon = R.drawable.ic_exp_christmas,
         )
-        val cloths: CategoryModel =
-            CategoryModel(category = R.string.category_cloths, icon = R.drawable.ic_exp_cloths)
-        val concert: CategoryModel =
-            CategoryModel(category = R.string.category_concert, icon = R.drawable.ic_exp_concert)
+        val cloths: CategoryModel = CategoryModel(
+            title = "Cloths",
+            icon = R.drawable.ic_exp_cloths,
+        )
+        val concert: CategoryModel = CategoryModel(
+            title = "Concert",
+            icon = R.drawable.ic_exp_concert,
+        )
         val education: CategoryModel = CategoryModel(
-            category = R.string.category_education,
+            title = "Education",
             icon = R.drawable.ic_exp_education,
         )
         val electricity: CategoryModel = CategoryModel(
-            category = R.string.category_electricity,
+            title = "Electricity",
             icon = R.drawable.ic_exp_electricity,
         )
         val entertainment: CategoryModel = CategoryModel(
-            category = R.string.category_entertainment,
+            title = "Entertainment",
             icon = R.drawable.ic_exp_entertainment,
         )
-        val fees: CategoryModel =
-            CategoryModel(category = R.string.category_fees, icon = R.drawable.ic_exp_fees)
-        val food: CategoryModel =
-            CategoryModel(category = R.string.category_food, icon = R.drawable.ic_exp_food)
+        val fees: CategoryModel = CategoryModel(
+            title = "Fees",
+            icon = R.drawable.ic_exp_fees,
+        )
+        val food: CategoryModel = CategoryModel(
+            title = "Food",
+            icon = R.drawable.ic_exp_food,
+        )
         val furniture: CategoryModel = CategoryModel(
-            category = R.string.category_furniture,
+            title = "Furniture",
             icon = R.drawable.ic_exp_furniture,
         )
-        val game: CategoryModel =
-            CategoryModel(category = R.string.category_game, icon = R.drawable.ic_exp_game)
-        val garbage: CategoryModel =
-            CategoryModel(category = R.string.category_garbage, icon = R.drawable.ic_exp_garbage)
-        val grocery: CategoryModel =
-            CategoryModel(category = R.string.category_grocery, icon = R.drawable.ic_exp_grocery)
+        val game: CategoryModel = CategoryModel(
+            title = "Game",
+            icon = R.drawable.ic_exp_game,
+        )
+        val garbage: CategoryModel = CategoryModel(
+            title = "Garbage",
+            icon = R.drawable.ic_exp_garbage,
+        )
+        val grocery: CategoryModel = CategoryModel(
+            title = "Grocery",
+            icon = R.drawable.ic_exp_grocery,
+        )
         val healthcare: CategoryModel = CategoryModel(
-            category = R.string.category_healthcare,
+            title = "Healthcare",
             icon = R.drawable.ic_exp_healthcare,
         )
-        val housing: CategoryModel =
-            CategoryModel(category = R.string.category_housing, icon = R.drawable.ic_exp_housing)
+        val housing: CategoryModel = CategoryModel(
+            title = "Housing",
+            icon = R.drawable.ic_exp_housing,
+        )
         val insurance: CategoryModel = CategoryModel(
-            category = R.string.category_insurance,
+            title = "Insurance",
             icon = R.drawable.ic_exp_insurance,
         )
-        val internet: CategoryModel =
-            CategoryModel(category = R.string.category_internet, icon = R.drawable.ic_exp_internet)
+        val internet: CategoryModel = CategoryModel(
+            title = "Internet",
+            icon = R.drawable.ic_exp_internet,
+        )
         val investing: CategoryModel = CategoryModel(
-            category = R.string.category_investing,
+            title = "Investing",
             icon = R.drawable.ic_exp_investing,
         )
-        val loan: CategoryModel =
-            CategoryModel(category = R.string.category_loan, icon = R.drawable.ic_exp_loan)
+        val loan: CategoryModel = CategoryModel(
+            title = "Loan",
+            icon = R.drawable.ic_exp_loan,
+        )
         val maintenance: CategoryModel = CategoryModel(
-            category = R.string.category_maintenance,
+            title = "Maintenance",
             icon = R.drawable.ic_exp_maintenance,
         )
         val marketing: CategoryModel = CategoryModel(
-            category = R.string.category_marketing,
+            title = "Marketing",
             icon = R.drawable.ic_exp_marketing,
         )
-        val marketing: CategoryModel = CategoryModel(
-            category = R.string.category_marketing,
-            icon = R.drawable.ic_exp_marketing,
+        val movies: CategoryModel = CategoryModel(
+            title = "Movies",
+            icon = R.drawable.ic_exp_movies,
         )
-
+        val office: CategoryModel = CategoryModel(
+            title = "Office",
+            icon = R.drawable.ic_exp_office,
+        )
         val others: CategoryModel = CategoryModel(
-            category = R.string.category_other,
+            title = "Other",
             icon = R.drawable.ic_exp_other,
         )
+        val phones: CategoryModel = CategoryModel(
+            title = "Phone",
+            icon = R.drawable.ic_exp_phone,
+        )
+        val rent: CategoryModel = CategoryModel(
+            title = "Rent",
+            icon = R.drawable.ic_exp_rent,
+        )
+        val restaurant: CategoryModel = CategoryModel(
+            title = "Restaurant",
+            icon = R.drawable.ic_exp_restaurant,
+        )
+        val salary: CategoryModel = CategoryModel(
+            title = "Salary",
+            icon = R.drawable.ic_exp_salary,
+        )
+        val saving: CategoryModel = CategoryModel(
+            title = "Saving",
+            icon = R.drawable.ic_exp_saving,
+        )
+        val shoes: CategoryModel = CategoryModel(
+            title = "Shoes",
+            icon = R.drawable.ic_exp_shoes,
+        )
+        val shopping: CategoryModel = CategoryModel(
+            title = "Shopping",
+            icon = R.drawable.ic_exp_shopping,
+        )
+        val subscriptions: CategoryModel = CategoryModel(
+            title = "Subscriptions",
+            icon = R.drawable.ic_exp_subscriptions,
+        )
+        val tax: CategoryModel = CategoryModel(
+            title = "Tax",
+            icon = R.drawable.ic_exp_tax,
+        )
+        val transportation: CategoryModel = CategoryModel(
+            title = "Transportation",
+            icon = R.drawable.ic_exp_transportation,
+        )
+        val travel: CategoryModel = CategoryModel(
+            title = "Travel",
+            icon = R.drawable.ic_exp_travel,
+        )
+        val utilities: CategoryModel = CategoryModel(
+            title = "Utilities",
+            icon = R.drawable.ic_exp_utilities,
+        )
+        val water: CategoryModel = CategoryModel(
+            title = "Water",
+            icon = R.drawable.ic_exp_water,
+        )
+        val wedding: CategoryModel = CategoryModel(
+            title = "Wedding",
+            icon = R.drawable.ic_exp_wedding,
+        )
+
+        val listCategories: List<CategoryModel> by lazy {
+            listOf(
+                advertising, anniversary, birthday, charity, christmas, cloths, concert, education,
+                electricity, entertainment, fees, food, furniture, game, garbage, grocery,
+                healthcare, housing, insurance, internet, investing, loan, maintenance, marketing,
+                movies, office, others, phones, rent, restaurant, salary, saving, shoes, shopping,
+                subscriptions, tax, transportation, travel, utilities, water, wedding,
+            )
+        }
+
+        fun getIconByTitle(title: String): Int {
+            return listCategories.find { it.title == title }?.icon ?: others.icon
+        }
     }
 }
