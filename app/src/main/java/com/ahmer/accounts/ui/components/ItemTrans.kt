@@ -97,14 +97,15 @@ fun ItemTrans(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (transEntity.type == "Debit") {
+            if (transEntity.type == Constants.TYPE_DEBIT) {
                 AmountWithSymbolText(
                     modifier = Modifier.weight(weight = 0.25f),
                     context = mContext,
                     currency = currency,
                     amount = transEntity.amount.toDouble(),
-                    color = colorRedDark,
                     isBold = false,
+                    isExpense = false,
+                    type = transEntity.type,
                 )
                 Text(text = "", modifier = Modifier.weight(weight = 0.25f))
             } else {
@@ -114,8 +115,9 @@ fun ItemTrans(
                     context = mContext,
                     currency = currency,
                     amount = transEntity.amount.toDouble(),
-                    color = colorGreenDark,
                     isBold = false,
+                    isExpense = false,
+                    type = transEntity.type,
                 )
             }
         }

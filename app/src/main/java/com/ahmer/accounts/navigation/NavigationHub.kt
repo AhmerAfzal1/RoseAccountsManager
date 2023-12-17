@@ -51,6 +51,7 @@ fun MainNavigation(
             ExpenseListScreen(
                 onNavigation = { navController.navigate(route = it.route) },
                 viewModel = hiltViewModel(),
+                viewModelSettings = hiltViewModel(),
             )
         }
         composable(

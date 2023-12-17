@@ -79,13 +79,13 @@ fun ExpenseAddEditScreen(
     onPopBackStack: () -> Unit
 ) {
     val mContext: Context = LocalContext.current
+    val mCurrency: Currency by viewModelSettings.currentCurrency.collectAsStateWithLifecycle()
     val mFocusManager: FocusManager = LocalFocusManager.current
     val mFocusRequester: FocusRequester = remember { FocusRequester() }
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
     val mSurfaceColor: Color =
         if (MaterialTheme.colorScheme.isLight()) Color.Black else Color.Yellow
     val mSurfaceElevation: Dp = 4.dp
-    val mCurrency: Currency by viewModelSettings.currentCurrency.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->

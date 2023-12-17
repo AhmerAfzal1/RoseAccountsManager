@@ -37,6 +37,7 @@ import com.ahmer.accounts.state.ExpenseState
 import com.ahmer.accounts.ui.components.ItemExpense
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.Constants
+import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.HelperUtils
 import kotlinx.coroutines.flow.collectLatest
 
@@ -45,8 +46,10 @@ import kotlinx.coroutines.flow.collectLatest
 fun ExpenseListScreen(
     onNavigation: (UiEvent.Navigate) -> Unit,
     viewModel: ExpenseViewModel,
+    viewModelSettings: SettingsViewModel,
 ) {
     val mContext: Context = LocalContext.current
+    val mCurrency: Currency by viewModelSettings.currentCurrency.collectAsStateWithLifecycle()
     val mState: ExpenseState by viewModel.uiState.collectAsStateWithLifecycle()
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     var isVisibleFab: Boolean by rememberSaveable { mutableStateOf(value = true) }
@@ -113,6 +116,7 @@ fun ExpenseListScreen(
             ) { expenseEntity ->
                 ItemExpense(
                     expenseEntity = expenseEntity,
+                    currency = mCurrency,
                     onEvent = viewModel::onEvent,
                     modifier = Modifier.animateItemPlacement(
                         animationSpec = tween(durationMillis = Constants.ANIMATE_ITEM_DURATION)

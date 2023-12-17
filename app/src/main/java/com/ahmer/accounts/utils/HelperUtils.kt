@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.content.ContextCompat
 import com.ahmer.accounts.R
+import com.ahmer.accounts.ui.theme.colorGreenDark
+import com.ahmer.accounts.ui.theme.colorRedDark
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.io.File
 import java.math.BigDecimal
@@ -66,33 +68,38 @@ object HelperUtils {
         context: Context,
         currency: Currency,
         amount: Double,
-        color: Color,
-        isBold: Boolean = true
+        color: Color? = null,
+        isBold: Boolean = true,
+        isExpense: Boolean = false,
+        type: String? = null,
     ) {
         Row(
             modifier = modifier, verticalAlignment = Alignment.CenterVertically
         ) {
-            val textLength: Int =
-                currency.symbol.length + roundValue(
-                    context = context, value = amount
-                ).length - 1
-            /*Log.v(
-                Constants.LOG_TAG, "TextLen: Currency -> ${currency.symbol.length}, " +
-                        "Amount -> $amount: ${getRoundedValue(value = amount).length}, " +
-                        "TotalLen -> $textLength"
-            )*/
+            val mTextLength: Int =
+                currency.symbol.length + roundValue(context = context, value = amount).length - 1
+            val mValue: String = roundValue(context = context, value = amount)
+            val mAmount: String = if (isExpense) {
+                if (type == Constants.TYPE_INCOME) "+$mValue" else "-$mValue"
+            } else mValue
+
+            val mColor: Color = color
+                ?: if (type == Constants.TYPE_EXPENSE || type == Constants.TYPE_DEBIT) {
+                    colorRedDark
+                } else colorGreenDark
+
             AdjustableText(
                 text = "${currency.symbol} ",
                 modifier = modifierSymbol,
-                color = color,
-                length = textLength,
+                color = mColor,
+                length = mTextLength,
                 isBold = isBold,
             )
             AdjustableText(
-                text = roundValue(context = context, value = amount),
+                text = mAmount,
                 modifier = modifierAmount,
-                color = color,
-                length = textLength,
+                color = mColor,
+                length = mTextLength,
                 isBold = isBold,
             )
         }
@@ -134,12 +141,8 @@ object HelperUtils {
         ""
     } else {
         val mPattern = pattern.ifEmpty { Constants.PATTERN_GENERAL }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern(mPattern))
-        } else {
-            SimpleDateFormat(mPattern, Locale.getDefault()).format(Date(time))
-        }
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
+            .format(DateTimeFormatter.ofPattern(mPattern))
     }
 
     fun dirSize(directory: File): Long {
