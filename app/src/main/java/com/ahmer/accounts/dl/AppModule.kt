@@ -9,9 +9,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ahmer.accounts.database.AppDatabase
 import com.ahmer.accounts.database.dao.AdminDao
+import com.ahmer.accounts.database.dao.CategoryDao
 import com.ahmer.accounts.database.dao.ExpenseDao
 import com.ahmer.accounts.database.dao.PersonDao
 import com.ahmer.accounts.database.dao.TransDao
+import com.ahmer.accounts.database.repository.CategoryRepository
+import com.ahmer.accounts.database.repository.CategoryRepositoryImp
 import com.ahmer.accounts.database.repository.ExpenseRepository
 import com.ahmer.accounts.database.repository.ExpenseRepositoryImp
 import com.ahmer.accounts.database.repository.PersonRepository
@@ -57,6 +60,10 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun providesCategoryDao(database: AppDatabase): CategoryDao = database.categoryDao()
+
+    @Provides
+    @Singleton
     fun providesExpenseDao(database: AppDatabase): ExpenseDao = database.expenseDao()
 
     @Provides
@@ -66,6 +73,11 @@ object AppModule {
     @Provides
     @Singleton
     fun providesTransDao(database: AppDatabase): TransDao = database.transDao()
+
+    @Provides
+    @Singleton
+    fun providesCategoryRepository(categoryDao: CategoryDao): CategoryRepository =
+        CategoryRepositoryImp(categoryDao = categoryDao)
 
     @Provides
     @Singleton
