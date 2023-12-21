@@ -52,7 +52,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.6"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
 
     packaging {
@@ -98,8 +98,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.6")
 
     //Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.49")
-    ksp("com.google.dagger:hilt-compiler:2.49")
+    implementation("com.google.dagger:hilt-android:2.50")
+    ksp("com.google.dagger:hilt-compiler:2.50")
 
     //Room Database
     implementation("androidx.room:room-ktx:2.6.1")
