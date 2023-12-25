@@ -25,8 +25,6 @@ import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.entity.TransEntity
 import com.ahmer.accounts.ui.isLight
-import com.ahmer.accounts.ui.theme.colorGreenDark
-import com.ahmer.accounts.ui.theme.colorRedDark
 import com.ahmer.accounts.ui.theme.colorSelectionDark
 import com.ahmer.accounts.ui.theme.colorSelectionLight
 import com.ahmer.accounts.utils.Constants
