@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
 import com.ahmer.accounts.state.MainState
-import com.ahmer.accounts.ui.TabItem.Companion.Icons
+import com.ahmer.accounts.ui.TabItemChart.Companion.Icons
 import com.ahmer.accounts.ui.components.BalanceChartScreen
 import com.ahmer.accounts.ui.components.TransactionsChartScreen
 import com.ahmer.accounts.utils.Constants
@@ -117,6 +117,45 @@ fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
     }
 }
 
+private object TabsScreenChart {
+    const val CHART_TRANSACTIONS = 0
+    const val CHART_BALANCE = 1
+    //const val CHART_ACCOUNTS = 2 //Later to implement, how many new accounts added daily, weekly and monthly
+}
+
+sealed class TabItemChart(
+    @StringRes val title: Int,
+    @DrawableRes val selectedIcon: Int,
+    @DrawableRes val unselectedIcon: Int,
+    @StringRes val contentDescription: Int,
+) {
+    data object Transactions : TabItemChart(
+        title = R.string.label_trans,
+        selectedIcon = R.drawable.ic_bar_chart,
+        unselectedIcon = R.drawable.ic_bar_chart,
+        contentDescription = R.string.content_bar,
+    )
+
+    data object Balance : TabItemChart(
+        title = R.string.label_balance,
+        selectedIcon = R.drawable.ic_filled_pie_chart,
+        unselectedIcon = R.drawable.ic_outlined_pie_chart,
+        contentDescription = R.string.content_pie,
+    )
+
+    companion object {
+        val tabItemCharts: List<TabItemChart> by lazy { listOf(Transactions, Balance) }
+
+        @Composable
+        fun TabItemChart.Icons(selected: Boolean) {
+            Icon(
+                painter = painterResource(id = if (selected) selectedIcon else unselectedIcon),
+                contentDescription = stringResource(id = contentDescription),
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Tabs(
@@ -126,7 +165,7 @@ private fun Tabs(
     onChangeActiveFilter: (String) -> Unit,
 ) {
     val mContext: Context = LocalContext.current
-    val mList: List<TabItem> = TabItem.tabItems
+    val mList: List<TabItemChart> = TabItemChart.tabItemCharts
     val mPagerState: PagerState = rememberPagerState(pageCount = { mList.size })
     var mSelectedTab: Int by rememberSaveable { mutableIntStateOf(value = 0) }
 
@@ -182,58 +221,18 @@ private fun Tabs(
             key = { mList[it].title },
         ) { page ->
             when (page) {
-                TabsScreen.CHART_TRANSACTIONS -> {
-                    TransactionsChartScreen(
-                        barChartList = barChartList, activeFilter = activeFilter,
-                        onChangeActiveFilter = onChangeActiveFilter
-                    )
-                }
+                TabsScreenChart.CHART_TRANSACTIONS -> TransactionsChartScreen(
+                    barChartList = barChartList, activeFilter = activeFilter,
+                    onChangeActiveFilter = onChangeActiveFilter
+                )
 
-                TabsScreen.CHART_BALANCE -> BalanceChartScreen(mainState = mainState)
+
+                TabsScreenChart.CHART_BALANCE -> BalanceChartScreen(mainState = mainState)
                 else -> HelperUtils.showToast(
                     context = mContext,
                     msg = stringResource(id = R.string.toast_tab_requested, page)
                 )
             }
-        }
-    }
-}
-
-private object TabsScreen {
-    const val CHART_TRANSACTIONS = 0
-    const val CHART_BALANCE = 1
-    //const val CHART_ACCOUNTS = 2 //Later to implement, how many new accounts added daily, weekly and monthly
-}
-
-sealed class TabItem(
-    @StringRes val title: Int,
-    @DrawableRes val selectedIcon: Int,
-    @DrawableRes val unselectedIcon: Int,
-    @StringRes val contentDescription: Int,
-) {
-    data object Transactions : TabItem(
-        title = R.string.label_trans,
-        selectedIcon = R.drawable.ic_bar_chart,
-        unselectedIcon = R.drawable.ic_bar_chart,
-        contentDescription = R.string.content_bar,
-    )
-
-    data object Balance : TabItem(
-        title = R.string.label_balance,
-        selectedIcon = R.drawable.ic_filled_pie_chart,
-        unselectedIcon = R.drawable.ic_outlined_pie_chart,
-        contentDescription = R.string.content_pie,
-    )
-
-    companion object {
-        val tabItems: List<TabItem> by lazy { listOf(Transactions, Balance) }
-
-        @Composable
-        fun TabItem.Icons(selected: Boolean) {
-            Icon(
-                painter = painterResource(id = if (selected) selectedIcon else unselectedIcon),
-                contentDescription = stringResource(id = contentDescription),
-            )
         }
     }
 }
