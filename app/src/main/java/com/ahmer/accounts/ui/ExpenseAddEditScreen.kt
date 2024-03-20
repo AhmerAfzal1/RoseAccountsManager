@@ -1,32 +1,49 @@
 package com.ahmer.accounts.ui
 
 import android.content.Context
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -45,12 +62,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -61,6 +80,7 @@ import com.ahmer.accounts.dialogs.DateTimePickerDialog
 import com.ahmer.accounts.event.ExpenseAddEditEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.utils.BackIcon
+import com.ahmer.accounts.utils.CheckIcon
 import com.ahmer.accounts.utils.CloseIcon
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.Currency
@@ -221,7 +241,7 @@ private fun ExpenseAddEditMain(
                 }
             }
 
-            DropDownTextField(items = CategoryModel.listCategories, onEvent = viewModel::onEvent)
+            //DropDownTextField(items = CategoryModel.listCategories, onEvent = viewModel::onEvent)
 
             MyTextField(
                 value = expenseEntity.amount,
@@ -302,38 +322,126 @@ private fun ExpenseAddEditMain(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+private object TabsScreenCategory {
+    const val EXPENSE = 0
+    const val INCOME = 1
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun DropDownTextField(items: List<CategoryModel>, onEvent: (ExpenseAddEditEvent) -> Unit) {
-    var isExpanded: Boolean by remember { mutableStateOf(value = false) }
-    var mSelectedItem: String by remember { mutableStateOf(value = CategoryModel.others.title) }
+fun CategoryBottomSheet(
+    onEvent: (ExpenseAddEditEvent) -> Unit
+) {
+    val mContext: Context = LocalContext.current
+    val mExpenseItems: List<CategoryModel> = CategoryModel.listExpense
+    val mIncomeItems: List<CategoryModel> = CategoryModel.listIncome
+    val mListTabs: List<String> = listOf(Constants.TYPE_INCOME, Constants.TYPE_EXPENSE)
+    val mPagerState: PagerState = rememberPagerState(pageCount = { mListTabs.size })
+    val mSheetState: SheetState = rememberModalBottomSheetState()
+    var mExpenseSelectedItem: String by remember { mutableStateOf(value = CategoryModel.expenseOther.category) }
+    var mIncomeSelectedItem: String by remember { mutableStateOf(value = CategoryModel.incomeOthers.category) }
+    var mSelectedTab: Int by rememberSaveable { mutableIntStateOf(value = 0) }
+    var mShowBottomSheet: Boolean by remember { mutableStateOf(value = false) }
 
-    ExposedDropdownMenuBox(
-        expanded = isExpanded,
-        onExpandedChange = { expand -> isExpanded = expand },
-    ) {
-        MyTextField(
-            value = mSelectedItem,
-            onValueChange = {},
-            modifier = Modifier.menuAnchor(),
-            readOnly = true,
-            label = { Text(stringResource(id = R.string.label_category)) },
-            leadingIcon = { NotesIcon() },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-            },
-        )
+    LaunchedEffect(key1 = mSelectedTab) {
+        mPagerState.animateScrollToPage(page = mSelectedTab)
+    }
 
-        ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
-            items.forEach { category ->
-                DropdownMenuItem(
-                    text = { Text(text = category.title) },
-                    onClick = {
-                        mSelectedItem = category.title
-                        onEvent(ExpenseAddEditEvent.OnCategoryChange(mSelectedItem))
-                        isExpanded = false
+    LaunchedEffect(key1 = mPagerState.currentPage) {
+        mSelectedTab = mPagerState.currentPage
+    }
+
+    if (mShowBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { mShowBottomSheet = false },
+            modifier = Modifier.fillMaxHeight(fraction = 0.5f),
+            sheetState = mSheetState,
+            dragHandle = { BottomSheetDefaults.DragHandle() },
+        ) {
+            TabRow(
+                selectedTabIndex = mSelectedTab,
+                modifier = Modifier,
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        Modifier.tabIndicatorOffset(currentTabPosition = tabPositions[mSelectedTab]),
+                        height = 3.dp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                },
+                divider = { Divider(thickness = 3.dp) },
+            ) {
+                mListTabs.forEachIndexed { index, tabItem ->
+                    val mSelected: Boolean = mSelectedTab == index
+                    Tab(
+                        selected = mSelected,
+                        onClick = { mSelectedTab = index },
+                        modifier = Modifier,
+                        enabled = true,
+                        text = {
+                            Text(
+                                text = tabItem,
+                                modifier = Modifier.padding(all = 16.dp),
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                    )
+                }
+            }
+
+            HorizontalPager(
+                state = mPagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(weight = 1f),
+            ) { page ->
+                when (page) {
+                    TabsScreenCategory.EXPENSE -> {
+
                     }
-                )
+
+                    TabsScreenCategory.INCOME -> {
+
+                    }
+
+                    else -> HelperUtils.showToast(
+                        context = mContext,
+                        msg = stringResource(id = R.string.toast_tab_requested, page)
+                    )
+                }
+            }
+        }
+    }
+    /* onClick
+    mSelectedItem = category.title
+    onEvent(ExpenseAddEditEvent.OnCategoryChange(mSelectedItem))*/
+}
+
+@Composable
+private fun ListItemsScreen(listItems: List<CategoryModel>) {
+    val mLazyListState: LazyListState = rememberLazyListState()
+    var isSelected: Boolean by remember { mutableStateOf(value = false) }
+
+    listItems.forEachIndexed { index, categoryModel ->
+        Row {
+            Spacer(modifier = Modifier.width(width = 8.dp))
+            Icon(
+                painter = painterResource(id = categoryModel.icon),
+                contentDescription = "${categoryModel.category} icon"
+            )
+            Spacer(modifier = Modifier.width(width = 8.dp))
+            Text(
+                text = categoryModel.category,
+                modifier = Modifier.weight(weight = 1f)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            if (isSelected) {
+                CheckIcon(modifier = Modifier, tint = Color.Blue)
+            } else {
+                Spacer(modifier = Modifier.size(size = 24.dp))
             }
         }
     }

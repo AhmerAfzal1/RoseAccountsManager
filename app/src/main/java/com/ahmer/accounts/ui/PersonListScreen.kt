@@ -312,7 +312,8 @@ private fun SearchBarPerson(
 
                     OrderSection(modifier = Modifier,
                         sortOrder = mCurrentSortOrder,
-                        onOrderChange = { viewModel.updateSortOrder(sortOrder = it) })
+                        onOrderChange = { viewModel.updateSortOrder(sortOrder = it) }
+                    )
                 }
             }
         }

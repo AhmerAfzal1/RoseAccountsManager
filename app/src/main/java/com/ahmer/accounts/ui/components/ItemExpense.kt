@@ -50,7 +50,7 @@ fun ItemExpense(
         val mContext: Context = LocalContext.current
         val mDesc: String = expenseEntity.description
         Icon(
-            painter = painterResource(id = CategoryModel.getIconByTitle(title = mCategory)),
+            painter = painterResource(id = CategoryModel.getExpenseIconByTitle(title = mCategory)),
             contentDescription = "$mCategory icon",
             modifier = Modifier.size(size = 32.dp)
         )

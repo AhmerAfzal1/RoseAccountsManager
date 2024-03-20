@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.ahmer.accounts.database.entity.CategoryEntity
-import com.ahmer.accounts.database.entity.ExpenseEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
