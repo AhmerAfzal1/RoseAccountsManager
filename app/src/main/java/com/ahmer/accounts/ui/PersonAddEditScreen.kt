@@ -25,7 +25,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
@@ -60,7 +59,7 @@ import com.ahmer.accounts.utils.PersonIcon
 import com.ahmer.accounts.utils.PhoneIcon
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () -> Unit) {
     val mContext: Context = LocalContext.current
@@ -131,7 +130,6 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PersonAddEditMain(
     viewModel: PersonAddEditViewModel,

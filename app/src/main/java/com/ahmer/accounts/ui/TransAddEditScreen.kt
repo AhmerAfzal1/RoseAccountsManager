@@ -28,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
@@ -67,7 +66,7 @@ import com.ahmer.accounts.utils.MyTextField
 import com.ahmer.accounts.utils.NotesIcon
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransAddEditScreen(
     viewModel: TransAddEditViewModel,

@@ -12,15 +12,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -182,13 +182,13 @@ private fun Tabs(
             selectedTabIndex = mSelectedTab,
             modifier = Modifier,
             indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
+                SecondaryIndicator(
                     Modifier.tabIndicatorOffset(currentTabPosition = tabPositions[mSelectedTab]),
                     height = 3.dp,
                     color = MaterialTheme.colorScheme.primary
                 )
             },
-            divider = { Divider(thickness = 3.dp) },
+            divider = { HorizontalDivider(thickness = 3.dp) },
         ) {
             mList.forEachIndexed { index, tabItem ->
                 val mSelected: Boolean = mSelectedTab == index

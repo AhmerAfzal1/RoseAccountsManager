@@ -1,11 +1,11 @@
 package com.ahmer.accounts.utils
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -57,7 +57,7 @@ fun AddressIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.c
 @Composable
 fun BackIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.KeyboardArrowLeft,
+        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
         contentDescription = stringResource(id = R.string.content_back),
         modifier = modifier,
         tint = tint

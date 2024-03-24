@@ -24,8 +24,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ProvideTextStyle
@@ -301,7 +301,7 @@ fun CurrencySelectionModal(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 8.dp),
@@ -343,7 +343,7 @@ fun CurrencySelectionModal(
                             Spacer(modifier = Modifier.size(size = 24.dp))
                         }
                     }
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 5.dp),

@@ -51,7 +51,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusManager
@@ -369,7 +368,6 @@ fun TransListScreen(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SearchBarTransactions(
     modifier: Modifier = Modifier,
