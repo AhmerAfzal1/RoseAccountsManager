@@ -9,7 +9,7 @@ plugins {
     id("com.google.gms.google-services")
     id("dagger.hilt.android.plugin")
     id("kotlin-parcelize")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.10"
 }
 
 android {
@@ -80,7 +80,7 @@ dependencies {
     implementation("com.google.firebase:firebase-perf-ktx")
 
     //Ads
-    implementation("com.google.android.gms:play-services-ads:23.2.0")
+    implementation("com.google.android.gms:play-services-ads:23.3.0")
 
     //Jetpack Compose View Model
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
@@ -95,8 +95,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
     //Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    ksp("com.google.dagger:hilt-compiler:2.51.1")
+    implementation("com.google.dagger:hilt-android:2.52")
+    ksp("com.google.dagger:hilt-compiler:2.52")
 
     //Room Database
     implementation("androidx.room:room-ktx:2.6.1")
