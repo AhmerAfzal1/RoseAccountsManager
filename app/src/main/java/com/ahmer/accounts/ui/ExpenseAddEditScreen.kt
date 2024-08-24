@@ -2,10 +2,9 @@ package com.ahmer.accounts.ui
 
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -24,7 +25,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -41,11 +41,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -88,7 +90,11 @@ import com.ahmer.accounts.utils.DateIcon
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.MyTextField
 import com.ahmer.accounts.utils.NotesIcon
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -119,9 +125,9 @@ fun ExpenseAddEditScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
+    /*LaunchedEffect(Unit) {
         mFocusRequester.requestFocus()
-    }
+    }*/
 
     fun clear() {
         mFocusManager.clearFocus()
@@ -174,9 +180,11 @@ private fun ExpenseAddEditMain(
     focusRequester: FocusRequester,
     keyboardController: SoftwareKeyboardController?,
 ) {
+    val mCategory: CategoryModel = CategoryModel.expenseOthers
     val mState by viewModel.uiState.collectAsState()
     var mDatePickerDialog: Boolean by rememberSaveable { mutableStateOf(value = false) }
     val mExpenseEntity: ExpenseEntity = mState.expense ?: ExpenseEntity()
+    var mShowCategoryBottomSheet: Boolean by remember { mutableStateOf(value = false) }
 
     if (mDatePickerDialog) {
         DateTimePickerDialog(selectedDate = mExpenseEntity.date) {
@@ -193,11 +201,18 @@ private fun ExpenseAddEditMain(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val mOptions: List<String> = listOf(Constants.TYPE_EXPENSE, Constants.TYPE_INCOME)
+            if (mShowCategoryBottomSheet) {
+                CategoryBottomSheet(
+                    onEvent = viewModel::onEvent,
+                    categoryModel = CategoryModel.expenseOthers,
+                    tabPosition = if (expenseEntity.type == Constants.TYPE_EXPENSE) 0 else 1,
+                )
+            }
+
             MyTextField(value = HelperUtils.getDateTime(
                 time = expenseEntity.date, pattern = Constants.PATTERN_TEXT_FIELD
             ),
@@ -207,9 +222,55 @@ private fun ExpenseAddEditMain(
                 label = { Text(stringResource(id = R.string.label_date)) },
                 leadingIcon = { DateIcon() },
                 trailingIcon = {},
-                supportingText = {})
+                supportingText = {}
+            )
 
+            Text(
+                text = "Category",
+                modifier = Modifier
+                    .padding(start = 16.dp, bottom = 2.dp)
+                    .align(alignment = Alignment.Start),
+                color = Color.DarkGray,
+                maxLines = 1,
+                style = MaterialTheme.typography.bodySmall
+            )
             Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp)
+                    .clickable {
+                        mShowCategoryBottomSheet = !mShowCategoryBottomSheet
+                    },
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = CategoryModel.getIconByTitle(title = expenseEntity.category)),
+                    contentDescription = "${expenseEntity.category} icon",
+                    modifier = Modifier.size(size = 48.dp)
+                )
+
+                Spacer(modifier = Modifier.width(width = 8.dp))
+
+                Column {
+                    Text(
+                        text = if (expenseEntity.category == "") mCategory.category else expenseEntity.category,
+                        modifier = Modifier,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Text(
+                        text = if (expenseEntity.type == "") mCategory.type else expenseEntity.type,
+                        modifier = Modifier.padding(start = 2.dp),
+                        maxLines = 1,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
+            /*Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 15.dp),
@@ -237,9 +298,7 @@ private fun ExpenseAddEditMain(
                         )
                     }
                 }
-            }
-
-            //DropDownTextField(items = CategoryModel.listCategories, onEvent = viewModel::onEvent)
+            }*/
 
             MyTextField(
                 value = expenseEntity.amount,
@@ -328,18 +387,16 @@ private object TabsScreenCategory {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CategoryBottomSheet(
-    onEvent: (ExpenseAddEditEvent) -> Unit
+    onEvent: (ExpenseAddEditEvent) -> Unit,
+    categoryModel: CategoryModel,
+    tabPosition: Int
 ) {
     val mContext: Context = LocalContext.current
-    val mExpenseItems: List<CategoryModel> = CategoryModel.listExpense
-    val mIncomeItems: List<CategoryModel> = CategoryModel.listIncome
-    val mListTabs: List<String> = listOf(Constants.TYPE_INCOME, Constants.TYPE_EXPENSE)
+    val mListTabs: List<String> = listOf(Constants.TYPE_EXPENSE, Constants.TYPE_INCOME)
     val mPagerState: PagerState = rememberPagerState(pageCount = { mListTabs.size })
     val mSheetState: SheetState = rememberModalBottomSheetState()
-    var mExpenseSelectedItem: String by remember { mutableStateOf(value = CategoryModel.expenseOther.category) }
-    var mIncomeSelectedItem: String by remember { mutableStateOf(value = CategoryModel.incomeOthers.category) }
-    var mSelectedTab: Int by rememberSaveable { mutableIntStateOf(value = 0) }
-    var mShowBottomSheet: Boolean by remember { mutableStateOf(value = false) }
+    var mSelectedTab: Int by rememberSaveable { mutableIntStateOf(value = tabPosition) }
+    val mShowBottomSheet: MutableState<Boolean> = remember { mutableStateOf(value = true) }
 
     LaunchedEffect(key1 = mSelectedTab) {
         mPagerState.animateScrollToPage(page = mSelectedTab)
@@ -349,9 +406,9 @@ fun CategoryBottomSheet(
         mSelectedTab = mPagerState.currentPage
     }
 
-    if (mShowBottomSheet) {
+    if (mShowBottomSheet.value) {
         ModalBottomSheet(
-            onDismissRequest = { mShowBottomSheet = false },
+            onDismissRequest = { mShowBottomSheet.value = false },
             modifier = Modifier.fillMaxHeight(fraction = 0.5f),
             sheetState = mSheetState,
             dragHandle = { BottomSheetDefaults.DragHandle() },
@@ -398,11 +455,21 @@ fun CategoryBottomSheet(
             ) { page ->
                 when (page) {
                     TabsScreenCategory.EXPENSE -> {
-
+                        ListItemsScreen(
+                            onEvent = onEvent,
+                            listItems = CategoryModel.listExpense,
+                            categoryModel = categoryModel,
+                            isCloseBottomSheet = mShowBottomSheet
+                        )
                     }
 
                     TabsScreenCategory.INCOME -> {
-
+                        ListItemsScreen(
+                            onEvent = onEvent,
+                            listItems = CategoryModel.listIncome,
+                            categoryModel = categoryModel,
+                            isCloseBottomSheet = mShowBottomSheet
+                        )
                     }
 
                     else -> HelperUtils.showToast(
@@ -412,35 +479,74 @@ fun CategoryBottomSheet(
                 }
             }
         }
-    }
-    /* onClick
+    }/* onClick
     mSelectedItem = category.title
     onEvent(ExpenseAddEditEvent.OnCategoryChange(mSelectedItem))*/
 }
 
 @Composable
-private fun ListItemsScreen(listItems: List<CategoryModel>) {
+private fun ListItemsScreen(
+    onEvent: (ExpenseAddEditEvent) -> Unit,
+    listItems: List<CategoryModel>,
+    categoryModel: CategoryModel,
+    isCloseBottomSheet: MutableState<Boolean>
+) {
     val mLazyListState: LazyListState = rememberLazyListState()
+    val mCoroutineScope: CoroutineScope = rememberCoroutineScope()
     var isSelected: Boolean by remember { mutableStateOf(value = false) }
+    var mSelectedCategory: CategoryModel by remember { mutableStateOf(value = categoryModel) }
 
-    listItems.forEachIndexed { index, categoryModel ->
-        Row {
-            Spacer(modifier = Modifier.width(width = 8.dp))
-            Icon(
-                painter = painterResource(id = categoryModel.icon),
-                contentDescription = "${categoryModel.category} icon"
-            )
-            Spacer(modifier = Modifier.width(width = 8.dp))
-            Text(
-                text = categoryModel.category,
-                modifier = Modifier.weight(weight = 1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            if (isSelected) {
-                CheckIcon(modifier = Modifier, tint = Color.Blue)
-            } else {
-                Spacer(modifier = Modifier.size(size = 24.dp))
+    LaunchedEffect(key1 = mSelectedCategory) {
+        val mIndex: Int = listItems.indexOf(mSelectedCategory)
+        val mOffset: Int = -mLazyListState.layoutInfo.viewportEndOffset / 2
+        if (mIndex != -1) {
+            mCoroutineScope.launch {
+                mLazyListState.animateScrollToItem(index = mIndex, scrollOffset = mOffset)
             }
+        }
+    }
+
+    LazyColumn(
+        modifier = Modifier, state = mLazyListState
+    ) {
+        items(items = listItems) { category ->
+            isSelected = category == mSelectedCategory
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    mSelectedCategory = category
+                    onEvent(ExpenseAddEditEvent.OnCategoryChange(category.category))
+                    onEvent(ExpenseAddEditEvent.OnTypeChange(category.type))
+                    runBlocking {
+                        delay(timeMillis = 1000L)
+                    }
+                    isCloseBottomSheet.value = false
+                }
+                .padding(all = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(id = category.icon),
+                    contentDescription = "${category.category} icon"
+                )
+                Spacer(modifier = Modifier.width(width = 8.dp))
+                Text(
+                    text = category.category,
+                    modifier = Modifier.weight(weight = 1f),
+                    fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Normal
+                )
+                Spacer(modifier = Modifier.weight(weight = 0.1f))
+                if (isSelected) {
+                    CheckIcon(modifier = Modifier, tint = Color.Blue)
+                } else {
+                    Spacer(modifier = Modifier.size(size = 24.dp))
+                }
+            }
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 5.dp),
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+            )
         }
     }
 }

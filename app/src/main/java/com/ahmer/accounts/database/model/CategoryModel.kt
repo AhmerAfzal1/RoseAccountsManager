@@ -192,8 +192,8 @@ data class CategoryModel(
             type = Constants.TYPE_EXPENSE,
             icon = R.drawable.ic_exp_office,
         )
-        val expenseOther: CategoryModel = CategoryModel(
-            category = "Other",
+        val expenseOthers: CategoryModel = CategoryModel(
+            category = "Others",
             type = Constants.TYPE_EXPENSE,
             icon = R.drawable.ic_inc_others,
         )
@@ -275,7 +275,7 @@ data class CategoryModel(
                 expenseElectricity, expenseEntertainment, expenseFees, expenseFood,
                 expenseFurniture, expenseGame, expenseGarbage, expenseGrocery, expenseHealthcare,
                 expenseHousing, expenseInsurance, expenseInternet, expenseInvesting, expenseLoan,
-                expenseMaintenance, expenseMarketing, expenseMovies, expenseOffice, expenseOther,
+                expenseMaintenance, expenseMarketing, expenseMovies, expenseOffice, expenseOthers,
                 expensePhone, expenseRent, expenseRestaurant, expenseSalary, expenseSaving,
                 expenseShoes, expenseShopping, expenseSubscriptions, expenseTax,
                 expenseTransportation, expenseTravel, expenseUtilities, expenseWater, expenseWedding
@@ -289,8 +289,28 @@ data class CategoryModel(
             )
         }
 
+        val listAll: List<CategoryModel> by lazy {
+            listOf(
+                incomeBonus, incomeDividend, incomeGifts, incomeInterest, incomeOthers,
+                incomeRefunds, incomeRental, incomeSalary, incomeSales, incomeTip,
+                expenseAdvertising, expenseAnniversary, expenseBirthday, expenseCharity,
+                expenseChristmas, expenseCloths, expenseConcert, expenseEducation,
+                expenseElectricity, expenseEntertainment, expenseFees, expenseFood,
+                expenseFurniture, expenseGame, expenseGarbage, expenseGrocery, expenseHealthcare,
+                expenseHousing, expenseInsurance, expenseInternet, expenseInvesting, expenseLoan,
+                expenseMaintenance, expenseMarketing, expenseMovies, expenseOffice, expenseOthers,
+                expensePhone, expenseRent, expenseRestaurant, expenseSalary, expenseSaving,
+                expenseShoes, expenseShopping, expenseSubscriptions, expenseTax,
+                expenseTransportation, expenseTravel, expenseUtilities, expenseWater, expenseWedding
+            )
+        }
+
+        fun getIconByTitle(title: String): Int {
+            return listAll.find { it.category == title }?.icon ?: expenseOthers.icon
+        }
+
         fun getExpenseIconByTitle(title: String): Int {
-            return listExpense.find { it.category == title }?.icon ?: expenseOther.icon
+            return listExpense.find { it.category == title }?.icon ?: expenseOthers.icon
         }
 
         fun getIncomeIconByTitle(title: String): Int {

@@ -226,7 +226,6 @@ private fun Tabs(
                     onChangeActiveFilter = onChangeActiveFilter
                 )
 
-
                 TabsScreenChart.CHART_BALANCE -> BalanceChartScreen(mainState = mainState)
                 else -> HelperUtils.showToast(
                     context = mContext,

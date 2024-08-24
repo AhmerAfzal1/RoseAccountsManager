@@ -116,6 +116,7 @@ fun ExpenseListScreen(
             ) { expenseEntity ->
                 ItemExpense(
                     expenseEntity = expenseEntity,
+                    allExpense = mState.allExpenses,
                     currency = mCurrency,
                     onEvent = viewModel::onEvent,
                     modifier = Modifier.animateItemPlacement(

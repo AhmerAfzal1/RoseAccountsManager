@@ -106,6 +106,7 @@ fun RoseAccountsManagerTheme(
         else -> lightColorScheme
     }
 
+    //Change status bar color
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {

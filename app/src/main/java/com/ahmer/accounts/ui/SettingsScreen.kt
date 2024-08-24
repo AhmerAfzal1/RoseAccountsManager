@@ -312,7 +312,7 @@ fun CurrencySelectionModal(
                 modifier = Modifier,
                 state = mLazyListState
             ) {
-                items(mCurrencyList) { currency ->
+                items(items = mCurrencyList) { currency ->
                     isSelected = currency == mSelectedCurrency
                     Row(modifier = Modifier
                         .fillMaxWidth()

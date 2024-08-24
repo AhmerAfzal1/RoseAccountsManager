@@ -35,13 +35,13 @@ class DataStore @Inject constructor(private val dataStore: DataStore<Preferences
     }
 
     val getSortOrder: Flow<SortOrder> = dataStore.data.map { preference ->
-        val sortBy = SortBy.valueOf(
+        val mSortBy = SortBy.valueOf(
             value = preference[DataStoreKeys.sortByKey] ?: SortBy.Descending.name
         )
         when (preference[DataStoreKeys.sortOrderKey]) {
-            SortOrder.Amount::class.java.name -> SortOrder.Amount(sortBy = sortBy)
-            SortOrder.Name::class.java.name -> SortOrder.Name(sortBy = sortBy)
-            else -> SortOrder.Date(sortBy = sortBy)
+            SortOrder.Amount::class.java.name -> SortOrder.Amount(sortBy = mSortBy)
+            SortOrder.Name::class.java.name -> SortOrder.Name(sortBy = mSortBy)
+            else -> SortOrder.Date(sortBy = mSortBy)
         }
     }
 

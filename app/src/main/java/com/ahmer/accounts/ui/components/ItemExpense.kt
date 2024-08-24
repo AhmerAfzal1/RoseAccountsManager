@@ -1,6 +1,7 @@
 package com.ahmer.accounts.ui.components
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,15 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.ahmer.accounts.R
 import com.ahmer.accounts.database.entity.ExpenseEntity
 import com.ahmer.accounts.database.model.CategoryModel
 import com.ahmer.accounts.event.ExpenseEvent
+import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.HelperUtils
 
@@ -35,9 +36,22 @@ import com.ahmer.accounts.utils.HelperUtils
 fun ItemExpense(
     modifier: Modifier = Modifier,
     currency: Currency,
+    allExpense: List<ExpenseEntity>,
     expenseEntity: ExpenseEntity,
     onEvent: (ExpenseEvent) -> Unit,
 ) {
+
+    allExpense.forEach {
+        HelperUtils.getDateTime(time = it.date, pattern = Constants.PATTERN_SHORT)
+        //Date wise add item in ElevatedCard
+    }
+    ElevatedCard(
+        onClick = { /*TODO*/ },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -49,37 +63,35 @@ fun ItemExpense(
         val mCategory: String = expenseEntity.category
         val mContext: Context = LocalContext.current
         val mDesc: String = expenseEntity.description
-        Icon(
+        Image(
             painter = painterResource(id = CategoryModel.getExpenseIconByTitle(title = mCategory)),
             contentDescription = "$mCategory icon",
-            modifier = Modifier.size(size = 32.dp)
+            modifier = Modifier.size(size = 40.dp)
         )
 
-        Spacer(modifier = Modifier.width(width = 16.dp))
+        Spacer(modifier = Modifier.width(width = 8.dp))
 
         Column {
             Text(
-                text = mDesc.ifEmpty { stringResource(R.string.label_no_description) },
-                color = if (mDesc.isEmpty()) Color.LightGray else Color.Unspecified,
-                fontStyle = if (mDesc.isEmpty()) FontStyle.Italic else FontStyle.Normal,
-                textAlign = TextAlign.Start,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 2,
-                style = if (mDesc.isEmpty()) {
-                    MaterialTheme.typography.labelSmall
-                } else {
-                    MaterialTheme.typography.labelMedium
-                }
-            )
-            Text(
                 text = mCategory,
-                color = Color.DarkGray,
                 maxLines = 1,
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.labelLarge
             )
+            if (mDesc.isNotEmpty()) {
+                Text(
+                    text = mDesc,
+                    color = Color.DarkGray,
+                    fontStyle = FontStyle.Normal,
+                    textAlign = TextAlign.Start,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
         }
 
         Spacer(modifier = Modifier.weight(weight = 1f))
+
         HelperUtils.AmountWithSymbolText(
             modifier = modifier.padding(end = 16.dp),
             context = mContext,
@@ -90,4 +102,12 @@ fun ItemExpense(
             type = expenseEntity.type,
         )
     }
+
+    HorizontalDivider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        thickness = 0.5.dp,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+    )
 }
