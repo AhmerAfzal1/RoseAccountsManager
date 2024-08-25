@@ -13,8 +13,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ahmer.accounts.database.model.TransSumModel
-import com.ahmer.accounts.ui.ExpenseAddEditScreen
-import com.ahmer.accounts.ui.ExpenseListScreen
 import com.ahmer.accounts.ui.PersonAddEditScreen
 import com.ahmer.accounts.ui.PersonsListScreen
 import com.ahmer.accounts.ui.ReportScreen
@@ -41,32 +39,6 @@ fun MainNavigation(
                 personViewModel = hiltViewModel(),
                 settingsViewModel = hiltViewModel(),
                 transSumModel = transSumModel,
-            )
-        }
-        composable(
-            route = NavItems.Expense.fullRoute,
-            enterTransition = { fadeIn() },
-            exitTransition = { fadeOut() },
-        ) {
-            ExpenseListScreen(
-                onNavigation = { navController.navigate(route = it.route) },
-                viewModel = hiltViewModel(),
-                viewModelSettings = hiltViewModel(),
-            )
-        }
-        composable(
-            route = NavItems.ExpenseAddEdit.fullRoute,
-            arguments = listOf(navArgument(name = "expenseID") {
-                type = NavType.IntType
-                defaultValue = -1
-            }),
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None },
-        ) {
-            ExpenseAddEditScreen(
-                viewModel = hiltViewModel(),
-                viewModelSettings = hiltViewModel(),
-                onPopBackStack = { navController.popBackStack() }
             )
         }
         composable(

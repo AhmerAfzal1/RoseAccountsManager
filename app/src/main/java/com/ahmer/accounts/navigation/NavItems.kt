@@ -27,28 +27,6 @@ sealed class NavItems(
         val fullRoute = route + argument
     }
 
-    data object Expense : NavItems(
-        label = R.string.label_expenses,
-        selectedIcon = R.drawable.ic_filled_expense,
-        unselectedIcon = R.drawable.ic_outlined_expense,
-        contentDescription = R.string.content_expenses,
-        route = "expenseScreen",
-        argument = "",
-    ) {
-        val fullRoute = route + argument
-    }
-
-    data object ExpenseAddEdit : NavItems(
-        label = R.string.label_expense_add_edit,
-        selectedIcon = R.drawable.ic_filled_settings,
-        unselectedIcon = R.drawable.ic_outlined_settings,
-        contentDescription = R.string.content_person_add_edit,
-        route = "expenseAddEditScreen",
-        argument = "?expenseID={expenseID}"
-    ) {
-        val fullRoute = route + argument
-    }
-
     data object Report : NavItems(
         label = R.string.label_report,
         selectedIcon = R.drawable.ic_filled_report,
@@ -105,7 +83,7 @@ sealed class NavItems(
     }
 
     companion object {
-        val navBottomItems: List<NavItems> = listOf(Accounts, Expense, Report, Settings)
+        val navBottomItems: List<NavItems> = listOf(Accounts, Report, Settings)
 
         @Composable
         fun NavItems.Icons(selected: Boolean) {
