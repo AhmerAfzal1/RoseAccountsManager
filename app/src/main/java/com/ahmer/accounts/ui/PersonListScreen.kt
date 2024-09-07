@@ -147,7 +147,9 @@ fun PersonsListScreen(
                 enter = slideInVertically(initialOffsetY = { it * 2 }),
                 exit = slideOutVertically(targetOffsetY = { it * 2 }),
             ) {
-                FloatingActionButton(onClick = { personViewModel.onEvent(PersonEvent.OnAddEditPerson) }) {
+                FloatingActionButton(onClick = {
+                    personViewModel.onEvent(event = PersonEvent.OnAddEditPerson)
+                }) {
                     AddIcon()
                 }
             }
@@ -174,7 +176,7 @@ fun PersonsListScreen(
                     .padding(start = 4.dp, end = 4.dp),
                 text = mTextSearch,
                 onTextChange = { text ->
-                    personViewModel.onEvent(PersonEvent.OnSearchTextChange(text))
+                    personViewModel.onEvent(event = PersonEvent.OnSearchTextChange(text))
                     mTextSearch = text
                 },
                 viewModel = personViewModel,
@@ -234,8 +236,7 @@ private fun SearchBarPerson(
                 .weight(weight = 0.90f)
                 .border(
                     border = BorderStroke(
-                        width = 1.5.dp,
-                        color = MaterialTheme.colorScheme.primary
+                        width = 1.5.dp, color = MaterialTheme.colorScheme.primary
                     ),
                     shape = RoundedCornerShape(percent = 50)
                 )
@@ -345,7 +346,7 @@ private fun MyRadioButton(
 @Composable
 private fun OrderSection(
     modifier: Modifier = Modifier,
-    sortOrder: SortOrder = SortOrder.Date(SortBy.Descending),
+    sortOrder: SortOrder = SortOrder.Date(sortBy = SortBy.Descending),
     onOrderChange: (SortOrder) -> Unit
 ) {
     Column(modifier = modifier) {

@@ -23,8 +23,6 @@ object Constants {
     const val DATA_STORE_KEY_THEME: String = "Theme"
     const val DATA_STORE_NAME: String = "RoseDataStore"
     const val DB_NAME: String = "RoseDatabase.db"
-    const val DB_TABLE_CATEGORY: String = "Category"
-    const val DB_TABLE_EXPENSE: String = "Expenses"
     const val DB_TABLE_PERSON: String = "Persons"
     const val DB_TABLE_TRANSACTION: String = "Transactions"
     const val LEN_ADDRESS: Int = 64

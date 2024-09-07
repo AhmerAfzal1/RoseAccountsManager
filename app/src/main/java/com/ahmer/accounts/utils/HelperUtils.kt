@@ -32,6 +32,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.math.roundToInt
 
 object HelperUtils {
@@ -180,15 +181,19 @@ object HelperUtils {
         return mFormat.format(mRound)
     }
 
-    fun roundValue(value: Double) = String.format(format = "%.2f", value)
+    fun roundValue(value: Double) = String.format(
+        locale = Locale.getDefault(), format = "%.2f", value
+    )
 
     fun sizeFormat(size: Long): String {
         var mResult = size.toDouble() / 1024
         if (mResult < 1024) return "${mResult.roundToInt()} KB"
         mResult /= 1024
-        if (mResult < 1024) return String.format(format = "%.2f MB", mResult)
+        if (mResult < 1024) return String.format(
+            locale = Locale.getDefault(), format = "%.2f MB", mResult
+        )
         mResult /= 1024
-        return String.format(format = "%.2f GB", mResult)
+        return String.format(locale = Locale.getDefault(), format = "%.2f GB", mResult)
     }
 
     fun isGrantedPermission(context: Context, permission: String): Boolean {
