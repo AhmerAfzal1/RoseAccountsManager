@@ -70,6 +70,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
 
     //Firebase BOM
     implementation(platform("com.google.firebase:firebase-bom:33.2.0"))

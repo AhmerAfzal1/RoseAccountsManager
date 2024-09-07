@@ -61,6 +61,7 @@ class SettingsViewModel @Inject constructor(
 
     fun backupDatabase(context: Context, uri: Uri?) {
         val mJob = CoroutineScope(Dispatchers.IO).launch {
+            //While ask personDao provider then simply comment the val mDatabase line
             val mDatabase = AppModule.providesDatabase(context = context)
             val mQuery = SimpleSQLiteQuery(query = "pragma wal_checkpoint(full)")
             mDatabase.adminDao().checkPoint(supportSQLiteQuery = mQuery)

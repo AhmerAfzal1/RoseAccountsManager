@@ -39,34 +39,32 @@ class ReportViewModel @Inject constructor(
     private val _graph: MutableStateFlow<ReportState> = MutableStateFlow(ReportState())
     val graph: StateFlow<ReportState> = _graph.asStateFlow()
 
-    private val todayDate = DateUtils.generateFormatDate(date = LocalDate.now())
-    private val yesterdayDate = DateUtils.previousDay(date = todayDate)
-    private val weekDates = DateUtils.getWeekDates(dateString = todayDate)
-    private val monthDates = DateUtils.getMonthDates(dateString = todayDate)
-    private val oneWeekEarlierDate = DateUtils.generate7daysPriorDate(date = todayDate)
-    private val daysInThe7daysPrior =
-        DateUtils.datesBetween(startDate = oneWeekEarlierDate, endDate = todayDate)
+    private val mToday = DateUtils.generateFormatDate(date = LocalDate.now())
+    private val mYesterday = DateUtils.previousDay(date = mToday)
+    private val mThisWeek = DateUtils.getWeekDates(dateString = mToday)
+    private val mLastWeek = DateUtils.getPastWeekData()
+    private val mThisMonth = DateUtils.getMonthDates(dateString = mToday)
 
     private fun filtered(filter: String): Flow<List<TransEntity>> {
         return when (filter) {
             ConstantsChart.TODAY -> {
-                transRepository.allTransactionsByDate(date = todayDate)
+                transRepository.allTransactionsByDate(date = mToday)
             }
 
             ConstantsChart.YESTERDAY -> {
-                transRepository.allTransactionsByDate(date = yesterdayDate)
+                transRepository.allTransactionsByDate(date = mYesterday)
             }
 
             ConstantsChart.THIS_WEEK -> {
-                transRepository.allTransactionsByBetweenDates(dates = weekDates)
+                transRepository.allTransactionsByBetweenDates(dates = mThisWeek)
             }
 
             ConstantsChart.LAST_7_DAYS -> {
-                transRepository.allTransactionsByBetweenDates(dates = daysInThe7daysPrior)
+                transRepository.allTransactionsByBetweenDates(dates = mLastWeek)
             }
 
             ConstantsChart.THIS_MONTH -> {
-                transRepository.allTransactionsByBetweenDates(dates = monthDates)
+                transRepository.allTransactionsByBetweenDates(dates = mThisMonth)
             }
 
             ConstantsChart.ALL -> {
@@ -97,8 +95,11 @@ class ReportViewModel @Inject constructor(
     }
 
     init {
-        //loadData(dates = weekDates)
         data(filter = ConstantsChart.THIS_WEEK)
-        Log.v(Constants.LOG_TAG, "Week days: $weekDates")
+        Log.v(Constants.LOG_TAG, "Today days: $mToday")
+        Log.v(Constants.LOG_TAG, "Yesterday days: $mYesterday")
+        Log.v(Constants.LOG_TAG, "Week days: $mThisWeek")
+        Log.v(Constants.LOG_TAG, "Last 7 days: $mLastWeek")
+        Log.v(Constants.LOG_TAG, "This month days: $mThisMonth")
     }
 }

@@ -43,7 +43,6 @@ object DateUtils {
         return weekDates
     }
 
-
     fun getMonthDates(dateString: String): List<String> {
         val dateFormat = SimpleDateFormat(Constants.PATTERN_CHART, Locale.getDefault())
         val date = dateFormat.parse(dateString)
@@ -73,33 +72,33 @@ object DateUtils {
     }
 
     fun datesBetween(startDate: String, endDate: String): List<String> {
-        val formatter = SimpleDateFormat(Constants.PATTERN_CHART, Locale.getDefault())
-        val start = formatter.parse(startDate)
-        val end = formatter.parse(endDate)
-        val dates = mutableListOf<String>()
-        var currentDate = start
+        val dateFormat = SimpleDateFormat(Constants.PATTERN_CHART, Locale.getDefault())
+        val start = dateFormat.parse(startDate) ?: return emptyList()
+        val end = dateFormat.parse(endDate) ?: return emptyList()
+        val dataList = mutableListOf<String>()
+        val calendar = Calendar.getInstance()
+        calendar.time = start
 
-        while (currentDate!! <= end) {
-            dates.add(formatter.format(currentDate))
-            val calendar = Calendar.getInstance().apply {
-                time = currentDate!!
-                add(Calendar.DATE, 1)
-            }
-            currentDate = calendar.time
+        while (calendar.time <= end) {
+            dataList.add(dateFormat.format(calendar.time))
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
 
-        return dates
+        return dataList
     }
 
-    fun generate7daysPriorDate(date: String): String {
-        val formatter = SimpleDateFormat(Constants.PATTERN_CHART, Locale.getDefault())
-        val parsedDate = formatter.parse(date)
+    fun getPastWeekData(): List<String> {
+        val dateFormat = SimpleDateFormat(Constants.PATTERN_CHART, Locale.getDefault())
         val calendar = Calendar.getInstance()
-        if (parsedDate != null) {
-            calendar.time = parsedDate
+        calendar.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
+        calendar.add(Calendar.WEEK_OF_YEAR, -1)
+
+        val data = mutableListOf<String>()
+        for (i in 0 until 7) {
+            data.add(dateFormat.format(calendar.time))
+            calendar.add(Calendar.DATE, 1)
         }
-        calendar.add(Calendar.DATE, -6)
-        return formatter.format(calendar.time)
+        return data
     }
 
     fun previousDay(date: String): String {
@@ -112,7 +111,6 @@ object DateUtils {
         calendar.add(Calendar.DATE, -1)
         return formatter.format(calendar.time)
     }
-
 
     fun generateFormatDate(date: LocalDate): String {
         val dateCount =

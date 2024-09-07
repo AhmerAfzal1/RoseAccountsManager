@@ -198,10 +198,11 @@ fun PersonsListScreen(
                         personsBalanceModel = person,
                         currency = mCurrentCurrency,
                         onEvent = personViewModel::onEvent,
-                        modifier = Modifier
-                            .animateItemPlacement(
-                                animationSpec = tween(durationMillis = Constants.ANIMATE_ITEM_DURATION)
-                            )
+                        modifier = Modifier.animateItem(
+                            fadeInSpec = tween(durationMillis = Constants.ANIMATE_FADE_IN_DURATION),
+                            fadeOutSpec = tween(durationMillis = Constants.ANIMATE_FADE_OUT_DURATION),
+                            placementSpec = tween(durationMillis = Constants.ANIMATE_DURATION)
+                        )
                     )
                 }
             }

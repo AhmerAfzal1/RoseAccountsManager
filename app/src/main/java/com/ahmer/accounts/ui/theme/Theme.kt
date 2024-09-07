@@ -2,6 +2,7 @@ package com.ahmer.accounts.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import android.view.WindowManager
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -93,7 +94,7 @@ private val darkColorScheme = lightColorScheme(
 fun RoseAccountsManagerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false, // Default value true
+    dynamicColor: Boolean = true, // Default value true
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -104,16 +105,6 @@ fun RoseAccountsManagerTheme(
 
         darkTheme -> darkColorScheme
         else -> lightColorScheme
-    }
-
-    //Change status bar color
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.onPrimaryContainer.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-        }
     }
 
     MaterialTheme(

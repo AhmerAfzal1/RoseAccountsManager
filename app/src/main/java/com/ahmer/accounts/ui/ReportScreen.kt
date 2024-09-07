@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,11 +41,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
+import com.ahmer.accounts.database.entity.TransEntity
 import com.ahmer.accounts.state.MainState
+import com.ahmer.accounts.state.ReportState
 import com.ahmer.accounts.ui.TabItemChart.Companion.Icons
 import com.ahmer.accounts.ui.components.BalanceChartScreen
 import com.ahmer.accounts.ui.components.TransactionsChartScreen
 import com.ahmer.accounts.utils.Constants
+import com.ahmer.accounts.utils.ConstantsChart
 import com.ahmer.accounts.utils.DateUtils
 import com.ahmer.accounts.utils.HelperUtils
 import com.github.tehras.charts.bar.BarChartData
@@ -73,19 +75,22 @@ fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
     }) { innerPadding ->
         val mMainState: MainState by mainViewModel.uiState.collectAsStateWithLifecycle()
 
-        val graphState by viewModel.graph.collectAsStateWithLifecycle()
-        val allTransactions = graphState.allTransactions
-        val mGraph = allTransactions.map { entity ->
+        val mGraphState: ReportState by viewModel.graph.collectAsStateWithLifecycle()
+        val mActiveTabFilter: String = viewModel.activeFilter.value
+        val mAllTransactions: List<TransEntity> = mGraphState.allTransactions
+        val mGraph = mAllTransactions.map { entity ->
             val mTotal = entity.amount.toFloat()
-            Log.v(Constants.LOG_TAG, "mGraph: $mTotal, Size: ${allTransactions.size}")
-            if (allTransactions.isNotEmpty()) {
+            Log.v(Constants.LOG_TAG, "mGraph: $mTotal, Size: ${mAllTransactions.size}")
+            if (mAllTransactions.isNotEmpty()) {
                 BarChartData.Bar(
                     value = mTotal,
                     color = MaterialTheme.colorScheme.primary,
-                    label = if (allTransactions.size == 7) {
+                    label = if (mActiveTabFilter == ConstantsChart.THIS_WEEK ||
+                        mActiveTabFilter == ConstantsChart.LAST_7_DAYS
+                    ) {
                         DateUtils.actualDayOfWeek(dateString = entity.createdOn).substring(0, 3)
                     } else {
-                        (allTransactions.indexOf(entity) + 1).toString()
+                        (mAllTransactions.indexOf(entity) + 1).toString()
                     }
                 )
             } else {
@@ -110,7 +115,7 @@ fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
             Tabs(
                 mainState = mMainState,
                 barChartList = mGraph,
-                activeFilter = viewModel.activeFilter.value,
+                activeFilter = mActiveTabFilter,
                 onChangeActiveFilter = { viewModel.onChangeActiveFilter(filter = it) }
             )
         }
@@ -156,7 +161,6 @@ sealed class TabItemChart(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Tabs(
     mainState: MainState,

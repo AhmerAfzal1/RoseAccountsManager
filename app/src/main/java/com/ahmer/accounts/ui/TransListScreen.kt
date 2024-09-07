@@ -95,7 +95,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransListScreen(
     onNavigation: (UiEvent.Navigate) -> Unit,
@@ -356,10 +356,10 @@ fun TransListScreen(
                             if (mSelectedItems.size == 0) mLongClickState = false
                             mShowSearch.value = false
                         },
-                        modifier = Modifier.animateItemPlacement(
-                            animationSpec = tween(
-                                durationMillis = Constants.ANIMATE_ITEM_DURATION
-                            )
+                        modifier = Modifier.animateItem(
+                            fadeInSpec = tween(durationMillis = Constants.ANIMATE_FADE_IN_DURATION),
+                            fadeOutSpec = tween(durationMillis = Constants.ANIMATE_FADE_OUT_DURATION),
+                            placementSpec = tween(durationMillis = Constants.ANIMATE_DURATION)
                         )
                     )
                 }

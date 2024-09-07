@@ -14,7 +14,9 @@ object ConstantsChart {
 
 object Constants {
     const val ADS_WAIT_TIME: Long = 250L
-    const val ANIMATE_ITEM_DURATION: Int = 500
+    const val ANIMATE_DURATION: Int = 500
+    const val ANIMATE_FADE_IN_DURATION: Int = 250
+    const val ANIMATE_FADE_OUT_DURATION: Int = 150
     const val BUTTON_SAVE: String = "SAVE"
     const val BUTTON_UPDATE: String = "UPDATE"
     const val DATA_STORE_KEY_CURRENCY: String = "Currency"
@@ -37,7 +39,7 @@ object Constants {
     const val PATTERN_GENERAL: String = "dd MMM yyyy hh:mm:ss a"
     const val PATTERN_PDF: String = "EEEE, dd MMMM yyyy - hh:mm:ss a"
     const val PATTERN_SHORT: String = "dd MMM yy"
-    const val PATTERN_TEXT_FIELD: String = "EEE, dd MMM yyyy  h:mm a"
+    const val PATTERN_TEXT_FIELD: String = "EEE, dd MMM yyyy h:mm a"
     const val PATTERN_TRANSACTION_ITEM: String = "dd MMM yyyy, h:mm a"
     const val PLAY_STORE_LINK: String = "https://play.google.com/store/apps/details?id="
     const val STATE_IN_STARTED_TIME: Long = 5000L
