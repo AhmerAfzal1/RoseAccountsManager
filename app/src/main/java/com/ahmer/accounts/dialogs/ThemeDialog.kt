@@ -66,14 +66,17 @@ fun ThemeDialog(viewModel: SettingsViewModel) {
                         }
                     }
                 )
-            }, confirmButton = {
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+            confirmButton = {
                 TextButton(onClick = {
                     mOpenDialog = false
                     viewModel.updateTheme(themeMode = themeMode)
                 }) {
                     Text(text = stringResource(id = R.string.label_ok), fontSize = 14.sp)
                 }
-            }, dismissButton = {
+            },
+            dismissButton = {
                 TextButton(onClick = { mOpenDialog = false }) {
                     Text(text = stringResource(id = R.string.label_cancel), fontSize = 14.sp)
                 }

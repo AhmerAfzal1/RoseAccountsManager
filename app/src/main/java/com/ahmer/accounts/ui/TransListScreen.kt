@@ -9,6 +9,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -113,8 +114,7 @@ fun TransListScreen(
     val mShowSearch: MutableState<Boolean> = remember { mutableStateOf(value = false) }
     val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val mState: TransState by transViewModel.uiState.collectAsStateWithLifecycle()
-    val mSurfaceColor: Color =
-        if (MaterialTheme.colorScheme.isLight()) Color.Black else Color.Yellow
+    val mSurfaceColor: Color = if (isSystemInDarkTheme()) Color.Black else Color.Yellow
     val mSurfaceElevation: Dp = 4.dp
     var mLongClickState: Boolean by remember { mutableStateOf(value = false) }
     var mShowDeleteDialogAccount: Boolean by remember { mutableStateOf(value = false) }

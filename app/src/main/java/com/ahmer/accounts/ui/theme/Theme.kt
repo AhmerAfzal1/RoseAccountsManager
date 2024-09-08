@@ -88,7 +88,7 @@ private val darkColorScheme = lightColorScheme(
 fun RoseAccountsManagerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true, // Default value true
+    dynamicColor: Boolean = false, // Default value true
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,8 +57,7 @@ import com.github.tehras.charts.bar.BarChartData
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
-    val mSurfaceColor: Color =
-        if (MaterialTheme.colorScheme.isLight()) Color.Black else Color.Yellow
+    val mSurfaceColor: Color = if (isSystemInDarkTheme()) Color.Black else Color.Yellow
     val mSurfaceElevation: Dp = 4.dp
 
     Scaffold(modifier = Modifier, topBar = {
@@ -78,27 +78,40 @@ fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
         val mGraphState: ReportState by viewModel.graph.collectAsStateWithLifecycle()
         val mActiveTabFilter: String = viewModel.activeFilter.value
         val mAllTransactions: List<TransEntity> = mGraphState.allTransactions
-        val mGraph = mAllTransactions.map { entity ->
-            val mTotal = entity.amount.toFloat()
-            Log.v(Constants.LOG_TAG, "mGraph: $mTotal, Size: ${mAllTransactions.size}")
-            if (mAllTransactions.isNotEmpty()) {
-                BarChartData.Bar(
-                    value = mTotal,
-                    color = MaterialTheme.colorScheme.primary,
-                    label = if (mActiveTabFilter == ConstantsChart.THIS_WEEK ||
-                        mActiveTabFilter == ConstantsChart.LAST_7_DAYS
-                    ) {
-                        DateUtils.actualDayOfWeek(dateString = entity.createdOn).substring(0, 3)
-                    } else {
-                        (mAllTransactions.indexOf(entity) + 1).toString()
-                    }
+
+        val mGraph: List<BarChartData.Bar> = when {
+            mActiveTabFilter == ConstantsChart.THIS_WEEK || mActiveTabFilter == ConstantsChart.LAST_7_DAYS -> {
+                mAllTransactions.groupBy { it.createdOn }.map { (date, transactions) ->
+                    val mTotal: Double = transactions.sumOf { it.amount.toDouble() }
+                    Log.v(Constants.LOG_TAG, "mGraph Grouped: $mTotal, Size: ${transactions.size}")
+                    BarChartData.Bar(
+                        value = mTotal.toFloat(),
+                        color = MaterialTheme.colorScheme.primary,
+                        label = DateUtils.actualDayOfWeek(dateString = date).substring(0, 3)
+                    )
+                }
+            }
+
+            mAllTransactions.isEmpty() -> {
+                listOf(
+                    BarChartData.Bar(
+                        value = 0.toFloat(),
+                        label = "",
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 )
-            } else {
-                BarChartData.Bar(
-                    value = mTotal,
-                    label = "",
-                    color = MaterialTheme.colorScheme.primary
-                )
+            }
+
+            else -> {
+                mAllTransactions.map { entity ->
+                    val mTotal: Float = entity.amount.toFloat()
+                    Log.v(Constants.LOG_TAG, "mGraph: $mTotal, Size: ${mAllTransactions.size}")
+                    BarChartData.Bar(
+                        value = mTotal,
+                        color = MaterialTheme.colorScheme.primary,
+                        label = (mAllTransactions.indexOf(entity) + 1).toString()
+                    )
+                }
             }
         }
 

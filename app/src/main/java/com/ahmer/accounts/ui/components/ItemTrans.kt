@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +25,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.entity.TransEntity
-import com.ahmer.accounts.ui.isLight
 import com.ahmer.accounts.ui.theme.colorSelectionDark
 import com.ahmer.accounts.ui.theme.colorSelectionLight
 import com.ahmer.accounts.utils.Constants
@@ -44,7 +44,7 @@ fun ItemTrans(
 ) {
     val mContext: Context = LocalContext.current
     val mSelectionColor: Color =
-        if (MaterialTheme.colorScheme.isLight()) colorSelectionLight else colorSelectionDark
+        if (isSystemInDarkTheme()) colorSelectionDark else colorSelectionLight
 
     Row(
         modifier = modifier

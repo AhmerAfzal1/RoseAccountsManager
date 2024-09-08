@@ -6,6 +6,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
@@ -90,7 +91,8 @@ fun DateTimePickerDialog(selectedDate: Long, onDateTimeSelected: (Long) -> Unit)
             },
             text = {
                 TimePicker(state = mTimePickerState, layoutType = TimePickerLayoutType.Vertical)
-            }
+            },
+            containerColor = MaterialTheme.colorScheme.background,
         )
     }
 }

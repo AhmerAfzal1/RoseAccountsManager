@@ -2,6 +2,7 @@ package com.ahmer.accounts.ui
 
 import android.content.Context
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +12,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -66,8 +66,7 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
     val mFocusManager: FocusManager = LocalFocusManager.current
     val mFocusRequester: FocusRequester = remember { FocusRequester() }
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
-    val mSurfaceColor: Color =
-        if (MaterialTheme.colorScheme.isLight()) Color.Black else Color.Yellow
+    val mSurfaceColor: Color = if (isSystemInDarkTheme()) Color.Black else Color.Yellow
     val mSurfaceElevation: Dp = 4.dp
 
     LaunchedEffect(key1 = true) {

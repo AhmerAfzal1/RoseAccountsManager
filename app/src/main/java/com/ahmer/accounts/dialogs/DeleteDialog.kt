@@ -1,6 +1,7 @@
 package com.ahmer.accounts.dialogs
 
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -78,7 +79,8 @@ fun DeleteAlertDialog(
             },
             icon = { DeleteIcon() },
             title = { Text(text = stringResource(id = R.string.label_confirm)) },
-            text = { Text(text = mString) }
+            text = { Text(text = mString) },
+            containerColor = MaterialTheme.colorScheme.background,
         )
     }
 }

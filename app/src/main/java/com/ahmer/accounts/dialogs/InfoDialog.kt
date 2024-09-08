@@ -79,7 +79,8 @@ fun MoreInfoAlertDialog(modifier: Modifier = Modifier, personsEntity: PersonsEnt
                         }
                     }
                 }
-            }
+            },
+            containerColor = MaterialTheme.colorScheme.background,
         )
     }
 }

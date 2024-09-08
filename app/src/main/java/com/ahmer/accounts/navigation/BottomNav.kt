@@ -6,6 +6,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ fun BottomNav(navController: NavHostController, bottomBarState: Boolean) {
     ) {
         NavigationBar(
             modifier = Modifier.navigationBarsPadding(),
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
             tonalElevation = 5.dp,
             windowInsets = WindowInsets.navigationBars,
         ) {
@@ -48,7 +50,7 @@ fun BottomNav(navController: NavHostController, bottomBarState: Boolean) {
                     selected = mCurrentDestination?.hierarchy?.any { it.route == item.route } == true,
                     onClick = {
                         mSelectedItem = index
-                        navController.navigate(item.route) {
+                        navController.navigate(route = item.route) {
                             popUpTo(id = navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
