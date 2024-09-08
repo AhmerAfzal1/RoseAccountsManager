@@ -18,3 +18,4 @@ local.properties
 /app/release/
 app/build/
 app/release/
+/.kotlin/errors/
