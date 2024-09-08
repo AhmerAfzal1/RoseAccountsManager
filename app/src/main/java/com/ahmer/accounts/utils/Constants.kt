@@ -51,5 +51,4 @@ object Constants {
     const val TYPE_INCOME: String = "Income"
     const val UNKNOWN_ERROR: String = "Unknown error"
     val ICON_SIZE: Dp = 36.dp
-    val TOP_APP_BAR_HEIGHT: Dp = 64.dp
 }

@@ -32,19 +32,6 @@ data class TransEntity(
         time = created, pattern = Constants.PATTERN_CHART
     ),
 ) : Parcelable {
-    fun toExternalModel(): TransEntity {
-        return TransEntity(
-            id = id,
-            personId = personId,
-            date = date,
-            type = type,
-            description = description,
-            amount = amount,
-            created = created,
-            createdOn = createdOn,
-        )
-    }
-
     val shortDate: String
         get() = HelperUtils.getDateTime(time = date, pattern = Constants.PATTERN_SHORT)
 }

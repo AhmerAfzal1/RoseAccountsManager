@@ -8,7 +8,6 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ahmer.accounts.database.AppDatabase
-import com.ahmer.accounts.database.DbCallback
 import com.ahmer.accounts.database.dao.AdminDao
 import com.ahmer.accounts.database.dao.PersonDao
 import com.ahmer.accounts.database.dao.TransDao
@@ -22,7 +21,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Provider
 import javax.inject.Singleton
 
 @Module

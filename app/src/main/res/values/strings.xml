@@ -11,79 +11,38 @@
     <string name="content_accounts">Accounts icon</string>
     <string name="content_add">Add icon</string>
     <string name="content_address">Address icon</string>
-    <string name="content_advertising">Advertising icon</string>
-    <string name="content_anniversary">Anniversary icon</string>
     <string name="content_back">Back icon</string>
     <string name="content_backup">Backup icon</string>
     <string name="content_bar">Bar chart icon</string>
-    <string name="content_birthday">Birthday icon</string>
-    <string name="content_charity">Charity icon</string>
     <string name="content_check">Check icon</string>
-    <string name="content_christmas">Christmas icon</string>
     <string name="content_clear_cached">Clear caches icon</string>
     <string name="content_close">Close icon</string>
-    <string name="content_cloths">Cloths icon</string>
-    <string name="content_concert">Concert icon</string>
     <string name="content_credit">Credit icon</string>
     <string name="content_date">Select a date</string>
     <string name="content_debit">Debit icon</string>
     <string name="content_delete">Delete icon</string>
     <string name="content_dollar">Dollar icon</string>
     <string name="content_edit">Edit icon</string>
-    <string name="content_education">Education icon</string>
-    <string name="content_electricity">Electricity icon</string>
     <string name="content_email">Email icon</string>
-    <string name="content_entertainment">Entertainment icon</string>
-    <string name="content_expenses">Expenses icon</string>
-    <string name="content_fees">Fees icon</string>
     <string name="content_filter">Filter icon</string>
-    <string name="content_food">Food icon</string>
-    <string name="content_furniture">Furniture icon</string>
-    <string name="content_game">Game icon</string>
-    <string name="content_garbage">Garbage icon</string>
-    <string name="content_grocery">Grocery icon</string>
-    <string name="content_healthcare">Healthcare icon</string>
-    <string name="content_housing">Housing icon</string>
     <string name="content_info">More info icon</string>
-    <string name="content_insurance">Insurance icon</string>
-    <string name="content_internet">Internet icon</string>
-    <string name="content_investing">Investing icon</string>
-    <string name="content_loan">Loan icon</string>
-    <string name="content_maintenance">Maintenance icon</string>
-    <string name="content_marketing">Marketing icon</string>
     <string name="content_more">More icon</string>
-    <string name="content_movies">Movies icon</string>
     <string name="content_notes">Notes icon</string>
-    <string name="content_office">Office icon</string>
-    <string name="content_other">Other icon</string>
     <string name="content_pdf">Pdf icon</string>
     <string name="content_person">Person icon</string>
     <string name="content_person_add_edit">Persons add edit icon</string>
     <string name="content_phone">Phone icon</string>
     <string name="content_pie">Pie chart icon</string>
-    <string name="content_rent">Rent icon</string>
     <string name="content_report">Reports icon</string>
-    <string name="content_restaurant">Restaurant icon</string>
     <string name="content_restore_backup">Restore backup icon</string>
-    <string name="content_salary">Salary icon</string>
     <string name="content_save">Save icon</string>
-    <string name="content_saving">Saving icon</string>
     <string name="content_search">Search icon</string>
     <string name="content_select_all">Select all icon</string>
     <string name="content_settings">Settings icon</string>
-    <string name="content_shoes">Shoes icon</string>
-    <string name="content_shopping">Shopping icon</string>
-    <string name="content_subscriptions">Subscriptions icon</string>
-    <string name="content_tax">Tax icon</string>
     <string name="content_theme">Theme icon</string>
     <string name="content_trans">Transactions icon</string>
     <string name="content_trans_add_edit">Transactions add edit icon</string>
-    <string name="content_transportation">Transportation icon</string>
-    <string name="content_travel">Travel icon</string>
-    <string name="content_utilities">Utilities icon</string>
     <string name="content_version">Version icon</string>
-    <string name="content_water">Water icon</string>
-    <string name="content_wedding">Wedding icon</string>
 
     //Labels
     <string name="label_accounts">Accounts</string>
@@ -101,7 +60,6 @@
     <string name="label_by_sort">SORT BY</string>
     <string name="label_by_sort_order">ORDER BY</string>
     <string name="label_cancel">Cancel</string>
-    <string name="label_category">Category</string>
     <string name="label_choose_theme">Choose Theme</string>
     <string name="label_confirm">Confirmation</string>
     <string name="label_date">Date</string>
@@ -109,9 +67,6 @@
     <string name="label_description">Description</string>
     <string name="label_edit_transaction">Edit Transaction</string>
     <string name="label_email">Email Address</string>
-    <string name="label_expense_add_edit">Expense Add Edit</string>
-    <string name="label_generate_pdf">Export PDF</string>
-    <string name="label_info">Info Account</string>
     <string name="label_intent_chooser">Select the database backup file</string>
     <string name="label_name">Name</string>
     <string name="label_no_description">No description</string>
@@ -139,7 +94,6 @@
     <string name="label_total_balance">NET BALANCE</string>
     <string name="label_trans">Transactions</string>
     <string name="label_trans_add_edit">Transactions Add Edit</string>
-    <string name="label_expenses">Expenses</string>
 
     //Toast messages
     <string name="toast_msg_db_backup">%1$s successfully backed up to %2$s</string>
@@ -148,6 +102,5 @@
     <string name="toast_pdf_generated">PDF file generated successfully.</string>
     <string name="toast_pdf_not_generated">There is no transaction to create a PDF file.</string>
     <string name="toast_tab_requested">Unexpected tab requested: %1$s</string>
-    <string name="label_by_category">Category</string>
 
 </resources>
