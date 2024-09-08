@@ -62,6 +62,7 @@
     <string name="label_cancel">Cancel</string>
     <string name="label_choose_theme">Choose Theme</string>
     <string name="label_confirm">Confirmation</string>
+    <string name="label_created_on">Created On</string>
     <string name="label_date">Date</string>
     <string name="label_delete">Delete</string>
     <string name="label_description">Description</string>
@@ -90,10 +91,12 @@
     <string name="label_save">Save</string>
     <string name="label_search">Search…</string>
     <string name="label_settings">Settings</string>
+    <string name="label_sr_no">Sr. No.</string>
     <string name="label_total">Total</string>
     <string name="label_total_balance">NET BALANCE</string>
     <string name="label_trans">Transactions</string>
     <string name="label_trans_add_edit">Transactions Add Edit</string>
+    <string name="label_type">Type</string>
 
     //Toast messages
     <string name="toast_msg_db_backup">%1$s successfully backed up to %2$s</string>

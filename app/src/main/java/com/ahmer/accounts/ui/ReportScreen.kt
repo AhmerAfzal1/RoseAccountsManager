@@ -78,6 +78,7 @@ fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
         val mGraphState: ReportState by viewModel.graph.collectAsStateWithLifecycle()
         val mActiveTabFilter: String = viewModel.activeFilter.value
         val mAllTransactions: List<TransEntity> = mGraphState.allTransactions
+        //val mTabTransactions: MutableList<TransEntity> = mutableListOf()
 
         val mGraph: List<BarChartData.Bar> = when {
             mActiveTabFilter == ConstantsChart.THIS_WEEK || mActiveTabFilter == ConstantsChart.LAST_7_DAYS -> {
@@ -129,7 +130,8 @@ fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
                 mainState = mMainState,
                 barChartList = mGraph,
                 activeFilter = mActiveTabFilter,
-                onChangeActiveFilter = { viewModel.onChangeActiveFilter(filter = it) }
+                onChangeActiveFilter = { viewModel.onChangeActiveFilter(filter = it) },
+                tabTransactions = mAllTransactions,
             )
         }
     }
@@ -180,6 +182,7 @@ private fun Tabs(
     barChartList: List<BarChartData.Bar>,
     activeFilter: String,
     onChangeActiveFilter: (String) -> Unit,
+    tabTransactions: List<TransEntity>
 ) {
     val mContext: Context = LocalContext.current
     val mList: List<TabItemChart> = TabItemChart.tabItemCharts
@@ -240,7 +243,7 @@ private fun Tabs(
             when (page) {
                 TabsScreenChart.CHART_TRANSACTIONS -> TransactionsChartScreen(
                     barChartList = barChartList, activeFilter = activeFilter,
-                    onChangeActiveFilter = onChangeActiveFilter
+                    onChangeActiveFilter = onChangeActiveFilter, tabTransactions = tabTransactions
                 )
 
                 TabsScreenChart.CHART_BALANCE -> BalanceChartScreen(mainState = mainState)
