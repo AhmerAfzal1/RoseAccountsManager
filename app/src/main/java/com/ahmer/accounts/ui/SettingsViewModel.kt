@@ -2,6 +2,9 @@ package com.ahmer.accounts.ui
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.material3.ColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.luminance
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,9 +39,7 @@ class SettingsViewModel @Inject constructor(
     val eventFlow: SharedFlow<UiEvent> = _eventFlow.asSharedFlow()
 
     val currentCurrency: StateFlow<Currency> = dataStore.getCurrency.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        initialValue = Currency.PKR
+        scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = Currency.PKR
     )
 
     val currentTheme: StateFlow<ThemeMode> = dataStore.getTheme.stateIn(
@@ -81,8 +82,7 @@ class SettingsViewModel @Inject constructor(
                 _eventFlow.emit(
                     value = UiEvent.ShowToast(
                         context.getString(
-                            R.string.toast_msg_db_backup,
-                            uri?.let {
+                            R.string.toast_msg_db_backup, uri?.let {
                                 HelperUtils.fileNameFromDatabase(context = context, uri = it)
                             }, uri?.path
                         )
@@ -124,3 +124,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 }
+
+@Composable
+fun ColorScheme.isLight() = this.background.luminance() > 0.5

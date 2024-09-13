@@ -3,7 +3,6 @@ package com.ahmer.accounts.ui
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -74,6 +73,7 @@ fun TransAddEditScreen(
     viewModelSettings: SettingsViewModel,
     onPopBackStack: () -> Unit
 ) {
+    val isLightTheme: Boolean = MaterialTheme.colorScheme.isLight()
     val isEditMode: Boolean = viewModel.isEditMode
     val mContext: Context = LocalContext.current
     val mCurrency: Currency by viewModelSettings.currentCurrency.collectAsStateWithLifecycle()
@@ -81,7 +81,7 @@ fun TransAddEditScreen(
     val mFocusRequester: FocusRequester = remember { FocusRequester() }
     val mKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
     val mState: TransAddEditState by viewModel.uiState.collectAsStateWithLifecycle()
-    val mSurfaceColor: Color = if (isSystemInDarkTheme()) Color.Black else Color.Yellow
+    val mSurfaceColor: Color = if (isLightTheme) Color.Black else Color.Yellow
     val mSurfaceElevation: Dp = 4.dp
     val mTransEntity: TransEntity = mState.transaction ?: TransEntity()
     var mDatePickerDialog: Boolean by rememberSaveable { mutableStateOf(value = false) }

@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,7 +56,8 @@ import com.github.tehras.charts.bar.BarChartData
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
-    val mSurfaceColor: Color = if (isSystemInDarkTheme()) Color.Black else Color.Yellow
+    val isLightTheme: Boolean = MaterialTheme.colorScheme.isLight()
+    val mSurfaceColor: Color = if (isLightTheme) Color.Black else Color.Yellow
     val mSurfaceElevation: Dp = 4.dp
 
     Scaffold(modifier = Modifier, topBar = {
