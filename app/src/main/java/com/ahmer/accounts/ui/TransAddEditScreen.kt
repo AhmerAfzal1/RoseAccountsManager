@@ -150,16 +150,20 @@ fun TransAddEditScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val mOptions: List<String> = listOf(Constants.TYPE_CREDIT, Constants.TYPE_DEBIT)
-            MyTextField(value = HelperUtils.getDateTime(
-                time = mTransEntity.date, pattern = Constants.PATTERN_TEXT_FIELD
-            ),
+            val mTextColor: Color = if (isLightTheme) Color.Black else Color.White
+            MyTextField(
+                value = HelperUtils.getDateTime(
+                    time = mTransEntity.date, pattern = Constants.PATTERN_TEXT_FIELD
+                ),
                 onValueChange = {},
                 modifier = Modifier.onFocusChanged { mDatePickerDialog = it.isFocused },
                 readOnly = true,
                 label = { Text(stringResource(id = R.string.label_date)) },
                 leadingIcon = { DateIcon() },
                 trailingIcon = {},
-                supportingText = {})
+                supportingText = {},
+                textColor = mTextColor
+            )
 
             Row(
                 modifier = Modifier
@@ -221,7 +225,8 @@ fun TransAddEditScreen(
                 ),
                 keyboardActions = KeyboardActions(onNext = {
                     mFocusManager.moveFocus(FocusDirection.Down)
-                })
+                }),
+                textColor = mTextColor
             )
 
             MyTextField(
@@ -255,7 +260,8 @@ fun TransAddEditScreen(
                     capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = { clear() }),
-                maxLines = 3
+                maxLines = 3,
+                textColor = mTextColor
             )
 
             OutlinedButton(

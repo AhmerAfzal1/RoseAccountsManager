@@ -137,8 +137,10 @@ fun PersonAddEditMain(
     focusRequester: FocusRequester,
     keyboardController: SoftwareKeyboardController?,
 ) {
+    val isLightTheme: Boolean = MaterialTheme.colorScheme.isLight()
     var isMoreData: Boolean by remember { mutableStateOf(value = false) }
     val mState by viewModel.uiState.collectAsState()
+    val mTextColor: Color = if (isLightTheme) Color.Black else Color.White
 
     fun clear() {
         focusManager.clearFocus()
@@ -190,7 +192,8 @@ fun PersonAddEditMain(
                 ),
                 keyboardActions = KeyboardActions(onNext = {
                     focusManager.moveFocus(FocusDirection.Down)
-                })
+                }),
+                textColor = mTextColor
             )
 
             MyTextField(
@@ -225,7 +228,8 @@ fun PersonAddEditMain(
                 ),
                 keyboardActions = KeyboardActions(onNext = {
                     focusManager.moveFocus(FocusDirection.Down)
-                })
+                }),
+                textColor = mTextColor
             )
 
             if (!isMoreData) {
@@ -267,7 +271,8 @@ fun PersonAddEditMain(
                     ),
                     keyboardActions = KeyboardActions(onNext = {
                         focusManager.moveFocus(FocusDirection.Down)
-                    })
+                    }),
+                    textColor = mTextColor
                 )
 
                 MyTextField(
@@ -303,7 +308,8 @@ fun PersonAddEditMain(
                     ),
                     keyboardActions = KeyboardActions(onNext = {
                         focusManager.moveFocus(FocusDirection.Down)
-                    })
+                    }),
+                    textColor = mTextColor
                 )
 
                 MyTextField(
@@ -336,6 +342,7 @@ fun PersonAddEditMain(
                         imeAction = ImeAction.Done
                     ),
                     keyboardActions = KeyboardActions(onDone = { clear() }),
+                    textColor = mTextColor
                 )
             }
 

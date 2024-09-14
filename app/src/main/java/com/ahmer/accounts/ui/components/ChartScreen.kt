@@ -75,142 +75,162 @@ fun TransactionsChartScreen(
     onChangeActiveFilter: (String) -> Unit,
     tabTransactions: List<TransEntity>,
 ) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(all = 8.dp),
+        horizontalAlignment = Alignment.Start
+    ) {
+        BardChartItem(barChartList = barChartList)
+        BarChartCardItem(activeFilter = activeFilter) { onChangeActiveFilter(it) }
+        TransactionHeadingCardItem()
+        AllTransactionItem(allTransactions = tabTransactions)
+    }
+}
+
+@Composable
+fun BardChartItem(modifier: Modifier = Modifier, barChartList: List<BarChartData.Bar>) {
+    BarChart(
+        barChartData = BarChartData(bars = barChartList),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height = 300.dp)
+            .padding(all = 8.dp),
+        animation = simpleChartAnimation(),
+        barDrawer = SimpleBarDrawer(),
+        xAxisDrawer = SimpleXAxisDrawer(
+            axisLineThickness = 1.dp,
+            axisLineColor = MaterialTheme.colorScheme.primary
+        ),
+        yAxisDrawer = SimpleYAxisDrawer(
+            axisLineThickness = 1.dp,
+            axisLineColor = MaterialTheme.colorScheme.primary
+        ),
+        labelDrawer = SimpleValueDrawer(
+            drawLocation = SimpleValueDrawer.DrawLocation.XAxis,
+            labelTextColor = MaterialTheme.colorScheme.primary
+        )
+    )
+}
+
+@Composable
+fun BarChartCardItem(
+    modifier: Modifier = Modifier,
+    activeFilter: String,
+    onChangeActiveFilter: (String) -> Unit
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        ChartGraphCard(
+            filterName = ConstantsChart.THIS_WEEK,
+            isActive = activeFilter == ConstantsChart.THIS_WEEK,
+            onClick = { onChangeActiveFilter(it) }
+        )
+        ChartGraphCard(
+            filterName = ConstantsChart.LAST_7_DAYS,
+            isActive = activeFilter == ConstantsChart.LAST_7_DAYS,
+            onClick = { onChangeActiveFilter(it) }
+        )
+        ChartGraphCard(
+            filterName = ConstantsChart.THIS_MONTH,
+            isActive = activeFilter == ConstantsChart.THIS_MONTH,
+            onClick = { onChangeActiveFilter(it) }
+        )
+        ChartGraphCard(
+            filterName = ConstantsChart.ALL,
+            isActive = activeFilter == ConstantsChart.ALL,
+            onClick = { onChangeActiveFilter(it) }
+        )
+    }
+}
+
+@Composable
+fun TransactionHeadingCardItem(modifier: Modifier = Modifier) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = CardDefaults.shape,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(),
+    ) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(all = 4.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            Text(
+                text = stringResource(R.string.label_sr_no).uppercase(),
+                modifier = Modifier.weight(weight = 0.125f),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = stringResource(R.string.label_created_on).uppercase(),
+                modifier = Modifier.weight(weight = 0.3125f),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = stringResource(R.string.label_type).uppercase(),
+                modifier = Modifier.weight(weight = 0.3125f),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = stringResource(R.string.label_by_amount).uppercase(),
+                modifier = Modifier.weight(weight = 0.25f),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+
+    HorizontalDivider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp),
+        thickness = 2.dp,
+        color = Color.LightGray.copy(alpha = 0.2f)
+    )
+}
+
+@Composable
+fun AllTransactionItem(modifier: Modifier = Modifier, allTransactions: List<TransEntity>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(all = 8.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        item {
-            BarChart(
-                barChartData = BarChartData(bars = barChartList),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(height = 300.dp)
-                    .padding(all = 8.dp),
-                animation = simpleChartAnimation(),
-                barDrawer = SimpleBarDrawer(),
-                xAxisDrawer = SimpleXAxisDrawer(
-                    axisLineThickness = 1.dp,
-                    axisLineColor = MaterialTheme.colorScheme.primary
-                ),
-                yAxisDrawer = SimpleYAxisDrawer(
-                    axisLineThickness = 1.dp,
-                    axisLineColor = MaterialTheme.colorScheme.primary
-                ),
-                labelDrawer = SimpleValueDrawer(
-                    drawLocation = SimpleValueDrawer.DrawLocation.XAxis,
-                    labelTextColor = MaterialTheme.colorScheme.primary
-                )
-            )
-        }
-
-        item {
+        items(items = allTransactions, key = { tranId -> tranId.id }) { transaction ->
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                ChartGraphCard(
-                    filterName = ConstantsChart.THIS_WEEK,
-                    isActive = activeFilter == ConstantsChart.THIS_WEEK,
-                    onClick = { onChangeActiveFilter(it) }
-                )
-                ChartGraphCard(
-                    filterName = ConstantsChart.LAST_7_DAYS,
-                    isActive = activeFilter == ConstantsChart.LAST_7_DAYS,
-                    onClick = { onChangeActiveFilter(it) }
-                )
-                ChartGraphCard(
-                    filterName = ConstantsChart.THIS_MONTH,
-                    isActive = activeFilter == ConstantsChart.THIS_MONTH,
-                    onClick = { onChangeActiveFilter(it) }
-                )
-                ChartGraphCard(
-                    filterName = ConstantsChart.ALL,
-                    isActive = activeFilter == ConstantsChart.ALL,
-                    onClick = { onChangeActiveFilter(it) }
-                )
-            }
-        }
-
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = CardDefaults.shape,
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(),
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(all = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                ) {
-                    Text(
-                        text = stringResource(R.string.label_sr_no).uppercase(),
-                        modifier = Modifier.weight(weight = 1f),
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = stringResource(R.string.label_created_on).uppercase(),
-                        modifier = Modifier.weight(weight = 1f),
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = stringResource(R.string.label_type).uppercase(),
-                        modifier = Modifier.weight(weight = 1f),
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = stringResource(R.string.label_by_amount).uppercase(),
-                        modifier = Modifier.weight(weight = 1f),
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp),
-                thickness = 2.dp,
-                color = Color.LightGray.copy(alpha = 0.2f)
-            )
-        }
-
-        items(items = tabTransactions, key = { tranId -> tranId.id }) { transaction ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(all = 4.dp),
+                modifier = modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 Text(
-                    text = (tabTransactions.indexOf(transaction) + 1).toString(),
+                    text = (allTransactions.indexOf(transaction) + 1).toString(),
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.weight(weight = 1f)
+                    modifier = Modifier.weight(weight = 0.125f)
                 )
                 Text(
                     text = transaction.createdOn,
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.weight(weight = 1f)
+                    modifier = Modifier.weight(weight = 0.3125f)
                 )
                 Text(
                     text = transaction.type,
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.weight(weight = 1f)
+                    modifier = Modifier.weight(weight = 0.3125f)
                 )
                 Text(
                     text = transaction.amount,
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.weight(weight = 1f)
+                    modifier = Modifier.weight(weight = 0.25f)
                 )
             }
         }

@@ -75,8 +75,8 @@ fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
     }) { innerPadding ->
         val mMainState: MainState by mainViewModel.uiState.collectAsStateWithLifecycle()
 
-        val mGraphState: ReportState by viewModel.graph.collectAsStateWithLifecycle()
         val mActiveTabFilter: String = viewModel.activeFilter.value
+        val mGraphState: ReportState by viewModel.graph.collectAsStateWithLifecycle()
         val mAllTransactions: List<TransEntity> = mGraphState.allTransactions
         //val mTabTransactions: MutableList<TransEntity> = mutableListOf()
 
