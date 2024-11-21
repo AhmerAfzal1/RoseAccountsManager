@@ -126,7 +126,7 @@ fun BarChartCardItem(
         modifier = modifier
             .fillMaxWidth()
             .horizontalScroll(state = rememberScrollState())
-            .padding(vertical = 4.dp),
+            .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
     ) {
