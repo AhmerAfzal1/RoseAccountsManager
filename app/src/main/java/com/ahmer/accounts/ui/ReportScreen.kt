@@ -51,7 +51,7 @@ import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.ConstantsChart
 import com.ahmer.accounts.utils.DateUtils
 import com.ahmer.accounts.utils.HelperUtils
-import com.github.tehras.charts.bar.BarChartData
+import com.ahmer.accounts.utils.chart.bar.BarChartData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

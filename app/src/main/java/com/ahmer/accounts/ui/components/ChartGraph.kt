@@ -26,7 +26,7 @@ fun ChartGraphCard(
 ) {
     Box(
         modifier = Modifier
-            .padding(all = 8.dp)
+            .padding(all = 4.dp)
             .clickable { onClick(filterName) }
     ) {
         if (isActive) {

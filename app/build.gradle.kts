@@ -9,7 +9,7 @@ plugins {
     id("com.google.gms.google-services")
     id("dagger.hilt.android.plugin")
     id("kotlin-parcelize")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.21"
 }
 
 android {
@@ -117,6 +117,4 @@ dependencies {
     //Others
     implementation("com.guardanis:applock:3.0.2")
     implementation("com.itextpdf:itextpdf:5.5.13.4")
-    implementation("com.github.tehras:charts:0.2.4-alpha")
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

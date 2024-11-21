@@ -1,5 +1,6 @@
 package com.ahmer.accounts.ui.components
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -31,13 +33,13 @@ import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.ConstantsChart
 import com.ahmer.accounts.utils.chart.PieChart
 import com.ahmer.accounts.utils.chart.PieChartData
-import com.github.tehras.charts.bar.BarChart
-import com.github.tehras.charts.bar.BarChartData
-import com.github.tehras.charts.bar.renderer.bar.SimpleBarDrawer
-import com.github.tehras.charts.bar.renderer.label.SimpleValueDrawer
-import com.github.tehras.charts.bar.renderer.xaxis.SimpleXAxisDrawer
-import com.github.tehras.charts.bar.renderer.yaxis.SimpleYAxisDrawer
-import com.github.tehras.charts.piechart.animation.simpleChartAnimation
+import com.ahmer.accounts.utils.chart.bar.BarChart
+import com.ahmer.accounts.utils.chart.bar.BarChartData
+import com.ahmer.accounts.utils.chart.bar.renderer.bar.SimpleBarDrawer
+import com.ahmer.accounts.utils.chart.bar.renderer.label.SimpleValueDrawer
+import com.ahmer.accounts.utils.chart.bar.renderer.xaxis.SimpleXAxisDrawer
+import com.ahmer.accounts.utils.chart.bar.renderer.yaxis.SimpleYAxisDrawer
+import com.ahmer.accounts.utils.chart.bar.simpleChartAnimation
 
 @Composable
 fun BalanceChartScreen(mainState: MainState) {
@@ -104,7 +106,8 @@ fun BardChartItem(modifier: Modifier = Modifier, barChartList: List<BarChartData
         ),
         yAxisDrawer = SimpleYAxisDrawer(
             axisLineThickness = 1.dp,
-            axisLineColor = MaterialTheme.colorScheme.primary
+            axisLineColor = MaterialTheme.colorScheme.primary,
+            labelTextColor = MaterialTheme.colorScheme.primary
         ),
         labelDrawer = SimpleValueDrawer(
             drawLocation = SimpleValueDrawer.DrawLocation.XAxis,
@@ -122,7 +125,8 @@ fun BarChartCardItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .horizontalScroll(state = rememberScrollState())
+            .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
     ) {

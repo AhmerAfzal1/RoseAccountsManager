@@ -12,7 +12,7 @@ import com.ahmer.accounts.state.ReportState
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.ConstantsChart
 import com.ahmer.accounts.utils.DateUtils
-import com.github.tehras.charts.bar.BarChartData
+import com.ahmer.accounts.utils.chart.bar.BarChartData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
