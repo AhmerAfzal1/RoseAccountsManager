@@ -174,7 +174,8 @@ fun TransAddEditScreen(
                     val mType = if (text == Constants.TYPE_CREDIT) {
                         Constants.TYPE_CREDIT_SUFFIX
                     } else Constants.TYPE_DEBIT_SUFFIX
-                    Box(contentAlignment = Alignment.Center,
+                    Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 5.dp)

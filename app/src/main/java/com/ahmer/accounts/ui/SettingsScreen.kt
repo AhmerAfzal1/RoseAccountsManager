@@ -153,29 +153,34 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     ) {
         item {
             PreferenceCategory(title = stringResource(id = R.string.label_pref_category_theme)) {
-                TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_theme)) },
+                TextPreference(
+                    title = { Text(text = stringResource(id = R.string.label_pref_text_title_theme)) },
                     summary = { Text(text = mSummary) },
                     icon = { ThemeIcon() },
                     onClick = { mShowThemeDialog = !mShowThemeDialog })
             }
 
             PreferenceCategory(title = stringResource(id = R.string.label_pref_category_backup_restore)) {
-                TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_backup)) },
+                TextPreference(
+                    title = { Text(text = stringResource(id = R.string.label_pref_text_title_backup)) },
                     summary = { Text(text = "Backup your data manually") },
                     icon = { BackupIcon() },
                     onClick = { backup() })
-                TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_restore)) },
+                TextPreference(
+                    title = { Text(text = stringResource(id = R.string.label_pref_text_title_restore)) },
                     summary = { Text(text = "Restore the backup") },
                     icon = { RestoreIcon() },
                     onClick = { restore() })
             }
 
             PreferenceCategory(title = stringResource(id = R.string.label_pref_category_general)) {
-                TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_currency)) },
+                TextPreference(
+                    title = { Text(text = stringResource(id = R.string.label_pref_text_title_currency)) },
                     summary = { Text(text = mCurrentCurrency.code) },
                     icon = { CurrencyIcon() },
                     onClick = { mShowBottomSheet.value = !mShowBottomSheet.value })
-                TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_clear_caches)) },
+                TextPreference(
+                    title = { Text(text = stringResource(id = R.string.label_pref_text_title_clear_caches)) },
                     summary = {
                         Text(
                             text = stringResource(
@@ -186,7 +191,8 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                     },
                     icon = { ClearCachesIcon() },
                     onClick = {})
-                TextPreference(title = { Text(text = stringResource(id = R.string.label_pref_text_title_app_version)) },
+                TextPreference(
+                    title = { Text(text = stringResource(id = R.string.label_pref_text_title_app_version)) },
                     summary = { Text(text = "${mAppVersion.versionName} (${mAppVersion.versionCode})") },
                     icon = { VersionIcon() },
                     onClick = { })
@@ -314,13 +320,14 @@ fun CurrencySelectionModal(
             ) {
                 items(items = mCurrencyList) { currency ->
                     isSelected = currency == mSelectedCurrency
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            mSelectedCurrency = currency
-                            viewModel.updateCurrency(currency = currency)
-                        }
-                        .padding(all = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                mSelectedCurrency = currency
+                                viewModel.updateCurrency(currency = currency)
+                            }
+                            .padding(all = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = currency.flag,
                             modifier = Modifier

@@ -309,7 +309,8 @@ private fun SearchBarPerson(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                     )
 
-                    OrderSection(modifier = Modifier,
+                    OrderSection(
+                        modifier = Modifier,
                         sortOrder = mCurrentSortOrder,
                         onOrderChange = { viewModel.updateSortOrder(sortOrder = it) }
                     )
@@ -363,17 +364,20 @@ private fun OrderSection(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp)
         ) {
             item {
-                MyRadioButton(title = stringResource(R.string.label_by_recent),
+                MyRadioButton(
+                    title = stringResource(R.string.label_by_recent),
                     selected = sortOrder is SortOrder.Date,
                     onSelect = { onOrderChange(SortOrder.Date(sortOrder.sortBy)) })
             }
             item {
-                MyRadioButton(title = stringResource(R.string.label_by_name),
+                MyRadioButton(
+                    title = stringResource(R.string.label_by_name),
                     selected = sortOrder is SortOrder.Name,
                     onSelect = { onOrderChange(SortOrder.Name(sortOrder.sortBy)) })
             }
             item {
-                MyRadioButton(title = stringResource(R.string.label_by_amount),
+                MyRadioButton(
+                    title = stringResource(R.string.label_by_amount),
                     selected = sortOrder is SortOrder.Amount,
                     onSelect = { onOrderChange(SortOrder.Amount(sortOrder.sortBy)) })
             }
@@ -393,12 +397,14 @@ private fun OrderSection(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp)
         ) {
             item {
-                MyRadioButton(title = stringResource(R.string.label_by_ascending),
+                MyRadioButton(
+                    title = stringResource(R.string.label_by_ascending),
                     selected = sortOrder.sortBy is SortBy.Ascending,
                     onSelect = { onOrderChange(sortOrder.copy(SortBy.Ascending)) })
             }
             item {
-                MyRadioButton(title = stringResource(R.string.label_by_descending),
+                MyRadioButton(
+                    title = stringResource(R.string.label_by_descending),
                     selected = sortOrder.sortBy is SortBy.Descending,
                     onSelect = { onOrderChange(sortOrder.copy(SortBy.Descending)) })
             }

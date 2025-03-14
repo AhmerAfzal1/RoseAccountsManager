@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.ahmer.accounts.R
 import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorRedDark
@@ -224,34 +225,42 @@ object HelperUtils {
 
     fun moreApps(context: Context, developerId: String = "Ahmer Afzal") {
         try {
-            ContextCompat.startActivity(
-                context, Intent(
-                    Intent.ACTION_VIEW, Uri.parse("market://search?q=pub:$developerId&hl=en")
-                ), null
+            context.startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    "market://search?q=pub:$developerId&hl=en".toUri()
+                ).apply {
+                    // Ensure the intent has the FLAG_ACTIVITY_NEW_TASK if needed
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }, null
             )
         } catch (e: ActivityNotFoundException) {
-            ContextCompat.startActivity(
-                context, Intent(
+            context.startActivity(
+                Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("https://play.google.com/store/apps/developer?id=$developerId&hl=en")
-                ), null
+                    "https://play.google.com/store/apps/developer?id=$developerId&hl=en".toUri()
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }, null
             )
         }
     }
 
     fun runWeb(context: Context, packageName: String) {
         try {
-            ContextCompat.startActivity(
-                context,
-                Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")),
-                null
+            context.startActivity(
+                Intent(Intent.ACTION_VIEW, "market://details?id=$packageName".toUri()).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }, null
             )
         } catch (e: ActivityNotFoundException) {
-            ContextCompat.startActivity(
-                context, Intent(
+            context.startActivity(
+                Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
-                ), null
+                    "https://play.google.com/store/apps/details?id=$packageName".toUri()
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }, null
             )
         }
     }
@@ -260,16 +269,22 @@ object HelperUtils {
         try {
             val mIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name))
                 putExtra(
                     Intent.EXTRA_TEXT,
                     "https://play.google.com/store/apps/details?id=${context.packageName}"
                 )
             }
-            ContextCompat.startActivity(context, Intent.createChooser(mIntent, "Choose one"), null)
+
+            context.startActivity(
+                Intent.createChooser(mIntent, "Share app via").apply {
+                    // Add flags to the chooser intent itself
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }, null
+            )
         } catch (e: Exception) {
-            Log.e(Constants.LOG_TAG, "Exception while share app: ${e.localizedMessage}", e)
+            Log.e(Constants.LOG_TAG, "Exception while sharing app: ${e.localizedMessage}", e)
             FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
