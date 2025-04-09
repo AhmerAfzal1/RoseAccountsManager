@@ -75,13 +75,13 @@ fun MainFunction(viewModel: MainViewModel) {
                 && mCurrentRoute != NavItems.Transactions.fullRoute
                 && mCurrentRoute != NavItems.TransactionsAddEdit.fullRoute
         BottomNav(
-            navController = mNavController, bottomBarState = mBottomBarState
+            navController = mNavController, isVisible = mBottomBarState
         )
     }) { innerPadding ->
         MainNavigation(
             modifier = Modifier.padding(paddingValues = innerPadding),
             navController = mNavController,
-            transSumModel = mState.accountsBalance
+            transactionSumModel = mState.accountsBalance
         )
     }
 }

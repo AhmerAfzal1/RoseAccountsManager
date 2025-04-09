@@ -8,13 +8,19 @@ import androidx.room.PrimaryKey
 import com.ahmer.accounts.utils.Constants
 import kotlinx.parcelize.Parcelize
 
+/**
+ * Data class representing a person in the database.
+ *
+ * This entity is used for storing person details and is annotated with Room and Parcelable annotations.
+ */
 @Keep
 @Entity(
     tableName = Constants.DB_TABLE_PERSON,
-    indices = [Index(value = arrayOf("id"), unique = true)]
+    indices = [Index(value = ["id"], unique = true)]
 )
+
 @Parcelize
-data class PersonsEntity(
+data class PersonEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val name: String = "",
@@ -23,5 +29,5 @@ data class PersonsEntity(
     val email: String = "",
     val notes: String = "",
     val created: Long = System.currentTimeMillis(),
-    val updated: Long = 0.toLong()
+    val updated: Long = 0L
 ) : Parcelable

@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmer.accounts.database.entity.PersonsEntity
-import com.ahmer.accounts.database.model.PersonsBalanceModel
+import com.ahmer.accounts.database.entity.PersonEntity
+import com.ahmer.accounts.database.model.PersonBalanceModel
 import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
@@ -49,9 +49,9 @@ class PersonViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<PersonState> = MutableStateFlow(value = PersonState())
     val uiState: StateFlow<PersonState> = _uiState.asStateFlow()
 
-    private var mDeletedPerson: PersonsEntity? = null
+    private var mDeletedPerson: PersonEntity? = null
 
-    var persons: List<PersonsBalanceModel> by mutableStateOf(value = emptyList())
+    var persons: List<PersonBalanceModel> by mutableStateOf(value = emptyList())
         private set
 
     val currentSortOrder: StateFlow<SortOrder> = dataStore.getSortOrder.stateIn(
@@ -81,7 +81,7 @@ class PersonViewModel @Inject constructor(
             is PersonEvent.OnDelete -> {
                 viewModelScope.launch {
                     mDeletedPerson = event.personsEntity
-                    personRepository.delete(personsEntity = event.personsEntity)
+                    personRepository.delete(person = event.personsEntity)
                     _eventFlow.emit(
                         value = UiEvent.ShowSnackBar(
                             message = "${event.personsEntity.name} deleted", action = "Undo"
@@ -111,14 +111,14 @@ class PersonViewModel @Inject constructor(
             PersonEvent.OnUndoDeletePerson -> {
                 mDeletedPerson?.let { person ->
                     viewModelScope.launch {
-                        personRepository.insertOrUpdate(personsEntity = person)
+                        personRepository.insertOrUpdate(person = person)
                     }
                 }
             }
         }
     }
 
-    fun deletePerson(person: PersonsEntity) {
+    fun deletePerson(person: PersonEntity) {
         viewModelScope.launch {
             onEvent(PersonEvent.OnDelete(personsEntity = person))
         }
@@ -129,7 +129,7 @@ class PersonViewModel @Inject constructor(
         combine(_searchQuery, currentSortOrder) { query, dataStore ->
             Pair(first = query, second = dataStore)
         }.flatMapLatest { (search, sortOrder) ->
-            personRepository.allPersonsSearch(query = search, sortOrder = sortOrder)
+            personRepository.searchPersons(query = search, sortOrder = sortOrder)
         }.onEach { result ->
             persons = result
             _uiState.update { personState -> personState.copy(allPersons = result) }

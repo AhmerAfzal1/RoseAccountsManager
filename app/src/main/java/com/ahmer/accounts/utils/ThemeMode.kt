@@ -6,33 +6,47 @@ sealed class ThemeMode(val name: String) {
     data object System : ThemeMode(name = "system")
 
     companion object {
-        private const val DARK: String = "Dark"
-        private const val LIGHT: String = "Light"
-        private const val SYSTEM: String = "System default"
+        private const val TITLE_DARK: String = "Dark"
+        private const val TITLE_LIGHT: String = "Light"
+        private const val TITLE_SYSTEM: String = "System default"
 
-        val listOfThemeModes: List<Pair<ThemeMode, String>> by lazy {
+        /**
+         * Lazily initialized list of theme modes paired with their display titles.
+         */
+        val themeModes: List<Pair<ThemeMode, String>> by lazy {
             listOf(
-                Dark to DARK,
-                Light to LIGHT,
-                System to SYSTEM
+                Dark to TITLE_DARK,
+                Light to TITLE_LIGHT,
+                System to TITLE_SYSTEM
             )
         }
 
-        fun getThemeModesTitle(themeMode: ThemeMode): String {
-            return when (themeMode) {
-                Dark -> DARK
-                Light -> LIGHT
-                System -> SYSTEM
-            }
+        /**
+         * Returns the display title for the given [themeMode].
+         *
+         * @param themeMode the theme mode.
+         * @return the corresponding display title.
+         */
+        fun getDisplayTitle(themeMode: ThemeMode): String = when (themeMode) {
+            Dark -> TITLE_DARK
+            Light -> TITLE_LIGHT
+            System -> TITLE_SYSTEM
+
         }
 
-        fun valueOf(value: String): ThemeMode {
-            return when (value) {
-                Dark.name -> Dark
-                Light.name -> Light
-                System.name -> System
-                else -> System
-            }
+        /**
+         * Maps the provided string [value] to the corresponding [ThemeMode].
+         * Defaults to [System] if the value does not match any mode.
+         *
+         * @param value the string representation of the theme mode.
+         * @return the matching [ThemeMode] instance, or [System] if no match is found.
+         */
+        fun valueOf(value: String): ThemeMode = when (value) {
+            Dark.name -> Dark
+            Light.name -> Light
+            System.name -> System
+            else -> System
         }
+
     }
 }

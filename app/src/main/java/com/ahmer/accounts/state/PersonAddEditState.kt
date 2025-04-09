@@ -1,7 +1,7 @@
 package com.ahmer.accounts.state
 
-import com.ahmer.accounts.database.entity.PersonsEntity
+import com.ahmer.accounts.database.entity.PersonEntity
 
 data class PersonAddEditState(
-    val person: PersonsEntity? = PersonsEntity(),
+    val person: PersonEntity? = PersonEntity(),
 )

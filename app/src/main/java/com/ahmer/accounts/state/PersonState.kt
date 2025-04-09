@@ -1,7 +1,7 @@
 package com.ahmer.accounts.state
 
-import com.ahmer.accounts.database.model.PersonsBalanceModel
+import com.ahmer.accounts.database.model.PersonBalanceModel
 
 data class PersonState(
-    val allPersons: List<PersonsBalanceModel> = emptyList(),
+    val allPersons: List<PersonBalanceModel> = emptyList(),
 )

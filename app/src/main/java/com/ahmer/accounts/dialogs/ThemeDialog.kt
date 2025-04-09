@@ -29,7 +29,7 @@ import com.ahmer.accounts.utils.ThemeMode
 @Composable
 fun ThemeDialog(viewModel: SettingsViewModel) {
     val mCurrentTheme: ThemeMode by viewModel.currentTheme.collectAsStateWithLifecycle()
-    val mListThemeModes: List<Pair<ThemeMode, String>> = ThemeMode.listOfThemeModes
+    val mListThemeModes: List<Pair<ThemeMode, String>> = ThemeMode.themeModes
     val (themeMode, setThemeMode) = remember { mutableStateOf(value = mCurrentTheme) }
     var mOpenDialog: Boolean by remember { mutableStateOf(value = true) }
 

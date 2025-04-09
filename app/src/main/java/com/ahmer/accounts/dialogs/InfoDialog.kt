@@ -19,43 +19,36 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.entity.PersonsEntity
+import com.ahmer.accounts.database.entity.PersonEntity
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.InfoIcon
 
 @Composable
-fun RowScope.InfoText(text: String, weight: Float, isTitle: Boolean = false) {
-    if (isTitle) {
-        Text(
-            modifier = Modifier
-                .weight(weight = weight)
-                .padding(top = 3.dp),
-            text = text,
-            style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold
-        )
-    } else {
-        Text(
-            modifier = Modifier
-                .weight(weight = weight)
-                .padding(start = 2.dp, top = 3.dp),
-            text = text,
-            style = MaterialTheme.typography.titleSmall
-        )
-    }
+private fun RowScope.InfoText(text: String, weight: Float, isTitle: Boolean = false) {
+    Text(
+        modifier = Modifier
+            .weight(weight)
+            .padding(
+                start = if (!isTitle) 2.dp else 0.dp,
+                top = 3.dp
+            ),
+        text = text,
+        style = MaterialTheme.typography.titleSmall,
+        fontWeight = if (isTitle) FontWeight.Bold else FontWeight.Normal
+    )
 }
 
 @Composable
-fun MoreInfoAlertDialog(modifier: Modifier = Modifier, personsEntity: PersonsEntity) {
+fun MoreInfoAlertDialog(personEntity: PersonEntity) {
     val mDataList: List<Pair<String, String>> by lazy {
         listOf(
-            "Name:" to personsEntity.name,
-            "Phone:" to personsEntity.phone,
-            "Address:" to personsEntity.address,
-            "Email:" to personsEntity.email,
-            "Notes:" to personsEntity.notes,
-            "Created:" to HelperUtils.getDateTime(time = personsEntity.created),
-            "Updated:" to HelperUtils.getDateTime(time = personsEntity.updated),
+            "Name:" to personEntity.name,
+            "Phone:" to personEntity.phone,
+            "Address:" to personEntity.address,
+            "Email:" to personEntity.email,
+            "Notes:" to personEntity.notes,
+            "Created:" to HelperUtils.getDateTime(time = personEntity.created),
+            "Updated:" to HelperUtils.getDateTime(time = personEntity.updated),
         )
     }
     var mOpenDialog: Boolean by remember { mutableStateOf(value = true) }
@@ -68,12 +61,11 @@ fun MoreInfoAlertDialog(modifier: Modifier = Modifier, personsEntity: PersonsEnt
                     Text(text = stringResource(id = R.string.label_ok))
                 }
             },
-            modifier = modifier,
             icon = { InfoIcon() },
             text = {
                 LazyColumn {
                     items(items = mDataList) { (title, value) ->
-                        Row {
+                        Row(modifier = Modifier.padding(vertical = 2.dp)) {
                             InfoText(text = title, weight = 1f, isTitle = true)
                             InfoText(text = value, weight = 3f, isTitle = false)
                         }

@@ -25,8 +25,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.ahmer.accounts.database.entity.PersonsEntity
-import com.ahmer.accounts.database.model.PersonsBalanceModel
+import com.ahmer.accounts.database.entity.PersonEntity
+import com.ahmer.accounts.database.model.PersonBalanceModel
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorRedDark
@@ -35,14 +35,14 @@ import com.ahmer.accounts.utils.HelperUtils
 
 @Composable
 fun ItemPerson(
-    personsBalanceModel: PersonsBalanceModel,
+    personsBalanceModel: PersonBalanceModel,
     currency: Currency,
     onEvent: (PersonEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val mBalance: Double = personsBalanceModel.balanceModel.balance
     val mContext: Context = LocalContext.current
-    val mPersonsEntity: PersonsEntity = personsBalanceModel.personsEntity
+    val mPersonsEntity: PersonEntity = personsBalanceModel.personsEntity
 
     Row(
         modifier = modifier

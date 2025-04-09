@@ -75,7 +75,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.model.TransSumModel
+import com.ahmer.accounts.database.model.TransactionSumModel
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.PersonState
@@ -102,7 +102,7 @@ fun PersonsListScreen(
     onNavigation: (UiEvent.Navigate) -> Unit,
     personViewModel: PersonViewModel,
     settingsViewModel: SettingsViewModel,
-    transSumModel: TransSumModel,
+    transactionSumModel: TransactionSumModel,
 ) {
     val mContext: Context = LocalContext.current.applicationContext
     val mCurrentCurrency: Currency by settingsViewModel.currentCurrency.collectAsStateWithLifecycle()
@@ -167,7 +167,7 @@ fun PersonsListScreen(
                 .fillMaxSize()
                 .padding(paddingValues = innerPadding),
         ) {
-            ItemBalance(transSumModel = transSumModel, currency = mCurrentCurrency)
+            ItemBalance(transactionSumModel = transactionSumModel, currency = mCurrentCurrency)
             SearchBarPerson(
                 modifier = Modifier
                     .fillMaxWidth()

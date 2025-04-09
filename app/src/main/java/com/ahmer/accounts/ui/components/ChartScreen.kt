@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.entity.TransEntity
+import com.ahmer.accounts.database.entity.TransactionEntity
 import com.ahmer.accounts.state.MainState
 import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorRedDark
@@ -75,7 +75,7 @@ fun TransactionsChartScreen(
     barChartList: List<BarChartData.Bar>,
     activeFilter: String,
     onChangeActiveFilter: (String) -> Unit,
-    tabTransactions: List<TransEntity>,
+    tabTransactions: List<TransactionEntity>,
 ) {
     Column(
         modifier = Modifier
@@ -204,7 +204,7 @@ fun TransactionHeadingCardItem(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AllTransactionItem(modifier: Modifier = Modifier, allTransactions: List<TransEntity>) {
+fun AllTransactionItem(modifier: Modifier = Modifier, allTransactions: List<TransactionEntity>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()

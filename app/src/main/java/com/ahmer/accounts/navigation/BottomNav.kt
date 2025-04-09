@@ -12,9 +12,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,12 +24,29 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ahmer.accounts.navigation.NavItems.Companion.Icons
 
-@Composable
-fun BottomNav(navController: NavHostController, bottomBarState: Boolean) {
-    var mSelectedItem: Int by rememberSaveable { mutableIntStateOf(value = 0) }
+/**
+ * Extension function for [NavDestination] to determine if the destination's hierarchy
+ * contains the given [route].
+ *
+ * @param route The route string to compare against the destination's hierarchy.
+ * @return `true` if the destination belongs to the hierarchy for [route], `false` otherwise.
+ */
+private fun NavDestination?.isRouteInHierarchy(route: String): Boolean {
+    return this?.hierarchy?.any { it.route == route } ?: false
+}
 
+/**
+ * Composable displaying the bottom navigation bar with animated visibility.
+ *
+ * This bottom navigation bar will slide in/out vertically based on [isVisible] state.
+ *
+ * @param navController The [NavHostController] that handles navigation actions.
+ * @param isVisible Flag controlling the visibility of the bottom navigation bar.
+ */
+@Composable
+fun BottomNav(navController: NavHostController, isVisible: Boolean) {
     AnimatedVisibility(
-        visible = bottomBarState,
+        visible = isVisible,
         enter = slideInVertically(initialOffsetY = { it }),
         exit = slideOutVertically(targetOffsetY = { it })
     ) {
@@ -42,15 +56,16 @@ fun BottomNav(navController: NavHostController, bottomBarState: Boolean) {
             tonalElevation = 5.dp,
             windowInsets = WindowInsets.navigationBars,
         ) {
-            val mNavBackStackEntry: NavBackStackEntry? by navController.currentBackStackEntryAsState()
-            val mCurrentDestination: NavDestination? = mNavBackStackEntry?.destination
+            val currentBackStackEntry: NavBackStackEntry? by navController.currentBackStackEntryAsState()
+            val currentDestination: NavDestination? = currentBackStackEntry?.destination
 
-            NavItems.navBottomItems.forEachIndexed { index, item ->
+            NavItems.navBottomItems.forEach { navItem ->
+                val isSelected = currentDestination.isRouteInHierarchy(route = navItem.route)
+
                 NavigationBarItem(
-                    selected = mCurrentDestination?.hierarchy?.any { it.route == item.route } == true,
+                    selected = isSelected,
                     onClick = {
-                        mSelectedItem = index
-                        navController.navigate(route = item.route) {
+                        navController.navigate(route = navItem.route) {
                             popUpTo(id = navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
@@ -58,10 +73,10 @@ fun BottomNav(navController: NavHostController, bottomBarState: Boolean) {
                             restoreState = true
                         }
                     },
-                    icon = { item.Icons(selected = mSelectedItem == index) },
+                    icon = { navItem.Icons(selected = isSelected) },
                     label = {
                         Text(
-                            text = stringResource(id = item.label),
+                            text = stringResource(id = navItem.label),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )

@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.entity.TransEntity
+import com.ahmer.accounts.database.entity.TransactionEntity
 import com.ahmer.accounts.state.MainState
 import com.ahmer.accounts.state.ReportState
 import com.ahmer.accounts.ui.TabItemChart.Companion.Icons
@@ -77,7 +77,7 @@ fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
 
         val mActiveTabFilter: String = viewModel.activeFilter.value
         val mGraphState: ReportState by viewModel.graph.collectAsStateWithLifecycle()
-        val mAllTransactions: List<TransEntity> = mGraphState.allTransactions
+        val mAllTransactions: List<TransactionEntity> = mGraphState.allTransactions
         //val mTabTransactions: MutableList<TransEntity> = mutableListOf()
 
         val mGraph: List<BarChartData.Bar> = when {
@@ -182,7 +182,7 @@ private fun Tabs(
     barChartList: List<BarChartData.Bar>,
     activeFilter: String,
     onChangeActiveFilter: (String) -> Unit,
-    tabTransactions: List<TransEntity>
+    tabTransactions: List<TransactionEntity>
 ) {
     val mContext: Context = LocalContext.current
     val mList: List<TabItemChart> = TabItemChart.tabItemCharts

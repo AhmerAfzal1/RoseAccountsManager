@@ -37,7 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ahmer.accounts.utils.HelperUtils
+import java.util.Locale
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
@@ -101,6 +101,7 @@ fun PieChart(
                     }
 
                     val percentage = (pieChartInput.value / totalValue * 100.0)
+                    val roundPercentage = String.format(Locale.getDefault(), "%.2f", percentage)
 
                     if (index == 0) {
                         values = mutableListOf()
@@ -108,7 +109,7 @@ fun PieChart(
 
                     values.add(
                         PieChartValue(
-                            text = "${HelperUtils.roundValue(value = percentage)} %",
+                            text = "$roundPercentage %",
                             x = circleCenter.x,
                             y = circleCenter.y + (radius - (radius - innerRadius) / 2f) * factor,
                             rotate = rotateAngle.toFloat()

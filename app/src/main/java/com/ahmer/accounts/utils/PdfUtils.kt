@@ -82,7 +82,7 @@ object PdfUtils {
         return try {
             context.contentResolver.openOutputStream(uri)?.use { outputStream ->
                 PdfWriter.getInstance(document, outputStream).apply {
-                    pageEvent = HeaderFooterPageEvent(context)
+                    pageEvent = HeaderFooterPageEvent(context = context)
                 }
 
                 document.setupMetadata(context = context, person = person)
@@ -161,7 +161,7 @@ object PdfUtils {
         transactions: List<TransactionEntity>,
         sumModel: TransactionSumModel
     ) {
-        val table = createMainTable(context)
+        val table = createMainTable(context = context)
         val sortedTransactions = transactions.sortedBy { it.id }
 
         var currentBalance = 0.0
@@ -169,8 +169,8 @@ object PdfUtils {
         var debitCount = 0
 
         sortedTransactions.forEach { transaction ->
-            table.addDateCell(transaction.shortDate)
-            table.addDescriptionCell(transaction.description)
+            table.addDateCell(text = transaction.shortDate)
+            table.addDescriptionCell(text = transaction.description)
 
             val (debit, credit) = when (transaction.type) {
                 Constants.TYPE_CREDIT -> {
@@ -191,8 +191,8 @@ object PdfUtils {
         }
 
         add(table)
-        add(createTotalTable(context, sumModel))
-        addTransactionSummary(context, creditCount, debitCount)
+        add(createTotalTable(context = context, sumModel = sumModel))
+        addTransactionSummary(context = context, creditCount = creditCount, debitCount = debitCount)
     }
 
     /**
@@ -213,7 +213,7 @@ object PdfUtils {
                 Constants.TYPE_CREDIT,
                 context.getString(R.string.label_balance)
             ).forEach { header ->
-                addHeaderCell(header.uppercase())
+                addHeaderCell(text = header.uppercase())
             }
         }
     }
@@ -222,21 +222,21 @@ object PdfUtils {
      * Adds a header cell with centered text to the table.
      */
     private fun PdfPTable.addHeaderCell(text: String) {
-        addCell(createCell(text, isHeading = true, alignment = Element.ALIGN_CENTER))
+        addCell(createCell(text = text, isHeading = true, alignment = Element.ALIGN_CENTER))
     }
 
     /**
      * Adds a date cell with centered text to the table.
      */
     private fun PdfPTable.addDateCell(text: String) {
-        addCell(createCell(text, alignment = Element.ALIGN_CENTER))
+        addCell(createCell(text = text, alignment = Element.ALIGN_CENTER))
     }
 
     /**
      * Adds a description cell with left-aligned text to the table.
      */
     private fun PdfPTable.addDescriptionCell(text: String) {
-        addCell(createCell(text, alignment = Element.ALIGN_LEFT))
+        addCell(createCell(text = text, alignment = Element.ALIGN_LEFT))
     }
 
     /**
@@ -247,9 +247,13 @@ object PdfUtils {
      * @param isBal If true, always display the value (for balance column).
      */
     private fun PdfPTable.addNumericCell(value: Double, isBal: Boolean = false) {
-        val roundValue = roundValue(value)
-        val text = if (value != 0.0) roundValue else ""
-        addCell(createCell(if (isBal) roundValue else text, alignment = Element.ALIGN_RIGHT))
+        val rounded = roundValue(value = value)
+        val text = when {
+            isBal -> rounded  // Always show formatted value for balance
+            value != 0.0 -> rounded  // Show value for non-zero debit/credit
+            else -> ""  // Empty for zero in debit/credit
+        }
+        addCell(createCell(text = text, alignment = Element.ALIGN_RIGHT))
     }
 
     /**
@@ -266,28 +270,28 @@ object PdfUtils {
 
             addCell(
                 createCell(
-                    context.getString(R.string.label_total).uppercase(),
+                    text = context.getString(R.string.label_total).uppercase(),
                     isTotal = true,
                     alignment = Element.ALIGN_CENTER
                 )
             )
             addCell(
                 createCell(
-                    roundValue(sumModel.debitSum),
+                    text = roundValue(value = sumModel.debitSum),
                     isTotal = true,
                     alignment = Element.ALIGN_RIGHT
                 )
             )
             addCell(
                 createCell(
-                    roundValue(sumModel.creditSum),
+                    text = roundValue(value = sumModel.creditSum),
                     isTotal = true,
                     alignment = Element.ALIGN_RIGHT
                 )
             )
             addCell(
                 createCell(
-                    roundValue(sumModel.balance),
+                    text = roundValue(value = sumModel.balance),
                     isTotal = true,
                     alignment = Element.ALIGN_RIGHT
                 )

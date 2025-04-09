@@ -9,17 +9,25 @@ import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.HelperUtils
 import kotlinx.parcelize.Parcelize
 
+/**
+ * Data class representing a transaction associated with a person.
+ *
+ * This entity is used for storing transaction details and includes a foreign key constraint
+ * linking it to the corresponding person.
+ */
 @Entity(
-    tableName = Constants.DB_TABLE_TRANSACTION, foreignKeys = [ForeignKey(
-        entity = PersonsEntity::class,
-        parentColumns = arrayOf("id"),
-        childColumns = arrayOf("personId"),
+    tableName = Constants.DB_TABLE_TRANSACTION,
+    foreignKeys = [ForeignKey(
+        entity = PersonEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["personId"],
         onUpdate = ForeignKey.CASCADE,
         onDelete = ForeignKey.CASCADE
-    )], indices = [Index(value = ["id"], unique = true), Index(value = ["personId"])]
+    )],
+    indices = [Index(value = ["id"], unique = true), Index(value = ["personId"])]
 )
 @Parcelize
-data class TransEntity(
+data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val personId: Int = 0,

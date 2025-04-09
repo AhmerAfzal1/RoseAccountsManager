@@ -15,24 +15,39 @@ import dagger.hilt.android.HiltAndroidApp
 class BaseApp : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
-        MultiDex.install(applicationContext)
-        if (FirebaseApp.getApps(applicationContext).isEmpty()) {
-            FirebaseApp.initializeApp(applicationContext)
+        MultiDex.install(this)
+        initializeFirebase()
+    }
+
+    private fun initializeFirebase() {
+        // Initialize Firebase App if not already initialized
+        if (FirebaseApp.getApps(this).isEmpty()) {
+            FirebaseApp.initializeApp(this)
         }
-        FirebaseAnalytics.getInstance(applicationContext).setAnalyticsCollectionEnabled(true)
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-        FirebasePerformance.getInstance().isPerformanceCollectionEnabled = true
-        FirebaseMessaging.getInstance().isAutoInitEnabled = true
-        val mFirebaseAppCheck = FirebaseAppCheck.getInstance()
-        mFirebaseAppCheck.installAppCheckProviderFactory(
-            PlayIntegrityAppCheckProviderFactory.getInstance()
-        )
-        /*
-         if (NetworkUtils.isConnected()) {
-             MobileAds.initialize(this) {
-                 Log.v(Constants.LOG_TAG, "AdMob Sdk Initialize")
-             }
-         }
-        */
+
+        // Enable Firebase Analytics collection
+        FirebaseAnalytics.getInstance(this).apply {
+            setAnalyticsCollectionEnabled(true)
+        }
+
+        // Enable Crashlytics collection
+        FirebaseCrashlytics.getInstance().apply {
+            isCrashlyticsCollectionEnabled = true
+        }
+
+        // Enable Performance Monitoring
+        FirebasePerformance.getInstance().apply {
+            isPerformanceCollectionEnabled = true
+        }
+
+        // Enable Firebase Cloud Messaging auto-init
+        FirebaseMessaging.getInstance().apply {
+            isAutoInitEnabled = true
+        }
+
+        // Set up Firebase App Check with Play Integrity provider
+        FirebaseAppCheck.getInstance().apply {
+            installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
+        }
     }
 }

@@ -77,7 +77,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     val mCurrentCurrency: Currency by viewModel.currentCurrency.collectAsStateWithLifecycle()
     val mCurrentTheme: ThemeMode by viewModel.currentTheme.collectAsStateWithLifecycle()
     val mShowBottomSheet: MutableState<Boolean> = remember { mutableStateOf(value = false) }
-    val mSummary: String = ThemeMode.getThemeModesTitle(themeMode = mCurrentTheme)
+    val mSummary: String = ThemeMode.getDisplayTitle(themeMode = mCurrentTheme)
     var mShowThemeDialog: Boolean by remember { mutableStateOf(value = false) }
 
     LaunchedEffect(key1 = true) {

@@ -28,8 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.entity.PersonsEntity
-import com.ahmer.accounts.database.model.TransSumModel
+import com.ahmer.accounts.database.entity.PersonEntity
+import com.ahmer.accounts.database.model.TransactionSumModel
 import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorGreenLight
 import com.ahmer.accounts.ui.theme.colorRedDark
@@ -45,9 +45,9 @@ import com.ahmer.accounts.utils.PdfIcon
 @Composable
 fun ItemBalance(
     modifier: Modifier = Modifier,
-    transSumModel: TransSumModel,
+    transactionSumModel: TransactionSumModel,
     currency: Currency,
-    personsEntity: PersonsEntity = PersonsEntity(),
+    personsEntity: PersonEntity = PersonEntity(),
     isUsedTrans: Boolean = false,
     onClickDelete: () -> Unit = {},
     onClickInfo: () -> Unit = {},
@@ -125,13 +125,17 @@ fun ItemBalance(
                     }
                 }
                 ItemBalance(
-                    transSumModel = transSumModel, currency = currency, paddingValues = mPadding,
+                    transactionSumModel = transactionSumModel,
+                    currency = currency,
+                    paddingValues = mPadding,
                 )
             }
         } else {
             mPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 6.dp)
             ItemBalance(
-                transSumModel = transSumModel, currency = currency, paddingValues = mPadding,
+                transactionSumModel = transactionSumModel,
+                currency = currency,
+                paddingValues = mPadding,
             )
         }
     }
@@ -139,12 +143,12 @@ fun ItemBalance(
 
 @Composable
 private fun ItemBalance(
-    transSumModel: TransSumModel, currency: Currency, paddingValues: PaddingValues
+    transactionSumModel: TransactionSumModel, currency: Currency, paddingValues: PaddingValues
 ) {
     val mColorBackground: Color
     val mColorText: Color
 
-    if (transSumModel.balance >= 0) {
+    if (transactionSumModel.balance >= 0) {
         mColorBackground = colorGreenLight
         mColorText = colorGreenDark
     } else {
@@ -165,7 +169,7 @@ private fun ItemBalance(
             currency = currency,
             colorText = colorGreenDark,
             colorBg = colorGreenLight,
-            amount = transSumModel.creditSum,
+            amount = transactionSumModel.creditSum,
             type = stringResource(id = R.string.label_total) + " ${Constants.TYPE_CREDIT}",
         )
 
@@ -176,7 +180,7 @@ private fun ItemBalance(
             currency = currency,
             colorText = colorRedDark,
             colorBg = colorRedLight,
-            amount = transSumModel.debitSum,
+            amount = transactionSumModel.debitSum,
             type = stringResource(id = R.string.label_total) + " ${Constants.TYPE_DEBIT}",
         )
     }
@@ -186,7 +190,7 @@ private fun ItemBalance(
         currency = currency,
         colorText = mColorText,
         colorBg = mColorBackground,
-        amount = transSumModel.balance,
+        amount = transactionSumModel.balance,
         type = stringResource(id = R.string.label_total_balance),
     )
 }
@@ -221,7 +225,7 @@ private fun BalanceCard(
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                text = " ${HelperUtils.roundValue(context = mContext, value = amount)}",
+                text = " ${HelperUtils.roundValue(value = amount)}",
                 color = colorText,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium,

@@ -12,49 +12,47 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.entity.TransEntity
+import com.ahmer.accounts.database.entity.TransactionEntity
 import com.ahmer.accounts.utils.DeleteIcon
 
 @Composable
 fun DeleteAlertDialog(
     modifier: Modifier = Modifier,
     accountName: String = "",
-    transactionsList: List<TransEntity> = emptyList(),
+    transactionsList: List<TransactionEntity> = emptyList(),
     onConfirmClick: () -> Unit
 ) {
-    val mHeading = "Do you want to permanently delete"
-    val mPerson: AnnotatedString = buildAnnotatedString {
-        append(text = "$mHeading this ")
-        withStyle(style = SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
-            append(text = accountName)
-        }
-        append(
-            text = " account? All transaction(s) associated with this account will also be deleted" +
-                    "and this action cannot be undone and you will be unable to recover any data."
-        )
-    }
-
-    val mString: AnnotatedString = if (transactionsList.isNotEmpty()) {
-        if (transactionsList.size == 1) {
-            buildAnnotatedString {
-                append(text = "$mHeading this transaction?")
-            }
-        } else {
-            buildAnnotatedString {
-                append(text = "$mHeading the all selected ")
-                withStyle(style = SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
-                    append(text = "${transactionsList.size}")
+    val dialogMessage = buildAnnotatedString {
+        when {
+            // Account deletion case
+            transactionsList.isEmpty() -> {
+                append("Deleting this ")
+                withStyle(SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
+                    append(accountName)
                 }
-                append(text = " transactions?")
+                append(" account will also remove all associated transactions. This action is irreversible.")
+            }
+
+            // Single transaction case
+            transactionsList.size == 1 -> {
+                append("Deleting this transaction is irreversible.")
+            }
+
+            // Multiple transactions case
+            else -> {
+                append("Deleting all ")
+                withStyle(SpanStyle(color = Color.Red, fontWeight = FontWeight.Bold)) {
+                    append("${transactionsList.size}")
+                }
+                append(" selected transactions is irreversible.")
             }
         }
-    } else mPerson
+    }
 
     var mOpenDialog: Boolean by remember { mutableStateOf(value = true) }
 
@@ -79,7 +77,7 @@ fun DeleteAlertDialog(
             },
             icon = { DeleteIcon() },
             title = { Text(text = stringResource(id = R.string.label_confirm)) },
-            text = { Text(text = mString) },
+            text = { Text(text = dialogMessage) },
             containerColor = MaterialTheme.colorScheme.background,
         )
     }

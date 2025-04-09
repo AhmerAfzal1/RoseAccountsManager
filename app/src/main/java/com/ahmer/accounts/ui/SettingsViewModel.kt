@@ -63,9 +63,9 @@ class SettingsViewModel @Inject constructor(
     fun backupDatabase(context: Context, uri: Uri?) {
         val mJob = CoroutineScope(Dispatchers.IO).launch {
             //While ask personDao provider then simply comment the val mDatabase line
-            val mDatabase = AppModule.providesDatabase(context = context)
+            val mDatabase = AppModule.provideDatabase(context = context)
             val mQuery = SimpleSQLiteQuery(query = "pragma wal_checkpoint(full)")
-            mDatabase.adminDao().checkPoint(supportSQLiteQuery = mQuery)
+            mDatabase.adminDao().executeCheckpoint(query = mQuery)
             val mInputStream = context.getDatabasePath(Constants.DB_NAME).inputStream()
             val mOutputStream = uri?.let { context.contentResolver.openOutputStream(it) }
             runCatching {
@@ -94,9 +94,9 @@ class SettingsViewModel @Inject constructor(
 
     fun restoreDatabase(context: Context, uri: Uri?) {
         val mJob = CoroutineScope(Dispatchers.IO).launch {
-            val mDatabase = AppModule.providesDatabase(context = context)
+            val mDatabase = AppModule.provideDatabase(context = context)
             val mQuery = SimpleSQLiteQuery(query = "pragma wal_checkpoint(full)")
-            mDatabase.adminDao().checkPoint(supportSQLiteQuery = mQuery)
+            mDatabase.adminDao().executeCheckpoint(query = mQuery)
             mDatabase.close()
             val mInputStream = uri?.let { context.contentResolver.openInputStream(it) }
             val mOutputStream = context.getDatabasePath(Constants.DB_NAME).outputStream()

@@ -1,7 +1,7 @@
 package com.ahmer.accounts.state
 
-import com.ahmer.accounts.database.model.TransSumModel
+import com.ahmer.accounts.database.model.TransactionSumModel
 
 data class MainState(
-    val accountsBalance: TransSumModel = TransSumModel(),
+    val accountsBalance: TransactionSumModel = TransactionSumModel(),
 )

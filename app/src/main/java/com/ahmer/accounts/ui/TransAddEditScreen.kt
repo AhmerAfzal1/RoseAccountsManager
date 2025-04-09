@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.entity.TransEntity
+import com.ahmer.accounts.database.entity.TransactionEntity
 import com.ahmer.accounts.dialogs.DateTimePickerDialog
 import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.event.UiEvent
@@ -83,7 +83,7 @@ fun TransAddEditScreen(
     val mState: TransAddEditState by viewModel.uiState.collectAsStateWithLifecycle()
     val mSurfaceColor: Color = if (isLightTheme) Color.Black else Color.Yellow
     val mSurfaceElevation: Dp = 4.dp
-    val mTransEntity: TransEntity = mState.transaction ?: TransEntity()
+    val mTransactionEntity: TransactionEntity = mState.transaction ?: TransactionEntity()
     var mDatePickerDialog: Boolean by rememberSaveable { mutableStateOf(value = false) }
 
     LaunchedEffect(key1 = true) {
@@ -104,8 +104,10 @@ fun TransAddEditScreen(
     }
 
     if (mDatePickerDialog) {
-        DateTimePickerDialog(selectedDate = mTransEntity.date) {
-            viewModel.onEvent(TransAddEditEvent.OnDateChange(it))
+        DateTimePickerDialog(
+            selectedDate = mTransactionEntity.date,
+        ) {
+            viewModel.onEvent(TransAddEditEvent.OnDateChange(date = it))
         }
     }
 
@@ -153,7 +155,7 @@ fun TransAddEditScreen(
             val mTextColor: Color = if (isLightTheme) Color.Black else Color.White
             MyTextField(
                 value = HelperUtils.getDateTime(
-                    time = mTransEntity.date, pattern = Constants.PATTERN_TEXT_FIELD
+                    time = mTransactionEntity.date, pattern = Constants.PATTERN_TEXT_FIELD
                 ),
                 onValueChange = {},
                 modifier = Modifier.onFocusChanged { mDatePickerDialog = it.isFocused },
@@ -180,7 +182,7 @@ fun TransAddEditScreen(
                             .weight(1f)
                             .padding(horizontal = 5.dp)
                             .background(
-                                color = if (text == mTransEntity.type) {
+                                color = if (text == mTransactionEntity.type) {
                                     MaterialTheme.colorScheme.primary
                                 } else Color.LightGray
                             )
@@ -189,7 +191,7 @@ fun TransAddEditScreen(
                             text = mType.uppercase(),
                             modifier = Modifier.padding(vertical = 12.dp),
                             color = Color.White,
-                            fontWeight = if (text == mTransEntity.type) FontWeight.Bold else FontWeight.Normal,
+                            fontWeight = if (text == mTransactionEntity.type) FontWeight.Bold else FontWeight.Normal,
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -197,7 +199,7 @@ fun TransAddEditScreen(
             }
 
             MyTextField(
-                value = mTransEntity.amount,
+                value = mTransactionEntity.amount,
                 onValueChange = {
                     viewModel.onEvent(TransAddEditEvent.OnAmountChange(it))
                 },
@@ -211,9 +213,9 @@ fun TransAddEditScreen(
                 label = { Text(stringResource(id = R.string.label_by_amount)) },
                 leadingIcon = { CurrencyIcon() },
                 trailingIcon = {
-                    if (mTransEntity.amount.isNotEmpty()) {
+                    if (mTransactionEntity.amount.isNotEmpty()) {
                         CloseIcon(modifier = Modifier.clickable {
-                            if (mTransEntity.amount.isNotEmpty()) {
+                            if (mTransactionEntity.amount.isNotEmpty()) {
                                 viewModel.onEvent(TransAddEditEvent.OnAmountChange(amount = ""))
                             }
                         })
@@ -231,7 +233,7 @@ fun TransAddEditScreen(
             )
 
             MyTextField(
-                value = mTransEntity.description,
+                value = mTransactionEntity.description,
                 onValueChange = {
                     if (it.length <= Constants.LEN_DESCRIPTION) {
                         viewModel.onEvent(TransAddEditEvent.OnDescriptionChange(it))
@@ -240,9 +242,9 @@ fun TransAddEditScreen(
                 label = { Text(stringResource(id = R.string.label_description)) },
                 leadingIcon = { NotesIcon() },
                 trailingIcon = {
-                    if (mTransEntity.description.isNotEmpty()) {
+                    if (mTransactionEntity.description.isNotEmpty()) {
                         CloseIcon(modifier = Modifier.clickable {
-                            if (mTransEntity.description.isNotEmpty()) {
+                            if (mTransactionEntity.description.isNotEmpty()) {
                                 viewModel.onEvent(
                                     TransAddEditEvent.OnDescriptionChange(description = "")
                                 )
@@ -252,7 +254,7 @@ fun TransAddEditScreen(
                 },
                 supportingText = {
                     Text(
-                        text = "${mTransEntity.description.length} / ${Constants.LEN_DESCRIPTION}",
+                        text = "${mTransactionEntity.description.length} / ${Constants.LEN_DESCRIPTION}",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.End,
                     )
@@ -269,7 +271,7 @@ fun TransAddEditScreen(
                 onClick = {
                     clear()
                     viewModel.onEvent(TransAddEditEvent.OnSaveClick)
-                }, enabled = mTransEntity.amount.isNotEmpty()
+                }, enabled = mTransactionEntity.amount.isNotEmpty()
             ) {
                 Text(text = if (!isEditMode) Constants.BUTTON_SAVE else Constants.BUTTON_UPDATE)
             }

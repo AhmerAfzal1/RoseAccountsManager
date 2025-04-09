@@ -8,8 +8,8 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmer.accounts.database.entity.TransEntity
-import com.ahmer.accounts.database.repository.TransRepository
+import com.ahmer.accounts.database.entity.TransactionEntity
+import com.ahmer.accounts.database.repository.TransactionRepository
 import com.ahmer.accounts.event.TransAddEditEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.TransAddEditState
@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransAddEditViewModel @Inject constructor(
-    private val transRepository: TransRepository,
+    private val transactionRepository: TransactionRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), LifecycleObserver {
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
@@ -43,7 +43,7 @@ class TransAddEditViewModel @Inject constructor(
 
     var isEditMode: Boolean by mutableStateOf(value = false)
 
-    private var currentTransaction: TransEntity?
+    private var currentTransaction: TransactionEntity?
         get() {
             return _uiState.value.transaction
         }
@@ -64,14 +64,15 @@ class TransAddEditViewModel @Inject constructor(
             mTransId = transId
             if (transId != -1) {
                 isEditMode = true
-                transRepository.transactionById(transId = transId).onEach { transEntity ->
-                    _uiState.update { addEditState ->
-                        currentTransaction = transEntity
-                        addEditState.copy(transaction = transEntity)
-                    }
-                }.launchIn(scope = viewModelScope)
+                transactionRepository.getTransactionById(transactionId = transId)
+                    .onEach { transEntity ->
+                        _uiState.update { addEditState ->
+                            currentTransaction = transEntity
+                            addEditState.copy(transaction = transEntity)
+                        }
+                    }.launchIn(scope = viewModelScope)
             } else {
-                currentTransaction = TransEntity(date = System.currentTimeMillis())
+                currentTransaction = TransactionEntity(date = System.currentTimeMillis())
             }
         }
     }
@@ -101,7 +102,7 @@ class TransAddEditViewModel @Inject constructor(
     private fun save() {
         viewModelScope.launch {
             try {
-                var mTransaction: TransEntity? by mutableStateOf(value = TransEntity())
+                var mTransaction: TransactionEntity? by mutableStateOf(value = TransactionEntity())
                 if (currentTransaction!!.type.isEmpty()) {
                     _eventFlow.emit(value = UiEvent.ShowToast("Please select credit or debit type"))
                     return@launch
@@ -112,7 +113,7 @@ class TransAddEditViewModel @Inject constructor(
                 }
                 if (mTransId == -1) {
                     mTransaction = currentTransaction?.let { transaction ->
-                        TransEntity(
+                        TransactionEntity(
                             id = transaction.id,
                             personId = mPersonId!!,
                             date = transaction.date,
@@ -131,7 +132,7 @@ class TransAddEditViewModel @Inject constructor(
                         amount = currentTransaction!!.amount.trim()
                     )
                 }
-                transRepository.insertOrUpdate(transEntity = mTransaction!!)
+                transactionRepository.insertOrUpdate(transaction = mTransaction!!)
                 _eventFlow.emit(value = UiEvent.PopBackStack)
             } catch (e: Exception) {
                 val mError = "The transaction could not be added due to an unknown error"

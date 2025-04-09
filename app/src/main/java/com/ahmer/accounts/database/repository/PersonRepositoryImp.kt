@@ -1,9 +1,9 @@
 package com.ahmer.accounts.database.repository
 
 import com.ahmer.accounts.database.dao.PersonDao
-import com.ahmer.accounts.database.entity.PersonsEntity
-import com.ahmer.accounts.database.model.PersonsBalanceModel
-import com.ahmer.accounts.database.model.TransSumModel
+import com.ahmer.accounts.database.entity.PersonEntity
+import com.ahmer.accounts.database.model.PersonBalanceModel
+import com.ahmer.accounts.database.model.TransactionSumModel
 import com.ahmer.accounts.utils.SortBy
 import com.ahmer.accounts.utils.SortOrder
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -13,50 +13,91 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @ViewModelScoped
-class PersonRepositoryImp @Inject constructor(private val personDao: PersonDao) : PersonRepository {
-    override suspend fun insertOrUpdate(personsEntity: PersonsEntity) {
-        return withContext(context = Dispatchers.IO) {
-            personDao.insertOrUpdate(personsEntity = personsEntity)
+class PersonRepositoryImp @Inject constructor(
+    private val personDao: PersonDao
+) : PersonRepository {
+
+    /**
+     * Inserts or updates a person entity in the database.
+     *
+     * @param person The person entity to be inserted or updated.
+     */
+    override suspend fun insertOrUpdate(person: PersonEntity) {
+        withContext(context = Dispatchers.IO) {
+            personDao.upsertPerson(person = person)
         }
     }
 
-    override suspend fun delete(personsEntity: PersonsEntity) {
-        return withContext(context = Dispatchers.IO) {
-            personDao.delete(personsEntity = personsEntity)
+    /**
+     * Deletes a person entity from the database.
+     *
+     * @param person The person entity to be deleted.
+     */
+    override suspend fun delete(person: PersonEntity) {
+        withContext(context = Dispatchers.IO) {
+            personDao.deletePerson(person = person)
         }
     }
 
-    override fun allPersons(): Flow<List<PersonsEntity>> = personDao.allPersons()
+    /**
+     * Retrieves all persons from the database.
+     *
+     * @return A [Flow] emitting a list of all persons.
+     */
+    override fun getAllPersons(): Flow<List<PersonEntity>> = personDao.getAllPersons()
 
-    override fun allPersonsSearch(
+    /**
+     * Searches for persons based on a query string and a specified sorting order.
+     *
+     * @param query The search term used to filter persons by their attributes.
+     * @param sortOrder The sorting criteria determining the attribute and order (ascending or descending) to sort the results by. It can be one of the following:
+     * - [SortOrder.Amount]: Sorts by the amount associated with each person.
+     * - [SortOrder.Date]: Sorts by the date associated with each person.
+     * - [SortOrder.Name]: Sorts by the name of each person.
+     *
+     * Each of these can be further specified with a [SortBy] to determine the direction:
+     * - [SortBy.Ascending]: Sorts the results in ascending order.
+     * - [SortBy.Descending]: Sorts the results in descending order.
+     *
+     * For example, to sort by amount in ascending order, you would pass `SortOrder.Amount(SortBy.Ascending)`.
+     *
+     * @return A [Flow] emitting a list of [PersonBalanceModel] objects that match the search query and are ordered according to the specified [sortOrder].
+     */
+    override fun searchPersons(
         query: String, sortOrder: SortOrder
-    ): Flow<List<PersonsBalanceModel>> {
-        return when (sortOrder.sortBy) {
-            SortBy.Ascending -> {
-                when (sortOrder) {
-                    is SortOrder.Amount -> personDao.allPersonsSearch(query = query, sort = 0)
-                    is SortOrder.Date -> personDao.allPersonsSearch(query = query, sort = 2)
-                    is SortOrder.Name -> personDao.allPersonsSearch(query = query, sort = 4)
-                }
-            }
-
-            SortBy.Descending -> {
-                when (sortOrder) {
-                    is SortOrder.Amount -> personDao.allPersonsSearch(query = query, sort = 1)
-                    is SortOrder.Date -> personDao.allPersonsSearch(query = query, sort = 3)
-                    is SortOrder.Name -> personDao.allPersonsSearch(query = query, sort = 5)
-                }
-            }
+    ): Flow<List<PersonBalanceModel>> {
+        val sortType = when (sortOrder) {
+            is SortOrder.Amount -> if (sortOrder.sortBy is SortBy.Ascending) 0 else 1
+            is SortOrder.Date -> if (sortOrder.sortBy is SortBy.Ascending) 2 else 3
+            is SortOrder.Name -> if (sortOrder.sortBy is SortBy.Ascending) 4 else 5
         }
+        return personDao.searchPersons(query = query, sort = sortType)
     }
 
-    override fun personById(personId: Int): Flow<PersonsEntity> {
-        return personDao.personById(personId = personId)
+    /**
+     * Retrieves a person entity by their unique identifier.
+     *
+     * @param personId The ID of the person to retrieve.
+     * @return A [Flow] emitting the requested person entity.
+     */
+    override fun getPersonById(personId: Int): Flow<PersonEntity> {
+        return personDao.getPersonById(personId = personId)
     }
 
-    override fun balanceByPerson(personId: Int): Flow<TransSumModel> {
+    /**
+     * Retrieves the financial balance summary for a specific person.
+     *
+     * @param personId The ID of the person whose balance is being retrieved.
+     * @return A [Flow] emitting the transaction summary for the specified person.
+     */
+    override fun getBalanceByPerson(personId: Int): Flow<TransactionSumModel> {
         return personDao.balanceByPerson(personId = personId)
     }
 
-    override fun accountsBalance(): Flow<TransSumModel> = personDao.accountsBalance()
+    /**
+     * Retrieves the aggregated financial balance across all accounts.
+     *
+     * @return A [Flow] emitting the total transaction summary.
+     */
+    override fun getAccountsBalance(): Flow<TransactionSumModel> = personDao.accountsBalance()
 }

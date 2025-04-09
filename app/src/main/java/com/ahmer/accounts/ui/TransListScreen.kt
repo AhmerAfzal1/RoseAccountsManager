@@ -69,8 +69,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.entity.PersonsEntity
-import com.ahmer.accounts.database.entity.TransEntity
+import com.ahmer.accounts.database.entity.PersonEntity
+import com.ahmer.accounts.database.entity.TransactionEntity
 import com.ahmer.accounts.dialogs.DeleteAlertDialog
 import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
 import com.ahmer.accounts.event.TransEvent
@@ -107,8 +107,8 @@ fun TransListScreen(
     val mContext: Context = LocalContext.current
     val mCurrency: Currency by settingsViewModel.currentCurrency.collectAsStateWithLifecycle()
     val mPersons = personViewModel.persons.find { it.personsEntity.id == personId }
-    val mPerson: PersonsEntity = mPersons?.personsEntity ?: PersonsEntity()
-    val mSelectedItems: SnapshotStateList<TransEntity> = remember { mutableStateListOf() }
+    val mPerson: PersonEntity = mPersons?.personsEntity ?: PersonEntity()
+    val mSelectedItems: SnapshotStateList<TransactionEntity> = remember { mutableStateListOf() }
     val isNotSelection: Boolean = mSelectedItems.size <= 0
     val isLightTheme: Boolean = MaterialTheme.colorScheme.isLight()
     val mShowSearch: MutableState<Boolean> = remember { mutableStateOf(value = false) }
@@ -128,7 +128,10 @@ fun TransListScreen(
         if (it.resultCode == Activity.RESULT_OK) {
             val mUri = it.data?.data ?: return@rememberLauncherForActivityResult
             transViewModel.generatePdf(
-                context = mContext, uri = mUri, person = mPerson, transSum = mState.transSumModel
+                context = mContext,
+                uri = mUri,
+                person = mPerson,
+                transSum = mState.transactionSumModel
             )
         }
     }
@@ -160,7 +163,7 @@ fun TransListScreen(
     }
 
     if (mShowInfoDialog) {
-        MoreInfoAlertDialog(personsEntity = mPerson)
+        MoreInfoAlertDialog(personEntity = mPerson)
     }
 
     if (mShowDeleteDialogAccount) {
@@ -234,7 +237,7 @@ fun TransListScreen(
                                 IconButton(
                                     onClick = {
                                         mSelectedItems.clear()
-                                        val mSelect: List<TransEntity> =
+                                        val mSelect: List<TransactionEntity> =
                                             mState.allTransactions.filter {
                                                 it.personId == personId
                                             }
@@ -267,15 +270,15 @@ fun TransListScreen(
             verticalArrangement = Arrangement.Top
         ) {
             ItemBalance(
-                transSumModel = mState.transSumModel,
+                transactionSumModel = mState.transactionSumModel,
                 currency = mCurrency,
                 personsEntity = mPerson,
                 isUsedTrans = true,
                 onClickDelete = { mShowDeleteDialogAccount = true },
                 onClickInfo = { mShowInfoDialog = !mShowInfoDialog },
                 onClickPdf = {
-                    val mIntent = PdfUtils.exportToPdf(
-                        context = mContext, transList = mState.allTransactions
+                    val mIntent = PdfUtils.createPdfIntent(
+                        context = mContext, transactions = mState.allTransactions
                     )
                     if (mIntent != null) {
                         mLauncher.launch(mIntent)
@@ -335,7 +338,7 @@ fun TransListScreen(
                 ) { transaction ->
                     val isSelected = mSelectedItems.contains(transaction)
                     ItemTrans(
-                        transEntity = transaction,
+                        transactionEntity = transaction,
                         currency = mCurrency,
                         isSelected = isSelected,
                         onClick = {

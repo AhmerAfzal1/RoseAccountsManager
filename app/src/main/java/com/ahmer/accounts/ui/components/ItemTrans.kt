@@ -23,7 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
-import com.ahmer.accounts.database.entity.TransEntity
+import com.ahmer.accounts.database.entity.TransactionEntity
 import com.ahmer.accounts.ui.isLight
 import com.ahmer.accounts.ui.theme.colorSelectionDark
 import com.ahmer.accounts.ui.theme.colorSelectionLight
@@ -35,7 +35,7 @@ import com.ahmer.accounts.utils.HelperUtils.AmountWithSymbolText
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemTrans(
-    transEntity: TransEntity,
+    transactionEntity: TransactionEntity,
     currency: Currency,
     modifier: Modifier = Modifier,
     isSelected: Boolean,
@@ -64,7 +64,7 @@ fun ItemTrans(
                 .fillMaxWidth()
                 .weight(weight = 0.44f),
         ) {
-            val mDesc: String = transEntity.description
+            val mDesc: String = transactionEntity.description
             Text(
                 text = mDesc.ifEmpty { stringResource(R.string.label_no_description) },
                 color = if (mDesc.isEmpty()) Color.LightGray else Color.Unspecified,
@@ -80,7 +80,7 @@ fun ItemTrans(
             )
             Text(
                 text = HelperUtils.getDateTime(
-                    time = transEntity.date, pattern = Constants.PATTERN_TRANSACTION_ITEM
+                    time = transactionEntity.date, pattern = Constants.PATTERN_TRANSACTION_ITEM
                 ),
                 color = Color.Gray,
                 textAlign = TextAlign.Start,
@@ -95,15 +95,15 @@ fun ItemTrans(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (transEntity.type == Constants.TYPE_DEBIT) {
+            if (transactionEntity.type == Constants.TYPE_DEBIT) {
                 AmountWithSymbolText(
                     modifier = Modifier.weight(weight = 0.25f),
                     context = mContext,
                     currency = currency,
-                    amount = transEntity.amount.toDouble(),
+                    amount = transactionEntity.amount.toDouble(),
                     isBold = false,
                     isExpense = false,
-                    type = transEntity.type,
+                    type = transactionEntity.type,
                 )
                 Text(text = "", modifier = Modifier.weight(weight = 0.25f))
             } else {
@@ -112,10 +112,10 @@ fun ItemTrans(
                     modifier = Modifier.weight(weight = 0.25f),
                     context = mContext,
                     currency = currency,
-                    amount = transEntity.amount.toDouble(),
+                    amount = transactionEntity.amount.toDouble(),
                     isBold = false,
                     isExpense = false,
-                    type = transEntity.type,
+                    type = transactionEntity.type,
                 )
             }
         }

@@ -8,7 +8,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmer.accounts.database.entity.PersonsEntity
+import com.ahmer.accounts.database.entity.PersonEntity
 import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.event.PersonAddEditEvent
 import com.ahmer.accounts.event.UiEvent
@@ -42,7 +42,7 @@ class PersonAddEditViewModel @Inject constructor(
     private var mPersonId: Int? = 0
     var titleBar by mutableStateOf(value = "Add Person Data")
 
-    private var currentPerson: PersonsEntity?
+    private var currentPerson: PersonEntity?
         get() {
             return _uiState.value.person
         }
@@ -58,14 +58,14 @@ class PersonAddEditViewModel @Inject constructor(
             mPersonId = personId
             if (personId != -1) {
                 titleBar = "Edit Person Data"
-                personRepository.personById(personId = personId).onEach { person ->
+                personRepository.getPersonById(personId = personId).onEach { person ->
                     _uiState.update { addEditState ->
                         currentPerson = person
                         addEditState.copy(person = person)
                     }
                 }.launchIn(scope = viewModelScope)
             } else {
-                currentPerson = PersonsEntity()
+                currentPerson = PersonEntity()
             }
         }
     }
@@ -96,7 +96,7 @@ class PersonAddEditViewModel @Inject constructor(
             PersonAddEditEvent.OnSaveClick -> {
                 viewModelScope.launch {
                     try {
-                        var mPerson: PersonsEntity? by mutableStateOf(value = PersonsEntity())
+                        var mPerson: PersonEntity? by mutableStateOf(value = PersonEntity())
                         var mMessage by mutableStateOf(value = "")
                         if (currentPerson!!.name.isEmpty()) {
                             _eventFlow.emit(value = UiEvent.ShowToast("The name can't be empty"))
@@ -104,7 +104,7 @@ class PersonAddEditViewModel @Inject constructor(
                         }
                         if (mPersonId == -1) {
                             mPerson = currentPerson?.let { person ->
-                                PersonsEntity(
+                                PersonEntity(
                                     id = person.id,
                                     name = person.name.trim(),
                                     address = person.address.trim(),
@@ -126,7 +126,7 @@ class PersonAddEditViewModel @Inject constructor(
                             )
                             mMessage = "${mPerson?.name?.trim()} updated successfully!"
                         }
-                        personRepository.insertOrUpdate(personsEntity = mPerson!!)
+                        personRepository.insertOrUpdate(person = mPerson!!)
                         _eventFlow.emit(value = UiEvent.PopBackStack)
                         _eventFlow.emit(value = UiEvent.ShowToast(message = mMessage))
                     } catch (e: Exception) {

@@ -1,7 +1,7 @@
 package com.ahmer.accounts.state
 
-import com.ahmer.accounts.database.entity.TransEntity
+import com.ahmer.accounts.database.entity.TransactionEntity
 
 data class ReportState(
-    val allTransactions: List<TransEntity> = emptyList(),
+    val allTransactions: List<TransactionEntity> = emptyList(),
 )

@@ -1,7 +1,6 @@
 package com.ahmer.accounts.utils
 
 import android.content.ActivityNotFoundException
-import android.content.ComponentName
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
@@ -9,7 +8,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
@@ -34,9 +32,15 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToInt
 
 object HelperUtils {
+    private val formatterCache = ConcurrentHashMap<String, DateTimeFormatter>()
+    private val decimalFormat = DecimalFormat("#,##0.##").apply {
+        roundingMode = RoundingMode.HALF_UP
+    }
+
     @Composable
     fun AdjustableText(
         modifier: Modifier = Modifier,
@@ -49,7 +53,7 @@ object HelperUtils {
             text = text,
             modifier = modifier,
             color = color,
-            fontWeight = if (isBold && length <= 17) FontWeight.Bold else FontWeight.Normal,
+            fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal,
             maxLines = 1,
             style = when (if (length == 0) text.length else length) {
                 in 0..10 -> MaterialTheme.typography.bodyMedium
@@ -76,8 +80,8 @@ object HelperUtils {
             modifier = modifier, verticalAlignment = Alignment.CenterVertically
         ) {
             val mTextLength: Int =
-                currency.symbol.length + roundValue(context = context, value = amount).length - 1
-            val mValue: String = roundValue(context = context, value = amount)
+                currency.symbol.length + roundValue(value = amount).length - 1
+            val mValue: String = roundValue(value = amount)
             val mAmount: String = if (isExpense) {
                 if (type == Constants.TYPE_INCOME) "+$mValue" else "-$mValue"
             } else mValue
@@ -126,8 +130,8 @@ object HelperUtils {
     private fun contentFileName(context: Context, uri: Uri): String? = runCatching {
         context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
             cursor.moveToFirst()
-            return@use cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
-                .let(cursor::getString)
+            cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
+
         }
     }.getOrNull()
 
@@ -136,55 +140,43 @@ object HelperUtils {
         else -> uri.path?.let(::File)?.name
     }
 
-    fun getDateTime(time: Long, pattern: String = ""): String = if (time == 0.toLong()) {
-        ""
-    } else {
-        val mPattern = pattern.ifEmpty { Constants.PATTERN_GENERAL }
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
-            .format(DateTimeFormatter.ofPattern(mPattern))
+    fun getDateTime(time: Long, pattern: String = Constants.PATTERN_GENERAL): String {
+        if (time == 0L) return ""
+        return formatterCache.getOrPut(pattern) {
+            DateTimeFormatter.ofPattern(pattern)
+        }.format(
+            LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
+        )
     }
 
     fun dirSize(directory: File): Long {
-        var mSize = 0.toLong()
-        directory.listFiles()?.forEach { file ->
-            if (file != null && file.isDirectory) {
-                mSize += dirSize(directory = file)
-            } else if (file != null && file.isFile) {
-                mSize += file.length()
-            }
-        }
-        return mSize
+        return directory.walk()
+            .filter { it.isFile }
+            .fold(initial = 0L) { acc, file -> acc + file.length() }
     }
 
     fun cacheSize(context: Context): String {
-        var mSize = 0.toLong()
-        val mExternalCacheDir = context.externalCacheDir
-        mSize += dirSize(directory = context.cacheDir)
-        if (mExternalCacheDir != null) {
-            mSize += dirSize(directory = mExternalCacheDir)
-        }
-        mSize += dirSize(directory = context.codeCacheDir)
-        return sizeFormat(size = mSize)
+        val mCacheDirs = listOfNotNull(
+            context.cacheDir,
+            context.externalCacheDir,
+            context.codeCacheDir
+        )
+        return sizeFormat(size = mCacheDirs.sumOf { dirSize(directory = it) })
     }
 
-    fun playStoreLink(context: Context): String = Constants.PLAY_STORE_LINK + context.packageName
+    fun playStoreLink(context: Context): String =
+        "${Constants.PLAY_STORE_LINK}${context.packageName}"
 
-    fun roundValue(context: Context, value: Double): String {
-        val mFormat = DecimalFormat("#,##0.##")
-        var mRound: BigDecimal? = null
-        try {
-            mRound = BigDecimal(value).setScale(2, RoundingMode.HALF_UP)
-        } catch (e: NumberFormatException) {
-            showToast(context = context, msg = e.localizedMessage ?: Constants.UNKNOWN_ERROR)
+    fun roundValue(value: Double): String {
+        return try {
+            decimalFormat.format(BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP))
         } catch (e: Exception) {
-            showToast(context = context, msg = e.localizedMessage ?: Constants.UNKNOWN_ERROR)
+            when (e) {
+                is NumberFormatException -> "0.00"
+                else -> throw e
+            }
         }
-        return mFormat.format(mRound)
     }
-
-    fun roundValue(value: Double) = String.format(
-        locale = Locale.getDefault(), format = "%.2f", value
-    )
 
     fun sizeFormat(size: Long): String {
         var mResult = size.toDouble() / 1024
@@ -197,30 +189,23 @@ object HelperUtils {
         return String.format(locale = Locale.getDefault(), format = "%.2f GB", mResult)
     }
 
-    fun isGrantedPermission(context: Context, permission: String): Boolean {
-        return ContextCompat.checkSelfPermission(
-            context, permission
-        ) == PackageManager.PERMISSION_GRANTED
+    fun isGrantedPermission(context: Context, permission: String): Boolean =
+        ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
 
-    }
-
-    fun isGrantedPermissions(context: Context, permissions: Array<String>): Boolean {
-        return permissions.all {
-            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
-        }
-    }
+    fun isGrantedPermissions(context: Context, permissions: Array<String>): Boolean =
+        permissions.all { isGrantedPermission(context = context, permission = it) }
 
     fun showToast(context: Context, msg: String) {
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
     }
 
     fun relaunchApp(context: Context) {
-        val mPackageManager: PackageManager = context.packageManager
-        val mIntent: Intent = mPackageManager.getLaunchIntentForPackage(context.packageName)!!
-        val mComponentName: ComponentName = mIntent.component!!
-        val mRestartIntent: Intent = Intent.makeRestartActivityTask(mComponentName)
-        context.startActivity(mRestartIntent)
-        Runtime.getRuntime().exit(0)
+        context.packageManager.getLaunchIntentForPackage(context.packageName)?.let {
+            with(Intent.makeRestartActivityTask(it.component)) {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                context.startActivity(this)
+            }
+        }
     }
 
     fun moreApps(context: Context, developerId: String = "Ahmer Afzal") {
@@ -228,20 +213,19 @@ object HelperUtils {
             context.startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    "market://search?q=pub:$developerId&hl=en".toUri()
+                    "market://search?q=pub:$developerId".toUri()
                 ).apply {
-                    // Ensure the intent has the FLAG_ACTIVITY_NEW_TASK if needed
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }, null
+                }
             )
         } catch (e: ActivityNotFoundException) {
             context.startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    "https://play.google.com/store/apps/developer?id=$developerId&hl=en".toUri()
+                    "https://play.google.com/store/apps/developer?id=$developerId".toUri()
                 ).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }, null
+                }
             )
         }
     }
@@ -251,7 +235,7 @@ object HelperUtils {
             context.startActivity(
                 Intent(Intent.ACTION_VIEW, "market://details?id=$packageName".toUri()).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }, null
+                }
             )
         } catch (e: ActivityNotFoundException) {
             context.startActivity(
@@ -260,31 +244,23 @@ object HelperUtils {
                     "https://play.google.com/store/apps/details?id=$packageName".toUri()
                 ).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }, null
+                }
             )
         }
     }
 
     fun shareApp(context: Context) {
         try {
-            val mIntent = Intent(Intent.ACTION_SEND).apply {
+            Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name))
-                putExtra(
-                    Intent.EXTRA_TEXT,
-                    "https://play.google.com/store/apps/details?id=${context.packageName}"
-                )
+                putExtra(Intent.EXTRA_TEXT, playStoreLink(context))
+            }.let { Intent.createChooser(it, context.getString(R.string.label_share_app)) }.run {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(this)
             }
-
-            context.startActivity(
-                Intent.createChooser(mIntent, "Share app via").apply {
-                    // Add flags to the chooser intent itself
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }, null
-            )
         } catch (e: Exception) {
-            Log.e(Constants.LOG_TAG, "Exception while sharing app: ${e.localizedMessage}", e)
+            FirebaseCrashlytics.getInstance().log("Share failed: ${e.localizedMessage}")
             FirebaseCrashlytics.getInstance().recordException(e)
         }
     }

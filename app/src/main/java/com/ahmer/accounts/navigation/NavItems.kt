@@ -8,6 +8,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.ahmer.accounts.R
 
+/**
+ * Represents an item in the application's navigation structure.
+ *
+ * @property label The string resource ID for the navigation item's label.
+ * @property selectedIcon The drawable resource ID for the selected state icon.
+ * @property unselectedIcon The drawable resource ID for the unselected state icon.
+ * @property contentDescription The string resource ID for the content description of the icon.
+ * @property route The base route string for the navigation destination.
+ * @property argument Optional route arguments appended to the base route.
+ */
 sealed class NavItems(
     val label: Int,
     @DrawableRes val selectedIcon: Int,
@@ -83,8 +93,16 @@ sealed class NavItems(
     }
 
     companion object {
+        /**
+         * A list of [NavItems] to be displayed in the bottom navigation bar.
+         */
         val navBottomItems: List<NavItems> = listOf(Accounts, Report, Settings)
 
+        /**
+         * Composable extension function to display the icon for the [NavItems].
+         *
+         * @param selected Determines whether the selected or unselected icon is rendered.
+         */
         @Composable
         fun NavItems.Icons(selected: Boolean) {
             Icon(
@@ -94,5 +112,3 @@ sealed class NavItems(
         }
     }
 }
-
-
