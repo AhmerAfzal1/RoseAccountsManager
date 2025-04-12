@@ -12,11 +12,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,17 +33,15 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val mViewModel: MainViewModel by viewModels()
-    private val mSettingsViewModel: SettingsViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels()
+    private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen().apply {
-            setKeepOnScreenCondition { mViewModel.isLoadingSplash.value }
-        }
+        installSplashScreen().setKeepOnScreenCondition { viewModel.isLoadingSplash.value }
         setContent {
-            val mCurrentTheme: ThemeMode by mSettingsViewModel.currentTheme.collectAsStateWithLifecycle()
-            val isDarkTheme: Boolean = when (mCurrentTheme) {
+            val currentTheme: ThemeMode by settingsViewModel.currentTheme.collectAsStateWithLifecycle()
+            val isDarkTheme: Boolean = when (currentTheme) {
                 ThemeMode.Dark -> true
                 ThemeMode.Light -> false
                 ThemeMode.System -> isSystemInDarkTheme()
@@ -53,35 +49,57 @@ class MainActivity : ComponentActivity() {
             RoseAccountsManagerTheme(darkTheme = isDarkTheme) {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
                 ) {
-                    MainFunction(viewModel = mViewModel)
+                    MainScreen(viewModel = viewModel)
                 }
             }
         }
     }
 }
 
+/**
+ * Main screen composable containing the navigation scaffold and bottom bar
+ *
+ * @param viewModel ViewModel instance providing the UI state
+ */
 @Composable
-fun MainFunction(viewModel: MainViewModel) {
-    val mNavController: NavHostController = rememberNavController()
-    val mNavBackStackEntry: NavBackStackEntry? by mNavController.currentBackStackEntryAsState()
-    val mCurrentRoute: String? = mNavBackStackEntry?.destination?.route
-    val mState: MainState by viewModel.uiState.collectAsState()
-    var mBottomBarState: Boolean by rememberSaveable { (mutableStateOf(value = false)) }
+fun MainScreen(viewModel: MainViewModel) {
+    val navController: NavHostController = rememberNavController()
+    val currentState: MainState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Scaffold(modifier = Modifier.navigationBarsPadding(), bottomBar = {
-        mBottomBarState = mCurrentRoute != NavItems.PersonAddEdit.fullRoute
-                && mCurrentRoute != NavItems.Transactions.fullRoute
-                && mCurrentRoute != NavItems.TransactionsAddEdit.fullRoute
-        BottomNav(
-            navController = mNavController, isVisible = mBottomBarState
-        )
-    }) { innerPadding ->
+    val bottomBarVisible = rememberBottomBarVisibility(navController = navController)
+
+    Scaffold(
+        modifier = Modifier.navigationBarsPadding(),
+        bottomBar = { BottomNav(navController = navController, isVisible = bottomBarVisible) }
+    ) { innerPadding ->
         MainNavigation(
             modifier = Modifier.padding(paddingValues = innerPadding),
-            navController = mNavController,
-            transactionSumModel = mState.accountsBalance
+            navController = navController,
+            transactionSumModel = currentState.accountsBalance
         )
     }
+}
+
+/**
+ * Determines bottom bar visibility based on current navigation route
+ *
+ * @param navController Navigation controller for observing route changes
+ * @return Boolean indicating if bottom bar should be visible
+ */
+@Composable
+private fun rememberBottomBarVisibility(navController: NavHostController): Boolean {
+    val navBackStackEntry: NavBackStackEntry? by navController.currentBackStackEntryAsState()
+    return remember(navBackStackEntry) {
+        derivedStateOf {
+            val route = navBackStackEntry?.destination?.route
+            route !in setOf(
+                NavItems.PersonAddEdit.fullRoute,
+                NavItems.Transactions.fullRoute,
+                NavItems.TransactionsAddEdit.fullRoute
+            )
+        }
+    }.value
 }

@@ -27,10 +27,12 @@ class MainViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<MainState> = MutableStateFlow(value = MainState())
     val uiState: StateFlow<MainState> = _uiState.asStateFlow()
 
-    private fun getAllPersonsBalance() {
-        personRepository.getAccountsBalance().onEach { transSumModel ->
-            _uiState.update { balState -> balState.copy(accountsBalance = transSumModel) }
-        }.launchIn(scope = viewModelScope)
+    private fun loadInitialData() {
+        personRepository.getAccountsBalance()
+            .onEach { accountBalance ->
+                _uiState.update { balState -> balState.copy(accountsBalance = accountBalance) }
+            }
+            .launchIn(scope = viewModelScope)
 
         viewModelScope.launch {
             delay(duration = 1.seconds)
@@ -39,6 +41,6 @@ class MainViewModel @Inject constructor(
     }
 
     init {
-        getAllPersonsBalance()
+        loadInitialData()
     }
 }

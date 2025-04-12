@@ -242,8 +242,8 @@ private fun Tabs(
         ) { page ->
             when (page) {
                 TabsScreenChart.CHART_TRANSACTIONS -> TransactionsChartScreen(
-                    barChartList = barChartList, activeFilter = activeFilter,
-                    onChangeActiveFilter = onChangeActiveFilter, tabTransactions = tabTransactions
+                    barChartData = barChartList, activeFilter = activeFilter,
+                    onActiveFilterChanged = onChangeActiveFilter, transactions = tabTransactions
                 )
 
                 TabsScreenChart.CHART_BALANCE -> BalanceChartScreen(mainState = mainState)

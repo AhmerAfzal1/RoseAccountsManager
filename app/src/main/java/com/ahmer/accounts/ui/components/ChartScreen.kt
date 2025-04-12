@@ -4,13 +4,14 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -18,6 +19,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,21 +43,32 @@ import com.ahmer.accounts.utils.chart.bar.renderer.xaxis.SimpleXAxisDrawer
 import com.ahmer.accounts.utils.chart.bar.renderer.yaxis.SimpleYAxisDrawer
 import com.ahmer.accounts.utils.chart.bar.simpleChartAnimation
 
+private const val SERIAL_NUMBER_WEIGHT = 0.125f
+private const val DATE_TYPE_WEIGHT = 0.3125f
+private const val AMOUNT_WEIGHT = 0.25f
+
+/**
+ * Displays a pie chart showing the balance distribution between credit and debit.
+ *
+ * @param mainState The state containing account balance information
+ */
 @Composable
 fun BalanceChartScreen(mainState: MainState) {
-    val mData: List<PieChartData> by lazy {
+    val chartData = remember(mainState) {
         listOf(
             PieChartData(
                 color = colorGreenDark,
                 value = mainState.accountsBalance.creditSum,
                 description = Constants.TYPE_CREDIT,
-            ), PieChartData(
+            ),
+            PieChartData(
                 color = colorRedDark,
                 value = mainState.accountsBalance.debitSum,
                 description = Constants.TYPE_DEBIT
             )
         )
     }
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -64,18 +77,26 @@ fun BalanceChartScreen(mainState: MainState) {
     ) {
         PieChart(
             modifier = Modifier.size(size = 250.dp),
-            inputs = mData,
+            inputs = chartData,
             centerText = stringResource(id = R.string.label_balance).uppercase(),
         )
     }
 }
 
+/**
+ * Main container for transactions chart screen
+ *
+ * @param barChartData List of data points for the bar chart
+ * @param activeFilter Currently selected time filter
+ * @param onActiveFilterChanged Callback when filter changes
+ * @param transactions List of transactions to display
+ */
 @Composable
 fun TransactionsChartScreen(
-    barChartList: List<BarChartData.Bar>,
+    barChartData: List<BarChartData.Bar>,
     activeFilter: String,
-    onChangeActiveFilter: (String) -> Unit,
-    tabTransactions: List<TransactionEntity>,
+    onActiveFilterChanged: (String) -> Unit,
+    transactions: List<TransactionEntity>,
 ) {
     Column(
         modifier = Modifier
@@ -83,15 +104,21 @@ fun TransactionsChartScreen(
             .padding(all = 8.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        BardChartItem(barChartList = barChartList)
-        BarChartCardItem(activeFilter = activeFilter) { onChangeActiveFilter(it) }
-        TransactionHeadingCardItem()
-        AllTransactionItem(allTransactions = tabTransactions)
+        BarChartItem(barChartList = barChartData)
+        TimeFilterSelector(activeFilter = activeFilter, onFilterSelected = onActiveFilterChanged)
+        TransactionHeader()
+        TransactionList(transactions = transactions)
     }
 }
 
+/**
+ * Displays a bar chart with given data
+ *
+ * @param barChartList List of bars to display in the chart
+ * @param modifier Modifier for layout customization
+ */
 @Composable
-fun BardChartItem(modifier: Modifier = Modifier, barChartList: List<BarChartData.Bar>) {
+fun BarChartItem(modifier: Modifier = Modifier, barChartList: List<BarChartData.Bar>) {
     BarChart(
         barChartData = BarChartData(bars = barChartList),
         modifier = modifier
@@ -116,12 +143,26 @@ fun BardChartItem(modifier: Modifier = Modifier, barChartList: List<BarChartData
     )
 }
 
+/**
+ * Horizontal selector for time filters
+ *
+ * @param activeFilter Currently active filter
+ * @param onFilterSelected Callback when filter is selected
+ * @param modifier Modifier for layout customization
+ */
 @Composable
-fun BarChartCardItem(
-    modifier: Modifier = Modifier,
+private fun TimeFilterSelector(
     activeFilter: String,
-    onChangeActiveFilter: (String) -> Unit
+    onFilterSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    val filters: List<String> = listOf(
+        ConstantsChart.THIS_WEEK,
+        ConstantsChart.LAST_7_DAYS,
+        ConstantsChart.THIS_MONTH,
+        ConstantsChart.ALL
+    )
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -130,31 +171,33 @@ fun BarChartCardItem(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        ChartGraphCard(
-            filterName = ConstantsChart.THIS_WEEK,
-            isActive = activeFilter == ConstantsChart.THIS_WEEK,
-            onClick = { onChangeActiveFilter(it) }
-        )
-        ChartGraphCard(
-            filterName = ConstantsChart.LAST_7_DAYS,
-            isActive = activeFilter == ConstantsChart.LAST_7_DAYS,
-            onClick = { onChangeActiveFilter(it) }
-        )
-        ChartGraphCard(
-            filterName = ConstantsChart.THIS_MONTH,
-            isActive = activeFilter == ConstantsChart.THIS_MONTH,
-            onClick = { onChangeActiveFilter(it) }
-        )
-        ChartGraphCard(
-            filterName = ConstantsChart.ALL,
-            isActive = activeFilter == ConstantsChart.ALL,
-            onClick = { onChangeActiveFilter(it) }
-        )
+        filters.forEach { filter ->
+            ChartFilterCard(
+                filterName = filter,
+                isActive = activeFilter == filter,
+                onClick = onFilterSelected
+            )
+        }
     }
 }
 
 @Composable
-fun TransactionHeadingCardItem(modifier: Modifier = Modifier) {
+private fun RowScope.HeaderText(textRes: Int, weight: Float) {
+    Text(
+        text = stringResource(textRes).uppercase(),
+        modifier = Modifier.weight(weight = weight),
+        style = MaterialTheme.typography.bodySmall,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+/**
+ * Header row for transactions list
+ *
+ * @param modifier Modifier for layout customization
+ */
+@Composable
+fun TransactionHeader(modifier: Modifier = Modifier) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = CardDefaults.shape,
@@ -167,29 +210,21 @@ fun TransactionHeadingCardItem(modifier: Modifier = Modifier) {
                 .padding(all = 4.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
-            Text(
-                text = stringResource(R.string.label_sr_no).uppercase(),
-                modifier = Modifier.weight(weight = 0.125f),
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Bold
+            HeaderText(
+                textRes = R.string.label_sr_no,
+                weight = SERIAL_NUMBER_WEIGHT
             )
-            Text(
-                text = stringResource(R.string.label_created_on).uppercase(),
-                modifier = Modifier.weight(weight = 0.3125f),
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Bold
+            HeaderText(
+                textRes = R.string.label_created_on,
+                weight = DATE_TYPE_WEIGHT
             )
-            Text(
-                text = stringResource(R.string.label_type).uppercase(),
-                modifier = Modifier.weight(weight = 0.3125f),
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Bold
+            HeaderText(
+                textRes = R.string.label_type,
+                weight = DATE_TYPE_WEIGHT
             )
-            Text(
-                text = stringResource(R.string.label_by_amount).uppercase(),
-                modifier = Modifier.weight(weight = 0.25f),
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Bold
+            HeaderText(
+                textRes = R.string.label_by_amount,
+                weight = AMOUNT_WEIGHT
             )
         }
     }
@@ -203,40 +238,66 @@ fun TransactionHeadingCardItem(modifier: Modifier = Modifier) {
     )
 }
 
+/**
+ * Scrollable list of transactions
+ *
+ * @param transactions List of transactions to display
+ * @param modifier Modifier for layout customization
+ */
 @Composable
-fun AllTransactionItem(modifier: Modifier = Modifier, allTransactions: List<TransactionEntity>) {
+fun TransactionList(
+    transactions: List<TransactionEntity>,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(all = 8.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        items(items = allTransactions, key = { tranId -> tranId.id }) { transaction ->
-            Row(
-                modifier = modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                Text(
-                    text = (allTransactions.indexOf(transaction) + 1).toString(),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.weight(weight = 0.125f)
-                )
-                Text(
-                    text = transaction.createdOn,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.weight(weight = 0.3125f)
-                )
-                Text(
-                    text = transaction.type,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.weight(weight = 0.3125f)
-                )
-                Text(
-                    text = transaction.amount,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.weight(weight = 0.25f)
-                )
-            }
+        itemsIndexed(
+            items = transactions,
+            key = { _, transaction -> transaction.id }) { index, transaction ->
+            TransactionRow(index = index, transaction = transaction)
         }
+    }
+}
+
+/**
+ * Single row representing a transaction
+ * @param index Position in the list
+ * @param transaction Transaction data to display
+ * @param modifier Modifier for layout customization
+ */
+@Composable
+private fun TransactionRow(
+    index: Int,
+    transaction: TransactionEntity,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+    ) {
+        Text(
+            text = (index + 1).toString(),
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(SERIAL_NUMBER_WEIGHT)
+        )
+        Text(
+            text = transaction.createdOn,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(DATE_TYPE_WEIGHT)
+        )
+        Text(
+            text = transaction.type,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(DATE_TYPE_WEIGHT)
+        )
+        Text(
+            text = transaction.amount,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(AMOUNT_WEIGHT)
+        )
     }
 }

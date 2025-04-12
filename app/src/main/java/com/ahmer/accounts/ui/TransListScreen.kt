@@ -76,6 +76,8 @@ import com.ahmer.accounts.dialogs.MoreInfoAlertDialog
 import com.ahmer.accounts.event.TransEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.TransState
+import com.ahmer.accounts.ui.components.BalanceAction
+import com.ahmer.accounts.ui.components.BalanceData
 import com.ahmer.accounts.ui.components.ItemBalance
 import com.ahmer.accounts.ui.components.ItemTrans
 import com.ahmer.accounts.utils.AddCircleIcon
@@ -168,7 +170,7 @@ fun TransListScreen(
 
     if (mShowDeleteDialogAccount) {
         DeleteAlertDialog(accountName = mPerson.name, transactionsList = emptyList()) {
-            personViewModel.deletePerson(person = mPerson)
+            personViewModel.deleteAccount(person = mPerson)
             onPopBackStack()
         }
     }
@@ -270,21 +272,31 @@ fun TransListScreen(
             verticalArrangement = Arrangement.Top
         ) {
             ItemBalance(
-                transactionSumModel = mState.transactionSumModel,
-                currency = mCurrency,
-                personsEntity = mPerson,
-                isUsedTrans = true,
-                onClickDelete = { mShowDeleteDialogAccount = true },
-                onClickInfo = { mShowInfoDialog = !mShowInfoDialog },
-                onClickPdf = {
-                    val mIntent = PdfUtils.createPdfIntent(
-                        context = mContext, transactions = mState.allTransactions
-                    )
-                    if (mIntent != null) {
-                        mLauncher.launch(mIntent)
+                balanceData = BalanceData(
+                    transactionSum = mState.transactionSumModel,
+                    currency = mCurrency
+                ),
+                person = mPerson,
+                onAction = { action ->
+                    when (action) {
+                        BalanceAction.Delete -> mShowDeleteDialogAccount = true
+
+                        BalanceAction.Edit -> {
+                            transViewModel.onEvent(TransEvent.OnPersonEditClick(mPerson))
+                        }
+
+                        BalanceAction.Info -> mShowInfoDialog = !mShowInfoDialog
+
+                        BalanceAction.Pdf -> {
+                            val mIntent = PdfUtils.createPdfIntent(
+                                context = mContext, transactions = mState.allTransactions
+                            )
+                            if (mIntent != null) {
+                                mLauncher.launch(mIntent)
+                            }
+                        }
                     }
-                },
-                onClickEdit = { transViewModel.onEvent(TransEvent.OnPersonEditClick(mPerson)) },
+                }
             )
 
             Surface(
@@ -338,7 +350,7 @@ fun TransListScreen(
                 ) { transaction ->
                     val isSelected = mSelectedItems.contains(transaction)
                     ItemTrans(
-                        transactionEntity = transaction,
+                        transaction = transaction,
                         currency = mCurrency,
                         isSelected = isSelected,
                         onClick = {

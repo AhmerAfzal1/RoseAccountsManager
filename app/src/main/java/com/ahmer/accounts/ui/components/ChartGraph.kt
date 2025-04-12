@@ -17,51 +17,51 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * A customizable card component for chart filter selection.
+ *
+ * @param modifier Modifier to be applied to the container Box
+ * @param filterName The display text for the filter option
+ * @param isActive Whether this filter is currently selected
+ * @param onClick Callback when the filter is selected, returns the filterName
+ */
 @Composable
-fun ChartGraphCard(
-    modifier: Modifier = Modifier,
-    filterName: String,
-    isActive: Boolean,
-    onClick: (String) -> Unit
+fun ChartFilterCard(
+    modifier: Modifier = Modifier, filterName: String, isActive: Boolean, onClick: (String) -> Unit
 ) {
+    val color = MaterialTheme.colorScheme.primary
     Box(
-        modifier = Modifier
+        modifier = modifier
             .padding(all = 4.dp)
-            .clickable { onClick(filterName) }
-    ) {
-        if (isActive) {
-            Row(
-                modifier = modifier
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(size = 4.dp),
+            .clickable { onClick(filterName) }) {
+        Row(
+            modifier = Modifier
+                .padding(all = 8.dp)
+                .thenIf(isActive) {
+                    border(
+                        width = 1.dp, color = color, shape = RoundedCornerShape(size = 4.dp)
                     )
-                    .padding(all = 8.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = filterName,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp,
-                    style = TextStyle(color = MaterialTheme.colorScheme.primary)
+                },
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = filterName, style = TextStyle(
+                    color = color, fontSize = 14.sp, fontWeight = FontWeight.SemiBold
                 )
-            }
-        } else {
-            Row(
-                modifier = modifier
-                    .padding(all = 8.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = filterName,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp,
-                    style = TextStyle(color = MaterialTheme.colorScheme.primary)
-                )
-            }
+            )
         }
     }
 }
+
+/**
+ * Helper extension function to conditionally apply modifiers.
+ *
+ * @param condition The condition to check
+ * @param modifierBlock Lambda returning the modifier to apply if condition is true
+ */
+private fun Modifier.thenIf(
+    condition: Boolean, modifierBlock: Modifier.() -> Modifier
+): Modifier = this.then(
+    if (condition) modifierBlock() else Modifier
+)

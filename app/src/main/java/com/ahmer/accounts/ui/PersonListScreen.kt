@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -30,6 +31,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -42,6 +44,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -78,8 +81,10 @@ import com.ahmer.accounts.R
 import com.ahmer.accounts.database.model.TransactionSumModel
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
-import com.ahmer.accounts.state.PersonState
+import com.ahmer.accounts.state.AccountState
+import com.ahmer.accounts.ui.components.BalanceData
 import com.ahmer.accounts.ui.components.ItemBalance
+import com.ahmer.accounts.ui.components.ItemBalanceV1
 import com.ahmer.accounts.ui.components.ItemPerson
 import com.ahmer.accounts.utils.AddIcon
 import com.ahmer.accounts.utils.CloseIcon
@@ -104,33 +109,34 @@ fun PersonsListScreen(
     settingsViewModel: SettingsViewModel,
     transactionSumModel: TransactionSumModel,
 ) {
-    val mContext: Context = LocalContext.current.applicationContext
-    val mCurrentCurrency: Currency by settingsViewModel.currentCurrency.collectAsStateWithLifecycle()
-    val mSnackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val mState: PersonState by personViewModel.uiState.collectAsStateWithLifecycle()
-    var isVisibleFab: Boolean by rememberSaveable { mutableStateOf(value = true) }
-    var mTextSearch: String by remember { mutableStateOf(value = personViewModel.searchQuery.value) }
+    val context: Context = LocalContext.current.applicationContext
+    val currency: Currency by settingsViewModel.currentCurrency.collectAsStateWithLifecycle()
+    val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    val state: AccountState by personViewModel.uiState.collectAsStateWithLifecycle()
+    var fabVisible: Boolean by rememberSaveable { mutableStateOf(value = true) }
+    var searchText: String by remember { mutableStateOf(value = personViewModel.searchQuery.value) }
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(Unit) {
         personViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.Navigate -> onNavigation(event)
                 is UiEvent.ShowSnackBar -> {
-                    /*
-                    val mResult = mSnackBarHostState.showSnackbar(
+                    snackbarHostState.showSnackbar(
                         message = event.message,
                         actionLabel = event.action,
-                        duration = SnackbarDuration.Short
-                    )
-                    if (mResult == SnackbarResult.ActionPerformed) { }
-                    */
+                        withDismissAction = false,
+                    ).also {
+                        if (it == SnackbarResult.ActionPerformed) {
+                            personViewModel.onEvent(PersonEvent.OnUndoDeletePerson)
+                        }
+                    }
                 }
 
-                is UiEvent.RelaunchApp -> HelperUtils.relaunchApp(context = mContext)
                 is UiEvent.ShowToast -> HelperUtils.showToast(
-                    context = mContext, msg = event.message
+                    context = context, msg = event.message
                 )
 
+                UiEvent.RelaunchApp -> HelperUtils.relaunchApp(context = context)
                 else -> Unit
             }
         }
@@ -138,10 +144,10 @@ fun PersonsListScreen(
 
     Scaffold(
         modifier = Modifier,
-        snackbarHost = { SnackbarHost(hostState = mSnackBarHostState) },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = isVisibleFab,
+                visible = fabVisible,
                 enter = slideInVertically(initialOffsetY = { it * 2 }),
                 exit = slideOutVertically(targetOffsetY = { it * 2 }),
             ) {
@@ -153,55 +159,87 @@ fun PersonsListScreen(
             }
         },
     ) { innerPadding ->
-        val mNestedScrollConnection = remember {
+        Box(modifier = Modifier.nestedScroll(remember {
             object : NestedScrollConnection {
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                    if (available.y < -1) isVisibleFab = false // Hide FAB
-                    if (available.y > 1) isVisibleFab = true // Show FAB
+                    fabVisible = available.y > 0
                     return Offset.Zero
                 }
             }
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues = innerPadding),
-        ) {
-            ItemBalance(transactionSumModel = transactionSumModel, currency = mCurrentCurrency)
-            SearchBarPerson(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 4.dp, end = 4.dp),
-                text = mTextSearch,
-                onTextChange = { text ->
-                    personViewModel.onEvent(event = PersonEvent.OnSearchTextChange(text))
-                    mTextSearch = text
-                },
-                viewModel = personViewModel,
-            )
-
-            LazyColumn(
+        })) {
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .nestedScroll(connection = mNestedScrollConnection),
-                contentPadding = innerPadding,
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(paddingValues = innerPadding),
             ) {
-                items(
-                    items = mState.allPersons,
-                    key = { persons -> persons.personsEntity.id },
-                ) { person ->
-                    ItemPerson(
-                        personsBalanceModel = person,
-                        currency = mCurrentCurrency,
-                        onEvent = personViewModel::onEvent,
-                        modifier = Modifier.animateItem(
-                            fadeInSpec = tween(durationMillis = Constants.ANIMATE_FADE_IN_DURATION),
-                            fadeOutSpec = tween(durationMillis = Constants.ANIMATE_FADE_OUT_DURATION),
-                            placementSpec = tween(durationMillis = Constants.ANIMATE_DURATION)
-                        )
+                ItemBalanceV1(
+                    balanceData = BalanceData(
+                        transactionSum = transactionSumModel,
+                        currency = currency
                     )
+                )
+                SearchBarPerson(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 4.dp, end = 4.dp),
+                    searchQuery = searchText,
+                    onTextChange = { text ->
+                        personViewModel.onEvent(event = PersonEvent.OnSearchTextChange(text))
+                        searchText = text
+                    },
+                    viewModel = personViewModel,
+                )
+
+                when {
+                    state.isLoading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .wrapContentSize()
+                        )
+                    }
+
+                    state.allAccounts.isEmpty() -> Text(
+                        text = "No account found",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+
+                    state.error != null -> {
+                        Text(
+                            text = state.error ?: "Unknown error occurred",
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .wrapContentSize()
+                        )
+                    }
+
+                    else -> {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            items(
+                                items = state.allAccounts,
+                                key = { it.personsEntity.id },
+                            ) { account ->
+                                ItemPerson(
+                                    account = account,
+                                    currency = currency,
+                                    onEvent = personViewModel::onEvent,
+                                    modifier = Modifier.animateItem(
+                                        fadeInSpec = tween(durationMillis = Constants.ANIMATE_FADE_IN_DURATION),
+                                        fadeOutSpec = tween(durationMillis = Constants.ANIMATE_FADE_OUT_DURATION),
+                                        placementSpec = tween(durationMillis = Constants.ANIMATE_DURATION)
+                                    )
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -212,7 +250,7 @@ fun PersonsListScreen(
 @Composable
 private fun SearchBarPerson(
     modifier: Modifier = Modifier,
-    text: String,
+    searchQuery: String,
     onTextChange: (String) -> Unit,
     viewModel: PersonViewModel,
 ) = Box(modifier = modifier) {
@@ -241,7 +279,7 @@ private fun SearchBarPerson(
                 )
         ) {
             TextField(
-                value = text,
+                value = searchQuery,
                 onValueChange = onTextChange,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -252,13 +290,13 @@ private fun SearchBarPerson(
                     if (isFocused) {
                         CloseIcon(modifier = Modifier.clickable {
                             mCoroutineScope.launch { delay(duration = 200.milliseconds) }
-                            if (text.isNotEmpty()) onTextChange("") else mFocusManager.clearFocus()
+                            if (searchQuery.isNotEmpty()) onTextChange("") else mFocusManager.clearFocus()
                         })
                     }
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = {
-                    onTextChange(text)
+                    onTextChange(searchQuery)
                     mKeyboardController?.hide()
                     mFocusManager.clearFocus()
                 }),

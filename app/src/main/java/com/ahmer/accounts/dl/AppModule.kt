@@ -47,7 +47,7 @@ object AppModule {
         klass = AppDatabase::class.java,
         name = Constants.DB_NAME,
     ).setJournalMode(journalMode = RoomDatabase.JournalMode.TRUNCATE) //For backup in single file
-        .fallbackToDestructiveMigration()
+        .fallbackToDestructiveMigration(dropAllTables = true)
         //.addCallback(callback = DbCallback(personDao = personProvider, transDao = transactionProvider))
         .build()
 

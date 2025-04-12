@@ -1,6 +1,5 @@
 package com.ahmer.accounts.ui.components
 
-import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,173 +40,250 @@ import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.InfoIcon
 import com.ahmer.accounts.utils.PdfIcon
 
+
+/**
+ * Data class for balance information
+ */
+data class BalanceData(
+    val transactionSum: TransactionSumModel,
+    val currency: Currency
+)
+
+/**
+ * Sealed class for balance actions
+ */
+sealed class BalanceAction {
+    data object Delete : BalanceAction()
+    data object Info : BalanceAction()
+    data object Pdf : BalanceAction()
+    data object Edit : BalanceAction()
+}
+
+/**
+ * Displays a balance card with optional person details and actions.
+ *
+ * @param modifier Modifier for styling
+ * @param balanceData Consolidated balance information
+ * @param person Optional person details to display
+ * @param onAction Callback for user actions
+ */
 @Composable
 fun ItemBalance(
     modifier: Modifier = Modifier,
-    transactionSumModel: TransactionSumModel,
-    currency: Currency,
-    personsEntity: PersonEntity = PersonEntity(),
-    isUsedTrans: Boolean = false,
-    onClickDelete: () -> Unit = {},
-    onClickInfo: () -> Unit = {},
-    onClickPdf: () -> Unit = {},
-    onClickEdit: () -> Unit = {},
+    balanceData: BalanceData,
+    person: PersonEntity? = null,
+    onAction: (BalanceAction) -> Unit = {}
 ) {
     OutlinedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
-        shape = CardDefaults.outlinedShape,
-        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.outlinedCardElevation(),
-        border = BorderStroke(width = 1.5.dp, color = MaterialTheme.colorScheme.primary),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        border = BorderStroke(
+            width = 1.5.dp,
+            color = MaterialTheme.colorScheme.primary
+        ),
     ) {
-        val mPadding: PaddingValues
-        if (isUsedTrans) {
-            mPadding = PaddingValues(start = 8.dp, end = 8.dp)
-            val isEnable: Boolean = personsEntity.name.isNotEmpty()
-            Column(
-                modifier = modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Start
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Column(
-                        modifier = modifier.padding(start = 8.dp, top = 2.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        Text(
-                            text = personsEntity.name,
-                            fontWeight = FontWeight.Normal,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        if (personsEntity.phone.isNotEmpty()) {
-                            Text(
-                                text = personsEntity.phone,
-                                modifier = modifier.padding(bottom = 2.dp),
-                                color = Color.Gray,
-                                maxLines = 1,
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 4.dp, end = 8.dp),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        IconButton(
-                            onClick = { onClickDelete() },
-                            modifier = Modifier.size(size = Constants.ICON_SIZE - 6.dp),
-                            enabled = isEnable,
-                        ) { DeleteIcon(tint = Color.Red) }
-                        IconButton(
-                            onClick = { onClickInfo() },
-                            modifier = Modifier.size(size = Constants.ICON_SIZE - 6.dp),
-                            enabled = isEnable,
-                        ) { InfoIcon() }
-                        IconButton(
-                            onClick = { onClickPdf() },
-                            modifier = Modifier.size(size = Constants.ICON_SIZE - 6.dp),
-                            enabled = isEnable,
-                        ) { PdfIcon() }
-                        IconButton(
-                            onClick = { onClickEdit() },
-                            modifier = Modifier.size(size = Constants.ICON_SIZE - 6.dp),
-                            enabled = isEnable,
-                        ) { EditIcon() }
-                    }
-                }
-                ItemBalance(
-                    transactionSumModel = transactionSumModel,
-                    currency = currency,
-                    paddingValues = mPadding,
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start
+        ) {
+            person?.let {
+                PersonDetailsSection(
+                    person = it,
+                    onAction = onAction,
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 )
             }
-        } else {
-            mPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 6.dp)
-            ItemBalance(
-                transactionSumModel = transactionSumModel,
-                currency = currency,
-                paddingValues = mPadding,
+
+            BalanceCardsSection(
+                transactionSum = balanceData.transactionSum,
+                currency = balanceData.currency,
+                padding = if (person != null) PaddingValues(horizontal = 8.dp)
+                else PaddingValues(horizontal = 8.dp, vertical = 6.dp)
             )
         }
     }
 }
 
+/**
+ * Displays person details and action buttons
+ */
 @Composable
-private fun ItemBalance(
-    transactionSumModel: TransactionSumModel, currency: Currency, paddingValues: PaddingValues
+private fun PersonDetailsSection(
+    modifier: Modifier = Modifier,
+    person: PersonEntity,
+    onAction: (BalanceAction) -> Unit
 ) {
-    val mColorBackground: Color
-    val mColorText: Color
+    val isActionsEnabled = person.name.isNotEmpty()
 
-    if (transactionSumModel.balance >= 0) {
-        mColorBackground = colorGreenLight
-        mColorText = colorGreenDark
-    } else {
-        mColorBackground = colorRedLight
-        mColorText = colorRedDark
-    }
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(paddingValues = paddingValues),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.Top
+            .padding(top = 2.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        BalanceCard(
-            modifier = Modifier
-                .weight(weight = 0.5f)
-                .padding(end = 4.dp),
-            currency = currency,
-            colorText = colorGreenDark,
-            colorBg = colorGreenLight,
-            amount = transactionSumModel.creditSum,
-            type = stringResource(id = R.string.label_total) + " ${Constants.TYPE_CREDIT}",
-        )
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = person.name,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Normal,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
 
-        BalanceCard(
-            modifier = Modifier
-                .weight(weight = 0.5f)
-                .padding(start = 4.dp),
-            currency = currency,
-            colorText = colorRedDark,
-            colorBg = colorRedLight,
-            amount = transactionSumModel.debitSum,
-            type = stringResource(id = R.string.label_total) + " ${Constants.TYPE_DEBIT}",
+            if (person.phone.isNotEmpty()) {
+                Text(
+                    text = person.phone,
+                    modifier = Modifier.padding(bottom = 2.dp),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            }
+        }
+
+        ActionButtons(
+            isEnabled = isActionsEnabled,
+            onDelete = { onAction(BalanceAction.Delete) },
+            onInfo = { onAction(BalanceAction.Info) },
+            onPdf = { onAction(BalanceAction.Pdf) },
+            onEdit = { onAction(BalanceAction.Edit) }
         )
     }
+}
 
-    BalanceCard(
-        modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 6.dp),
-        currency = currency,
-        colorText = mColorText,
-        colorBg = mColorBackground,
-        amount = transactionSumModel.balance,
-        type = stringResource(id = R.string.label_total_balance),
-    )
+/**
+ * Reusable action button component
+ */
+@Composable
+private fun ActionIconButton(
+    onClick: () -> Unit,
+    enabled: Boolean,
+    icon: @Composable () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.size(Constants.ICON_SIZE - 6.dp),
+        enabled = enabled
+    ) {
+        icon()
+    }
+}
+
+/**
+ * Displays action buttons in a row
+ */
+@Composable
+private fun ActionButtons(
+    isEnabled: Boolean,
+    onDelete: () -> Unit,
+    onInfo: () -> Unit,
+    onPdf: () -> Unit,
+    onEdit: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.End
+    ) {
+        ActionIconButton(
+            onClick = onDelete,
+            enabled = isEnabled,
+            icon = { DeleteIcon(tint = MaterialTheme.colorScheme.error) }
+        )
+        ActionIconButton(
+            onClick = onInfo,
+            enabled = isEnabled,
+            icon = { InfoIcon() }
+        )
+        ActionIconButton(
+            onClick = onPdf,
+            enabled = isEnabled,
+            icon = { PdfIcon() }
+        )
+        ActionIconButton(
+            onClick = onEdit,
+            enabled = isEnabled,
+            icon = { EditIcon() }
+        )
+    }
+}
+
+/**
+ * Displays balance cards in a column
+ */
+@Composable
+private fun BalanceCardsSection(
+    transactionSum: TransactionSumModel,
+    currency: Currency,
+    padding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(padding),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            BalanceCard(
+                modifier = Modifier.weight(1f),
+                amount = transactionSum.creditSum,
+                label = stringResource(R.string.label_total) + " ${Constants.TYPE_CREDIT}",
+                textColor = colorGreenDark,
+                backgroundColor = colorGreenLight,
+                currency = currency
+            )
+
+            BalanceCard(
+                modifier = Modifier.weight(1f),
+                amount = transactionSum.debitSum,
+                label = stringResource(R.string.label_total) + " ${Constants.TYPE_DEBIT}",
+                textColor = colorRedDark,
+                backgroundColor = colorRedLight,
+                currency = currency
+            )
+        }
+
+        BalanceCard(
+            modifier = Modifier.padding(padding),
+            amount = transactionSum.balance,
+            label = stringResource(R.string.label_total_balance),
+            textColor = if (transactionSum.balance >= 0) {
+                colorGreenDark
+            } else {
+                colorRedDark
+            },
+            backgroundColor = if (transactionSum.balance >= 0) {
+                colorGreenLight
+            } else {
+                colorRedLight
+            },
+            currency = currency
+        )
+    }
 }
 
 @Composable
 private fun BalanceCard(
     modifier: Modifier = Modifier,
     currency: Currency,
-    colorText: Color,
-    colorBg: Color,
+    textColor: Color,
+    backgroundColor: Color,
     amount: Double,
-    type: String,
+    label: String,
 ) {
-    val mContext: Context = LocalContext.current
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = colorBg)
+            .background(color = backgroundColor)
             .shadow(elevation = 0.5.dp, shape = RoundedCornerShape(size = 1.dp)),
     ) {
         Row(
@@ -220,24 +295,24 @@ private fun BalanceCard(
         ) {
             Text(
                 text = currency.symbol,
-                color = colorText,
+                color = textColor,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
                 text = " ${HelperUtils.roundValue(value = amount)}",
-                color = colorText,
+                color = textColor,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium,
             )
         }
 
         Text(
-            text = type.uppercase(),
+            text = label.uppercase(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 2.dp),
-            color = colorText,
+            color = textColor,
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.labelSmall,

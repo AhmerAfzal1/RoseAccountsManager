@@ -7,9 +7,9 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,100 +32,142 @@ import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.HelperUtils.AmountWithSymbolText
 
+
+/**
+ * Composable item representing a transaction with details and amount display.
+ *
+ * @param transaction Transaction data to display
+ * @param currency Currency type for amount formatting
+ * @param modifier Modifier for styling and layout
+ * @param isSelected Whether the item is in selected state
+ * @param onClick Callback for regular click interaction
+ * @param onLongClick Callback for long press interaction
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemTrans(
-    transactionEntity: TransactionEntity,
-    currency: Currency,
     modifier: Modifier = Modifier,
+    transaction: TransactionEntity,
+    currency: Currency,
     isSelected: Boolean,
     onClick: () -> Unit,
     onLongClick: (Boolean) -> Unit,
 ) {
-    val isLightTheme: Boolean = MaterialTheme.colorScheme.isLight()
-    val mContext: Context = LocalContext.current
-    val mSelectionColor: Color = if (isLightTheme) colorSelectionDark else colorSelectionLight
+    val context: Context = LocalContext.current
+    val selectionColor: Color =
+        if (MaterialTheme.colorScheme.isLight()) colorSelectionDark else colorSelectionLight
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 4.dp, bottom = 4.dp)
-            .background(color = if (isSelected) mSelectionColor else Color.Transparent)
-            .combinedClickable(
-                enabled = true,
-                onLongClick = { onLongClick(true) },
-                onClick = { onClick() },
-            ),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(weight = 0.44f),
-        ) {
-            val mDesc: String = transactionEntity.description
-            Text(
-                text = mDesc.ifEmpty { stringResource(R.string.label_no_description) },
-                color = if (mDesc.isEmpty()) Color.LightGray else Color.Unspecified,
-                fontStyle = if (mDesc.isEmpty()) FontStyle.Italic else FontStyle.Normal,
-                textAlign = TextAlign.Start,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 2,
-                style = if (mDesc.isEmpty()) {
-                    MaterialTheme.typography.labelSmall
-                } else {
-                    MaterialTheme.typography.labelMedium
-                }
-            )
-            Text(
-                text = HelperUtils.getDateTime(
-                    time = transactionEntity.date, pattern = Constants.PATTERN_TRANSACTION_ITEM
-                ),
-                color = Color.Gray,
-                textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.labelSmall
-            )
-        }
+    Column(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(all = 2.dp)
-                .weight(weight = 0.5f),
-            horizontalArrangement = Arrangement.Center,
+                .padding(vertical = 4.dp)
+                .background(color = if (isSelected) selectionColor else Color.Transparent)
+                .combinedClickable(
+                    enabled = true,
+                    onLongClick = { onLongClick(true) },
+                    onClick = onClick
+                ),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (transactionEntity.type == Constants.TYPE_DEBIT) {
-                AmountWithSymbolText(
-                    modifier = Modifier.weight(weight = 0.25f),
-                    context = mContext,
-                    currency = currency,
-                    amount = transactionEntity.amount.toDouble(),
-                    isBold = false,
-                    isExpense = false,
-                    type = transactionEntity.type,
-                )
-                Text(text = "", modifier = Modifier.weight(weight = 0.25f))
+            TransactionDetailsSection(
+                modifier = Modifier.weight(weight = 0.44f),
+                description = transaction.description,
+                date = transaction.date
+            )
+
+            TransactionAmountSection(
+                modifier = Modifier.weight(weight = 0.5f),
+                transaction = transaction,
+                currency = currency,
+                context = context
+            )
+        }
+
+        HelperUtils.ListDivider(thickness = 2.dp, alpha = 0.2f)
+    }
+}
+
+/**
+ * Displays transaction description and date details.
+ */
+@Composable
+private fun TransactionDetailsSection(
+    modifier: Modifier = Modifier,
+    description: String,
+    date: Long
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        val displayDescription = description.ifEmpty {
+            stringResource(R.string.label_no_description)
+        }
+
+        Text(
+            text = displayDescription,
+            color = if (description.isEmpty()) Color.LightGray else Color.Unspecified,
+            fontStyle = if (description.isEmpty()) FontStyle.Italic else FontStyle.Normal,
+            textAlign = TextAlign.Start,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 2,
+            style = if (description.isEmpty()) {
+                MaterialTheme.typography.labelSmall
             } else {
-                Text(text = "", modifier = Modifier.weight(weight = 0.25f))
-                AmountWithSymbolText(
-                    modifier = Modifier.weight(weight = 0.25f),
-                    context = mContext,
-                    currency = currency,
-                    amount = transactionEntity.amount.toDouble(),
-                    isBold = false,
-                    isExpense = false,
-                    type = transactionEntity.type,
-                )
+                MaterialTheme.typography.labelMedium
             }
+        )
+
+        Text(
+            text = HelperUtils.getDateTime(
+                time = date,
+                pattern = Constants.PATTERN_TRANSACTION_ITEM
+            ),
+            color = Color.Gray,
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
+}
+
+/**
+ * Displays transaction amount with type-specific formatting.
+ */
+@Composable
+private fun TransactionAmountSection(
+    modifier: Modifier = Modifier,
+    transaction: TransactionEntity,
+    currency: Currency,
+    context: Context
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(all = 2.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (transaction.type == Constants.TYPE_DEBIT) {
+            AmountWithSymbolText(
+                modifier = Modifier.weight(weight = 0.25f),
+                context = context,
+                currency = currency,
+                amount = transaction.amount.toDouble(),
+                isBold = false,
+                isExpense = false,
+                type = transaction.type
+            )
+            Spacer(modifier = Modifier.weight(weight = 0.25f))
+        } else {
+            Spacer(modifier = Modifier.weight(weight = 0.25f))
+            AmountWithSymbolText(
+                modifier = Modifier.weight(weight = 0.25f),
+                context = context,
+                currency = currency,
+                amount = transaction.amount.toDouble(),
+                isBold = false,
+                isExpense = false,
+                type = transaction.type
+            )
         }
     }
-
-    HorizontalDivider(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        thickness = 2.dp,
-        color = Color.LightGray.copy(alpha = 0.2f)
-    )
 }

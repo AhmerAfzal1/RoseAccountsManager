@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,78 +32,115 @@ import com.ahmer.accounts.ui.theme.colorRedDark
 import com.ahmer.accounts.utils.Currency
 import com.ahmer.accounts.utils.HelperUtils
 
+/**
+ * Composable item representing a person with their balance information.
+ *
+ * @param account Contains person details and their balance information
+ * @param currency Currency type for amount display
+ * @param onEvent Callback for handling user interactions with the person item
+ * @param modifier Modifier for styling and layout adjustments
+ */
 @Composable
 fun ItemPerson(
-    personsBalanceModel: PersonBalanceModel,
+    account: PersonBalanceModel,
     currency: Currency,
     onEvent: (PersonEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val mBalance: Double = personsBalanceModel.balanceModel.balance
-    val mContext: Context = LocalContext.current
-    val mPersonsEntity: PersonEntity = personsBalanceModel.personsEntity
+    val balance: Double = account.balanceModel.balance
+    val context: Context = LocalContext.current
+    val person: PersonEntity = account.personsEntity
+    val textColor = if (balance >= 0) colorGreenDark else colorRedDark
+    val horizontalPadding = 8.dp
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp, top = 6.dp, bottom = 6.dp)
-            .clickable { onEvent(PersonEvent.OnAddEditTransaction(mPersonsEntity)) },
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
             modifier = Modifier
-                .size(size = 40.dp)
-                .clip(shape = CircleShape)
-                .border(
-                    width = 1.5.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .padding(horizontal = horizontalPadding, vertical = 6.dp)
+                .clickable { onEvent(PersonEvent.OnAddEditTransaction(person)) },
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = mPersonsEntity.name.first().toString(),
-                modifier = Modifier.align(alignment = Alignment.Center),
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
-        Spacer(modifier = Modifier.width(width = 8.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(modifier = Modifier.weight(weight = 0.6f)) {
-                Text(
-                    text = mPersonsEntity.name,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.titleSmall
-                )
-                if (mPersonsEntity.phone.isNotEmpty()) {
-                    Text(
-                        text = mPersonsEntity.phone,
-                        color = Color.Gray,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
-            }
-            HelperUtils.AmountWithSymbolText(
-                modifier = Modifier.weight(weight = 0.4f),
-                context = mContext,
-                currency = currency,
-                amount = mBalance,
-                color = if (mBalance >= 0) colorGreenDark else colorRedDark,
-                isBold = false
-            )
-        }
-    }
+            InitialsAvatar(name = person.name)
+            Spacer(modifier = Modifier.width(horizontalPadding))
 
-    HorizontalDivider(
+            PersonDetailsSection(
+                person = person,
+                balance = balance,
+                currency = currency,
+                context = context,
+                textColor = textColor
+            )
+        }
+
+        HelperUtils.ListDivider(thickness = 0.5.dp, alpha = 0.15f)
+    }
+}
+
+/**
+ * Displays a circular avatar with the person's initials.
+ */
+@Composable
+private fun InitialsAvatar(name: String) {
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        thickness = 0.5.dp,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
-    )
+            .size(size = 40.dp)
+            .clip(shape = CircleShape)
+            .border(
+                width = 1.5.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = name.firstOrNull()?.toString() ?: "?",
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
+}
+
+/**
+ * Displays person details and balance information.
+ */
+@Composable
+private fun PersonDetailsSection(
+    person: PersonEntity,
+    balance: Double,
+    currency: Currency,
+    context: Context,
+    textColor: Color
+) {
+    val maxLines = 1
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(weight = 0.6f)) {
+            Text(
+                text = person.name,
+                fontWeight = FontWeight.Bold,
+                maxLines = maxLines,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleSmall
+            )
+
+            if (person.phone.isNotEmpty()) {
+                Text(
+                    text = person.phone,
+                    color = Color.Gray,
+                    maxLines = maxLines,
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
+        }
+
+        HelperUtils.AmountWithSymbolText(
+            modifier = Modifier.weight(weight = 0.4f),
+            context = context,
+            currency = currency,
+            amount = balance,
+            color = textColor,
+            isBold = false
+        )
+    }
 }

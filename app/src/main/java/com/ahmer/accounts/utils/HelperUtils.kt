@@ -10,6 +10,9 @@ import android.os.Build
 import android.provider.OpenableColumns
 import android.widget.Toast
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.ahmer.accounts.R
@@ -106,6 +111,17 @@ object HelperUtils {
                 isBold = isBold,
             )
         }
+    }
+
+    @Composable
+    fun ListDivider(thickness: Dp, alpha: Float) {
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            thickness = thickness,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha)
+        )
     }
 
     fun appInfo(context: Context): AppVersion {

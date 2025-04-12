@@ -12,7 +12,7 @@ import com.ahmer.accounts.database.repository.PersonRepository
 import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.navigation.NavItems
-import com.ahmer.accounts.state.PersonState
+import com.ahmer.accounts.state.AccountState
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.DataStore
 import com.ahmer.accounts.utils.SortBy
@@ -26,10 +26,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -37,7 +39,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PersonViewModel @Inject constructor(
-    private val personRepository: PersonRepository,
+    private val repository: PersonRepository,
     private val dataStore: DataStore,
 ) : ViewModel(), LifecycleObserver {
     private val _eventFlow: MutableSharedFlow<UiEvent> = MutableSharedFlow()
@@ -46,10 +48,10 @@ class PersonViewModel @Inject constructor(
     private val _searchQuery: MutableStateFlow<String> = MutableStateFlow(value = "")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val _uiState: MutableStateFlow<PersonState> = MutableStateFlow(value = PersonState())
-    val uiState: StateFlow<PersonState> = _uiState.asStateFlow()
+    private val _uiState: MutableStateFlow<AccountState> = MutableStateFlow(value = AccountState())
+    val uiState: StateFlow<AccountState> = _uiState.asStateFlow()
 
-    private var mDeletedPerson: PersonEntity? = null
+    private var deletedAccount: PersonEntity? = null
 
     var persons: List<PersonBalanceModel> by mutableStateOf(value = emptyList())
         private set
@@ -66,7 +68,7 @@ class PersonViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: PersonEvent) {
+    /*fun onEvent(event: PersonEvent) {
         when (event) {
             is PersonEvent.OnAddEditTransaction -> {
                 viewModelScope.launch {
@@ -80,8 +82,8 @@ class PersonViewModel @Inject constructor(
 
             is PersonEvent.OnDelete -> {
                 viewModelScope.launch {
-                    mDeletedPerson = event.personsEntity
-                    personRepository.delete(person = event.personsEntity)
+                    mDeletedAccount = event.personsEntity
+                    repository.delete(person = event.personsEntity)
                     _eventFlow.emit(
                         value = UiEvent.ShowSnackBar(
                             message = "${event.personsEntity.name} deleted", action = "Undo"
@@ -109,34 +111,97 @@ class PersonViewModel @Inject constructor(
             }
 
             PersonEvent.OnUndoDeletePerson -> {
-                mDeletedPerson?.let { person ->
+                mDeletedAccount?.let { person ->
                     viewModelScope.launch {
-                        personRepository.insertOrUpdate(person = person)
+                        repository.insertOrUpdate(person = person)
                     }
                 }
             }
         }
-    }
+    }*/
 
-    fun deletePerson(person: PersonEntity) {
+    fun deleteAccount(person: PersonEntity) {
         viewModelScope.launch {
             onEvent(PersonEvent.OnDelete(personsEntity = person))
+            showUndoSnackbar(name = person.name)
+        }
+    }
+
+    private fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun onEvent(event: PersonEvent) {
+        when (event) {
+            is PersonEvent.OnDelete -> deleteAccount(event.personsEntity)
+            is PersonEvent.OnSearchTextChange -> updateSearchQuery(event.searchQuery)
+            PersonEvent.OnUndoDeletePerson -> undoDelete()
+            PersonEvent.OnAddEditPerson -> navigateToAddEdit()
+            is PersonEvent.OnAddEditTransaction -> navigateToTransactions(event.personsEntity.id)
+            PersonEvent.OnSettings -> navigateToSettings()
+        }
+    }
+
+    private suspend fun showUndoSnackbar(name: String) {
+        _eventFlow.emit(
+            UiEvent.ShowSnackBar(
+                message = "$name deleted",
+                action = "Undo"
+            )
+        )
+    }
+
+    private fun undoDelete() {
+        deletedAccount?.let { account ->
+            viewModelScope.launch {
+                repository.insertOrUpdate(account)
+                deletedAccount = null
+            }
+        }
+    }
+
+    private fun navigateToAddEdit() {
+        viewModelScope.launch {
+            _eventFlow.emit(UiEvent.Navigate(NavItems.PersonAddEdit.route))
+        }
+    }
+
+    private fun navigateToTransactions(accountId: Int) {
+        viewModelScope.launch {
+            _eventFlow.emit(
+                UiEvent.Navigate(route = "${NavItems.Transactions.route}?transPersonId=$accountId")
+            )
+        }
+    }
+
+    private fun navigateToSettings() {
+        viewModelScope.launch {
+            _eventFlow.emit(UiEvent.Navigate(NavItems.Settings.route))
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun loadPersons() {
-        combine(_searchQuery, currentSortOrder) { query, dataStore ->
-            Pair(first = query, second = dataStore)
+    private fun loadAccounts() {
+        combine(_searchQuery, currentSortOrder) { query, sortOrder ->
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            Pair(first = query, second = sortOrder)
         }.flatMapLatest { (search, sortOrder) ->
-            personRepository.searchPersons(query = search, sortOrder = sortOrder)
-        }.onEach { result ->
-            persons = result
-            _uiState.update { personState -> personState.copy(allPersons = result) }
+            repository.searchPersons(query = search, sortOrder = sortOrder)
+                .onStart {
+                    _uiState.update { it.copy(isLoading = true) }
+                }.catch { e ->
+                    _uiState.update {
+                        it.copy(isLoading = false, error = e.localizedMessage ?: "Unknown error")
+                    }
+                }
+        }.onEach { accounts ->
+            _uiState.update {
+                it.copy(allAccounts = accounts, isLoading = false, error = null)
+            }
         }.launchIn(scope = viewModelScope)
     }
 
     init {
-        loadPersons()
+        loadAccounts()
     }
 }

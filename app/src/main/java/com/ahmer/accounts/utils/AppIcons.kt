@@ -295,6 +295,26 @@ fun SettingsIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.
 }
 
 @Composable
+fun TrendingDownIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_trending_down),
+        contentDescription = stringResource(id = R.string.content_trending_down),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun TrendingUpIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_trending_up),
+        contentDescription = stringResource(id = R.string.content_trending_up),
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
 fun ThemeIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         painter = painterResource(id = R.drawable.ic_dark_mode),
