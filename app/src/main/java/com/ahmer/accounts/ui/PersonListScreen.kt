@@ -83,7 +83,6 @@ import com.ahmer.accounts.event.PersonEvent
 import com.ahmer.accounts.event.UiEvent
 import com.ahmer.accounts.state.AccountState
 import com.ahmer.accounts.ui.components.BalanceData
-import com.ahmer.accounts.ui.components.ItemBalance
 import com.ahmer.accounts.ui.components.ItemBalanceV1
 import com.ahmer.accounts.ui.components.ItemPerson
 import com.ahmer.accounts.utils.AddIcon

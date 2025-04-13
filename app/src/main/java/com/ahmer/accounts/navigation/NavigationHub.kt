@@ -80,7 +80,7 @@ private fun NavGraphBuilder.addReportScreen() {
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() },
     ) {
-        ReportScreen(mainViewModel = hiltViewModel(), viewModel = hiltViewModel())
+        ReportScreen(viewModel = hiltViewModel())
     }
 }
 

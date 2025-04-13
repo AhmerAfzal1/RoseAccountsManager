@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.entity.TransactionEntity
-import com.ahmer.accounts.state.MainState
+import com.ahmer.accounts.database.model.TransactionSumModel
 import com.ahmer.accounts.ui.theme.colorGreenDark
 import com.ahmer.accounts.ui.theme.colorRedDark
 import com.ahmer.accounts.utils.Constants
@@ -50,20 +50,20 @@ private const val AMOUNT_WEIGHT = 0.25f
 /**
  * Displays a pie chart showing the balance distribution between credit and debit.
  *
- * @param mainState The state containing account balance information
+ * @param transactionSumModel The state containing account balance information
  */
 @Composable
-fun BalanceChartScreen(mainState: MainState) {
-    val chartData = remember(mainState) {
+fun BalanceChartScreen(transactionSumModel: TransactionSumModel) {
+    val chartData = remember(transactionSumModel) {
         listOf(
             PieChartData(
                 color = colorGreenDark,
-                value = mainState.accountsBalance.creditSum,
+                value = transactionSumModel.creditSum,
                 description = Constants.TYPE_CREDIT,
             ),
             PieChartData(
                 color = colorRedDark,
-                value = mainState.accountsBalance.debitSum,
+                value = transactionSumModel.debitSum,
                 description = Constants.TYPE_DEBIT
             )
         )
@@ -88,14 +88,14 @@ fun BalanceChartScreen(mainState: MainState) {
  *
  * @param barChartData List of data points for the bar chart
  * @param activeFilter Currently selected time filter
- * @param onActiveFilterChanged Callback when filter changes
+ * @param onFilterChanged Callback when filter changes
  * @param transactions List of transactions to display
  */
 @Composable
 fun TransactionsChartScreen(
     barChartData: List<BarChartData.Bar>,
     activeFilter: String,
-    onActiveFilterChanged: (String) -> Unit,
+    onFilterChanged: (String) -> Unit,
     transactions: List<TransactionEntity>,
 ) {
     Column(
@@ -105,7 +105,7 @@ fun TransactionsChartScreen(
         horizontalAlignment = Alignment.Start
     ) {
         BarChartItem(barChartList = barChartData)
-        TimeFilterSelector(activeFilter = activeFilter, onFilterSelected = onActiveFilterChanged)
+        TimeFilterSelector(activeFilter = activeFilter, onFilterSelected = onFilterChanged)
         TransactionHeader()
         TransactionList(transactions = transactions)
     }
@@ -123,7 +123,7 @@ fun BarChartItem(modifier: Modifier = Modifier, barChartList: List<BarChartData.
         barChartData = BarChartData(bars = barChartList),
         modifier = modifier
             .fillMaxWidth()
-            .height(height = 300.dp)
+            .height(height = 250.dp)
             .padding(all = 8.dp),
         animation = simpleChartAnimation(),
         barDrawer = SimpleBarDrawer(),
@@ -167,8 +167,8 @@ private fun TimeFilterSelector(
         modifier = modifier
             .fillMaxWidth()
             .horizontalScroll(state = rememberScrollState())
-            .padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.Start,
+            .padding(top = 8.dp, bottom = 4.dp),
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         filters.forEach { filter ->

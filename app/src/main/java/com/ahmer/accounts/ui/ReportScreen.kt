@@ -1,12 +1,9 @@
 package com.ahmer.accounts.ui
 
-import android.content.Context
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -27,45 +24,39 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmer.accounts.R
 import com.ahmer.accounts.database.entity.TransactionEntity
-import com.ahmer.accounts.state.MainState
 import com.ahmer.accounts.state.ReportState
-import com.ahmer.accounts.ui.TabItemChart.Companion.Icons
 import com.ahmer.accounts.ui.components.BalanceChartScreen
 import com.ahmer.accounts.ui.components.TransactionsChartScreen
-import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.ConstantsChart
 import com.ahmer.accounts.utils.DateUtils
-import com.ahmer.accounts.utils.HelperUtils
 import com.ahmer.accounts.utils.chart.bar.BarChartData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
+fun ReportScreen(viewModel: ReportViewModel) {
     val isLightTheme: Boolean = MaterialTheme.colorScheme.isLight()
-    val mSurfaceColor: Color = if (isLightTheme) Color.Black else Color.Yellow
-    val mSurfaceElevation: Dp = 4.dp
+    val surfaceColor: Color = if (isLightTheme) Color.Black else Color.Yellow
 
     Scaffold(modifier = Modifier, topBar = {
         Surface(
             modifier = Modifier.shadow(
-                elevation = mSurfaceElevation,
-                ambientColor = mSurfaceColor,
-                spotColor = mSurfaceColor,
+                elevation = 8.dp,
+                ambientColor = surfaceColor,
+                spotColor = surfaceColor,
             )
         ) {
             TopAppBar(title = {
@@ -73,51 +64,50 @@ fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
             })
         }
     }) { innerPadding ->
-        val mMainState: MainState by mainViewModel.uiState.collectAsStateWithLifecycle()
+        val state: ReportState by viewModel.state.collectAsStateWithLifecycle()
+        val activeFilter: String by viewModel.activeFilter.collectAsStateWithLifecycle()
+        val transactions: List<TransactionEntity> = state.transactions
+        val tabs: List<ReportTabItem> = ReportTabItem.entries
+        val pagerState: PagerState = rememberPagerState(pageCount = { tabs.size })
+        var selectedTab: Int by rememberSaveable { mutableIntStateOf(value = 0) }
+        val color: Color = MaterialTheme.colorScheme.primary
 
-        val mActiveTabFilter: String = viewModel.activeFilter.value
-        val mGraphState: ReportState by viewModel.graph.collectAsStateWithLifecycle()
-        val mAllTransactions: List<TransactionEntity> = mGraphState.allTransactions
-        //val mTabTransactions: MutableList<TransEntity> = mutableListOf()
-
-        val mGraph: List<BarChartData.Bar> = when {
-            mActiveTabFilter == ConstantsChart.THIS_WEEK || mActiveTabFilter == ConstantsChart.LAST_7_DAYS -> {
-                mAllTransactions.groupBy { it.createdOn }.map { (date, transactions) ->
-                    val mTotal: Double = transactions.sumOf { it.amount.toDouble() }
-                    Log.v(Constants.LOG_TAG, "mGraph Grouped: $mTotal, Size: ${transactions.size}")
-                    BarChartData.Bar(
-                        value = mTotal.toFloat(),
-                        color = MaterialTheme.colorScheme.primary,
-                        label = DateUtils.actualDayOfWeek(dateString = date).substring(0, 3)
-                    )
-                }
-            }
-
-            mAllTransactions.isEmpty() -> {
-                listOf(
-                    BarChartData.Bar(
-                        value = 0.toFloat(),
-                        label = "",
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                )
-            }
-
-            else -> {
-                mAllTransactions.map { entity ->
-                    val mTotal: Float = entity.amount.toFloat()
-                    Log.v(Constants.LOG_TAG, "mGraph: $mTotal, Size: ${mAllTransactions.size}")
-                    BarChartData.Bar(
-                        value = mTotal,
-                        color = MaterialTheme.colorScheme.primary,
-                        label = (mAllTransactions.indexOf(entity) + 1).toString()
-                    )
-                }
-            }
+        LaunchedEffect(selectedTab) {
+            pagerState.animateScrollToPage(selectedTab)
         }
 
-        LaunchedEffect(key1 = mGraph) {
-            viewModel.onChangeBarDataList(data = mGraph)
+        LaunchedEffect(pagerState.currentPage) {
+            selectedTab = pagerState.currentPage
+        }
+
+        val barChartData: List<BarChartData.Bar> = remember(transactions, activeFilter) {
+            when {
+                activeFilter == ConstantsChart.THIS_WEEK || activeFilter == ConstantsChart.LAST_7_DAYS -> {
+                    transactions.groupBy { it.createdOn }.map { (date, items) ->
+                        BarChartData.Bar(
+                            value = items.sumOf { it.amount.toDouble() }.toFloat(),
+                            label = DateUtils.actualDayOfWeek(date).take(3),
+                            color = color
+                        )
+                    }
+                }
+
+                transactions.isEmpty() -> {
+                    listOf(
+                        BarChartData.Bar(
+                            value = 0.toFloat(), label = "", color = color
+                        )
+                    )
+                }
+
+                else -> {
+                    transactions.mapIndexed { index, item ->
+                        BarChartData.Bar(
+                            value = item.amount.toFloat(), label = "${index + 1}", color = color
+                        )
+                    }
+                }
+            }
         }
 
         Column(
@@ -126,37 +116,90 @@ fun ReportScreen(mainViewModel: MainViewModel, viewModel: ReportViewModel) {
                 .padding(paddingValues = innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Tabs(
-                mainState = mMainState,
-                barChartList = mGraph,
-                activeFilter = mActiveTabFilter,
-                onChangeActiveFilter = { viewModel.onChangeActiveFilter(filter = it) },
-                tabTransactions = mAllTransactions,
+
+            ReportTabRow(
+                tabs = tabs, selectedTab = selectedTab, onTabSelected = { selectedTab = it })
+
+            HorizontalPager(
+                state = pagerState, modifier = Modifier
+                    .fillMaxSize()
+                    .weight(weight = 1f)
+            ) { page ->
+                when (tabs[page]) {
+                    is ReportTabItem.Transactions -> TransactionsChartScreen(
+                        barChartData = barChartData,
+                        activeFilter = activeFilter,
+                        onFilterChanged = viewModel::updateActiveFilter,
+                        transactions = state.transactions
+                    )
+
+                    is ReportTabItem.Balance -> BalanceChartScreen(
+                        transactionSumModel = state.transactionSum
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ReportTabRow(
+    modifier: Modifier = Modifier,
+    tabs: List<ReportTabItem>,
+    selectedTab: Int,
+    onTabSelected: (Int) -> Unit
+) {
+    TabRow(selectedTabIndex = selectedTab, modifier = modifier, indicator = { tabPositions ->
+        SecondaryIndicator(
+            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+            height = 3.dp,
+            color = MaterialTheme.colorScheme.primary
+        )
+    }, divider = { HorizontalDivider(thickness = 3.dp) }) {
+        tabs.forEachIndexed { index, tabItem ->
+            val isSelected: Boolean = selectedTab == index
+
+            Tab(
+                selected = isSelected,
+                onClick = { onTabSelected(index) },
+                enabled = true,
+                text = {
+                    Text(
+                        text = stringResource(id = tabItem.title),
+                        modifier = Modifier.padding(all = 16.dp),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(
+                            id = if (isSelected) tabItem.selectedIcon else tabItem.unselectedIcon
+                        ), contentDescription = stringResource(id = tabItem.contentDescription)
+                    )
+                },
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
             )
         }
     }
 }
 
-private object TabsScreenChart {
-    const val CHART_TRANSACTIONS = 0
-    const val CHART_BALANCE = 1
-    //const val CHART_ACCOUNTS = 2 //Later to implement, how many new accounts added daily, weekly and monthly
-}
-
-sealed class TabItemChart(
+sealed class ReportTabItem(
     @StringRes val title: Int,
     @DrawableRes val selectedIcon: Int,
     @DrawableRes val unselectedIcon: Int,
     @StringRes val contentDescription: Int,
 ) {
-    data object Transactions : TabItemChart(
+    data object Transactions : ReportTabItem(
         title = R.string.label_trans,
         selectedIcon = R.drawable.ic_bar_chart,
         unselectedIcon = R.drawable.ic_bar_chart,
         contentDescription = R.string.content_bar,
     )
 
-    data object Balance : TabItemChart(
+    data object Balance : ReportTabItem(
         title = R.string.label_balance,
         selectedIcon = R.drawable.ic_filled_pie_chart,
         unselectedIcon = R.drawable.ic_outlined_pie_chart,
@@ -164,94 +207,6 @@ sealed class TabItemChart(
     )
 
     companion object {
-        val tabItemCharts: List<TabItemChart> by lazy { listOf(Transactions, Balance) }
-
-        @Composable
-        fun TabItemChart.Icons(selected: Boolean) {
-            Icon(
-                painter = painterResource(id = if (selected) selectedIcon else unselectedIcon),
-                contentDescription = stringResource(id = contentDescription),
-            )
-        }
-    }
-}
-
-@Composable
-private fun Tabs(
-    mainState: MainState,
-    barChartList: List<BarChartData.Bar>,
-    activeFilter: String,
-    onChangeActiveFilter: (String) -> Unit,
-    tabTransactions: List<TransactionEntity>
-) {
-    val mContext: Context = LocalContext.current
-    val mList: List<TabItemChart> = TabItemChart.tabItemCharts
-    val mPagerState: PagerState = rememberPagerState(pageCount = { mList.size })
-    var mSelectedTab: Int by rememberSaveable { mutableIntStateOf(value = 0) }
-
-    LaunchedEffect(key1 = mSelectedTab) {
-        mPagerState.animateScrollToPage(page = mSelectedTab)
-    }
-
-    LaunchedEffect(key1 = mPagerState.currentPage) {
-        mSelectedTab = mPagerState.currentPage
-    }
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        TabRow(
-            selectedTabIndex = mSelectedTab,
-            modifier = Modifier,
-            indicator = { tabPositions ->
-                SecondaryIndicator(
-                    Modifier.tabIndicatorOffset(currentTabPosition = tabPositions[mSelectedTab]),
-                    height = 3.dp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            },
-            divider = { HorizontalDivider(thickness = 3.dp) },
-        ) {
-            mList.forEachIndexed { index, tabItem ->
-                val mSelected: Boolean = mSelectedTab == index
-                Tab(
-                    selected = mSelected,
-                    onClick = { mSelectedTab = index },
-                    modifier = Modifier,
-                    enabled = true,
-                    text = {
-                        Text(
-                            text = stringResource(id = tabItem.title),
-                            modifier = Modifier.padding(all = 16.dp),
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-                    icon = { tabItem.Icons(selected = mSelected) },
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                )
-            }
-        }
-
-        HorizontalPager(
-            state = mPagerState,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(weight = 1f),
-            key = { mList[it].title },
-        ) { page ->
-            when (page) {
-                TabsScreenChart.CHART_TRANSACTIONS -> TransactionsChartScreen(
-                    barChartData = barChartList, activeFilter = activeFilter,
-                    onActiveFilterChanged = onChangeActiveFilter, transactions = tabTransactions
-                )
-
-                TabsScreenChart.CHART_BALANCE -> BalanceChartScreen(mainState = mainState)
-                else -> HelperUtils.showToast(
-                    context = mContext,
-                    msg = stringResource(id = R.string.toast_tab_requested, page)
-                )
-            }
-        }
+        val entries = listOf(Transactions, Balance)
     }
 }

@@ -1,24 +1,20 @@
 package com.ahmer.accounts.ui
 
-import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmer.accounts.database.entity.TransactionEntity
+import com.ahmer.accounts.database.model.TransactionSumModel
 import com.ahmer.accounts.database.repository.TransactionRepository
 import com.ahmer.accounts.state.ReportState
 import com.ahmer.accounts.utils.Constants
 import com.ahmer.accounts.utils.ConstantsChart
 import com.ahmer.accounts.utils.DateUtils
-import com.ahmer.accounts.utils.chart.bar.BarChartData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -27,10 +23,66 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReportViewModel @Inject constructor(
-    private val transactionRepository: TransactionRepository,
-) : ViewModel(), LifecycleObserver {
+    private val repository: TransactionRepository,
+) : ViewModel() {
 
-    private val _activeFilter = mutableStateOf(ConstantsChart.THIS_WEEK)
+    private val _state: MutableStateFlow<ReportState> = MutableStateFlow(ReportState())
+    val state: StateFlow<ReportState> = _state.asStateFlow()
+
+    private val _activeFilter: MutableStateFlow<String> = MutableStateFlow(ConstantsChart.THIS_WEEK)
+    val activeFilter: StateFlow<String> = _activeFilter.asStateFlow()
+
+    private val today = DateUtils.formatDate(date = LocalDate.now())
+    private val yesterday = DateUtils.previousDay(dateString = today)
+    private val thisWeek = DateUtils.getWeekDates(dateString = today)
+    private val lastWeek = DateUtils.getPastWeekData()
+    private val thisMonth = DateUtils.getMonthDates(dateString = today)
+
+    fun onChangeActiveFilter(filter: String) {
+        _activeFilter.value = filter
+        loadData(filter = filter)
+    }
+
+    private fun getTransactionsFlow(filter: String): Flow<List<TransactionEntity>> = when (filter) {
+        ConstantsChart.TODAY -> repository.getTransactionsByDate(date = today)
+        ConstantsChart.YESTERDAY -> repository.getTransactionsByDate(date = yesterday)
+        ConstantsChart.THIS_WEEK -> repository.getTransactionsBetweenDates(dateRange = thisWeek)
+        ConstantsChart.LAST_7_DAYS -> repository.getTransactionsBetweenDates(dateRange = lastWeek)
+        ConstantsChart.THIS_MONTH -> repository.getTransactionsBetweenDates(dateRange = thisMonth)
+        ConstantsChart.ALL -> repository.getAllTransactions()
+        else -> flowOf(emptyList())
+    }
+
+    private fun calculateBalances(transactions: List<TransactionEntity>): Pair<Double, Double> {
+        val (credits, debits) = transactions.partition { it.type == Constants.TYPE_CREDIT }
+        return credits.sumOf { it.amount.toDouble() } to debits.sumOf { it.amount.toDouble() }
+    }
+
+    private fun loadData(filter: String) {
+        getTransactionsFlow(filter = filter)
+            .onEach { transactions ->
+                val (credit, debit) = calculateBalances(transactions = transactions)
+
+                _state.update {
+                    it.copy(
+                        transactions = transactions,
+                        transactionSum = TransactionSumModel(creditSum = credit, debitSum = debit)
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun updateActiveFilter(filter: String) {
+        _activeFilter.value = filter
+        loadData(filter)
+    }
+
+    init {
+        loadData(ConstantsChart.THIS_WEEK)
+    }
+
+    /*private val _activeFilter = mutableStateOf(ConstantsChart.THIS_WEEK)
     val activeFilter: State<String> = _activeFilter
 
     private val _barDataList = mutableStateOf<List<BarChartData.Bar>>(emptyList())
@@ -101,5 +153,5 @@ class ReportViewModel @Inject constructor(
         Log.v(Constants.LOG_TAG, "Week days: $mThisWeek")
         Log.v(Constants.LOG_TAG, "Last 7 days: $mLastWeek")
         Log.v(Constants.LOG_TAG, "This month days: $mThisMonth")
-    }
+    }*/
 }

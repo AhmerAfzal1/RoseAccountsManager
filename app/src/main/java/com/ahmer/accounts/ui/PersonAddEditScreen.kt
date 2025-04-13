@@ -72,7 +72,7 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
     val focusManager: FocusManager = LocalFocusManager.current
     val focusRequester: FocusRequester = remember { FocusRequester() }
     val keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current
-    val mSurfaceColor: Color = if (isLightTheme) Color.Black else Color.Yellow
+    val shadowColor: Color = if (isLightTheme) Color.Black else Color.Yellow
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -99,8 +99,8 @@ fun PersonAddEditScreen(viewModel: PersonAddEditViewModel, onPopBackStack: () ->
                 .shadow(
                     elevation = 8.dp,
                     shape = RectangleShape,
-                    ambientColor = mSurfaceColor,
-                    spotColor = mSurfaceColor
+                    ambientColor = shadowColor,
+                    spotColor = shadowColor
                 ),
             color = MaterialTheme.colorScheme.surface
         ) {
