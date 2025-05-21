@@ -1,46 +1,25 @@
 [versions]
-# Plugin Versions
-agp = "8.9.2"
+agp = "8.10.0"
+applock = "3.0.2"
+composeBom = "2025.05.01"
+coreKtx = "1.16.0"
+coreSplashscreen = "1.0.1"
+coroutines = "1.10.2"
+datastore = "1.1.7"
+firebaseBom = "33.14.0"
 firebaseCrashlyticsPlugin = "3.0.3"
 firebasePerfPlugin = "1.4.2"
 googleServicesPlugin = "4.4.2"
-hiltPlugin = "2.56.1"
-kotlin = "2.1.20"
-ksp = "2.1.20-2.0.0"
-
-# Core
-coreKtx = "1.16.0"
-coreSplashscreen = "1.0.1"
-multidex = "2.0.1"
-
-# Compose
-composeBom = "2025.04.00"
-
-# Firebase
-firebaseBom = "33.12.0"
-
-# Google Play Services
-playServicesAds = "24.2.0"
-
-# Lifecycle
-lifecycle = "2.8.7"
-
-# Navigation
-navigationCompose = "2.8.9"
 hiltNavigationCompose = "1.2.0"
-
-# Room
-room = "2.7.0"
-
-# DataStore
-datastore = "1.1.4"
-
-# Coroutines
-coroutines = "1.10.2"
-
-# Other
-applock = "3.0.2"
+hiltPlugin = "2.56.2"
 itextpdf = "5.5.13.4"
+kotlin = "2.1.21"
+ksp = "2.1.21-2.0.1"
+lifecycle = "2.9.0"
+multidex = "2.0.1"
+navigationCompose = "2.9.0"
+playServicesAds = "24.3.0"
+room = "2.7.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
