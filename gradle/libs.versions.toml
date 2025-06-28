@@ -1,25 +1,25 @@
 [versions]
-agp = "8.10.0"
+agp = "8.11.0"
 applock = "3.0.2"
-composeBom = "2025.05.01"
+composeBom = "2025.06.01"
 coreKtx = "1.16.0"
 coreSplashscreen = "1.0.1"
 coroutines = "1.10.2"
 datastore = "1.1.7"
-firebaseBom = "33.14.0"
-firebaseCrashlyticsPlugin = "3.0.3"
+firebaseBom = "33.16.0"
+firebaseCrashlyticsPlugin = "3.0.4"
 firebasePerfPlugin = "1.4.2"
-googleServicesPlugin = "4.4.2"
+googleServicesPlugin = "4.4.3"
 hiltNavigationCompose = "1.2.0"
 hiltPlugin = "2.56.2"
 itextpdf = "5.5.13.4"
-kotlin = "2.1.21"
-ksp = "2.1.21-2.0.1"
-lifecycle = "2.9.0"
+kotlin = "2.2.0"
+ksp = "2.2.0-2.0.2"
+lifecycle = "2.9.1"
 multidex = "2.0.1"
 navigationCompose = "2.9.0"
-playServicesAds = "24.3.0"
-room = "2.7.1"
+playServicesAds = "24.4.0"
+room = "2.7.2"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -64,7 +64,7 @@ google-play-ads = { group = "com.google.android.gms", name = "play-services-ads"
 
 # Hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltPlugin" }
-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hiltPlugin" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltPlugin" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 # Kotlin
