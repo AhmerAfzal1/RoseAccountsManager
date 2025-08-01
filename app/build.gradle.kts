@@ -63,7 +63,7 @@ android {
 
 dependencies {
     // Core
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.multidex)
 
@@ -87,10 +87,10 @@ dependencies {
     implementation(libs.google.play.ads)
 
     // Lifecycle
-    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.livedata)
     implementation(libs.lifecycle.runtime.compose)
-    implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.lifecycle.runtime)
+    implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel.savedstate)
 
