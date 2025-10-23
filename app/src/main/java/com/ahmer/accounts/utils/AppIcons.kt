@@ -1,20 +1,5 @@
 package com.ahmer.accounts.utils
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -37,7 +22,7 @@ fun AddCircleIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor
 @Composable
 fun AddIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.Add,
+        painter = painterResource(id = R.drawable.ic_add_circle_outline),
         contentDescription = stringResource(id = R.string.content_add),
         modifier = modifier,
         tint = tint
@@ -47,7 +32,7 @@ fun AddIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curre
 @Composable
 fun AddressIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Outlined.LocationOn,
+        painter = painterResource(id = R.drawable.ic_location_on),
         contentDescription = stringResource(id = R.string.content_address),
         modifier = modifier,
         tint = tint
@@ -57,7 +42,7 @@ fun AddressIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.c
 @Composable
 fun BackIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+        painter = painterResource(id = R.drawable.ic_back),
         contentDescription = stringResource(id = R.string.content_back),
         modifier = modifier,
         tint = tint
@@ -77,7 +62,7 @@ fun BackupIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 @Composable
 fun CheckIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.Check,
+        painter = painterResource(id = R.drawable.ic_check),
         contentDescription = stringResource(id = R.string.content_check),
         modifier = modifier,
         tint = tint
@@ -97,7 +82,7 @@ fun ClearCachesIcon(modifier: Modifier = Modifier, tint: Color = LocalContentCol
 @Composable
 fun CloseIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.Close,
+        painter = painterResource(id = android.R.drawable.ic_menu_close_clear_cancel),
         contentDescription = stringResource(id = R.string.content_close),
         modifier = modifier,
         tint = tint
@@ -127,7 +112,7 @@ fun CurrencyIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.
 @Composable
 fun DateIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.DateRange,
+        painter = painterResource(id = R.drawable.ic_date_range),
         contentDescription = stringResource(id = R.string.content_date),
         modifier = modifier,
         tint = tint
@@ -157,7 +142,7 @@ fun DeleteIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 @Composable
 fun EditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Outlined.Edit,
+        painter = painterResource(id = R.drawable.ic_edit),
         contentDescription = stringResource(id = R.string.content_edit),
         modifier = modifier,
         tint = tint
@@ -167,7 +152,7 @@ fun EditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 @Composable
 fun EmailIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Outlined.Email,
+        painter = painterResource(id = R.drawable.ic_email),
         contentDescription = stringResource(id = R.string.content_email),
         modifier = modifier,
         tint = tint
@@ -187,7 +172,7 @@ fun FilterIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 @Composable
 fun InfoIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Outlined.Info,
+        painter = painterResource(id = R.drawable.ic_info),
         contentDescription = stringResource(id = R.string.content_info),
         modifier = modifier,
         tint = tint
@@ -197,7 +182,7 @@ fun InfoIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 @Composable
 fun MoreIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.MoreVert,
+        painter = painterResource(id = R.drawable.ic_more_vert),
         contentDescription = stringResource(id = R.string.content_more),
         modifier = modifier,
         tint = tint
@@ -227,7 +212,7 @@ fun PdfIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curre
 @Composable
 fun PersonIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Outlined.Person,
+        painter = painterResource(id = R.drawable.ic_person),
         contentDescription = stringResource(id = R.string.content_person),
         modifier = modifier,
         tint = tint
@@ -237,7 +222,7 @@ fun PersonIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 @Composable
 fun PhoneIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Outlined.Phone,
+        painter = painterResource(id = R.drawable.ic_add_call),
         contentDescription = stringResource(id = R.string.content_phone),
         modifier = modifier,
         tint = tint
@@ -267,7 +252,7 @@ fun SaveIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 @Composable
 fun SearchIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.Search,
+        painter = painterResource(id = R.drawable.ic_search),
         contentDescription = stringResource(id = R.string.content_search),
         modifier = modifier,
         tint = tint
@@ -287,7 +272,7 @@ fun SelectAllIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor
 @Composable
 fun SettingsIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
-        imageVector = Icons.Filled.Settings,
+        painter = painterResource(id = R.drawable.ic_filled_settings),
         contentDescription = stringResource(id = R.string.content_settings),
         modifier = modifier,
         tint = tint

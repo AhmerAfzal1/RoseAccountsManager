@@ -19,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ahmer.accounts"
-        minSdk = 26
+        minSdk = 24
         targetSdk = 36
         versionCode = 1
         versionName = "1.00"
@@ -63,7 +63,6 @@ android {
 
 dependencies {
     // Core
-    implementation(libs.androidx.core)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.multidex)
 
@@ -72,8 +71,6 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.foundation)
     implementation(libs.compose.ui)
-    implementation(libs.compose.ui.graphics)
-    implementation(libs.compose.ui.tooling.preview)
 
     // Firebase BOM
     implementation(platform(libs.firebase.bom))
@@ -86,16 +83,7 @@ dependencies {
     // Google Ads
     implementation(libs.google.play.ads)
 
-    // Lifecycle
-    implementation(libs.lifecycle.livedata)
-    implementation(libs.lifecycle.runtime.compose)
-    implementation(libs.lifecycle.runtime)
-    implementation(libs.lifecycle.viewmodel)
-    implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.lifecycle.viewmodel.savedstate)
-
     // Navigation
-    implementation(libs.navigation.compose)
     implementation(libs.hilt.navigation.compose)
 
     // Hilt
@@ -108,8 +96,6 @@ dependencies {
     ksp(libs.room.compiler)
 
     // DataStore
-    implementation(libs.datastore)
-    implementation(libs.datastore.core)
     implementation(libs.datastore.preferences)
 
     // Coroutines
